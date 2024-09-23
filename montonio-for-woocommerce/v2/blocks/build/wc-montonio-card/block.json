@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "montonio/wc-montonio-card",
+  "version": "0.1.0",
+  "title": "Montonio Card Payments Block",
+  "category": "woocommerce",
+  "icon": "bank",
+  "description": "Bank Selection screen at Checkout",
+  "keywords": [
+    "checkout",
+    "payment",
+    "montonio",
+    "card"
+  ],
+  "supports": {
+    "html": false,
+    "multiple": false
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./index.js",
+  "textdomain": "montonio-for-woocommerce"
+}

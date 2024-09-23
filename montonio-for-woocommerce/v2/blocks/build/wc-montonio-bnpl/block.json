@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "montonio/wc-montonio-bnpl",
+  "version": "0.1.0",
+  "title": "Montonio Buy Now, Pay Later Block",
+  "category": "widgets",
+  "icon": "bank",
+  "description": "Bank Selection screen at Checkout",
+  "keywords": [
+    "checkout",
+    "payment",
+    "montonio",
+    "bnpl"
+  ],
+  "supports": {
+    "html": false,
+    "multiple": false
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./index.js",
+  "textdomain": "montonio-for-woocommerce"
+}

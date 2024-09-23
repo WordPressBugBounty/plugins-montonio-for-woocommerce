@@ -1,0 +1,477 @@
+:root {
+  --wrapper-width: 1280px;
+  --container-width: 1280px;
+  --container-padding: 32px;
+  --brand-10: #F0EEFB;
+  --brand-20: #D6D1F8;
+  --brand-30: #5E47F2;
+  --brand-40: #442DD2;
+  --brand-50: #301BB5;
+  --brand-60: #19068D;
+  --accent-10: #FFF0DC;
+  --accent-20: #FFDDAF;
+  --accent-30: #FFD08F;
+  --accent-40: #FFC26F;
+  --accent-50: #FFB248;
+  --accent-60: #F39C26;
+  --success-10: #ECFBF6;
+  --success-20: #C8F1E3;
+  --success-30: #6AD0A1;
+  --success-40: #1BB07A;
+  --success-50: #048F66;
+  --success-60: #006956;
+  --info-10: #E7EFFF;
+  --info-20: #95B6FF;
+  --info-30: #558AFF;
+  --info-40: #2366F9;
+  --info-50: #0A4DDE;
+  --info-60: #0038B0;
+  --warning-10: #FFF6DA;
+  --warning-20: #FFE6A3;
+  --warning-30: #FFD460;
+  --warning-40: #FFBB05;
+  --warning-50: #E3A500;
+  --warning-60: #BF8B00;
+  --error-10: #FFEBEB;
+  --error-20: #FFCFD5;
+  --error-30: #FC5266;
+  --error-40: #E9283F;
+  --error-50: #CE0920;
+  --error-60: #A9061A;
+  --neutral-00: #FFFFFF;
+  --neutral-10: #F6F8FC;
+  --neutral-20: #E2E8F0;
+  --neutral-30: #CBD4E1;
+  --neutral-40: #94A3B8;
+  --neutral-50: #64748B;
+  --neutral-60: #27364B;
+  --neutral-70: #0F1A2A;
+  --elevation-2dp: 0px 1px 2px rgba(15, 26, 42, 0.08);
+  --elevation-4dp: 0px 4px 8px -2px rgba(15, 26, 42, 0.04), 0px 0px 2px rgba(15, 26, 42, 0.08);
+  --elevation-6dp: 0px 12px 16px -4px rgba(15, 26, 42, 0.04), 0px 0px 2px rgba(15, 26, 42, 0.08);
+  --elevation-8dp: 0px 20px 24px -8px rgba(15, 26, 42, 0.04), 0px 0px 2px rgba(15, 26, 42, 0.08);
+  --elevation-16dp: 0px 24px 48px -12px rgba(15, 26, 42, 0.08), 0px 0px 2px rgba(15, 26, 42, 0.08);
+  --elevation-24dp: 0px 32px 64px -12px rgba(15, 26, 42, 0.08), 0px 0px 2px rgba(15, 26, 42, 0.08);
+  --spacing-025: 4px;
+  --spacing-050: 8px;
+  --spacing-075: 12px;
+  --spacing-100: 16px;
+  --spacing-150: 24px;
+  --spacing-200: 32px;
+  --spacing-250: 40px;
+  --spacing-300: 48px;
+  --spacing-400: 64px;
+  --spacing-500: 80px;
+  --spacing-600: 96px;
+  --spacing-750: 120px;
+  --spacing-1000: 160px;
+}
+
+.montonio-logo {
+  margin-bottom: 15px;
+}
+
+.montonio-menu {
+  margin-bottom: 20px;
+}
+.montonio-menu ul {
+  display: flex;
+  gap: 10px 30px;
+  margin: 0;
+  padding: 0;
+}
+.montonio-menu ul li {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 7px 0;
+  font-weight: 500;
+}
+.montonio-menu ul li a {
+  text-decoration: none;
+  color: #111;
+}
+.montonio-menu ul li.active {
+  border-bottom: 2px solid #4537cd;
+}
+.montonio-menu ul li .montonio-status {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 5px;
+  background: #2ecc71;
+  border-radius: 50%;
+}
+.montonio-menu ul li .montonio-status--sandbox {
+  background: #ff8d00;
+}
+
+.montonio-options-wrapper {
+  max-width: 750px;
+  margin: 0 auto;
+}
+.montonio-options-wrapper .montonio-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 30px;
+}
+.montonio-options-wrapper .montonio-card:last-child {
+  margin-bottom: 10px;
+}
+.montonio-options-wrapper .montonio-card h4 {
+  margin-top: 0;
+}
+.montonio-options-wrapper .montonio-card__body {
+  padding: 16px 24px;
+}
+.montonio-options-wrapper .montonio-card__body p {
+  margin: 0;
+}
+.montonio-options-wrapper .montonio-card--banner .montonio-card__body {
+  display: flex;
+  gap: 10px;
+}
+.montonio-options-wrapper .montonio-card__footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+}
+.montonio-options-wrapper .montonio-card--blue {
+  background: #E7EFFF;
+  border-color: #95B6FF;
+  color: #4537cd;
+}
+.montonio-options-wrapper .montonio-card--blue a {
+  color: #4537cd;
+}
+.montonio-options-wrapper .montonio-card--blue .dashicons {
+  color: #4537cd;
+  margin-right: 8px;
+}
+.montonio-options-wrapper .montonio-card--yellow {
+  background: #FFF6DA;
+  border-color: #fad791;
+  color: #d26b00;
+}
+.montonio-options-wrapper .montonio-card--yellow a {
+  color: #4537cd;
+}
+.montonio-options-wrapper .montonio-card--yellow .dashicons {
+  color: #4537cd;
+  margin-right: 8px;
+}
+.montonio-options-wrapper .montonio-card .description {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_live_title {
+  margin-top: 35px;
+  margin-bottom: 0;
+  font-size: 19px;
+  line-height: 1.6;
+  background: #E7EFFF;
+  border: 1px solid #95B6FF;
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding: 15px 10px 0 15px;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_live_title + p {
+  background: #E7EFFF;
+  border: 1px solid #95B6FF;
+  border-bottom: 0;
+  border-top: 0;
+  padding: 5px 10px 20px 15px;
+  font-size: 14px;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table {
+  display: block;
+  background: #E7EFFF;
+  border: 1px solid #95B6FF;
+  padding: 5px 10px 5px 15px;
+  margin-top: 0px;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table label {
+  font-size: 13px;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table input {
+  border-color: #a4b7fb;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_sanbox_title {
+  margin-top: 35px;
+  margin-bottom: 7px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+.montonio-options-wrapper .montonio-card #woocommerce_wc_montonio_api_general_title {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 2em;
+  margin-top: 1.7em;
+}
+.montonio-options-wrapper .montonio-api-status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 30px;
+}
+.montonio-options-wrapper .montonio-api-status p {
+  margin: 0;
+}
+.montonio-options-wrapper .montonio-api-status .dashicons {
+  margin-right: 5px;
+}
+.montonio-options-wrapper .montonio-api-status .api-status--green {
+  color: #2ecc71;
+}
+.montonio-options-wrapper .montonio-api-status .api-status--gray {
+  color: #bbbbbb;
+}
+.montonio-options-wrapper ~ * {
+  max-width: 750px !important;
+  margin: 0 auto;
+}
+
+.montonio-shipping-panel {
+  position: relative;
+  margin-bottom: 10px;
+  clear: both;
+}
+.montonio-shipping-panel__body {
+  padding: 13px 22px 20px;
+  background-color: #fff;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  color: #111;
+  border-radius: 6px;
+  box-shadow: 0 2px 9px rgba(0, 0, 0, 0.07);
+}
+.montonio-shipping-panel h4 {
+  color: #777 !important;
+  font-weight: normal;
+  margin: 0 !important;
+}
+.montonio-shipping-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px dashed #e0e0e0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.montonio-shipping-panel__title {
+  color: #111 !important;
+  margin: 0 !important;
+  text-transform: uppercase;
+}
+.montonio-shipping-panel__logo {
+  max-height: 50px !important;
+  max-width: 80px !important;
+  display: inline-block !important;
+}
+.montonio-shipping-panel__logo.default-logo {
+  max-height: 27px !important;
+}
+.montonio-shipping-panel__notice {
+  border: 1px solid #fad791;
+  background: #FFF6DA;
+  color: #d26b00;
+  padding: 14px 16px;
+}
+.montonio-shipping-panel__notice--blue {
+  border-color: #95B6FF;
+  background: #E7EFFF;
+  color: #4537cd;
+}
+.montonio-shipping-panel__notice--red {
+  border-color: #fa9191;
+  background: #ffdada;
+  color: #d20000;
+}
+.montonio-shipping-panel__notice p {
+  color: inherit !important;
+  margin: 0;
+}
+.montonio-shipping-panel__row {
+  margin-bottom: 15px;
+}
+.montonio-shipping-panel__row a {
+  color: #111;
+  font-weight: 600;
+}
+.montonio-shipping-panel__blocker {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(1px);
+          backdrop-filter: blur(1px);
+  border-radius: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 0.3s, opacity 0.3s linear;
+}
+.montonio-shipping-panel--loading .montonio-shipping-panel__blocker {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0s, opacity 0.3s linear;
+}
+.montonio-shipping-panel__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.montonio-shipping-panel__actions .montonio-button {
+  letter-spacing: 0;
+  display: inline-block;
+  background: var(--brand-40);
+  color: var(--neutral-00);
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: var(--elevation-2dp);
+  transition: background 300ms ease-out, color 300ms ease-out, border 300ms ease-out, outline 300ms ease-out;
+}
+.montonio-shipping-panel__actions .montonio-button:hover {
+  background: var(--brand-30);
+  color: var(--neutral-00);
+}
+.montonio-shipping-panel__actions .montonio-button:active {
+  background: var(--brand-50);
+}
+.montonio-shipping-panel__actions .montonio-button:focus {
+  outline: none;
+}
+.montonio-shipping-panel__actions .montonio-button:focus-visible {
+  outline: 4px solid rgba(68, 45, 210, 0.16);
+  outline-offset: 0px;
+}
+.montonio-shipping-panel__actions .montonio-button:disabled, .montonio-shipping-panel__actions .montonio-button[disabled] {
+  background: var(--neutral-20);
+  color: var(--neutral-40);
+}
+.montonio-shipping-panel__actions .montonio-button--secondary {
+  background: var(--neutral-00);
+  padding: 7px 11px;
+  color: var(--neutral-60);
+  border: 1px solid var(--neutral-30);
+}
+.montonio-shipping-panel__actions .montonio-button--secondary.button--sm {
+  padding: 3px 11px;
+}
+.montonio-shipping-panel__actions .montonio-button--secondary.button--lg {
+  padding: 11px 23px;
+}
+.montonio-shipping-panel__actions .montonio-button--secondary:hover {
+  background: var(--neutral-00);
+  border-color: var(--neutral-40);
+  color: var(--neutral-60);
+}
+.montonio-shipping-panel__actions .montonio-button--secondary:active, .montonio-shipping-panel__actions .montonio-button--secondary.button--active {
+  background: var(--neutral-00);
+  border-color: var(--brand-40);
+  color: var(--brand-40);
+  box-shadow: none;
+}
+.montonio-shipping-panel__actions .montonio-button--secondary:focus-visible {
+  background: var(--neutral-00);
+  border-color: var(--brand-40);
+  color: var(--brand-40);
+}
+.montonio-shipping-panel__actions .montonio-button--secondary:disabled, .montonio-shipping-panel__actions .montonio-button--secondary[disabled] {
+  border-color: var(--neutral-20);
+  color: var(--neutral-20);
+  box-shadow: none;
+}
+.montonio-shipping-panel__actions .montonio-button--negative {
+  background: #fff;
+  color: var(--brand-40);
+  box-shadow: none;
+}
+.montonio-shipping-panel__actions .montonio-button--negative:hover {
+  background: var(--brand-10);
+  color: var(--brand-30);
+}
+.montonio-shipping-panel__actions .montonio-button--negative:active, .montonio-shipping-panel__actions .montonio-button--negative.button--active {
+  background: var(--brand-20);
+  color: var(--brand-50);
+}
+
+label[for*=montonio_shipping_sender]::after {
+  content: "*";
+  color: #E9283F;
+}
+
+.montonio-big-banner__content {
+  padding: 25px 10px;
+}
+.montonio-big-banner__content img {
+  width: 140px;
+  margin-bottom: 20px;
+}
+.montonio-big-banner__content h3 {
+  font-size: 19px;
+  margin: 0 0 10px 0;
+}
+.montonio-big-banner__content p {
+  font-size: 15px;
+}
+.montonio-big-banner__content .action-required + .action-required {
+  margin-top: 5px;
+}
+
+.order-status.status-mon-label-printed {
+  background: #c6e1c6;
+  color: #5b841b;
+}
+
+.montonio-admin-pickup-point-country-select,
+.montonio-admin-pickup-point-select,
+.montonio_carrier_country {
+  width: 100% !important;
+  margin: 0 0 0.5em;
+}
+
+.montonio-banner-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.woocommerce-admin-page #wpcontent .montonio-banner-wrapper {
+  padding-left: 20px;
+}
+
+.woocommerce-admin-page #wpcontent #wpadminbar + .montonio-banner-wrapper {
+  margin-top: 90px;
+}
+
+.montonio-options-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  vertical-align: middle;
+  margin-left: 15px;
+  padding: 8px 15px 8px 10px;
+  background: #fff;
+  color: var(--brand-40);
+  border-radius: 5px;
+}
+.montonio-options-loader::before {
+  content: "";
+  display: block;
+  width: 25px;
+  height: 25px;
+  background-image: url("data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20id%3D%22loader-1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2240px%22%20%20height%3D%2240px%22%20viewBox%3D%220%200%2050%2050%22%20style%3D%22enable-background%3Anew%200%200%2050%2050%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpath%20fill%3D%22%23442DD2%22%20d%3D%22M43.935%2C25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318%2C0-18.683%2C8.365-18.683%2C18.683h4.068c0-8.071%2C6.543-14.615%2C14.615-14.615c8.072%2C0%2C14.615%2C6.543%2C14.615%2C14.615H43.935z%22%3E%3CanimateTransform%20attributeType%3D%22xml%22%0A%20%20%20%20%20%20%20%20%20attributeName%3D%22transform%22%0A%20%20%20%20%20%20%20%20%20type%3D%22rotate%22%0A%20%20%20%20%20%20%20%20%20from%3D%220%2025%2025%22%0A%20%20%20%20%20%20%20%20%20to%3D%22360%2025%2025%22%0A%20%20%20%20%20%20%20%20%20dur%3D%220.6s%22%0A%20%20%20%20%20%20%20%20%20repeatCount%3D%22indefinite%22%2F%3E%3C%2Fpath%3E%3C%2Fsvg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}

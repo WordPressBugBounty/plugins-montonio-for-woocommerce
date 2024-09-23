@@ -1,0 +1,203 @@
+img.montonio-payment-method-icon {
+  height: 24px !important;
+  margin-left: 8px;
+}
+
+.montonio-bank-payments-form:not(:first-child) {
+  margin-top: 16px;
+}
+.montonio-bank-payments-form .montonio-payments-country-dropdown {
+  width: 120px;
+}
+.montonio-bank-payments-form .montonio-bank-items {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.montonio-bank-payments-form .montonio-bank-items:not(:first-child) {
+  margin-top: 16px;
+}
+.montonio-bank-payments-form .montonio-bank-items .montonio-bank-item {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  margin: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+.montonio-bank-payments-form .montonio-bank-items .montonio-bank-item:hover {
+  background: #fbfbff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.montonio-bank-payments-form .montonio-bank-items .montonio-bank-item.active {
+  background: #f3f2ff;
+  border: 1px solid #4537cd;
+  color: #4537cd;
+}
+.montonio-bank-payments-form .montonio-bank-items .montonio-bank-item--hidden {
+  display: none !important;
+}
+.montonio-bank-payments-form .montonio-bank-items--list {
+  flex-direction: column;
+  gap: 10px;
+}
+.montonio-bank-payments-form .montonio-bank-items--list .montonio-bank-item {
+  width: 100%;
+  height: 60px;
+  padding: 12px 17px;
+}
+
+#montonio-payments-description.montonio-bank-items .montonio-bank-item-img,
+#payment #montonio-payments-description.montonio-bank-items .montonio-bank-item-img {
+  position: relative;
+  right: unset;
+  left: unset;
+  float: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  max-height: 26px;
+  pointer-events: none;
+  display: block;
+}
+
+.montonio-bnpl-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.montonio-bnpl-items:not(:first-child) {
+  margin-top: 16px;
+}
+.montonio-bnpl-items .montonio-bnpl-item {
+  margin: 0;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 25px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-top: none;
+}
+.montonio-bnpl-items .montonio-bnpl-item:hover {
+  background: #fbfbff;
+}
+.montonio-bnpl-items .montonio-bnpl-item:first-child {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+.montonio-bnpl-items .montonio-bnpl-item:last-child {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+.montonio-bnpl-items .montonio-bnpl-item.active {
+  background: #f3f2ff;
+  border: 1px solid #4537cd;
+  color: #4537cd;
+}
+.montonio-bnpl-items .montonio-bnpl-item--disabled {
+  background: #fefcfc;
+  color: #a5a5a5;
+  pointer-events: none;
+}
+.montonio-bnpl-items .montonio-bnpl-item .montonio-bnpl-item-subtitle {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+#montonio-blik-form:not(:first-child),
+#montonio-card-form:not(:first-child) {
+  margin-top: 16px;
+}
+#montonio-blik-form.loading,
+#montonio-card-form.loading {
+  padding: 25px 0;
+}
+
+.montonio-shipping-provider-logo {
+  max-height: 50px !important;
+  max-width: 80px !important;
+  display: block !important;
+}
+
+.montonio-pickup-point {
+  overflow: visible !important;
+}
+.montonio-pickup-point td {
+  width: 100%;
+  overflow: visible !important;
+}
+.montonio-pickup-point label {
+  text-align: left;
+}
+
+.choices .choices__list--single {
+  box-sizing: border-box;
+}
+.choices .choices__list--single .choices__item {
+  text-align: left;
+}
+.choices .choices__inner {
+  box-sizing: border-box;
+}
+.has-error .choices .choices__inner {
+  border-color: #cc1818;
+}
+.choices .choices__list--dropdown .choices__item--selectable,
+.choices .choices__list[aria-expanded] .choices__item--selectable {
+  padding-right: 10px !important;
+}
+.choices .choices__input {
+  padding-left: 35px !important;
+  background-color: #fff;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 11px center;
+  background-size: 16px 16px;
+}
+
+#montonio-shipping-pickup-point-dropdown-wrapper {
+  position: relative;
+}
+#montonio-shipping-pickup-point-dropdown-wrapper h2 {
+  margin-bottom: 8px;
+}
+#montonio-shipping-pickup-point-dropdown-wrapper #montonio-shipping-pickup-point-dropdown {
+  display: block;
+  width: 100%;
+}
+#montonio-shipping-pickup-point-dropdown-wrapper .choices {
+  margin-bottom: 0;
+}
+#montonio-shipping-pickup-point-dropdown-wrapper .montonio-pickup-point-id {
+  display: block !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0px !important;
+  height: 0px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  pointer-events: none !important;
+}
+
+.wc-block-checkout__payment-method .wc-block-components-radio-control__label > span {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

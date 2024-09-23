@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "montonio-for-woocommerce/wc-montonio-shipping-dropdown",
+  "version": "0.1.0",
+  "title": "Montonio Shipping Pickup Point Dropdown Block",
+  "category": "woocommerce",
+  "description": "Adds a Montonio Shipping Pickup Point Dropdown to the checkout page.",
+  "supports": {
+    "html": false,
+    "align": false,
+    "multiple": false,
+    "reusable": false
+  },
+  "parent": [
+    "woocommerce/checkout-shipping-methods-block"
+  ],
+  "attributes": {
+    "lock": {
+      "type": "object",
+      "default": {
+        "remove": true,
+        "move": true
+      }
+    }
+  },
+  "textdomain": "montonio-for-woocommerce",
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js"
+}
