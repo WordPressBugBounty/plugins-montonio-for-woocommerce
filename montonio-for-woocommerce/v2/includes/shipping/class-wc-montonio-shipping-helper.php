@@ -240,5 +240,4 @@ class WC_Montonio_Shipping_Helper {
         // Return true if never synced or if more than 24 hours have passed since last sync
         return ! $last_synced_at || ( $current_time - $last_synced_at ) > 24 * 60 * 60;
     }
-
 }

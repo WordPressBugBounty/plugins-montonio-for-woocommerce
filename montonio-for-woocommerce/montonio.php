@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           7.1.1
+ * Version:           7.1.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  * 
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 9.1.4
+ * WC tested up to: 9.3.3
  */
 
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -116,6 +116,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-api-settings.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-display-admin-options.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-telemetry-service.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/v2/ota/class-montonio-ota-updates.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/class-wc-montonio-shipping.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/blocks/class-wc-montonio-blocks-manager.php';
 
@@ -268,13 +269,13 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_style( 'montonio-pickup-points', WC_MONTONIO_PLUGIN_URL . '/shipping/assets/css/pickup-points.css', array(), WC_MONTONIO_PLUGIN_VERSION );
             wp_register_style( 'montonio-shipping-options', WC_MONTONIO_PLUGIN_URL . '/shipping/assets/css/shipping-options.css', array(), WC_MONTONIO_PLUGIN_VERSION );
 
-            wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-pis', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-pis.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-bnpl', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-bnpl.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-inline-card', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-inline-card.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-inline-blik', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-inline-blik.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-pickup-point-select', WC_MONTONIO_PLUGIN_URL . '/shipping/assets/js/montonio-pickup-point-select.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION );
-            wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-shipping-pickup-points.js', array( 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-shipping-pickup-points.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/v2/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );

@@ -26,7 +26,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/class-wc-montonio-shipping-item-manager.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/webhooks/class-wc-montonio-shipping-webhooks.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/class-wc-montonio-shipping-helper.php';
-        
+
         if ( get_option( 'montonio_shipping_enabled' ) === 'yes' && get_option( 'montonio_shipping_enable_v2' ) === 'yes' ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/class-wc-montonio-shipping-address-helper.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/shipping/class-wc-montonio-shipping-product.php';
@@ -58,6 +58,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
         // Admin notices
         add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
+
+        add_filter( 'montonio_ota_sync', array( $this, 'sync_shipping_methods_ota' ), 20, 1 );
+        add_filter( 'montonio_ota_sync', array( $this, 'ensure_store_shipping_webhook_is_registered_ota' ), 30, 1 );
     }
 
     public function ensure_store_shipping_webhook_is_registered() {
@@ -147,9 +150,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         try {
             if ( WC_Montonio_Shipping_Helper::is_time_to_sync_shipping_method_items() ) {
                 update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
-                
+
                 $lock_manager = new Montonio_Lock_Manager();
-                $lock_exists = $lock_manager->lock_exists( 'montonio_shipping_method_items_sync' );
+                $lock_exists  = $lock_manager->lock_exists( 'montonio_shipping_method_items_sync' );
 
                 if ( ! $lock_exists ) {
                     $this->sync_shipping_methods_ajax();
@@ -208,9 +211,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      */
     public function sync_shipping_methods() {
         update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
-        
+
         try {
-            $shipping_api = get_montonio_shipping_api();
+            $shipping_api     = get_montonio_shipping_api();
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
             foreach ( $shipping_methods['countries'] as $country ) {
@@ -282,6 +285,43 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
             echo '</div>';
         }
     }
+
+    /**
+     * Ensure that the Montonio Shipping Webhook is registered when an over-the-air trigger is received
+     *
+     * @since 7.1.2
+     * @param $status_report The status report of the OTA sync
+     * @return void
+     */
+    public function ensure_store_shipping_webhook_is_registered_ota( $status_report ) {
+        try {
+            do_action( 'wc_montonio_shipping_register_webhook', true );
+            MontonioHelper::append_to_status_report( $status_report, 'success', 'Montonio Shipping Webhook registered successfully!' );
+        } catch ( Exception $e ) {
+            MontonioHelper::append_to_status_report( $status_report, 'error', 'Montonio Shipping Webhook registration failed. Response: ' . $e->getMessage() );
+        }
+
+        return $status_report;
+    }
+
+    /**
+     * Sync shipping methods when an over-the-air trigger is received
+     *
+     * @since 7.1.2
+     * @param array $status_report The status report of the OTA sync
+     * @return void
+     */
+    public function sync_shipping_methods_ota( $status_report ) {
+        try {
+            $this->sync_shipping_methods();
+            MontonioHelper::append_to_status_report( $status_report, 'success', 'Shipping method sync successful!' );
+        } catch ( Exception $e ) {
+            MontonioHelper::append_to_status_report( $status_report, 'error', 'Shipping method sync failed. Response: ' . $e->getMessage() );
+        }
+
+        return $status_report;
+    }
+
 }
 
 WC_Montonio_Shipping::get_instance();

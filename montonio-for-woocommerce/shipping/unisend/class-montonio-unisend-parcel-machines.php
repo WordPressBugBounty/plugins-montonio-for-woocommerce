@@ -30,6 +30,12 @@ class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
         $this->title = __( $this->get_option( 'title', __( 'Unisend parcel machine', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
+    /**
+     * Validate the dimensions of a package against maximum allowed dimensions.
+     *
+     * @param array $package The package to validate, containing items to be shipped.
+     * @return bool True if the package dimensions are valid, false otherwise.
+     */
     protected function validate_package_dimensions( $package ) {
         $package_dimensions = $this->get_package_dimensions( $package );
 

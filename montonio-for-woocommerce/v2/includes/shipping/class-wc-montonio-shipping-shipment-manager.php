@@ -49,7 +49,6 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      */
     public function create_shipment( $order ) {
         try{
-            $shipping_api = get_montonio_shipping_api();
             $data = $this->get_shipment_data( $order );
             $data['merchantReference'] = (string) apply_filters( 'wc_montonio_merchant_reference_display', $order->get_order_number(), $order );
             
@@ -59,6 +58,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 $data['montonioOrderUuid'] = (string) $montonio_order_uuid;
             }
             
+            $shipping_api = get_montonio_shipping_api();
             $response = $shipping_api->create_shipment( $data );
 
             WC_Montonio_Logger::log( 'Create shipment response: ' . $response );
@@ -109,8 +109,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         try{
-            $shipping_api = get_montonio_shipping_api();
             $data = $this->get_shipment_data( $order );
+            $shipping_api = get_montonio_shipping_api();
             $response = $shipping_api->update_shipment( $shipment_id, $data );
 
             WC_Montonio_Logger::log( 'Update shipment response: ' . $response );
@@ -155,8 +155,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         $method_id           = $order->get_meta( '_montonio_pickup_point_uuid' );
 
         if ( empty( $method_type ) || empty( $method_id ) ) {
-            WC_Montonio_Logger::log( 'Shipment creation failed. Missing method type or method item ID.' );
-            return;
+            throw new Exception( 'Missing method type or method item ID' );
         }
 
         $address_helper = WC_Montonio_Shipping_Address_Helper::get_instance();

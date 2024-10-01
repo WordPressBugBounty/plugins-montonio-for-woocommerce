@@ -11,6 +11,7 @@ class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
 
     /**
      * Called from parent's constructor
+     * 
      * @return void
      */
     protected function init() {
@@ -30,6 +31,12 @@ class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
         $this->title = __( $this->get_option( 'title', __( 'Venipak parcel machine', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
+    /**
+     * Validate the dimensions of a package against maximum allowed dimensions.
+     *
+     * @param array $package The package to validate, containing items to be shipped.
+     * @return bool True if the package dimensions are valid, false otherwise.
+     */
     protected function validate_package_dimensions( $package ) {
         $package_dimensions = $this->get_package_dimensions( $package );
 
@@ -37,10 +44,11 @@ class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
     }
 
     /**
-	 * Check if the shipping method is available for use.
-	 *
-	 * @return bool
-	 */
+     * Check if the shipping method is available for the current package.
+     *
+     * @param array $package The package to check, containing items to be shipped.
+     * @return bool True if the shipping method is available, false otherwise.
+     */
     public function is_available( $package ) {
         foreach ( $package['contents'] as $item ) {
             if ( get_post_meta( $item['product_id'], '_montonio_no_parcel_machine', true ) === 'yes' ) {

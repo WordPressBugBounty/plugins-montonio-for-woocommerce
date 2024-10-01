@@ -13,7 +13,7 @@ class WC_Montonio_Shipping_Webhooks extends Montonio_Singleton {
      * @since 7.0.0
      */
     protected function __construct() {
-        add_action( 'wc_montonio_shipping_register_webhook', [$this, 'ensure_store_shipping_webhook_is_registered'] );
+        add_action( 'wc_montonio_shipping_register_webhook', [ $this, 'ensure_store_shipping_webhook_is_registered' ] );
     }
 
     /**

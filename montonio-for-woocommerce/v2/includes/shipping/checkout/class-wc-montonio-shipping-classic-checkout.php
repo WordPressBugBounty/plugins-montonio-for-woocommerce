@@ -47,7 +47,6 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
             wp_localize_script( 'montonio-shipping-pickup-points-legacy', 'wcMontonioShippingMethodItemsData', $shipping_method_items_data );
         } else {
-            wp_enqueue_script( 'montonio-sdk' );
             wp_enqueue_script( 'montonio-shipping-pickup-points' );
             wp_localize_script( 'montonio-shipping-pickup-points', 'wcMontonioShippingMethodItemsData', $shipping_method_items_data );
         }

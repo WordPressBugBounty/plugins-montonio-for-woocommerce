@@ -278,7 +278,6 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 		}
         
         if ( $this->inline_checkout === 'yes' && ! WC_Montonio_Helper::is_checkout_block() ) {
-            wp_enqueue_script( 'montonio-sdk' );
             wp_enqueue_script( 'montonio-inline-card' );
 
             $wc_montonio_inline_cc_params = array(

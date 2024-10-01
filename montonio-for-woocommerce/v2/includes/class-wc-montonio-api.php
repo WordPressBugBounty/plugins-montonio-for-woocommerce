@@ -226,7 +226,7 @@ class WC_Montonio_API {
         $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_API::get_bearer_token(),
+                'Authorization' => 'Bearer ' . $this->get_bearer_token(),
             ),
             'method' => 'GET'
         );

@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 7.1.1
+Version: 7.1.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
 Requires at least: 5.0
-Tested up to: 6.6.1
-Stable tag: 7.1.1
+Tested up to: 6.6.2
+Stable tag: 7.1.2
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,7 +81,14 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
-= 7.1.0 =
+= 7.1.2 =
+* Added - Option to disable the shipping method for selected shipping classes
+* Added - New bulk action: "Change status to Label Printed" for easier status management
+* Added - OTA (Over-The-Air) service to receive updates from Montonio for configuration and other data
+* Tweak - Updated "Label Printed" status badge color for better visual distinction
+* Fix - Resolved an issue where the checkout blocks were deactivated due to an unregistered dependency ‘montonio-sdk’
+
+= 7.1.1 =
 * Fix - Save tracking codes in '_montonio_tracking_info' order meta key
 
 = 7.1.0 =

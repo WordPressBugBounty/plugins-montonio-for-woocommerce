@@ -89,7 +89,9 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     public $shipping_method_items = [];
 
     /**
-     * Constructor
+     * Constructor for the shipping method.
+     *
+     * @param int $instance_id Optional. Instance ID.
      */
     public function __construct( $instance_id = 0 ) {
         $this->instance_id = absint( $instance_id );
@@ -106,16 +108,17 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Initialise Settings.
+     * Initialize form fields for the shipping method settings.
      */
     public function init_form_fields() {
         $this->instance_form_fields = require WC_MONTONIO_PLUGIN_PATH . '/shipping/class-montonio-shipping-method-settings.php';
     }
 
     /**
-     * Check if the shipping method is available for use.
+     * Check if the shipping method is available for the current order.
      *
-     * @return bool
+     * @param array $package The package to be shipped, containing items and destination info.
+     * @return bool True if the shipping method is available, false otherwise.
      */
     public function is_available( $package ) {
 
@@ -125,7 +128,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
         $country = WC_Montonio_Shipping_Helper::get_customer_shipping_country();
         
-        if (WC_Montonio_Shipping_Helper::is_using_v2()) {
+        if ( WC_Montonio_Shipping_Helper::is_using_v2() ) {
             if ( ! WC_Montonio_Shipping_Item_Manager::shipping_method_items_exist( $country, $this->provider_name, $this->type_v2 ) ) {
                 return false;
             }
@@ -145,13 +148,28 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             }
         }
 
+        // Check for disabled shipping classes
+        $disabled_classes = $this->get_option( 'disabled_shipping_classes', [] );
+
+        if ( ! empty( $disabled_classes ) && is_array( $package['contents'] ) ) {
+            foreach ( $package['contents'] as $item ) {
+                $product = $item['data'];
+                $shipping_class_id = $product->get_shipping_class_id();
+                
+                if ( in_array( $shipping_class_id, $disabled_classes ) ) {
+                    return false;
+                }
+            }
+        }
+
         return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', true, $package );
     }
 
     /**
-     * Assemble the dimensions of the package in cm
+     * Assemble the dimensions of the package in cm.
      *
-     * @return array
+     * @param array $package The package containing the items to be shipped.
+     * @return array An array of three dimensions [length, width, height] in cm.
      */
     protected function get_package_dimensions( $package ) {
         $package_dimensions = [0, 0, 0];
@@ -182,9 +200,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Check if all measurements added
+     * Check if any product in the package is missing measurements.
      *
-     * @return bool
+     * @param array $package The package containing the items to be shipped.
+     * @return bool True if any product is missing measurements, false otherwise.
      */
     protected function check_if_measurements_missing( $package ) {
         foreach ( $package['contents'] as $item ) {
@@ -197,9 +216,9 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Called when doing shipping rate calculations
+     * Calculate shipping costs and taxes for a package.
      *
-     * @return void
+     * @param array $package The package to calculate shipping for.
      */
     public function calculate_shipping( $package = [] ) {
         if ( get_option( 'montonio_shipping_enabled', 'no' ) !== 'yes' ) {
@@ -296,10 +315,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Get package total including taxes.
+     * Get the total cost of the cart including taxes.
      *
-     * @param  array $package Package of items from cart.
-     * @return int
+     * @param array $package Package of items from cart.
+     * @return float The total cost of the cart.
      */
     protected function get_cart_total( $package ) {
         $total = 0;
@@ -311,10 +330,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Get items in package.
+     * Get the total quantity of items in the package that need shipping.
      *
-     * @param  array $package Package of items from cart.
-     * @return int
+     * @param array $package Package of items from cart.
+     * @return int The total quantity of items needing shipping.
      */
     protected function get_package_item_qty( $package ) {
         $quantity = 0;
@@ -328,10 +347,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Finds and returns shipping classes and the products with said class.
+     * Find and return shipping classes and the products with said class.
      *
-     * @param mixed $package Package of items from cart.
-     * @return array
+     * @param array $package Package of items from cart.
+     * @return array An array of shipping classes and their associated products.
      */
     public function find_shipping_classes( $package ) {
         $found_shipping_classes = [];
@@ -354,9 +373,9 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     /**
      * Evaluate a cost from a sum/string.
      *
-     * @param  string $sum Sum of shipping.
-     * @param  array  $args Args, must contain `cost` and `qty` keys. Having `array()` as default is for back compat reasons.
-     * @return string
+     * @param string $sum The cost string to evaluate.
+     * @param array $args Arguments for evaluation, must contain 'cost' and 'qty' keys.
+     * @return float The evaluated cost.
      */
     protected function evaluate_cost( $sum, $args = [] ) {
         // Add warning for subclasses.
@@ -405,10 +424,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Work out fee (shortcode).
+     * Calculate fee based on given attributes (used in shortcode).
      *
-     * @param  array $atts Attributes.
-     * @return string
+     * @param array $atts Attributes for fee calculation.
+     * @return float The calculated fee.
      */
     public function fee( $atts ) {
         $atts = shortcode_atts(
@@ -441,9 +460,9 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     /**
      * Sanitize the cost field.
      *
-     * @param string $value Unsanitized value.
-     * @throws Exception Last error triggered.
-     * @return string
+     * @param string $value Unsanitized cost value.
+     * @return string Sanitized cost value.
+     * @throws Exception If the cost evaluation fails.
      */
     public function sanitize_cost( $value ) {
         $value = is_null( $value ) ? '' : $value;

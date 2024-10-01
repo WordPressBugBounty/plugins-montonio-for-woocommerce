@@ -66,4 +66,19 @@ class MontonioHelper {
 
         return in_array( $currency, $supported_currencies );
     }
+
+    /**
+     * Handle the result of an action and append it to the status report
+     *
+     * @since 7.1.2
+     * @param array $status_report The status report of the OTA sync
+     * @param string $status Status of the action ('success' or 'error')
+     * @param string $message The message to include in the status report
+     */
+    public static function append_to_status_report( &$status_report, $status, $message ) {
+        $status_report['sync_results'][] = array(
+            'status'  => $status,
+            'message' => date('Y-m-d H:i:s') . ' - ' . $message
+        );
+    }
 }

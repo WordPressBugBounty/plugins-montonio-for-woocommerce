@@ -427,8 +427,8 @@ label[for*=montonio_shipping_sender]::after {
 }
 
 .order-status.status-mon-label-printed {
-  background: #c6e1c6;
-  color: #5b841b;
+  background: #D6D1F8;
+  color: #442DD2;
 }
 
 .montonio-admin-pickup-point-country-select,

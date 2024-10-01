@@ -5,7 +5,7 @@ $cost_desc = __( 'Enter a cost (excl. tax) or sum, e.g. <code>10.00 * [qty]</cod
 
 $settings = array(
     'title' => array(
-        'title'       => __('Title', 'montonio-for-woocommerce'),
+        'title'       => __( 'Title', 'montonio-for-woocommerce' ),
         'type'        => 'text',
         'description' => __( 'Shipping method title that the customer will see at checkout', 'montonio-for-woocommerce' ),
         'default'     => $this->default_title,
@@ -22,7 +22,7 @@ $settings = array(
         ),
     ),
     'price' => array(
-        'title'             => __('Cost', 'montonio-for-woocommerce'),
+        'title'             => __( 'Cost', 'montonio-for-woocommerce' ),
         'type'              => 'text',
         'class'             => 'wc-shipping-modal-price',
 		'placeholder'       => '',
@@ -43,10 +43,16 @@ if ( ! empty( $shipping_classes ) ) {
         /* translators: %s: URL for link. */
         'description' => sprintf( __( 'These costs can optionally be added based on the <a href="%s">product shipping class</a>. Shipping class costs will be included in the default "Cost" value.', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=shipping&section=classes' ) ),
     );
+
+
+    $shipping_classes_options = array();
     foreach ( $shipping_classes as $shipping_class ) {
         if ( ! isset( $shipping_class->term_id ) ) {
             continue;
         }
+
+        $shipping_classes_options[$shipping_class->term_id] = $shipping_class->name;
+
         $settings[ 'class_cost_' . $shipping_class->term_id ] = array(
             /* translators: %s: shipping class name */
             'title'             => sprintf( __( '"%s" shipping class cost', 'woocommerce' ), esc_html( $shipping_class->name ) ),
@@ -81,11 +87,19 @@ if ( ! empty( $shipping_classes ) ) {
             'order' => __( 'Per order: Charge shipping for the most expensive shipping class', 'woocommerce' ),
         ),
     );
+
+    $settings['disabled_shipping_classes'] = array(
+        'title'    => __( 'Disable method for these shipping classes', 'montonio-for-woocommerce' ),
+        'type'     => 'multiselect',
+        'class'    => 'wc-enhanced-select',
+        'default'  => '',
+        'options'  => $shipping_classes_options,
+        'desc_tip' => __( 'Select shipping classes for which this method should be disabled. If the cart contains any product from these selected shipping classes, this shipping method will not be available.', 'montonio-for-woocommerce' ),
+    );
 }
 
-
 $settings['free_shipping_title'] = array(
-        'title'       => __('Free shipping options', 'montonio-for-woocommerce'),
+        'title'       => __( 'Free shipping options', 'montonio-for-woocommerce' ),
         'type'        => 'title',
         'description' => '',
         'default'     => ''
@@ -93,56 +107,56 @@ $settings['free_shipping_title'] = array(
 
 $settings['enableFreeShippingThreshold'] = array(
     'title'       => '',
-    'label'       => __('Enable free shipping based on cart total', 'montonio-for-woocommerce'),
+    'label'       => __( 'Enable free shipping based on cart total', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __('Allow free shipping if the cart total exceeds the specified amount', 'montonio-for-woocommerce'),
+    'description' => __( 'Allow free shipping if the cart total exceeds the specified amount', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'no',
 );
 
 $settings['freeShippingThreshold'] = array(
-    'title'       => __('Free shipping threshold', 'montonio-for-woocommerce'),
+    'title'       => __( 'Free shipping threshold', 'montonio-for-woocommerce' ),
     'type'        => 'text',
     'class'       => 'wc-shipping-modal-price',
-    'description' => __('Minimum cart total for free shipping', 'montonio-for-woocommerce'),
+    'description' => __( 'Minimum cart total for free shipping', 'montonio-for-woocommerce' ),
     'default'     => 50
 );
 
 $settings['enableFreeShippingQty'] = array(
     'title'       => '',
-    'label'       => __('Enable quantity based free shipping', 'montonio-for-woocommerce'),
+    'label'       => __( 'Enable quantity based free shipping', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __('Allow free shipping if the product quantity in the cart equals or exceeds the specified amount', 'montonio-for-woocommerce'),
+    'description' => __( 'Allow free shipping if the product quantity in the cart equals or exceeds the specified amount', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'no'
 );
 
 $settings['freeShippingQty'] = array(
-    'title'       => __('Free shipping product quantity', 'montonio-for-woocommerce'),
+    'title'       => __( 'Free shipping product quantity', 'montonio-for-woocommerce' ),
     'type'        => 'text',
-    'description' => __('Minimum amount of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce'),
+    'description' => __( 'Minimum amount of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce' ),
     'default'     => 10
 );
 
 
 $settings['enable_free_shipping_text'] = array(
     'title'       => '',
-    'label'       => __('Enable free shipping rate text', 'montonio-for-woocommerce'),
+    'label'       => __( 'Enable free shipping rate text', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __('Display 0.00 amount or custom text for free shipping rate', 'montonio-for-woocommerce'),
+    'description' => __( 'Display 0.00 amount or custom text for free shipping rate', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'no'
 );
 
 $settings['free_shipping_text'] = array(
-    'title'       => __('Free shipping rate text', 'montonio-for-woocommerce'),
+    'title'       => __( 'Free shipping rate text', 'montonio-for-woocommerce' ),
     'type'        => 'text',
-    'description' => __('Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate.', 'montonio-for-woocommerce'),
+    'description' => __( 'Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate.', 'montonio-for-woocommerce' ),
     'default'     => ''
 );
 
 $settings['measurement_check_title'] = array(
-    'title'       => __('Measurement check options', 'montonio-for-woocommerce'),
+    'title'       => __( 'Measurement check options', 'montonio-for-woocommerce' ),
     'type'        => 'title',
     'description' => '',
     'default'     => ''
@@ -150,7 +164,7 @@ $settings['measurement_check_title'] = array(
 
 $settings['enablePackageMeasurementsCheck'] = array(
     'title'       => '',
-    'label'       => __('Enable package measurements check', 'montonio-for-woocommerce'),
+    'label'       => __( 'Enable package measurements check', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
     'description' => __( 'Hide this shipping method if package\'s weight or dimensions exceed limits', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
@@ -158,7 +172,7 @@ $settings['enablePackageMeasurementsCheck'] = array(
 );
 
 $settings['maximumWeight'] = array(
-    'title'       => __('Maximum weight (kg)', 'montonio-for-woocommerce'),
+    'title'       => __( 'Maximum weight (kg)', 'montonio-for-woocommerce' ),
     'type'        => 'number',
     'description' => __( 'The total weight of items in the cart that is allowed for this option to be displayed', 'montonio-for-woocommerce' ),
     'default'     => $this->default_max_weight
@@ -166,7 +180,7 @@ $settings['maximumWeight'] = array(
 
 $settings['hideWhenNoMeasurements'] = array(
     'title'       => '',
-    'label'       => __('Hide when no measurements', 'montonio-for-woocommerce'),
+    'label'       => __( 'Hide when no measurements', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
     'description' => __( 'Hide this shipping method when an item in cart has no set weight or dimensions', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,

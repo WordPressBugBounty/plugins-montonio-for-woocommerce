@@ -71,10 +71,14 @@ jQuery(document).ready(function($) {
     }
 
     form.on('checkout_place_order', function() {
-        if ($('input[value="wc_montonio_blik"]').is(':checked')) {
+        if ($('input[value="wc_montonio_blik"]').is(':checked') && !$('#montonio-blik-form').is(':empty')) {
             $('body').addClass('wc-montonio-blik-processing');
-        } else {
-            $('body').removeClass('wc-montonio-blik-processing');
+
+            if(isCompleted == false) {
+                $('body').removeClass('wc-montonio-blik-processing');
+                $.scroll_to_notices( $('#payment_method_wc_montonio_blik') );
+                return false;
+            }
         }
     });
 
@@ -86,27 +90,17 @@ jQuery(document).ready(function($) {
 
     form.on('checkout_place_order_success', function() {       
         if ($('input[value="wc_montonio_blik"]').is(':checked') && !$('#montonio-blik-form').is(':empty')) {
-            if(isCompleted == false) {
-                confirmPayment(false);
-                $.scroll_to_notices( $('#payment_method_wc_montonio_blik') );
-            } else {
-                confirmPayment();
-            }
+            confirmPayment();
         }
     });
 
-    async function confirmPayment(redirect = true) {
+    async function confirmPayment() {
         try {
             const result = await embeddedPayment.confirmPayment(params.sandbox_mode === 'yes');
 
             window.location.replace(result.returnUrl);
         } catch (error) {
-            if (redirect) {
-                window.location.replace(encodeURI(params.return_url + '&error-message=' + error.message));
-            } else {
-                form.removeClass('processing').unblock();
-                $('body').removeClass('wc-montonio-blik-processing');
-            }
+            window.location.replace(encodeURI(params.return_url + '&error-message=' + error.message));
         }
     }
 });

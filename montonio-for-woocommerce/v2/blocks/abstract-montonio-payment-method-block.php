@@ -83,9 +83,9 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
                 'version'      => WC_MONTONIO_PLUGIN_VERSION,
             );
 
-        if ( ! is_admin() ) {    
-            $script_asset['dependencies'][] = 'montonio-sdk';    
-        }
+        $script_asset['dependencies'][] = 'montonio-sdk';    
+
+        wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
         wp_register_script(
             $handle,

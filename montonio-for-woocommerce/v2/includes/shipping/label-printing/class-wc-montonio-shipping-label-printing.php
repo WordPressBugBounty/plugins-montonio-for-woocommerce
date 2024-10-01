@@ -16,8 +16,12 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
     protected function __construct() {
         if ( WC_Montonio_Helper::is_hpos_enabled() ) {
             add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( $this, 'add_label_printing_bulk_actions' ) );
+            add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( $this, 'add_mark_as_label_printed_bulk_action' ) );
+            add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'handle_label_printed_bulk_action' ), 10, 3 );
         } else {
             add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_label_printing_bulk_actions' ) );
+            add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_mark_as_label_printed_bulk_action' ) );
+            add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_label_printed_bulk_action' ), 10, 3 );
         }
 
         add_action( 'wc_montonio_shipping_labels_ready', array( $this, 'mark_orders_as_labels_printed' ) );
@@ -119,7 +123,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
             'wc-montonio-shipping-label-printing',
             'wcMontonioShippingLabelPrintingData',
             array(
-                'getLabelFileUrl'               => esc_url_raw( rest_url( 'montonio/shipping/v2/labels' ) ),
+                'getLabelFileUrl'           => esc_url_raw( rest_url( 'montonio/shipping/v2/labels' ) ),
                 'createLabelsUrl'           => esc_url_raw( rest_url( 'montonio/shipping/v2/labels/create' ) ),
                 'markLabelsAsDownloadedUrl' => esc_url_raw( rest_url( 'montonio/shipping/v2/labels/mark-as-downloaded' ) ),
                 'nonce'                     => wp_create_nonce( 'wp_rest' )
@@ -127,6 +131,48 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
         );
 
         return $actions;
+    }
+
+    /**
+     * Adds the mark as label printed bulk action to the WooCommerce orders list view.
+     *
+     * @since 7.1.2
+     * @param array $actions The current bulk actions
+     * @return array The modified bulk actions
+     */
+    public function add_mark_as_label_printed_bulk_action( $actions ) {
+        $actions['mark_label-printed'] = __( 'Change status to label printed', 'montonio-for-woocommerce' );
+
+        return $actions;
+    }
+
+    /**
+     * Handle the 'Mark as label printed' bulk action and update order statuses.
+     *
+     * @since 7.1.2
+     *
+     * @param string $redirect_to The URL to redirect to after handling the bulk action.
+     * @param string $action The bulk action being performed.
+     * @param array $post_ids The array of order IDs selected for the bulk action.
+     * @return string The URL to redirect to after handling the bulk action.
+     */
+    public function handle_label_printed_bulk_action( $redirect_to, $action, $post_ids ) {
+        if ( $action !== 'mark_label-printed' ) {
+            return $redirect_to; // If it's not the action we are handling, exit.
+        }
+
+        foreach ( $post_ids as $post_id ) {
+            $order = wc_get_order( $post_id );
+            if ( $order && 'wc-mon-label-printed' !== $order->get_status() ) {
+                // Update order status to "Label Printed".
+                $order->update_status( 'wc-mon-label-printed', __( 'Order marked as Label Printed.', 'montonio-for-woocommerce' ) );
+            }
+        }
+
+        // Add a query parameter to the redirect URL to indicate how many orders were updated.
+        $redirect_to = add_query_arg( 'bulk_label_printed_orders', count( $post_ids ), $redirect_to );
+
+        return $redirect_to;
     }
 
     /**

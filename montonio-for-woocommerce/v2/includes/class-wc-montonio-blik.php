@@ -276,7 +276,6 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
 		}
 
         if ( $this->blik_in_checkout === 'yes' && ! WC_Montonio_Helper::is_checkout_block() ) {
-            wp_enqueue_script( 'montonio-sdk' );
             wp_enqueue_script( 'montonio-inline-blik' );
 
             $wc_montonio_inline_blik_params = array(

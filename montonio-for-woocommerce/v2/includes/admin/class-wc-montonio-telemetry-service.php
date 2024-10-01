@@ -189,15 +189,17 @@ class WC_Montonio_Telemetry_Service {
                 'montonioPluginVersion' => WC_MONTONIO_PLUGIN_VERSION,
                 'deactivatedAt'         => $deactivated_at,
                 'wordpressInfo'         => [
-                    'defaultLanguage'     => get_bloginfo( 'language' ),
-                    'supportedLanguages'  => get_available_languages(),
-                    'currency'            => get_option( 'woocommerce_currency' ),
-                    'timezone'            => wp_timezone_string(),
-                    'siteName'            => get_bloginfo( 'name' ),
-                    'siteDescription'     => get_bloginfo( 'description' ),
-                    'hasBlocksInCheckout' => $this->has_blocks_in_checkout(),
+                    'restApiUrl'            => rest_url(),
+                    'otaUpdatesUrl'         => rest_url( 'montonio/ota' ),
+                    'defaultLanguage'       => get_bloginfo( 'language' ),
+                    'supportedLanguages'    => get_available_languages(),
+                    'currency'              => get_option( 'woocommerce_currency' ),
+                    'timezone'              => wp_timezone_string(),
+                    'siteName'              => get_bloginfo( 'name' ),
+                    'siteDescription'       => get_bloginfo( 'description' ),
+                    'hasBlocksInCheckout'   => WC_Montonio_Helper::is_checkout_block(),
                     'merchantReferenceType' => $this->get_api_setting( 'merchant_reference_type' ),
-                    'services'            => [
+                    'services'              => [
                         'paymentInitiationV2' => $this->get_payment_service_data( 'wc_montonio_payments' ),
                         'cardPaymentsV2'      => $this->get_payment_service_data( 'wc_montonio_card' ),
                         'bnpl'                => $this->get_payment_service_data( 'wc_montonio_bnpl' ),
@@ -215,21 +217,6 @@ class WC_Montonio_Telemetry_Service {
     }
 
     /**
-     * Check if the WooCommerce Checkout block is present on the checkout page.
-     *
-     * @since 7.0.0
-     * @return bool Returns false. Note that the function currently does not return the result of the block check.
-     */
-    public function has_blocks_in_checkout() {
-        if ( class_exists( 'WC_Blocks_Utils' ) && method_exists( 'WC_Blocks_Utils', 'has_block_in_page' ) ) {
-            return WC_Blocks_Utils::has_block_in_page( wc_get_page_id( 'checkout' ), 'woocommerce/checkout' );
-        }
-
-        return false;
-    }
-
-
-    /**
      * Get API Settings.
      *
      * @since 7.0.2
@@ -238,7 +225,7 @@ class WC_Montonio_Telemetry_Service {
         $settings = $this->get_settings( 'wc_montonio_api' );
 
         if ( empty( $settings ) || ! is_array( $settings ) ) {
-            return null;
+            return;
         }
 
         return isset( $settings[$key] ) ? sanitize_text_field( $settings[$key] ) : null;

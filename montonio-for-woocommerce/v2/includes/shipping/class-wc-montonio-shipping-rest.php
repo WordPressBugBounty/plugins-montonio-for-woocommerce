@@ -112,6 +112,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      */
     public function check_sync_shipping_method_items_permissions( $request ) {
         $token = $request->get_param( 'token' );
+        
         try {
             $decoded = WC_Montonio_Helper::decode_jwt_token( $token );
             $url     = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
