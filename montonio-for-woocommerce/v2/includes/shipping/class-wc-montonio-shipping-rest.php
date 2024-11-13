@@ -225,7 +225,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      */
     public function get_label_file( $request ) {
         $label_file_id = $request->get_param( 'label_file_id' );
-        if ( ! WC_Montonio_Shipping_Helper::is_valid_uuid( $label_file_id ) ) {
+        if ( ! WC_Montonio_Helper::is_valid_uuid( $label_file_id ) ) {
             return new WP_Error( 'wc_montonio_shipping_invalid_label_file_id', 'Invalid or no label file ID provided.', ['status' => 400] );
         }
 

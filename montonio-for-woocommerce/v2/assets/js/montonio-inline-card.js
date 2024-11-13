@@ -54,7 +54,12 @@ jQuery(document).ready(function($) {
         });
     }
 
-    async function initializePayment() {     
+    async function initializePayment() {
+        if (typeof Montonio === 'undefined' || typeof Montonio.Checkout === 'undefined') {
+            console.error('Montonio SDK not loaded');
+            return;
+        }
+             
         embeddedPayment = await Montonio.Checkout.EmbeddedPayments.initializePayment({
             stripePublicKey: stripePublicKey,
             stripeClientSecret: stripeClientSecret,
@@ -64,6 +69,7 @@ jQuery(document).ready(function($) {
             targetId: 'montonio-card-form',
         });
 
+        $('input[name="montonio_card_payment_intent_uuid"]').val(uuid);
         $('#montonio-card-form').addClass('paymentInitilized').removeClass('loading').unblock();
 
         embeddedPayment.on('change', event => { 
@@ -72,10 +78,14 @@ jQuery(document).ready(function($) {
     }
 
     form.on('checkout_place_order', function() {
-        if ($('input[value="wc_montonio_card"]').is(':checked')) {
+        if ($('input[value="wc_montonio_card"]').is(':checked') && !$('#montonio-card-form').is(':empty')) {
             $('body').addClass('wc-montonio-cc-processing');
-        } else {
-            $('body').removeClass('wc-montonio-cc-processing');
+
+            if(isCompleted == false) {
+                $('body').removeClass('wc-montonio-cc-processing');
+                $.scroll_to_notices( $('#payment_method_wc_montonio_card') );
+                return false;
+            }
         }
     });
 
@@ -87,27 +97,17 @@ jQuery(document).ready(function($) {
 
     form.on('checkout_place_order_success', function() {       
         if ($('input[value="wc_montonio_card"]').is(':checked') && !$('#montonio-card-form').is(':empty')) {
-            if(isCompleted == false) {
-                confirmPayment(false);
-                $.scroll_to_notices( $('#payment_method_wc_montonio_card') );
-            } else {
-                confirmPayment();
-            }
+            confirmPayment();
         }
     });
 
-    async function confirmPayment(redirect = true) {
+    async function confirmPayment() {
         try {
             const result = await embeddedPayment.confirmPayment(params.sandbox_mode === 'yes');
 
             window.location.replace(result.returnUrl);
         } catch (error) {
-            if (redirect) {
-                window.location.replace(encodeURI(params.return_url + '&error-message=' + error.message));
-            } else {
-                form.removeClass('processing').unblock();
-                $('body').removeClass('wc-montonio-cc-processing');
-            }
+            window.location.replace(encodeURI(params.return_url + '&error-message=' + error.message));
         }
     }
 });

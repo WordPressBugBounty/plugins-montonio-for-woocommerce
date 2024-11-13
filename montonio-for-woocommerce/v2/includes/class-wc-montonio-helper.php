@@ -204,6 +204,18 @@ class WC_Montonio_Helper {
         }
     }
 
+    
+    /**
+     * Checks if the given string is a valid UUIDV4.
+     *
+     * @since 7.0.0
+     * @param string $uuid The string to check.
+     * @return boolean True if the string is a valid UUID, false otherwise.
+     */
+    public static function is_valid_uuid( $uuid ) {
+        return preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid ) === 1;
+    }
+
     /**
      * Create JWT token and sign it with secret key
      *

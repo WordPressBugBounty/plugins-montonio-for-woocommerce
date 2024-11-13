@@ -92,7 +92,7 @@ class WC_Montonio_Shipping_Item_Manager {
         $sql        = "SELECT * FROM $table_name WHERE item_id = %s";
         $params     = [$id];
 
-        return $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
+        return $wpdb->get_row( $wpdb->prepare( $sql, $params ) );
     }
 
     /**
@@ -190,7 +190,7 @@ class WC_Montonio_Shipping_Item_Manager {
 
         $grouped_localities = [];
         foreach ( $results as $pickup_point ) {
-            $locality                        = $pickup_point->locality;
+            $locality = $pickup_point->locality;
             $grouped_localities[$locality][] = [
                 'id'      => $pickup_point->item_id,
                 'name'    => $pickup_point->item_name,
@@ -203,6 +203,15 @@ class WC_Montonio_Shipping_Item_Manager {
         uasort( $grouped_localities, function ( $a, $b ) {
             return count( $b ) - count( $a );
         } );
+
+        // If "1. eelistus Omnivas" exists, move it to the beginning
+        if ( isset( $grouped_localities['1. eelistus Omnivas'] ) ) {
+            $omnivas_entry = array( '1. eelistus Omnivas' => $grouped_localities['1. eelistus Omnivas'] );
+            
+            unset( $grouped_localities['1. eelistus Omnivas'] );
+
+            $grouped_localities = $omnivas_entry + $grouped_localities;
+        }
 
         return $grouped_localities;
     }

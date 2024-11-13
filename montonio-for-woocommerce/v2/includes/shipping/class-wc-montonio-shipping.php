@@ -110,7 +110,6 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
             // Get pickup point info
             $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
-            $shipping_method_item = reset( $shipping_method_item );
 
             // Update order meta data and shipping address
             $order->update_meta_data( '_montonio_pickup_point_name', $shipping_method_item->item_name );

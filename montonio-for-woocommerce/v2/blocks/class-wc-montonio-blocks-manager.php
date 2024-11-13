@@ -37,6 +37,10 @@ class WC_Montonio_Blocks_Manager {
             return;
         }
 
+        if ( ! interface_exists( 'Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface' ) ) {
+            return;
+        }
+
         $this->include_block_files();
         $this->register_payment_methods();
 

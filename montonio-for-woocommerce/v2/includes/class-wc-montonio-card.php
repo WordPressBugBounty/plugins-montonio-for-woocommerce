@@ -209,11 +209,9 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             );
 
             if ( $this->inline_checkout === 'yes' ) {
-                $intent_data = WC()->session->get( 'montonio_cardPayments_intent_data' );
-    
-                if ( ! empty( $intent_data ) && isset( $intent_data->uuid ) ) {
-                    $payment_data['paymentIntentUuid'] = $intent_data->uuid;
-                } else {
+                $payment_intent_uuid = isset( $_POST['montonio_card_payment_intent_uuid'] ) ? sanitize_text_field( $_POST['montonio_card_payment_intent_uuid'] ) : null;
+
+                if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
                     wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
                     WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: paymentIntentUuid is empty. ' . $this->id );
 
@@ -221,6 +219,8 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
                         'result' => 'failure',
                     );
                 }
+
+                $payment_data['paymentIntentUuid'] = $payment_intent_uuid;
             }
         
             // Create new Montonio API instance
@@ -267,6 +267,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 
         if ( $this->inline_checkout === 'yes' ) {
             echo '<div id="montonio-card-form"></div>';
+            echo '<input type="hidden" name="montonio_card_payment_intent_uuid" value="">';
         }
 
         do_action( 'wc_montonio_after_payment_desc', $this->id );

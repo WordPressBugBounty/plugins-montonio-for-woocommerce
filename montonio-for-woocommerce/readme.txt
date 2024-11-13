@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 7.1.2
+Version: 7.1.3
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
 Requires at least: 5.0
 Tested up to: 6.6.2
-Stable tag: 7.1.2
+Stable tag: 7.1.3
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,14 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 7.1.3 =
+* Added - Validation to ensure the selected pickup-point carrier matches the correct carrier
+* Added - "Test Mode" message to block payment methods in the frontend
+* Tweak - Improved label request process to verify if the shipment status is "registered" before requesting a label
+* Tweak - "1. eelistus Omnivas" pickup point moved to the top if present
+* Tweak - Pickup-point address format now includes locality for improved filtering
+* Fix - Resolved compatibility issue in block integration with older WooCommerce versions
+
 = 7.1.2 =
 * Added - Option to disable the shipping method for selected shipping classes
 * Added - New bulk action: "Change status to Label Printed" for easier status management

@@ -126,11 +126,21 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
+        $carrier = $shipping_method->provider_name;
         $method_type = $shipping_method->type_v2;
 
         if ( in_array( $method_type, ['parcelMachine', 'postOffice', 'parcelShop'] ) ) {
-            if ( isset( $_POST['montonio_pickup_point'] ) && empty( $_POST['montonio_pickup_point'] ) ) {
+            $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( $_POST['montonio_pickup_point'] ) : null;
+
+            if ( empty( $shipping_method_item_id ) ) {
                 wc_add_notice( __( 'Please select a pickup point.', 'montonio-for-woocommerce' ), 'error' );
+                return;
+            }
+
+            $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
+            
+            if ( $carrier != $shipping_method_item->carrier_code ) {
+                wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
             }
         }
     }
@@ -157,7 +167,6 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
         }
 
         $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
-        $shipping_method_item = reset( $shipping_method_item );
 
         if ( empty( $shipping_method_item ) || $shipping_method_item->method_type !== 'pickupPoint' ) {
             return $shipping_label;

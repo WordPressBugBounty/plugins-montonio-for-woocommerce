@@ -6,7 +6,7 @@ require_once dirname(dirname(__FILE__)) . '/class-montonio-shipping-method.php';
 class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
     const MAX_DIMENSIONS = [36, 43, 61]; // lowest to highest (cm)
 
-    public $default_title = 'DPD pickup point';
+    public $default_title = 'DPD parcel machines';
     public $default_max_weight = 20; // kg
 
     /**
@@ -16,8 +16,8 @@ class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
      */
     protected function init() {
         $this->id                 = 'montonio_dpd_parcel_machines';
-        $this->method_title       = __( 'Montonio DPD pickup points', 'montonio-for-woocommerce' );
-        $this->method_description = __( 'DPD pickup points', 'montonio-for-woocommerce' );
+        $this->method_title       = __( 'Montonio DPD parcel machines', 'montonio-for-woocommerce' );
+        $this->method_description = __( 'DPD parcel machines', 'montonio-for-woocommerce' );
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
@@ -28,7 +28,7 @@ class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
         $this->type = 'parcel_machine';
         $this->type_v2 = 'parcelMachine';
         $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/dpd.png';
-        $this->title = __( $this->get_option( 'title', __( 'DPD pickup point', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->title = __( $this->get_option( 'title', __( 'DPD parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
     /**

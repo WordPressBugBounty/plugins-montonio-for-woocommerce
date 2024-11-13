@@ -53,7 +53,12 @@ jQuery(document).ready(function($) {
         });
     }
 
-    async function initializePayment() {     
+    async function initializePayment() {    
+        if (typeof Montonio === 'undefined' || typeof Montonio.Checkout === 'undefined') {
+            console.error('Montonio SDK not loaded');
+            return;
+        }
+         
         embeddedPayment = await Montonio.Checkout.EmbeddedPayments.initializePayment({
             stripePublicKey: stripePublicKey,
             stripeClientSecret: stripeClientSecret,
@@ -63,6 +68,7 @@ jQuery(document).ready(function($) {
             targetId: 'montonio-blik-form',
         });
 
+        $('input[name="montonio_blik_payment_intent_uuid"]').val(uuid);
         $('#montonio-blik-form').addClass('paymentInitilized').removeClass('loading').unblock();
 
         embeddedPayment.on('change', event => { 

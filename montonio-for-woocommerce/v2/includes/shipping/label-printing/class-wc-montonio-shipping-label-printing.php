@@ -79,7 +79,12 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
         $shipment_ids = array();
 
         foreach ( $order_ids as $order_id ) {
-            $order       = wc_get_order( $order_id );
+            $order = wc_get_order( $order_id );
+            
+            if ( 'registered' !== $order->get_meta( '_wc_montonio_shipping_shipment_status' ) ) {
+                continue;
+            }
+            
             $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 
             if ( ! empty( $shipment_id ) ) {
@@ -201,7 +206,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @return void
      */
     public function mark_orders_as_labels_printed( $order_ids ) {
-        $new_status = get_option( ' montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
+        $new_status = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
         foreach ( $order_ids as $order_id ) {
             $order = wc_get_order( $order_id );
             if ( $order->get_status() === 'processing' && 'no-change' !== $new_status ) {

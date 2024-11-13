@@ -29,12 +29,10 @@ class WC_Montonio_Inline_Checkout {
             $montonio_api = new WC_Montonio_API( $sandbox_mode );
             $response = $montonio_api->create_payment_intent( $method );
         
-            WC()->session->set('montonio_' . $method . '_intent_data', $response );
             wp_send_json_success( $response );
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Montonio Inline Checkout: ' . $e->getMessage() );
     
-            WC()->session->set( 'montonio_' . $method . '_intent_data', null );
             wp_send_json_error( $e->getMessage() );
         }
     }

@@ -1052,7 +1052,7 @@ class Montonio_Shipping {
 
         $order->add_order_note( $orderNote );
 
-        $newStatus = get_option(' montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
+        $newStatus = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
 
         if ( $order->get_status() === 'processing' && $newStatus !== 'no-change' ) {
             $order->update_status( $newStatus );

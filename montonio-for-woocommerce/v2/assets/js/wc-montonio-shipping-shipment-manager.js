@@ -83,7 +83,7 @@
                     }
                 }
 
-                if (shipmentStatus === 'registered' || shipmentStatus === 'registrationFailed') {
+                if (shipmentStatus === 'registered' || shipmentStatus === 'registrationFailed' || shipmentStatus === 'updateFailed') {
                     clearInterval(window.shipmentRegisteredInterval);
                 }
             },
