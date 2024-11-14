@@ -158,7 +158,7 @@ msgid "Here you can insert additional CSS rules for checkout."
 msgstr ""
 
 #: card-payments/class-montonio-card-payments.php:33
-#: montonio.php:355
+#: montonio.php:369
 msgid "Montonio Card Payments (old)"
 msgstr ""
 
@@ -185,21 +185,21 @@ msgstr ""
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:243
+#: montonio.php:239
 msgid "Settings"
 msgstr ""
 
-#: montonio.php:349
+#: montonio.php:363
 #: payments/class-montonio-payments.php:37
 msgid "Montonio Payments (old)"
 msgstr ""
 
-#: montonio.php:349
+#: montonio.php:363
 #: v2/includes/class-wc-montonio-payments.php:68
 msgid "Montonio Bank Payments (2024)"
 msgstr ""
 
-#: montonio.php:355
+#: montonio.php:369
 #: v2/includes/class-wc-montonio-card.php:33
 msgid "Montonio Card Payments (2024)"
 msgstr ""

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 7.1.3\n"
+"Project-Id-Version: Montonio for WooCommerce 7.1.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-12T11:31:18+00:00\n"
+"POT-Creation-Date: 2024-11-14T12:08:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -175,7 +175,7 @@ msgid "Here you can insert additional CSS rules for checkout."
 msgstr ""
 
 #: card-payments/class-montonio-card-payments.php:33
-#: montonio.php:355
+#: montonio.php:369
 msgid "Montonio Card Payments (old)"
 msgstr ""
 
@@ -206,21 +206,21 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: montonio.php:243
+#: montonio.php:239
 msgid "Settings"
 msgstr ""
 
-#: montonio.php:349
+#: montonio.php:363
 #: payments/class-montonio-payments.php:37
 msgid "Montonio Payments (old)"
 msgstr ""
 
-#: montonio.php:349
+#: montonio.php:363
 #: v2/includes/class-wc-montonio-payments.php:68
 msgid "Montonio Bank Payments (2024)"
 msgstr ""
 
-#: montonio.php:355
+#: montonio.php:369
 #: v2/includes/class-wc-montonio-card.php:33
 msgid "Montonio Card Payments (2024)"
 msgstr ""

@@ -3,36 +3,35 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           7.1.3
+ * Version:           7.1.4
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
  * Domain Path:       /languages
  * License:           GPL version 3 or later
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
- * 
+ *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 9.3.3
+ * WC tested up to: 9.4.1
  */
 
-if ( !defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.3' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.4' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
 define( 'WC_MONTONIO_DIR', __DIR__ );
-
 
 if ( ! class_exists( 'Montonio' ) ) {
     class Montonio {
 
         /**
          * Singleton instance of the class.
-         * 
+         *
          * @var mixed
          */
         private static $instance;
@@ -52,7 +51,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
         /**
          * Array to hold admin notices.
-         * 
+         *
          * @var array
          */
         protected $admin_notices = array();
@@ -64,6 +63,8 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function __construct() {
             add_action( 'plugins_loaded', array( $this, 'init' ) );
+            add_action( 'init', array( $this, 'load_textdomain' ) );
+            add_action( 'init', array( $this, 'init_api_settings' ) );
             add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 9999 );
         }
 
@@ -73,13 +74,10 @@ if ( ! class_exists( 'Montonio' ) ) {
          * @return void
          */
         public function init() {
-            global $wpdb;
-            if ( !class_exists( 'WooCommerce' ) ) {
+            if ( ! class_exists( 'WooCommerce' ) ) {
                 $this->add_admin_notice( sprintf( esc_html__( 'Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'montonio-for-woocommerce' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>' ), 'error' );
                 return;
             }
-
-            load_plugin_textdomain( 'montonio-for-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 
             $version = get_option( 'wc_montonio_plugin_version', '0' );
 
@@ -113,7 +111,6 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/class-wc-montonio-bnpl.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/class-wc-montonio-hire-purchase.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/class-wc-montonio-inline-checkout.php';
-            require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-api-settings.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-display-admin-options.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-telemetry-service.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/v2/ota/class-montonio-ota-updates.php';
@@ -122,7 +119,6 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/payments/class-montonio-payments.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/card-payments/class-montonio-card-payments.php';
-
 
             if ( get_option( 'montonio_shipping_enabled' ) === 'yes' ) {
                 if ( get_option( 'montonio_shipping_enable_v2' ) !== 'yes' ) {
@@ -163,7 +159,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
         /**
          * Add custom payment methods to WooCommerce.
-         * 
+         *
          * @param array $methods The existing payment methods.
          * @return array The updated array of payment methods.
          */
@@ -189,11 +185,11 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function modify_merchant_references( $order_id_or_number, $order ) {
             $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
-            $type = $api_settings['merchant_reference_type'] ?? '';
+            $type         = $api_settings['merchant_reference_type'] ?? '';
 
             if ( $type === 'order_number' ) {
                 return $order->get_order_number();
-            } 
+            }
 
             if ( $type === 'add_prefix' && ! empty( $api_settings['order_prefix'] ) ) {
                 return $api_settings['order_prefix'] . '-' . $order_id_or_number;
@@ -299,6 +295,24 @@ if ( ! class_exists( 'Montonio' ) ) {
         }
 
         /**
+         * Load plugin textdomain for internationalization.
+         *
+         * @return void
+         */
+        public function load_textdomain() {
+            load_plugin_textdomain( 'montonio-for-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+        }
+
+        /**
+         * Initialize Montonio API Settings.
+         *
+         * @return void
+         */
+        public function init_api_settings() {
+            require_once WC_MONTONIO_PLUGIN_PATH . '/v2/includes/admin/class-wc-montonio-api-settings.php';
+        }
+
+        /**
          * Add an admin notice to be displayed.
          *
          * @param string $message The message to be displayed in the admin notice.
@@ -364,7 +378,7 @@ if ( ! class_exists( 'Montonio' ) ) {
                     </div>
                 </div>
             <?php
-            endif;
+        endif;
         }
     }
     Montonio::get_instance();
