@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           7.1.4
+ * Version:           7.1.5
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.4' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '7.1.5' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -63,8 +63,8 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function __construct() {
             add_action( 'plugins_loaded', array( $this, 'init' ) );
-            add_action( 'init', array( $this, 'load_textdomain' ) );
-            add_action( 'init', array( $this, 'init_api_settings' ) );
+            add_action( 'before_woocommerce_init', array( $this, 'load_textdomain' ) );
+            add_action( 'woocommerce_init', array( $this, 'init_api_settings' ) );
             add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 9999 );
         }
 

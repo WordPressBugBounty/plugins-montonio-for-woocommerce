@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 7.1.4
+Version: 7.1.5
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
 Requires at least: 5.0
 Tested up to: 6.7
-Stable tag: 7.1.4
+Stable tag: 7.1.5
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,9 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 7.1.5 =
+* Fix - WC_Settings_API dependency error
+
 = 7.1.4 =
 * Fix - Delay load_plugin_textdomain execution until the init action
 

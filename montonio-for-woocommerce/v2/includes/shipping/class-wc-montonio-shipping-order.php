@@ -482,7 +482,7 @@ class WC_Montonio_Shipping_Order {
 
         // Verify that the meta data is correct with what we just searched for
         if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
-            WC_Montonio_Logger::log( sprintf( 'add_tracking_codes: Order not found. Payload: ', json_encode( $payload ) ) );
+            WC_Montonio_Logger::log( __( 'add_tracking_codes: Order not found.', 'montonio-for-woocommerce' ) );
             return new WP_REST_Response( ['message' => 'Order not found'], 400 );
         }
 
