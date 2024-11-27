@@ -465,7 +465,7 @@ msgstr ""
 
 #: shipping/class-montonio-shipping-settings.php:103
 #: shipping/class-montonio-shipping.php:1010
-#: v2/includes/shipping/class-wc-montonio-shipping.php:260
+#: v2/includes/shipping/class-wc-montonio-shipping.php:280
 msgid "Track your shipment:"
 msgstr ""
 
@@ -606,7 +606,7 @@ msgstr ""
 #: v2/includes/class-wc-montonio-hire-purchase.php:220
 #: v2/includes/class-wc-montonio-payments.php:318
 #: v2/includes/class-wc-montonio-payments.php:484
-#: v2/includes/shipping/class-wc-montonio-shipping.php:239
+#: v2/includes/shipping/class-wc-montonio-shipping.php:259
 msgid "Montonio API response: "
 msgstr ""
 
@@ -1256,15 +1256,15 @@ msgstr ""
 msgid "Shipment registration failed."
 msgstr ""
 
-#: v2/includes/shipping/class-wc-montonio-shipping-shipment-manager.php:74
+#: v2/includes/shipping/class-wc-montonio-shipping-shipment-manager.php:75
 msgid "Shipment creation failed."
 msgstr ""
 
-#: v2/includes/shipping/class-wc-montonio-shipping-shipment-manager.php:125
+#: v2/includes/shipping/class-wc-montonio-shipping-shipment-manager.php:128
 msgid "Shipment update failed."
 msgstr ""
 
-#: v2/includes/shipping/class-wc-montonio-shipping.php:236
+#: v2/includes/shipping/class-wc-montonio-shipping.php:256
 msgid "Montonio Shipping V2: Pickup point sync successful!"
 msgstr ""
 
@@ -1447,4 +1447,8 @@ msgstr ""
 #: shipping/dpd/class-montonio-dpd-parcel-machines.php:20
 #: shipping/dpd/class-montonio-dpd-parcel-machines.php:31
 msgid "DPD parcel machines"
+msgstr ""
+
+#: v2/includes/shipping/class-wc-montonio-shipping-order.php:485
+msgid "add_tracking_codes: Order not found."
 msgstr ""

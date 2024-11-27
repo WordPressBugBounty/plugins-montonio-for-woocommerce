@@ -25,6 +25,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @return void
      */
     public function create_shipment_when_payment_complete( $order_id, $order ) {
+
         if ( empty( $order ) ) {
             WC_Montonio_Logger::log( 'Shipment creation failed. Order object is empty.' );
             return;
@@ -48,18 +49,18 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @return string|null The API response on successful shipment creation, or null on failure.
      */
     public function create_shipment( $order ) {
-        try{
-            $data = $this->get_shipment_data( $order );
+        try {
+            $data                      = $this->get_shipment_data( $order );
             $data['merchantReference'] = (string) apply_filters( 'wc_montonio_merchant_reference_display', $order->get_order_number(), $order );
-            
+
             $montonio_order_uuid = $order->get_meta( '_montonio_uuid' );
 
             if ( ! empty( $montonio_order_uuid ) ) {
                 $data['montonioOrderUuid'] = (string) $montonio_order_uuid;
             }
-            
+
             $shipping_api = get_montonio_shipping_api();
-            $response = $shipping_api->create_shipment( $data );
+            $response     = $shipping_api->create_shipment( $data );
 
             WC_Montonio_Logger::log( 'Create shipment response: ' . $response );
             $decoded_response = json_decode( $response );
@@ -71,14 +72,16 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             return $response;
         } catch ( Exception $e ) {
             $decoded_response = json_decode( $e->getMessage(), true );
-            $note = '<strong>' . __( 'Shipment creation failed.', 'montonio-for-woocommerce' ) . '</strong>';
-            
+            $note             = '<strong>' . __( 'Shipment creation failed.', 'montonio-for-woocommerce' ) . '</strong>';
+
             if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
+
                 if ( is_array( $decoded_response['message'] ) ) {
                     $note .= '<br>' . implode( '<br>', $decoded_response['message'] );
                 } else {
                     $note .= '<br>' . $decoded_response['message'];
                 }
+
                 $note .= '<br>' . $decoded_response['error'];
             } else {
                 $note .= $e->getMessage();
@@ -90,8 +93,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             WC_Montonio_Logger::log( 'Shipment creation failed. Response: ' . $e->getMessage() );
             return;
         }
-    }
 
+    }
 
     /**
      * Updates an existing shipment for a given order using Montonio Shipping API.
@@ -108,10 +111,10 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             return;
         }
 
-        try{
-            $data = $this->get_shipment_data( $order );
+        try {
+            $data         = $this->get_shipment_data( $order );
             $shipping_api = get_montonio_shipping_api();
-            $response = $shipping_api->update_shipment( $shipment_id, $data );
+            $response     = $shipping_api->update_shipment( $shipment_id, $data );
 
             WC_Montonio_Logger::log( 'Update shipment response: ' . $response );
             $decoded_response = json_decode( $response );
@@ -122,14 +125,16 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             return $response;
         } catch ( Exception $e ) {
             $decoded_response = json_decode( $e->getMessage(), true );
-            $note = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
-            
+            $note             = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
+
             if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
+
                 if ( is_array( $decoded_response['message'] ) ) {
                     $note .= '<br>' . implode( '<br>', $decoded_response['message'] );
                 } else {
                     $note .= '<br>' . $decoded_response['message'];
                 }
+
                 $note .= '<br>' . $decoded_response['error'];
             } else {
                 $note .= $e->getMessage();
@@ -141,6 +146,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             WC_Montonio_Logger::log( 'Shipment update failed. Response: ' . $e->getMessage() );
             return;
         }
+
     }
 
     /**
@@ -151,99 +157,129 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @return array The formatted shipment data ready for API submission.
      */
     public function get_shipment_data( $order ) {
-        $method_type         = $order->get_meta( '_wc_montonio_shipping_method_type' );
-        $method_id           = $order->get_meta( '_montonio_pickup_point_uuid' );
+        $method_type = $order->get_meta( '_wc_montonio_shipping_method_type' );
+        $method_id   = $order->get_meta( '_montonio_pickup_point_uuid' );
 
         if ( empty( $method_type ) || empty( $method_id ) ) {
             throw new Exception( 'Missing method type or method item ID' );
         }
 
         $address_helper = WC_Montonio_Shipping_Address_Helper::get_instance();
-            $address_data   = $address_helper->standardize_address_data( [
-                'billing_first_name'        => (string) $order->get_billing_first_name(),
-                'billing_last_name'         => (string) $order->get_billing_last_name(),
-                'billing_company'           => (string) $order->get_billing_company(),
-                'billing_street_address_1'  => (string) $order->get_billing_address_1(),
-                'billing_street_address_2'  => (string) $order->get_billing_address_2(),
-                'billing_locality'          => (string) $order->get_billing_city(),
-                'billing_region'            => (string) $order->get_billing_state(),
-                'billing_postal_code'       => (string) $order->get_billing_postcode(),
-                'billing_country'           => (string) $order->get_billing_country(),
-                'billing_email'             => (string) $order->get_billing_email(),
-                'billing_phone_number'      => (string) $order->get_billing_phone(),
-                'shipping_first_name'       => (string) $order->get_shipping_first_name(),
-                'shipping_last_name'        => (string) $order->get_shipping_last_name(),
-                'shipping_company'          => (string) $order->get_shipping_company(),
-                'shipping_street_address_1' => (string) $order->get_shipping_address_1(),
-                'shipping_street_address_2' => (string) $order->get_shipping_address_2(),
-                'shipping_locality'         => (string) $order->get_shipping_city(),
-                'shipping_region'           => (string) $order->get_shipping_state(),
-                'shipping_postal_code'      => (string) $order->get_shipping_postcode(),
-                'shipping_country'          => (string) $order->get_shipping_country(),
-                'shipping_phone_number'     => method_exists( $order, 'get_shipping_phone' ) ? (string) $order->get_shipping_phone() : null,
-            ] );
+        $address_data   = $address_helper->standardize_address_data( array(
+            'billing_first_name'        => (string) $order->get_billing_first_name(),
+            'billing_last_name'         => (string) $order->get_billing_last_name(),
+            'billing_company'           => (string) $order->get_billing_company(),
+            'billing_street_address_1'  => (string) $order->get_billing_address_1(),
+            'billing_street_address_2'  => (string) $order->get_billing_address_2(),
+            'billing_locality'          => (string) $order->get_billing_city(),
+            'billing_region'            => (string) $order->get_billing_state(),
+            'billing_postal_code'       => (string) $order->get_billing_postcode(),
+            'billing_country'           => (string) $order->get_billing_country(),
+            'billing_email'             => (string) $order->get_billing_email(),
+            'billing_phone_number'      => (string) $order->get_billing_phone(),
+            'shipping_first_name'       => (string) $order->get_shipping_first_name(),
+            'shipping_last_name'        => (string) $order->get_shipping_last_name(),
+            'shipping_company'          => (string) $order->get_shipping_company(),
+            'shipping_street_address_1' => (string) $order->get_shipping_address_1(),
+            'shipping_street_address_2' => (string) $order->get_shipping_address_2(),
+            'shipping_locality'         => (string) $order->get_shipping_city(),
+            'shipping_region'           => (string) $order->get_shipping_state(),
+            'shipping_postal_code'      => (string) $order->get_shipping_postcode(),
+            'shipping_country'          => (string) $order->get_shipping_country(),
+            'shipping_phone_number'     => method_exists( $order, 'get_shipping_phone' ) ? (string) $order->get_shipping_phone() : null
+        ) );
 
-            $data = [
-                'receiver'          => [
-                    'name'        => trim( $address_data['first_name'] . ' ' . $address_data['last_name'] ),
-                    'companyName' => $address_data['company'],
-                    'country'     => $address_data['country'],
-                    'phoneNumber' => $address_data['phone_number'],
-                    'email'       => $address_data['email'],
-                ],
-                'metadata'       => [
-                    'platform'        => 'wordpress ' . get_bloginfo('version') . ' woocommerce ' . WC()->version,
-                    'platformVersion' => WC_MONTONIO_PLUGIN_VERSION
-                ],
-                'shippingMethod' => [
-                    'type' => (string) $method_type,
-                    'id'   => (string) $method_id
-                ]
-            ];
+        $data = array(
+            'receiver'       => array(
+                'name'        => trim( $address_data['first_name'] . ' ' . $address_data['last_name'] ),
+                'companyName' => $address_data['company'],
+                'country'     => $address_data['country'],
+                'phoneNumber' => $address_data['phone_number'],
+                'email'       => $address_data['email']
+            ),
+            'metadata'       => array(
+                'platform'        => 'wordpress ' . get_bloginfo( 'version' ) . ' woocommerce ' . WC()->version,
+                'platformVersion' => WC_MONTONIO_PLUGIN_VERSION
+            ),
+            'shippingMethod' => array(
+                'type' => (string) $method_type,
+                'id'   => (string) $method_id
+            )
+        );
 
-            if ( $method_type == 'courier' ) {
-                $data['receiver']['streetAddress'] = $address_data['street_address_1'] . ' ' . $address_data['street_address_2'];
-                $data['receiver']['postalCode']    = $address_data['postal_code'];
-                $data['receiver']['locality']      = $address_data['locality'];
-                $data['receiver']['region']        = $address_data['region'];
-            }
+        if ( $method_type == 'courier' ) {
+            $data['receiver']['streetAddress'] = $address_data['street_address_1'] . ' ' . $address_data['street_address_2'];
+            $data['receiver']['postalCode']    = $address_data['postal_code'];
+            $data['receiver']['locality']      = $address_data['locality'];
+            $data['receiver']['region']        = $address_data['region'];
+        }
 
-            $parcels = [];
+        $parcels                  = array();
+        $products                 = array();
+        $product_has_missing_args = false;
 
-            foreach ( $order->get_items() as $item ) {
-                $product = $item->get_product();
-                $weight  = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
+        foreach ( $order->get_items() as $item ) {
+            $product  = $item->get_product();
+            $sku      = $product->get_sku();
+            $ean      = $product->get_global_unique_id();
+            $name     = $product->get_name();
+            $quantity = $item->get_quantity();
+            $weight   = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
 
-                if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
-                    for ( $i = 0; $i < $item->get_quantity(); $i++ ) {
-                        $parcels[] = [
-                            'weight' => $weight > 0 ? $weight : 1,
-                            'length' => WC_Montonio_Helper::convert_to_meters( $product->get_length() ),
-                            'width'  => WC_Montonio_Helper::convert_to_meters( $product->get_width() ),
-                            'height' => WC_Montonio_Helper::convert_to_meters( $product->get_height() ),
-                        ];
-                    }
+            if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
+                for ( $i = 0; $i < $quantity; $i++ ) {
+                    $parcels[] = array(
+                        'weight' => $weight > 0 ? $weight : 1,
+                        'length' => WC_Montonio_Helper::convert_to_meters( $product->get_length() ),
+                        'width'  => WC_Montonio_Helper::convert_to_meters( $product->get_width() ),
+                        'height' => WC_Montonio_Helper::convert_to_meters( $product->get_height() )
+                    );
+                }
+            } else {
+                if ( array_key_exists( 'combined', $parcels ) ) {
+                    $parcels['combined']['weight'] += $weight * $quantity;
                 } else {
-                    if ( array_key_exists( 'combined', $parcels ) ) {
-                        $parcels['combined']['weight'] += $weight * $item->get_quantity();
-                    } else {
-                        $parcels['combined']['weight'] = $weight * $item->get_quantity();
-                    }
+                    $parcels['combined']['weight'] = $weight * $quantity;
                 }
             }
 
-            // For combined parcel, if it exists and weight is 0, set to 1
-            if ( array_key_exists( 'combined', $parcels ) && ! $parcels['combined']['weight'] > 0 ) {
-                $parcels['combined']['weight'] = 1;
+            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) ) {
+                $product_has_missing_args = true;
+                continue;
             }
 
-            $data['parcels'] = array_values( $parcels );
+            $product_data = array(
+                'sku'      => $sku,
+                'name'     => $name,
+                'quantity' => $quantity
+            );
 
-            $data = apply_filters( 'wc_montonio_before_shipping_data_submission', $data, $order );
-            WC_Montonio_Logger::log( 'Create shipment payload: ' . json_encode( $data ) );
+            // Add EAN if it exists (assuming it's stored as meta data)
+            if ( ! empty( $ean ) && strlen( $ean ) >= 13 ) {
+                $product_data['ean'] = $ean;
+            }
 
-            return $data;
+            $products[] = $product_data;
+        }
+
+        // For combined parcel, if it exists and weight is 0, set to 1
+        if ( array_key_exists( 'combined', $parcels ) && ! $parcels['combined']['weight'] > 0 ) {
+            $parcels['combined']['weight'] = 1;
+        }
+
+        // Only add products array if all products were valid
+        if ( ! $product_has_missing_args && ! empty( $products ) ) {
+            $data['products'] = $products;
+        }
+
+        $data['parcels'] = array_values( $parcels );
+
+        $data = apply_filters( 'wc_montonio_before_shipping_data_submission', $data, $order );
+        WC_Montonio_Logger::log( 'Create shipment payload: ' . json_encode( $data ) );
+
+        return $data;
     }
 
 }
+
 WC_Montonio_Shipping_Shipment_Manager::get_instance();
