@@ -212,9 +212,6 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
 
         try {
-            $courier_services_synced = false;
-            $pickup_point_countries = [];
-
             $shipping_api     = get_montonio_shipping_api();
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
@@ -223,32 +220,15 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                     break;
                 }
 
-                $country_code = $country['countryCode'];
-
-                // Skip if we've already processed this country
-                if ( in_array( $country_code, $pickup_point_countries ) ) {
-                    continue;
-                }
-
                 foreach ( $country['carriers'] as $carrier ) {
-                    foreach ( $carrier['shippingMethods'] as $method ) {
-                        if ( 'courier' === $method['type'] ) {
-                            if ( false === $courier_services_synced ) {
-                                $courier_services_synced = true;
-                                WC_Montonio_Shipping_Item_Manager::sync_method_items( 'courierServices' );
-                            }
-
-                            continue;
+                    foreach ( $carrier['shippingMethods'] as $methods ) {
+                        foreach ( $methods as $type ) {
+                            WC_Montonio_Shipping_Item_Manager::sync_method_items(
+                                $carrier['carrierCode'],
+                                $country['countryCode'],
+                                $type
+                            );
                         }
-
-                        $pickup_point_countries[] = $country_code;
-                        WC_Montonio_Shipping_Item_Manager::sync_method_items(
-                            'pickupPoints',
-                            null,
-                            $country_code
-                        );
-
-                        break 2;
                     }
                 }
             }

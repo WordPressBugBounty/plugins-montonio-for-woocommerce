@@ -30,13 +30,13 @@ class WC_Montonio_Shipping_API {
      * @since 7.0.0
      * @var string Root URL for the Montonio shipping sandbox application
      */
-    const MONTONIO_SHIPPING_SANDBOX_API_URL = 'https://shipping.montonio.com/api';
+    const MONTONIO_SHIPPING_SANDBOX_API_URL = 'https://shipping.montonio.com/api/v2';
 
     /**
      * @since 7.0.0
      * @var string Root URL for the Montonio shipping application
      */
-    const MONTONIO_SHIPPING_API_URL = 'https://shipping.montonio.com/api';
+    const MONTONIO_SHIPPING_API_URL = 'https://shipping.montonio.com/api/v2';
 
     /**
      * WC_Montonio_Shipping_API constructor.
@@ -60,7 +60,7 @@ class WC_Montonio_Shipping_API {
      * @return string
      */
     public function get_shipping_methods() {
-        $path = '/v2/shipping-methods';
+        $path = '/shipping-methods';
 
         $options = [
             'headers' => [
@@ -81,21 +81,15 @@ class WC_Montonio_Shipping_API {
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @return string The body of the response. Empty string if no body or incorrect parameter given. as a JSON string
      */
-    public function get_pickup_points( $carrier = null, $country = null ) {
-        $path = '/v3/shipping-methods/pickup-points';
-        $query_params = array();
-
-        if ( $carrier !== null ) {
-            $query_params['carrierCode'] = $carrier;
-        }
-        
-        if ( $country !== null ) {
-            $query_params['countryCode'] = $country;
-        }
-        
-        if ( ! empty( $query_params ) ) {
-            $path = add_query_arg( $query_params, $path );
-        }
+    public function get_pickup_points( $carrier, $country ) {
+        $path = '/shipping-methods/pickup-points';
+        $path = add_query_arg(
+            [
+                'carrierCode' => $carrier,
+                'countryCode' => $country
+            ],
+            $path
+        );
 
         $options = [
             'headers' => [
@@ -109,28 +103,22 @@ class WC_Montonio_Shipping_API {
     }
 
     /**
-     * Get courier services
+     * Get all store courier services
      * 
      * @since 7.0.0
      * @param string $carrier Carrier code
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @return string The body of the response. Empty string if no body or incorrect parameter given. as a JSON string
      */
-    public function get_courier_services( $carrier = null, $country = null ) {
-        $path = '/v3/shipping-methods/courier-services';
-        $query_params = array();
-    
-        if ( $carrier !== null ) {
-            $query_params['carrierCode'] = $carrier;
-        }
-        
-        if ( $country !== null ) {
-            $query_params['countryCode'] = $country;
-        }
-        
-        if ( ! empty( $query_params ) ) {
-            $path = add_query_arg( $query_params, $path );
-        }
+    public function get_courier_services( $carrier, $country ) {
+        $path = '/shipping-methods/courier-services';
+        $path = add_query_arg(
+            [
+                'carrierCode' => $carrier,
+                'countryCode' => $country
+            ],
+            $path
+        );
 
         $options = [
             'headers' => [
@@ -151,7 +139,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function create_shipment( $data ) {
-        $path = '/v2/shipments';
+        $path = '/shipments';
 
         $options = [
             'headers' => [
@@ -173,7 +161,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function update_shipment( $id, $data ) {
-        $path = '/v2/shipments/' . $id;
+        $path = '/shipments/' . $id;
 
         $options = [
             'headers' => [
@@ -195,7 +183,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function get_shipment( $id ) {
-        $path = '/v2/shipments/' . $id;
+        $path = '/shipments/' . $id;
 
         $options = [
             'headers' => [
@@ -217,7 +205,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function create_label( $data ) {
-        $path = '/v2/label-files';
+        $path = '/label-files';
 
         $options = [
             'headers' => [
@@ -240,7 +228,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function get_label_file_by_id( $id ) {
-        $path = '/v2/label-files/' . $id;
+        $path = '/label-files/' . $id;
 
         $options = [
             'headers' => [
@@ -261,7 +249,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function create_webhook( $data ) {
-        $path = '/v2/webhooks';
+        $path = '/webhooks';
 
         $options = [
             'headers' => [
@@ -282,7 +270,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     public function get_webhooks() {
-        $path = '/v2/webhooks';
+        $path = '/webhooks';
 
         $options = [
             'headers' => [

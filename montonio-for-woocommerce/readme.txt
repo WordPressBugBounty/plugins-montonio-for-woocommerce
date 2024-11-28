@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 7.1.6
+Version: 7.1.7
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
 Requires at least: 5.0
-Tested up to: 6.7.1
-Stable tag: 7.1.6
+Tested up to: 6.7
+Stable tag: 7.1.7
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,9 +81,8 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
-= 7.1.6 =
-* Added - Include product information in shipment data when SKU is used
-* Tweak - Use the new shipping API endpoints for faster synchronization of shipping method items
+= 7.1.7 =
+* Fix - Reverted module state to version 7.1.5
 
 = 7.1.5 =
 * Fix - WC_Settings_API dependency error
