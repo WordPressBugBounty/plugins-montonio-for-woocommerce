@@ -58,7 +58,6 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         add_filter( 'montonio_ota_sync', array( $this, 'sync_shipping_methods_ota' ), 20, 1 );
     }
 
-
     /**
      * Handle Montonio shipping checkout
      *
@@ -92,7 +91,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         $carrier                  = $shipping_method_instance->provider_name;
         $method_type              = $shipping_method_instance->type_v2;
 
-        if ( in_array( $method_type, ['parcelMachine', 'postOffice', 'parcelShop'] ) ) {
+        if ( in_array( $method_type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             $method_type = 'pickupPoint';
 
             // Check if pickup point is set
@@ -108,14 +107,14 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
             if ( method_exists( $order, 'set_shipping' ) ) {
                 $order->set_shipping(
-                    [
+                    array(
                         'address_1' => $shipping_method_item->item_name,
                         'address_2' => '',
                         'city'      => $shipping_method_item->locality,
                         'state'     => '',
                         'postcode'  => $shipping_method_item->postal_code,
                         'country'   => strtoupper( $shipping_method_item->country_code )
-                    ]
+                    )
                 );
             } else {
                 $order->update_meta_data( '_shipping_address_1', $shipping_method_item->item_name );
@@ -205,22 +204,17 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
         try {
             $courier_services_synced = false;
-            $pickup_point_countries = array();
+            $pickup_point_countries  = array();
 
             $shipping_api     = new WC_Montonio_Shipping_API();
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
             foreach ( $shipping_methods['countries'] as $country ) {
                 if ( empty( $country['carriers'] ) ) {
-                    break;
+                    continue;
                 }
 
                 $country_code = $country['countryCode'];
-
-                // Skip if we've already processed this country
-                if ( in_array( $country_code, $pickup_point_countries ) ) {
-                    continue;
-                }
 
                 foreach ( $country['carriers'] as $carrier ) {
                     foreach ( $carrier['shippingMethods'] as $method ) {
@@ -233,14 +227,16 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                             continue;
                         }
 
+                        if ( in_array( $country_code, $pickup_point_countries ) ) {
+                            continue;
+                        }
+
                         $pickup_point_countries[] = $country_code;
                         WC_Montonio_Shipping_Item_Manager::sync_method_items(
                             'pickupPoints',
                             null,
                             $country_code
                         );
-
-                        break 2;
                     }
                 }
             }

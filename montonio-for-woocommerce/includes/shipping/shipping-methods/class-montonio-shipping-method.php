@@ -46,6 +46,13 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     public $free_shipping_text;
 
     /**
+     * Customer's shipping country at checkout
+     *
+     * @var string
+     */
+    public $country;
+
+    /**
      * Shipping method cost.
      *
      * @var string
@@ -91,6 +98,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
         $this->enable_free_shipping_text = $this->get_option( 'enable_free_shipping_text' );
         $this->free_shipping_text        = $this->get_option( 'free_shipping_text' );
+        $this->country = WC_Montonio_Shipping_Helper::get_customer_shipping_country();
 
         $this->init_settings();
         $this->init_form_fields();
@@ -114,14 +122,11 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * @return bool True if the shipping method is available, false otherwise.
      */
     public function is_available( $package ) {
-
         if ( ! $this->is_enabled() ) {
             return false;
         }
-
-        $country = WC_Montonio_Shipping_Helper::get_customer_shipping_country();
         
-        if ( ! WC_Montonio_Shipping_Item_Manager::shipping_method_items_exist( $country, $this->provider_name, $this->type_v2 ) ) {
+        if ( ! WC_Montonio_Shipping_Item_Manager::shipping_method_items_exist( $this->country, $this->provider_name, $this->type_v2 ) ) {
             return false;
         }
 

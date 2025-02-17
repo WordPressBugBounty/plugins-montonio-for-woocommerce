@@ -66,7 +66,7 @@ msgstr "Maksājiet ar savu kredītkarti vai debetkarti, izmantojot Montonio."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:230
+#: montonio.php:236
 msgid "Settings"
 msgstr ""
 
@@ -236,7 +236,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:87
-#: includes/shipping/class-wc-montonio-shipping.php:272
+#: includes/shipping/class-wc-montonio-shipping.php:268
 msgid "Track your shipment:"
 msgstr ""
 
@@ -300,11 +300,11 @@ msgstr ""
 msgid "Please select a pickup point."
 msgstr "Lūdzu izvēlēties pakomātu"
 
-#: includes/shipping/class-wc-montonio-shipping.php:168
+#: includes/shipping/class-wc-montonio-shipping.php:167
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:248
+#: includes/shipping/class-wc-montonio-shipping.php:244
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
@@ -318,7 +318,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:242
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:318
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:484
-#: includes/shipping/class-wc-montonio-shipping.php:251
+#: includes/shipping/class-wc-montonio-shipping.php:247
 msgid "Montonio API response: "
 msgstr ""
 
@@ -1146,4 +1146,22 @@ msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:116
 msgid "The payment method will only be displayed if the cart total exceeds this amount. Minimum allowed value is 100."
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:15
+msgid "Montonio Latvijas Pasts courier"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:16
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:26
+msgid "Latvijas Pasts courier"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:15
+msgid "Montonio Latvijas Pasts parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:16
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:26
+msgid "Latvijas Pasts parcel machines"
 msgstr ""

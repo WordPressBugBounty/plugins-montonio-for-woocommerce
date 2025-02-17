@@ -172,7 +172,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
 
         $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-        if ( empty( $shipping_method_item ) || $shipping_method_item->method_type !== 'pickupPoint' ) {
+        if ( empty( $shipping_method_item ) || $shipping_method_item->method_type !== 'pickupPoints' ) {
             return $shipping_label;
         }
 

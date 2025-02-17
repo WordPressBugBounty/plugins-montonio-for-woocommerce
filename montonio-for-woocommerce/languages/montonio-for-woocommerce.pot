@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 8.0.0\n"
+"Project-Id-Version: Montonio for WooCommerce 8.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-31T12:40:32+00:00\n"
+"POT-Creation-Date: 2025-02-17T11:10:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -389,7 +389,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:242
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:318
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:484
-#: includes/shipping/class-wc-montonio-shipping.php:251
+#: includes/shipping/class-wc-montonio-shipping.php:247
 msgid "Montonio API response: "
 msgstr ""
 
@@ -762,7 +762,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:87
-#: includes/shipping/class-wc-montonio-shipping.php:272
+#: includes/shipping/class-wc-montonio-shipping.php:268
 msgid "Track your shipment:"
 msgstr ""
 
@@ -794,11 +794,11 @@ msgstr ""
 msgid "Shipment update failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:168
+#: includes/shipping/class-wc-montonio-shipping.php:167
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:248
+#: includes/shipping/class-wc-montonio-shipping.php:244
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
@@ -842,6 +842,24 @@ msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:28
 msgid "DPD parcel shop"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:15
+msgid "Montonio Latvijas Pasts courier"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:16
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:26
+msgid "Latvijas Pasts courier"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:15
+msgid "Montonio Latvijas Pasts parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:16
+#: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:26
+msgid "Latvijas Pasts parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:19
@@ -1052,7 +1070,7 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: montonio.php:230
+#: montonio.php:236
 msgid "Settings"
 msgstr ""
 

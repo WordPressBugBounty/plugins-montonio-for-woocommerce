@@ -116,7 +116,7 @@ class WC_Montonio_Shipping_Item_Manager {
      * @since 7.0.0
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @param string $carrier Carrier code
-     * @param string $type Shipping method type (parcelShop, pickupPoint, postOffice)
+     * @param string $type Shipping method type (parcelShop, parcelMachine, postOffice, courier)
      * @return array|object|null Database query results.
      */
     public static function get_shipping_method_items( $country, $carrier, $type ) {
@@ -150,7 +150,7 @@ class WC_Montonio_Shipping_Item_Manager {
      *
      * @since 7.0.0
      * @param string $carrier Carrier code
-     * @param string $type Shipping method type (parcelShop, pickupPoint, postOffice, courier)
+     * @param string $type Shipping method type (parcelShop, parcelMachine, postOffice, courier)
      * @return array List of country codes.
      */
     public static function get_shipping_method_countries( $carrier, $type ) {
@@ -172,7 +172,7 @@ class WC_Montonio_Shipping_Item_Manager {
      * @since 7.0.0
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @param string $carrier Carrier code
-     * @param string $type Shipping method type (parcelShop, pickupPoint, postOffice, courier)
+     * @param string $type Shipping method type (parcelShop, parcelMachine, postOffice, courier)
      * @return bool True if items exist, false otherwise.
      */
     public static function shipping_method_items_exist( $country, $carrier, $type ) {
@@ -192,7 +192,7 @@ class WC_Montonio_Shipping_Item_Manager {
      * @since 7.0.0
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @param string $carrier Carrier code
-     * @param string $type Shipping method type (parcelShop, pickupPoint, postOffice)
+     * @param string $type Shipping method type (parcelShop, parcelMachine, postOffice)
      * @return array Grouped pickup points by locality
      */
     public static function fetch_and_group_pickup_points( $country, $carrier, $type ) {

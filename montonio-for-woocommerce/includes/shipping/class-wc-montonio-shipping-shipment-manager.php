@@ -214,7 +214,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
 
         $parcels                  = array();
         $products                 = array();
-        $product_has_missing_args = false;
+        $skip_product_array       = false;
 
         foreach ( $order->get_items() as $item ) {
             $product  = $item->get_product();
@@ -241,8 +241,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 }
             }
 
-            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) || strlen( $name ) > 100 ) {
-                $product_has_missing_args = true;
+            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) || strlen( $name ) > 100 || false !== array_search( $sku, array_column( $products, 'sku' ) ) ) {
+                $skip_product_array = true;
                 continue;
             }
 
@@ -265,7 +265,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         // Only add products array if all products were valid
-        if ( 'create' === $type && ! $product_has_missing_args && ! empty( $products ) ) {
+        if ( 'create' === $type && ! $skip_product_array && ! empty( $products ) ) {
             $data['products'] = $products;
         }
 
