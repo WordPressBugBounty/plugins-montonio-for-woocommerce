@@ -39,13 +39,21 @@ class WC_Montonio_Shipping_Item_Manager {
             return;
         }
 
+        // Filter out B2B-only items only for courier services
+        $items_to_process = $data[$type];
+        if ( $type === 'courierServices' ) {
+            $items_to_process = array_filter( $data[$type], function( $item ) {
+                return ! isset( $item['b2bOnly'] ) || $item['b2bOnly'] === false;
+            } );
+        }
+
         $table_name = $wpdb->prefix . 'montonio_shipping_method_items';
 
         // Start transaction for data integrity
         $wpdb->query( 'START TRANSACTION' );
 
         // Prepare a list of IDs for deletion query
-        $shipping_item_ids = array_column( $data[$type], 'id' );
+        $shipping_item_ids = array_column( $items_to_process, 'id' );
 
         // Delete pickup points not present in the updated list
         $conditions = array();
@@ -73,7 +81,7 @@ class WC_Montonio_Shipping_Item_Manager {
         $wpdb->query( $wpdb->prepare( $sql, $params ) );
 
         // Insert or update records
-        foreach ( $data[$type] as $shipping_item_data ) {
+        foreach ( $items_to_process as $shipping_item_data ) {
             $mapped_data = array(
                 'item_id'        => $shipping_item_data['id'] ?? null,
                 'item_name'      => $shipping_item_data['name'] ?? null,
