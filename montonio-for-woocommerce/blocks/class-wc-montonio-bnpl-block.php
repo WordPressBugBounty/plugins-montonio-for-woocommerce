@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WC_Montonio_BNPL_Block class.
@@ -15,7 +15,7 @@ class WC_Montonio_BNPL_Block extends AbstractMontonioPaymentMethodBlock {
      * @since 7.1.0
      */
     public function __construct() {
-        parent::__construct('wc_montonio_bnpl');
+        parent::__construct( 'wc_montonio_bnpl' );
     }
 
     /**
@@ -29,6 +29,7 @@ class WC_Montonio_BNPL_Block extends AbstractMontonioPaymentMethodBlock {
             'title'       => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
             'description' => $this->get_setting( 'description' ),
             'iconurl'     => apply_filters( 'wc_montonio_bnpl_block_logo', 'https://public.montonio.com/images/logos/inbank-general.svg' ),
+            'sandboxMode' => $this->get_setting( 'sandbox_mode', 'no' )
         );
     }
 }

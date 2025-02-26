@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 8.0.1\n"
+"Project-Id-Version: Montonio for WooCommerce 8.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-17T11:10:55+00:00\n"
+"POT-Creation-Date: 2025-02-26T11:59:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -228,20 +228,14 @@ msgid "Please ensure activation of card payments v2 in partner system. <a href=\
 msgstr ""
 
 #: includes/admin/class-wc-montonio-display-admin-options.php:164
-msgid ""
-"To access the shipping API, you will need to use production (live) keys. Production keys will become available once you sign an agreement for either one of our services.<br/><br/>\r\n"
-"                For the shipping API specifically, production keys can also be used for testing purposes since no real costs are involved without sending actual packages."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-display-admin-options.php:171
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:177
+#: includes/admin/class-wc-montonio-display-admin-options.php:170
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating Payment Methods in WooCommerce</a>"
 msgstr ""
 
-#: includes/payment/class-wc-montonio-api.php:120
+#: includes/payment/class-wc-montonio-api.php:118
 msgid "Checkout via Montonio started."
 msgstr ""
 
@@ -389,7 +383,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:242
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:318
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:484
-#: includes/shipping/class-wc-montonio-shipping.php:247
+#: includes/shipping/class-wc-montonio-shipping.php:252
 msgid "Montonio API response: "
 msgstr ""
 
@@ -594,7 +588,6 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:183
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:201
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:214
-#: includes/shipping/class-wc-montonio-shipping-settings.php:91
 #: includes/shipping/class-wc-montonio-shipping-settings.php:98
 msgid "Enable"
 msgstr ""
@@ -735,82 +728,98 @@ msgstr ""
 msgid "Enable Montonio Shipping"
 msgstr ""
 
+#: includes/shipping/class-wc-montonio-shipping-settings.php:65
+msgid "Sandbox Mode"
+msgstr ""
+
 #: includes/shipping/class-wc-montonio-shipping-settings.php:66
+msgid "Enable Sandbox Mode"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:73
 msgid "Order status when label printed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:69
+#: includes/shipping/class-wc-montonio-shipping-settings.php:76
 msgid ""
 "What status should order be changed to in Woocommerce when label is printed in Montonio?<br>\r\n"
 "                    Status will only be changed when order's current status is \"Processing\"."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:76
+#: includes/shipping/class-wc-montonio-shipping-settings.php:83
 msgid "-- Do not change status --"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:84
+#: includes/shipping/class-wc-montonio-shipping-settings.php:91
 msgid "Tracking code text for e-mail"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:86
+#: includes/shipping/class-wc-montonio-shipping-settings.php:93
 msgid "Reset to default value"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:86
+#: includes/shipping/class-wc-montonio-shipping-settings.php:93
 msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href=\"%s\" target=\"_blank\">Click here</a> to learn more about how to add the code to customer emails."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:87
-#: includes/shipping/class-wc-montonio-shipping.php:268
+#: includes/shipping/class-wc-montonio-shipping-settings.php:94
+#: includes/shipping/class-wc-montonio-shipping.php:273
 msgid "Track your shipment:"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:90
+#: includes/shipping/class-wc-montonio-shipping-settings.php:97
 msgid "Show parcel machine address in dropdown in checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:97
+#: includes/shipping/class-wc-montonio-shipping-settings.php:104
 msgid "Show shipping provider logos in checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:108
+#: includes/shipping/class-wc-montonio-shipping-settings.php:105
+msgid "Enables"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:106
+msgid "Applicable only in legacy checkout"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:116
 msgid "Advanced"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:113
+#: includes/shipping/class-wc-montonio-shipping-settings.php:121
 msgid "Pickup point dropdown"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:117
-msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes."
+#: includes/shipping/class-wc-montonio-shipping-settings.php:125
+msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout)."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:74
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:75
 msgid "Shipment creation failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:124
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:126
 msgid "Shipment update failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:167
+#: includes/shipping/class-wc-montonio-shipping.php:170
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:244
+#: includes/shipping/class-wc-montonio-shipping.php:249
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:123
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:125
 msgid "Print shipping labels"
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:149
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:151
 msgid "Change status to label printed"
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:173
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:175
 msgid "Order marked as Label Printed."
 msgstr ""
 
@@ -837,11 +846,8 @@ msgid "Montonio DPD parcel shops"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:18
-msgid "DPD parcel shops"
-msgstr ""
-
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:28
-msgid "DPD parcel shop"
+msgid "DPD parcel shops"
 msgstr ""
 
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:15
@@ -876,11 +882,8 @@ msgid "Montonio Omniva parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php:18
-msgid "Omniva parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php:28
-msgid "Omniva parcel machine"
+msgid "Omniva parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:18
@@ -888,11 +891,8 @@ msgid "Montonio Omniva post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:19
-msgid "Omniva post offices"
-msgstr ""
-
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:29
-msgid "Omniva post office"
+msgid "Omniva post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/shipping-method-settings.php:12
@@ -992,36 +992,30 @@ msgid "Hide this shipping method when an item in cart has no set weight or dimen
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:17
-msgid "Montonio Smartpost courier"
+msgid "Montonio SmartPosti courier"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:18
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:28
-msgid "Smartpost courier"
+msgid "SmartPosti courier"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:17
-msgid "Montonio Smartpost parcel machines"
+msgid "Montonio SmartPosti parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:18
-msgid "Smartpost parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:29
-msgid "Smartpost parcel machine"
+msgid "SmartPosti parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:17
-msgid "Montonio Smartpost post offices"
+msgid "Montonio SmartPosti post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:18
-msgid "Smartpost post offices"
-msgstr ""
-
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:28
-msgid "Smartpost post office"
+msgid "SmartPosti post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:16
@@ -1029,11 +1023,8 @@ msgid "Montonio Unisend parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:17
-msgid "Unisend parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:27
-msgid "Unisend parcel machine"
+msgid "Unisend parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-courier.php:16
@@ -1050,11 +1041,8 @@ msgid "Montonio Venipak parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php:18
-msgid "Venipak parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php:28
-msgid "Venipak parcel machine"
+msgid "Venipak parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-shops.php:17

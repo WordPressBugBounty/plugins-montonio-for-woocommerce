@@ -222,12 +222,15 @@ class WC_Montonio_Helper {
      * @param string $sandbox_mode The sandbox mode
      * @return string The JWT token
      */
-    public static function create_jwt_token( $data = array(), $sandbox_mode = 'no' ) {
+    public static function create_jwt_token( $sandbox_mode = 'no', $data = array() ) {
         $api_keys = self::get_api_keys( $sandbox_mode );
 
         $data['accessKey'] = $api_keys['access_key'];
         $data['iat']       = time();
-        $data['exp']       = time() + ( 60 * 60 );
+
+        if ( ! isset( $data['exp'] ) ) {
+            $data['exp'] = time() + ( 60 * 60 );
+        }
 
         return \MontonioFirebaseV2\JWT\JWT::encode( $data, $api_keys['secret_key'] );
     }

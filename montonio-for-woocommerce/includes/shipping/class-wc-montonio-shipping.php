@@ -106,16 +106,19 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
             $order->update_meta_data( '_montonio_pickup_point_name', $shipping_method_item->item_name );
 
             if ( method_exists( $order, 'set_shipping' ) ) {
-                $order->set_shipping(
-                    array(
-                        'address_1' => $shipping_method_item->item_name,
-                        'address_2' => '',
-                        'city'      => $shipping_method_item->locality,
-                        'state'     => '',
-                        'postcode'  => $shipping_method_item->postal_code,
-                        'country'   => strtoupper( $shipping_method_item->country_code )
-                    )
+                $shipping_data = array(
+                    'address_1' => $shipping_method_item->item_name,
+                    'address_2' => '',
+                    'city'      => $shipping_method_item->locality,
+                    'postcode'  => $shipping_method_item->postal_code,
+                    'country'   => strtoupper( $shipping_method_item->country_code )
                 );
+
+                if ( ! WC_Montonio_Helper::is_checkout_block() ) {
+                    $shipping_data['state'] = '';
+                }
+
+                $order->set_shipping( $shipping_data );
             } else {
                 $order->update_meta_data( '_shipping_address_1', $shipping_method_item->item_name );
                 $order->update_meta_data( '_shipping_address_2', '' );
@@ -178,8 +181,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * @return void
      */
     public function sync_shipping_methods_ajax() {
+        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
         $url   = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
-        $token = WC_Montonio_Helper::create_jwt_token( array(
+        $token = WC_Montonio_Helper::create_jwt_token( $sandbox_mode, array(
             'hash' => md5( $url )
         ) );
 
@@ -206,7 +210,8 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
             $courier_services_synced = false;
             $pickup_point_countries  = array();
 
-            $shipping_api     = new WC_Montonio_Shipping_API();
+            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
             foreach ( $shipping_methods['countries'] as $country ) {

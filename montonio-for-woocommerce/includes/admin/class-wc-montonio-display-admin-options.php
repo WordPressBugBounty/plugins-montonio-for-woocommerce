@@ -161,13 +161,6 @@ class WC_Montonio_Display_Admin_Options {
 
         if ( 'montonio_shipping' === $id ) {
             $banners[] = array(
-                'content' => __( 'To access the shipping API, you will need to use production (live) keys. Production keys will become available once you sign an agreement for either one of our services.<br/><br/>
-                For the shipping API specifically, production keys can also be used for testing purposes since no real costs are involved without sending actual packages.', 'montonio-for-woocommerce' ),
-                'class'   => 'montonio-card--blue',
-                'icon'    => null
-            );
-
-            $banners[] = array(
                 'content' => sprintf( __( 'Follow these instructions to set up shipping: <a href="%s" target="_blank">How to set up Shipping solution</a>', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/57066-how-to-set-up-shipping-solution' ),
                 'class'   => null,
                 'icon'    => 'dashicons-info-outline'

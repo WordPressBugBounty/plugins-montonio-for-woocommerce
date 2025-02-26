@@ -37,16 +37,17 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      */
     public function create_label( $order_ids ) {
         $shipment_ids = $this->get_shipment_ids_from_order_ids( $order_ids );
-        $shipping_api = new WC_Montonio_Shipping_API();
+        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+        $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
 
         // This throws if there is a HTTP error
-        $response = $shipping_api->create_label( [
+        $response = $shipping_api->create_label( array(
             'shipmentIds' => $shipment_ids,
-            'metadata'    => [
+            'metadata'    => array(
                 'platform'        => 'wordpress ' . get_bloginfo( 'version' ) . ' woocommerce ' . WC()->version,
                 'platformVersion' => WC_MONTONIO_PLUGIN_VERSION
-            ]
-        ] );
+            )
+        ) );
 
         $response = json_decode( $response );
 
@@ -61,7 +62,8 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @return object The response object from the API.
      */
     public function get_label_file_by_id( $label_file_id ) {
-        $shipping_api = new WC_Montonio_Shipping_API();
+        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+        $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
         $response     = $shipping_api->get_label_file_by_id( $label_file_id );
         $response     = json_decode( $response );
 
@@ -80,11 +82,11 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
 
         foreach ( $order_ids as $order_id ) {
             $order = wc_get_order( $order_id );
-            
-            if ( 'registered' !== $order->get_meta( '_wc_montonio_shipping_shipment_status' ) ) {
+
+            if ( ! in_array( $order->get_meta( '_wc_montonio_shipping_shipment_status' ), array('registered', 'labelsCreated') ) ) {
                 continue;
             }
-            
+
             $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 
             if ( ! empty( $shipment_id ) ) {
@@ -189,12 +191,14 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @return WP_REST_Response|WP_Error The response object if everything went well, WP_Error if something went wrong
      */
     public function handle_label_ready_webhook( $payload ) {
+        error_log( 'print' );
         if ( isset( $payload->data->shipmentIds ) ) {
+            error_log( 'print 2' );
             $order_ids = $this->get_order_ids_from_shipment_ids( $payload->data->shipmentIds );
             do_action( 'wc_montonio_shipping_labels_ready', $order_ids );
             return new WP_REST_Response( 'labelFile.ready event handled successfully', 200 );
         } else {
-            return new WP_Error( 'montonio_shipping_label_ready_webhook_failed', 'No shipment IDs found in the payload', ['status' => 400] );
+            return new WP_Error( 'montonio_shipping_label_ready_webhook_failed', 'No shipment IDs found in the payload', array('status' => 400) );
         }
     }
 
@@ -206,13 +210,20 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @return void
      */
     public function mark_orders_as_labels_printed( $order_ids ) {
+        error_log( 'change-satus' );
         $new_status = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
+        error_log( $new_status );
+
         foreach ( $order_ids as $order_id ) {
+
+            error_log( 1 );
             $order = wc_get_order( $order_id );
+
             if ( $order->get_status() === 'processing' && 'no-change' !== $new_status ) {
+                error_log( 2 );
                 $order->update_status( $new_status );
                 $current_time = current_time( 'timestamp' );
-                WC_Montonio_Logger::log( 'Shipping V2 -> Label Printing -> Order ' . $order_id . ' status changed from processing to ' . $new_status, $current_time, $current_time );
+                WC_Montonio_Logger::log( 'Shipping -> Label Printing -> Order ' . $order_id . ' status changed from processing to ' . $new_status, $current_time, $current_time );
                 $order->add_order_note( 'Montonio shipping label printed' );
             }
 

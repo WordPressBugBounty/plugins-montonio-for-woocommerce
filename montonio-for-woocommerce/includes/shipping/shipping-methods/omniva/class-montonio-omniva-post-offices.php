@@ -26,7 +26,7 @@ class Montonio_Omniva_Post_Offices extends Montonio_Shipping_Method {
         $this->provider_name = 'omniva';
         $this->type_v2 = 'postOffice';
         $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/omniva.png';
-        $this->title = __( $this->get_option( 'title', __( 'Omniva post office', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->title = __( $this->get_option( 'title', __( 'Omniva post offices', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
     /**

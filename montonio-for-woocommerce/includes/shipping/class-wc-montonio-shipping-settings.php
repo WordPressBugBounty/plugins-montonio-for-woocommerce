@@ -62,6 +62,13 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'id'          => 'montonio_shipping_enabled'
             ),
             array(
+                'title'       => __( 'Sandbox Mode', 'montonio-for-woocommerce' ),
+                'desc'       => __( 'Enable Sandbox Mode', 'montonio-for-woocommerce' ),
+                'type'        => 'checkbox',
+                'default'     => 'no',
+                'id'          => 'montonio_shipping_sandbox_mode'
+            ),
+            array(
                 'type'    => 'select',
                 'title'   => __( 'Order status when label printed', 'montonio-for-woocommerce' ),
                 'class'   => 'wc-enhanced-select',
@@ -95,7 +102,8 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             ),
             array(
                 'title'       => __( 'Show shipping provider logos in checkout', 'montonio-for-woocommerce' ),
-                'desc'       => __( 'Enable', 'montonio-for-woocommerce' ),
+                'desc'       => __( 'Enables', 'montonio-for-woocommerce' ),
+                'desc_tip'    => __( 'Applicable only in legacy checkout', 'montonio-for-woocommerce' ),
                 'type'        => 'checkbox',
                 'default'     => 'no',
                 'id'          => 'montonio_shipping_show_provider_logos'
@@ -114,7 +122,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'type' => 'select',
                 'class' => 'wc-enhanced-select',
                 'default' => 'choices',
-                'desc' =>  __( 'Select the type of dropdown to use for pickup points. We recommend using the "Choices" dropdown as it offers a better user experience and interface. The "SelectWoo" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes.', 'montonio-for-woocommerce' ),
+                'desc' =>  __( 'Select the type of dropdown to use for pickup points. We recommend using the "Choices" dropdown as it offers a better user experience and interface. The "SelectWoo" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout).', 'montonio-for-woocommerce' ),
                 'options'     => array(
                     'choices' => 'Choices dropdown (recommended)',
                     'select2' => 'SelectWoo dropdown (legacy)',

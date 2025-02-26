@@ -206,8 +206,6 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             $labels  = $handler->create_label( $order_ids );
             return rest_ensure_response( ['message' => 'Labels created successfully.', 'data' => $labels] );
         } catch ( Exception $e ) {
-            // TODO: Montonio Logger
-            error_log( 'Error creating labels: ' . $e->getMessage() );
             WC_Montonio_Logger::log( 'Label creation failed. Response:' . $e->getMessage() );
             return new WP_Error( 'wc_montonio_shipping_label_creation_error', 'Error creating labels: ' . $e->getMessage(), ['status' => 500] );
         }

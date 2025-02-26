@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WC_Montonio_Hire_Purchase_Block class.
@@ -29,6 +29,7 @@ class WC_Montonio_Hire_Purchase_Block extends AbstractMontonioPaymentMethodBlock
             'title'       => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
             'description' => $this->get_setting( 'description' ),
             'iconurl'     => apply_filters( 'wc_montonio_hire_purchase_block_logo', 'https://public.montonio.com/images/logos/inbank-general.svg' ),
+            'sandboxMode' => $this->get_setting( 'sandbox_mode', 'no' )
         );
     }
 }

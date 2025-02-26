@@ -25,7 +25,7 @@ class Montonio_Omniva_Parcel_Machines extends Montonio_Shipping_Method {
         $this->provider_name = 'omniva';
         $this->type_v2 = 'parcelMachine';
         $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/omniva.png';
-        $this->title = __( $this->get_option( 'title', __( 'Omniva parcel machine', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->title = __( $this->get_option( 'title', __( 'Omniva parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
     /**

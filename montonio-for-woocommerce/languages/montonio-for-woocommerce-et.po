@@ -214,58 +214,53 @@ msgstr ""
 msgid "Enable Montonio Shipping"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:66
+#: includes/shipping/class-wc-montonio-shipping-settings.php:73
 msgid "Order status when label printed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:76
+#: includes/shipping/class-wc-montonio-shipping-settings.php:83
 msgid "-- Do not change status --"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:84
+#: includes/shipping/class-wc-montonio-shipping-settings.php:91
 msgid "Tracking code text for e-mail"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:86
+#: includes/shipping/class-wc-montonio-shipping-settings.php:93
 msgid "Reset to default value"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:86
+#: includes/shipping/class-wc-montonio-shipping-settings.php:93
 #, php-format
 msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href=\"%s\" target=\"_blank\">Click here</a> to learn more about how to add the code to customer emails."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:87
-#: includes/shipping/class-wc-montonio-shipping.php:268
+#: includes/shipping/class-wc-montonio-shipping-settings.php:94
+#: includes/shipping/class-wc-montonio-shipping.php:273
 msgid "Track your shipment:"
 msgstr "Jälgi oma saadetist:"
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:90
+#: includes/shipping/class-wc-montonio-shipping-settings.php:97
 msgid "Show parcel machine address in dropdown in checkout"
 msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:183
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:201
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:214
-#: includes/shipping/class-wc-montonio-shipping-settings.php:91
 #: includes/shipping/class-wc-montonio-shipping-settings.php:98
 msgid "Enable"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:97
+#: includes/shipping/class-wc-montonio-shipping-settings.php:104
 msgid "Show shipping provider logos in checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:108
+#: includes/shipping/class-wc-montonio-shipping-settings.php:116
 msgid "Advanced"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:113
+#: includes/shipping/class-wc-montonio-shipping-settings.php:121
 msgid "Pickup point dropdown"
-msgstr ""
-
-#: includes/shipping/class-wc-montonio-shipping-settings.php:117
-msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:341
@@ -300,11 +295,11 @@ msgstr ""
 msgid "Please select a pickup point."
 msgstr "Palun vali pakipunkt."
 
-#: includes/shipping/class-wc-montonio-shipping.php:167
+#: includes/shipping/class-wc-montonio-shipping.php:170
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:244
+#: includes/shipping/class-wc-montonio-shipping.php:249
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
@@ -318,11 +313,11 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:242
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:318
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:484
-#: includes/shipping/class-wc-montonio-shipping.php:247
+#: includes/shipping/class-wc-montonio-shipping.php:252
 msgid "Montonio API response: "
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:123
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:125
 msgid "Print shipping labels"
 msgstr ""
 
@@ -348,11 +343,8 @@ msgid "Montonio DPD parcel shops"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:18
-msgid "DPD parcel shops"
-msgstr ""
-
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:28
-msgid "DPD parcel shop"
+msgid "DPD parcel shops"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:19
@@ -362,18 +354,15 @@ msgstr ""
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:20
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:30
 msgid "Omniva courier"
-msgstr ""
+msgstr "Omniva kuller"
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php:17
 msgid "Montonio Omniva parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php:18
-msgid "Omniva parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php:28
-msgid "Omniva parcel machine"
+msgid "Omniva parcel machines"
 msgstr "Omniva pakiautomaat"
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:18
@@ -381,57 +370,45 @@ msgid "Montonio Omniva post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:19
-msgid "Omniva post offices"
-msgstr ""
-
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php:29
-msgid "Omniva post office"
+msgid "Omniva post offices"
 msgstr "Omniva postkontor"
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:17
-msgid "Montonio Smartpost courier"
+msgid "Montonio SmartPosti courier"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:18
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:28
-msgid "Smartpost courier"
-msgstr ""
+msgid "SmartPosti courier"
+msgstr "SmartPosti kuller"
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:17
-msgid "Montonio Smartpost parcel machines"
-msgstr ""
+msgid "Montonio SmartPosti parcel machines"
+msgstr "SmartPosti pakiautomaat"
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:18
-msgid "Smartpost parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php:29
-msgid "Smartpost parcel machine"
+msgid "SmartPosti parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:17
-msgid "Montonio Smartpost post offices"
+msgid "Montonio SmartPosti post offices"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:18
-msgid "Smartpost post offices"
-msgstr ""
-
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php:28
-msgid "Smartpost post office"
-msgstr ""
+msgid "SmartPosti post offices"
+msgstr "SmartPosti postkontor"
 
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:16
 msgid "Montonio Unisend parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:17
-msgid "Unisend parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php:27
-msgid "Unisend parcel machine"
-msgstr ""
+msgid "Unisend parcel machines"
+msgstr "Unisend pakiautomaat"
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-courier.php:16
 msgid "Montonio Venipak courier"
@@ -447,11 +424,8 @@ msgid "Montonio Venipak parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php:18
-msgid "Venipak parcel machines"
-msgstr ""
-
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php:28
-msgid "Venipak parcel machine"
+msgid "Venipak parcel machines"
 msgstr "Venipak pakiautomaat"
 
 #: includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-shops.php:17
@@ -552,12 +526,12 @@ msgstr ""
 msgid "API Settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:177
+#: includes/admin/class-wc-montonio-display-admin-options.php:170
 #, php-format
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating Payment Methods in WooCommerce</a>"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:171
+#: includes/admin/class-wc-montonio-display-admin-options.php:164
 #, php-format
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
@@ -592,7 +566,7 @@ msgstr ""
 msgid "Edit account keys"
 msgstr ""
 
-#: includes/payment/class-wc-montonio-api.php:120
+#: includes/payment/class-wc-montonio-api.php:118
 msgid "Checkout via Montonio started."
 msgstr ""
 
@@ -930,11 +904,11 @@ msgstr ""
 msgid "Shipment registration failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:74
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:75
 msgid "Shipment creation failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:124
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:126
 msgid "Shipment update failed."
 msgstr ""
 
@@ -963,7 +937,7 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:69
+#: includes/shipping/class-wc-montonio-shipping-settings.php:76
 msgid ""
 "What status should order be changed to in Woocommerce when label is printed in Montonio?<br>\r\n"
 "                    Status will only be changed when order's current status is \"Processing\"."
@@ -984,12 +958,6 @@ msgstr[1] ""
 #: blocks/class-wc-montonio-blocks-manager.php:149
 msgid "Selected Pickup Point"
 msgstr "Valitud pakiautomaat"
-
-#: includes/admin/class-wc-montonio-display-admin-options.php:164
-msgid ""
-"To access the shipping API, you will need to use production (live) keys. Production keys will become available once you sign an agreement for either one of our services.<br/><br/>\r\n"
-"                For the shipping API specifically, production keys can also be used for testing purposes since no real costs are involved without sending actual packages."
-msgstr ""
 
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-card/index.js:1
@@ -1038,11 +1006,11 @@ msgstr ""
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:149
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:151
 msgid "Change status to label printed"
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:173
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:175
 msgid "Order marked as Label Printed."
 msgstr ""
 
@@ -1102,7 +1070,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-machines.php:18
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-machines.php:28
 msgid "DPD parcel machines"
-msgstr ""
+msgstr "DPD pakiautomaat"
 
 #: includes/admin/class-wc-montonio-display-admin-options.php:144
 msgid "Test mode is for integration testing only. Payments are not processed."
@@ -1155,7 +1123,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:16
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:26
 msgid "Latvijas Pasts courier"
-msgstr ""
+msgstr "Latvijas Pasts kuller"
 
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:15
 msgid "Montonio Latvijas Pasts parcel machines"
@@ -1164,4 +1132,24 @@ msgstr ""
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:16
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php:26
 msgid "Latvijas Pasts parcel machines"
+msgstr "Latvijas Pasts pakiautomaat"
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:65
+msgid "Sandbox Mode"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:105
+msgid "Enables"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:106
+msgid "Applicable only in legacy checkout"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:125
+msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout)."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:66
+msgid "Enable Sandbox Mode"
 msgstr ""

@@ -19,7 +19,10 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function sync_method_items( $type, $carrier = null, $country = null ) {
         global $wpdb;
 
-        $montonio_shipping_api = new WC_Montonio_Shipping_API();
+        // Check if the plugin is in sandbox mode
+        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+
+        $montonio_shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
 
         if ( $type === 'courierServices' ) {
             $response = $montonio_shipping_api->get_courier_services( $carrier, $country );

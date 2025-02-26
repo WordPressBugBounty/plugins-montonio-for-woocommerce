@@ -70,9 +70,7 @@ class WC_Montonio_API {
      */
     public function create_payment_intent( $method ) {
         $data = array(
-            'accessKey' => $this->access_key,
             'method'    => $method,
-            'exp'       => time() + (60 * 60)
         );
 
         $args = array(
@@ -80,7 +78,7 @@ class WC_Montonio_API {
                 'Content-Type' => 'application/json',
             ),
             'method' => 'POST',
-            'body'   => json_encode( array( 'data' => MontonioFirebaseV2\JWT\JWT::encode( $data, $this->secret_key, 'HS256' ) ) )
+            'body'   => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
         );
 
         $response = $this->request( '/payment-intents/draft', $args );
@@ -94,14 +92,14 @@ class WC_Montonio_API {
      * @return object
      */
     public function create_order() {
-        $order_data = $this->get_order_data();
+        $data = $this->get_order_data();
 
         $args = array(
             'headers' => array(
                 'Content-Type' => 'application/json',
             ),
             'method' => 'POST',
-            'body'   => json_encode( array( 'data' => MontonioFirebaseV2\JWT\JWT::encode( $order_data, $this->secret_key, 'HS256' ) ) )
+            'body'   => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
         );
 
         $response = $this->request( '/orders', $args );
@@ -226,7 +224,7 @@ class WC_Montonio_API {
         $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( array(), $this->sandbox_mode ),
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode ),
             ),
             'method' => 'GET'
         );
@@ -240,8 +238,7 @@ class WC_Montonio_API {
      * @return string
      */
     public function create_refund_request( $order_uuid, $amount, $idempotency_key ) {
-        $payload = array(
-            'accessKey'      => $this->access_key,
+        $data = array(
             'orderUuid'      => $order_uuid,
             'amount'         => $amount,
             'idempotencyKey' => $idempotency_key,
@@ -253,7 +250,7 @@ class WC_Montonio_API {
                 'Content-Type' => 'application/json',
             ),
             'method' => 'POST',
-            'body'   => json_encode( array( 'data' => MontonioFirebaseV2\JWT\JWT::encode( $payload, $this->secret_key, 'HS256' ) ) )
+            'body'   => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
         );
 
        return $this->request( '/refunds', $args );

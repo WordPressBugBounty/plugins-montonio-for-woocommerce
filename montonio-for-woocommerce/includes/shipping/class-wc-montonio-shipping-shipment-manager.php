@@ -58,7 +58,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 $data['montonioOrderUuid'] = (string) $montonio_order_uuid;
             }
 
-            $shipping_api = new WC_Montonio_Shipping_API();
+            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
             $response     = $shipping_api->create_shipment( $data );
 
             WC_Montonio_Logger::log( 'Create shipment response: ' . $response );
@@ -109,7 +110,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
 
         try {
             $data         = $this->get_shipment_data( $order, 'update' );
-            $shipping_api = new WC_Montonio_Shipping_API();
+            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
             $response     = $shipping_api->update_shipment( $shipment_id, $data );
 
             WC_Montonio_Logger::log( 'Update shipment response: ' . $response );

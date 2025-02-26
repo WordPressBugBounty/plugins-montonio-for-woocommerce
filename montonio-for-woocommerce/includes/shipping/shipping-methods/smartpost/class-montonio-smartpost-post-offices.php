@@ -4,7 +4,7 @@ defined('ABSPATH') or exit;
 class Montonio_Smartpost_Post_Offices extends Montonio_Shipping_Method {
     const MAX_DIMENSIONS = [36, 60, 60]; // lowest to highest (cm)
 
-    public $default_title = 'Smartpost post office';
+    public $default_title = 'SmartPosti post office';
     public $default_max_weight = 35; // kg
 
     /**
@@ -14,8 +14,8 @@ class Montonio_Smartpost_Post_Offices extends Montonio_Shipping_Method {
      */
     protected function init() {
         $this->id                 = 'montonio_itella_post_offices';
-        $this->method_title       = __( 'Montonio Smartpost post offices', 'montonio-for-woocommerce' );
-        $this->method_description = __( 'Smartpost post offices', 'montonio-for-woocommerce' );
+        $this->method_title       = __( 'Montonio SmartPosti post offices', 'montonio-for-woocommerce' );
+        $this->method_description = __( 'SmartPosti post offices', 'montonio-for-woocommerce' );
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
@@ -24,8 +24,8 @@ class Montonio_Smartpost_Post_Offices extends Montonio_Shipping_Method {
 
         $this->provider_name = 'smartpost';
         $this->type_v2 = 'postOffice';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/itella.png';
-        $this->title = __( $this->get_option( 'title', __( 'Smartpost post office', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/smartposti.svg';
+        $this->title = __( $this->get_option( 'title', __( 'SmartPosti post offices', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
     /**

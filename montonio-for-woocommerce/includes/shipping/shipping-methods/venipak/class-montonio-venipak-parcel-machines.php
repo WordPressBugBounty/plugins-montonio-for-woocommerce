@@ -25,7 +25,7 @@ class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
         $this->provider_name = 'venipak';
         $this->type_v2 = 'parcelMachine';
         $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/venipak-logo.svg';
-        $this->title = __( $this->get_option( 'title', __( 'Venipak parcel machine', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->title = __( $this->get_option( 'title', __( 'Venipak parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
     }
 
     /**

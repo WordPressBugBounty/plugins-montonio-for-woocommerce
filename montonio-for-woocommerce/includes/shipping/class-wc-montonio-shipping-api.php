@@ -10,18 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Montonio_Shipping_API {
     /**
      * @since 7.0.0
-     * @var string The API access key
-     */
-    public $access_key;
-
-    /**
-     * @since 7.0.0
-     * @var string The API secret key
-     */
-    public $secret_key;
-
-    /**
-     * @since 7.0.0
      * @var string 'yes' if the API is in sandbox mode, 'no' otherwise
      */
     public $sandbox_mode;
@@ -30,7 +18,7 @@ class WC_Montonio_Shipping_API {
      * @since 7.0.0
      * @var string Root URL for the Montonio shipping sandbox application
      */
-    const MONTONIO_SHIPPING_SANDBOX_API_URL = 'https://shipping.montonio.com/api';
+    const MONTONIO_SHIPPING_SANDBOX_API_URL = 'https://sandbox-shipping.montonio.com/api';
 
     /**
      * @since 7.0.0
@@ -46,11 +34,6 @@ class WC_Montonio_Shipping_API {
      */
     public function __construct( $sandbox_mode = 'no' ) {
         $this->sandbox_mode = $sandbox_mode;
-
-        $api_keys = WC_Montonio_Helper::get_api_keys( $this->sandbox_mode );
-
-        $this->access_key = $api_keys['access_key'];
-        $this->secret_key = $api_keys['secret_key'];
     }
 
     /**
@@ -65,7 +48,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'GET'
         );
@@ -100,7 +83,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'GET'
         );
@@ -135,7 +118,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'GET'
         );
@@ -156,7 +139,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'POST',
             'body'    => json_encode( $data )
@@ -178,7 +161,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'PATCH',
             'body'    => json_encode( $data )
@@ -200,7 +183,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'GET'
         );
@@ -222,7 +205,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'POST',
             'body'    => json_encode( $data )
@@ -245,7 +228,7 @@ class WC_Montonio_Shipping_API {
         $options = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
             ),
             'method'  => 'GET'
         );
@@ -262,6 +245,7 @@ class WC_Montonio_Shipping_API {
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
     protected function api_request( $path, $options ) {
+        
         $url     = $this->get_api_url() . $path;
         $options = wp_parse_args( $options, array( 'timeout' => 30 ) );
 
