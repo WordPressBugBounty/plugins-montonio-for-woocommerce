@@ -22,6 +22,8 @@ jQuery(document).ready(function($) {
         initializeOrder();
     });
 
+    window.addEventListener('hashchange', onHashChange);
+
     function initializeOrder() {
         if ($('#montonio-card-form').hasClass('paymentInitilized')) {
             return false;
@@ -79,27 +81,26 @@ jQuery(document).ready(function($) {
 
     form.on('checkout_place_order', function() {
         if ($('input[value="wc_montonio_card"]').is(':checked') && !$('#montonio-card-form').is(':empty')) {
-            $('body').addClass('wc-montonio-cc-processing');
-
             if(isCompleted == false) {
-                $('body').removeClass('wc-montonio-cc-processing');
                 $.scroll_to_notices( $('#payment_method_wc_montonio_card') );
                 return false;
             }
         }
     });
+    
+    function onHashChange() {
+        if ($('input[value="wc_montonio_card"]').is(':checked')) {
+            var hash = window.location.hash.match(/^#confirm-pi-([0-9a-f-]+)$/i);
 
-    $(document).ajaxComplete( function() {
-        if ($('input[value="wc_montonio_card"]').is(':checked') && $('body').hasClass('wc-montonio-cc-processing') && !$('#montonio-card-form').is(':empty')) {
-            window.stop();
-        }
-    });
+            if ( ! hash ) {
+                return;
+            }
 
-    form.on('checkout_place_order_success', function() {       
-        if ($('input[value="wc_montonio_card"]').is(':checked') && !$('#montonio-card-form').is(':empty')) {
+            window.location.hash = 'processing';
+
             confirmPayment();
         }
-    });
+    }
 
     async function confirmPayment() {
         try {

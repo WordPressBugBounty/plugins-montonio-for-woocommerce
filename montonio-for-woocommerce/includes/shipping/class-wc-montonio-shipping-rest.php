@@ -114,7 +114,8 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
         $token = $request->get_param( 'token' );
         
         try {
-            $decoded = WC_Montonio_Helper::decode_jwt_token( $token );
+            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $decoded = WC_Montonio_Helper::decode_jwt_token( $token, $sandbox_mode );
             $url     = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
             $hash    = md5( $url );
 

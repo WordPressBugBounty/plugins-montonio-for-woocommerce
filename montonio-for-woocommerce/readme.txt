@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.0.3
+Version: 8.0.4
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 8.0.3
+Stable tag: 8.0.4
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,12 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 8.0.4 =
+* Tweak - Refactored the embedded payment flow to prevent unexpected redirects
+* Fix - Resolved an issue where pickup points from the previous country were still displayed after changing the shipping address in block checkout
+* Fix - Fixed an issue where the shipping sandbox mode was not properly decoding webhook payloads
+* Fix - Fixed address validation failing for countries that have the "State/County" field
+
 = 8.0.3 =
 * Added – Sandbox mode for shipping
 * Tweak – Enabled printing for orders with the labelsCreated status

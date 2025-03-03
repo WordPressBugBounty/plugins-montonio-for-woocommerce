@@ -21,6 +21,8 @@ jQuery(document).ready(function($) {
         initializeOrder();
     });
 
+    window.addEventListener('hashchange', onHashChange);
+
     function initializeOrder() {
         if ($('#montonio-blik-form').hasClass('paymentInitilized')) {
             return false;
@@ -78,27 +80,26 @@ jQuery(document).ready(function($) {
 
     form.on('checkout_place_order', function() {
         if ($('input[value="wc_montonio_blik"]').is(':checked') && !$('#montonio-blik-form').is(':empty')) {
-            $('body').addClass('wc-montonio-blik-processing');
-
             if(isCompleted == false) {
-                $('body').removeClass('wc-montonio-blik-processing');
                 $.scroll_to_notices( $('#payment_method_wc_montonio_blik') );
                 return false;
             }
         }
     });
 
-    $(document).ajaxComplete( function() {
-        if ($('input[value="wc_montonio_blik"]').is(':checked') && $('body').hasClass('wc-montonio-blik-processing') && !$('#montonio-blik-form').is(':empty')) {
-            window.stop();
-        }
-    });
+    function onHashChange() {
+        if ($('input[value="wc_montonio_blik"]').is(':checked')) {
+            var hash = window.location.hash.match(/^#confirm-pi-([0-9a-f-]+)$/i);
 
-    form.on('checkout_place_order_success', function() {       
-        if ($('input[value="wc_montonio_blik"]').is(':checked') && !$('#montonio-blik-form').is(':empty')) {
+            if ( ! hash ) {
+                return;
+            }
+
+            window.location.hash = 'processing';
+
             confirmPayment();
         }
-    });
+    }
 
     async function confirmPayment() {
         try {
