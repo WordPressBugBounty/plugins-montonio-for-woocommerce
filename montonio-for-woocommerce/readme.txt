@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.0.4
+Version: 8.0.5
 Date: 2019-09-04
 Contributors: Montonio
-Tags: online payment, payment, payment gateway, woocommerce, sales, hire-purchase, järelmaks, financing, credit intermediary, krediidivahendaja, montonio
+Tags: online payment, payment, payment gateway, sales, hire-purchase, järelmaks, financing, krediidivahendaja, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 8.0.4
+Stable tag: 8.0.5
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,10 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 8.0.5 =
+* Added - Embedded BLIK payment 'direct' flow integration
+* Tweak - Improved user-side error messages for better readability
+
 = 8.0.4 =
 * Tweak - Refactored the embedded payment flow to prevent unexpected redirects
 * Fix - Resolved an issue where pickup points from the previous country were still displayed after changing the shipping address in block checkout

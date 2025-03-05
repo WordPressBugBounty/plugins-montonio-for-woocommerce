@@ -18,6 +18,9 @@
     "multiple": false
   },
   "editorScript": "file:./index.js",
-  "viewScript": "file:./index.js",
+  "viewScript": [
+    "file:./index.js",
+    "file:./index-v1.js"
+  ],
   "textdomain": "montonio-for-woocommerce"
 }

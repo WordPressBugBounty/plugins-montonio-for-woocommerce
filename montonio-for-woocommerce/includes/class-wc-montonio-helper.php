@@ -266,4 +266,48 @@ class WC_Montonio_Helper {
             'message' => date( 'Y-m-d H:i:s' ) . ' - ' . $message
         );
     }
+
+    /**
+     * Translates Montonio API error codes to user-friendly messages
+     *
+     * @since 8.0.5
+     * @param string $raw_error The raw error response from the API
+     * @return string User-friendly translated error message
+     */
+    public static function get_error_message( $raw_error ) {
+        $decoded_error = json_decode( $raw_error, true );
+        $message       = isset( $decoded_error['message'] ) ? $decoded_error['message'] : '';
+
+        $error_translations = array(
+            'ER_GENERAL'         => __( 'A general error has occurred. Please try again later.', 'montonio-for-woocommerce' ),
+            'ER_TIC_USED'        => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_TIC_STS'         => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_TIC_EXPIRED'     => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_WRONG_TICKET'    => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'INSUFFICIENT_FUNDS' => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'TIMEOUT'            => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
+            'ER_BAD_PIN'         => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'GENERAL_ERROR'      => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'ISSUER_DECLINED'    => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'ALREADY_PAID_FOR'   => __( 'This order has already been paid for.', 'montonio-for-woocommerce' )
+        );
+
+        // Return the mapped message if we have one for this message
+        if ( ! empty( $message ) && isset( $error_translations[$message] ) ) {
+            return $error_translations[$message];
+        }
+
+        // First fallback: Use the decoded message if it exists
+        if ( ! empty( $message ) ) {
+
+            if ( is_array( $message ) ) {
+                $message = implode( '; ', $message );
+            }
+
+            return $message;
+        }
+
+        // Second fallback: Return the original error
+        return $raw_error;
+    }
 }

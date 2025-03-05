@@ -73,9 +73,23 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
      * @return array
      */
     public function get_payment_method_script_handles() {
-        $handle            = $this->name_slug . '-block';
         $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index.js';
-        $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . 'index.asset.php';
+        $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index.asset.php';
+
+        if ( 'wc_montonio_blik' === $this->name) {
+            $blik_settings = get_option( 'woocommerce_wc_montonio_blik_settings' );
+
+            if ( empty( $blik_settings['processor'] ) ) {
+                do_action( 'sync_blik_settings' );
+            }
+
+            if ( empty( $blik_settings['processor'] ) || 'stripe' === $blik_settings['processor'] ) {
+                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-v1.js';
+                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-v1.asset.php';        
+            }
+        }
+
+        $handle            = $this->name_slug . '-block';
         $script_asset      = file_exists( $script_asset_path )
             ? require $script_asset_path
             : array(

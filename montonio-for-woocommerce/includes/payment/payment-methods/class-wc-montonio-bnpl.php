@@ -237,13 +237,13 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
                 'redirect' => $response->paymentUrl,
             ];
         } catch ( Exception $e ) {
-            wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
+            $message = WC_Montonio_Helper::get_error_message( $e->getMessage() );
 
-            if ( ! empty( $e->getMessage() ) ) {
-                $order->add_order_note( __( 'Montonio: There was a problem processing the payment. Response: ', 'montonio-for-woocommerce' ) . $e->getMessage() );
-                wc_add_notice( __( 'Montonio API response: ', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
-                WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() . ' ' . $this->id );
-            }
+            wc_add_notice( $message, 'error' );
+
+            $order->add_order_note( __( 'Montonio: There was a problem processing the payment. Response: ', 'montonio-for-woocommerce' ) . $e->getMessage() );
+
+            WC_Montonio_Logger::log( 'Order creation failure - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
         }
     }
 

@@ -50,6 +50,15 @@ jQuery(document).ready(function($) {
 
                 initializePayment();
             } else {
+                if (response.data && typeof response.data === 'object' && response.data.reload) {
+                    // Refresh the page
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+
+                    return;
+                }
+
                 $('#montonio-blik-form').removeClass('loading').unblock();
             }
         });
