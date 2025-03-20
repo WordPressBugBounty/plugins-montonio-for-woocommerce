@@ -69,12 +69,6 @@ if ( ! empty( $shipment_status_reason ) ) {
                     <p><?php echo __( 'Shipment successfully created in Montonio. Waiting for tracking codes.', 'montonio-for-woocommerce' ); ?></p>
                 </div>
             <?php endif; ?>
-
-            <?php if ( 'registrationFailed' === $shipment_status ): ?>
-                <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--red">
-                    <p><?php echo __( 'Shipment registration in the carrier system failed.', 'montonio-for-woocommerce' ); ?></p>
-                </div>
-            <?php endif; ?>
         <?php endif; ?>
 
         <?php if ( ! empty( $error_reason ) ): ?>

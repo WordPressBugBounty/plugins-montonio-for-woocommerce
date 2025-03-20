@@ -634,6 +634,7 @@ class WC_Montonio_Shipping_Order {
 
         $order->add_order_note( $message );
         $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'registrationFailed' );
+        $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $message );
         $order->save_meta_data();
 
         return new WP_REST_Response( ['message' => 'Shipment registration failed message added to order'], 200 );

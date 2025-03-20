@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.1.0
+Version: 8.1.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, sales, hire-purchase, järelmaks, financing, krediidivahendaja, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 8.1.0
+Stable tag: 8.1.1
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,9 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 8.1.1 =
+* Fix - Display shipment registration failure error messages correctly
+
 = 8.1.0 =
 * Added - Refund status updates from API
 * Added - Shipment status updates from API

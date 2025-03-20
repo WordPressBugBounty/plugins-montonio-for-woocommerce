@@ -440,10 +440,6 @@ msgstr ""
 msgid "Montonio shipment ID:"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:75
-msgid "Shipment registration in the carrier system failed."
-msgstr ""
-
 #: templates/admin-order-shipping-panel.php:69
 msgid "Shipment successfully created in Montonio. Waiting for tracking codes."
 msgstr ""
@@ -452,15 +448,15 @@ msgstr ""
 msgid "Shipment tracking code(s):"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:88
+#: templates/admin-order-shipping-panel.php:82
 msgid "Update shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:90
+#: templates/admin-order-shipping-panel.php:84
 msgid "Create shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:94
+#: templates/admin-order-shipping-panel.php:88
 msgid "Print label"
 msgstr ""
 
@@ -1084,7 +1080,7 @@ msgid "Montonio Bank Payments"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:541
-#: includes/shipping/class-wc-montonio-shipping-order.php:659
+#: includes/shipping/class-wc-montonio-shipping-order.php:660
 msgid "add_tracking_codes: Order not found."
 msgstr ""
 
