@@ -42,7 +42,7 @@
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch('core/notices').createNotice(
                         'success',
-                        'Montonio: Shipment created/updated successfully',
+                        'Montonio: Shipment created/updated successfully.',
                     );
                 }
             },
@@ -50,7 +50,7 @@
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch('core/notices').createNotice(
                         'error',
-                        'Montonio: Shipment creation/update failed',
+                        'Montonio: Shipment creation/update failed. Check the order notes for details.',
                     );
                 }
             }
@@ -78,7 +78,7 @@
                     if (wp && wp.data && wp.data.dispatch) {
                         wp.data.dispatch('core/notices').createNotice(
                             'success',
-                            'Montonio: Shipment status updated',
+                            'Montonio: Shipment status updated.',
                         );
                     }
                 }

@@ -33,7 +33,7 @@ class WC_Montonio_Shipping_Webhooks {
             $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
             $payload      = WC_Montonio_Helper::decode_jwt_token( $decoded_body->payload, $sandbox_mode );
         } catch ( Exception $e ) {
-            return new WP_Error( 'montonio_shipping_webhook_invalid_token', 'Invalid token', array( 'status' => 400 ) );
+            return new WP_Error( 'montonio_shipping_webhook_invalid_token', $e->getMessage(), array( 'status' => 400 ) );
         }
 
         switch ( $payload->eventType ) {
@@ -42,7 +42,9 @@ class WC_Montonio_Shipping_Webhooks {
         case 'shipment.registrationFailed':
             return WC_Montonio_Shipping_Order::handle_registration_failed_webhook( $payload );
         case 'labelFile.ready':
-            return WC_Montonio_Shipping_Label_Printing::get_instance()->handle_label_ready_webhook( $payload );
+            return WC_Montonio_Shipping_Label_Printing::get_instance()->handle_label_ready_webhook( $payload );        
+        case 'shipment.statusUpdated':
+            return WC_Montonio_Shipping_Order::handle_status_update_webhook( $payload );
         default:
             WC_Montonio_Logger::log( 'Received unknown webhook event type: ' . $payload->eventType );
             return new WP_REST_Response( array( 'message' => 'Not handling this event type' ), 200 );

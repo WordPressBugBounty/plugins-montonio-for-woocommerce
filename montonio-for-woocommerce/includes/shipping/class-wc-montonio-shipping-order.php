@@ -13,15 +13,24 @@ class WC_Montonio_Shipping_Order {
      * @since 7.0.0
      */
     public function __construct() {
-        // Add shipping method filter
         if ( WC_Montonio_Helper::is_hpos_enabled() ) {
+            // Add shipping method filter
             add_action( 'woocommerce_order_list_table_restrict_manage_orders', array( $this, 'add_orders_filter' ) );
             add_filter( 'woocommerce_orders_table_query_clauses', array( $this, 'hpos_output_filter_results' ), 10, 3 );
             add_action( 'woocommerce_shop_order_list_table_custom_column', array( $this, 'modify_order_columns' ), 10, 2 );
+
+            // Add shipment status column
+            add_filter( 'woocommerce_shop_order_list_table_columns', array( $this, 'add_shipping_status_column' ), 20 );
+            add_action( 'woocommerce_shop_order_list_table_custom_column', array( $this, 'display_shipping_status_column_content' ), 20, 2 );        
         } else {
+            // Add shipping method filter
             add_action( 'restrict_manage_posts', array( $this, 'add_orders_filter' ) );
             add_filter( 'posts_where', array( $this, 'output_filter_results' ), 10, 2 );
             add_action( 'manage_shop_order_posts_custom_column', array( $this, 'modify_order_columns' ), 10, 2 );
+
+            // Add shipment status column
+            add_filter( 'manage_edit-shop_order_columns', array( $this, 'add_shipping_status_column' ), 20 );
+            add_action( 'manage_shop_order_posts_custom_column', array( $this, 'display_shipping_status_column_content' ), 20, 2 );
         }
 
         // Add custom order status
@@ -171,6 +180,53 @@ class WC_Montonio_Shipping_Order {
                 echo '<span style="color:sandybrown">' . __( 'Unexpected error - Check status in Montonio Partner System', 'montonio-for-woocommerce' ) . '</span><br />';
             } else {
                 echo '<span style="color:orange">' . __( 'Waiting for tracking codes from Montonio', 'montonio-for-woocommerce' ) . '</span><br />';
+            }
+        }
+    }
+
+    /**
+     * Add shipping status column to order list
+     *
+     * @since 8.1.0
+     * @param array $columns Current order list columns.
+     * @return array Modified columns.
+     */
+    public function add_shipping_status_column( $columns ) {
+        $new_columns = array();
+    
+        // Insert our column after the 'order_status' column
+        foreach ( $columns as $column_name => $column_info ) {
+            $new_columns[$column_name] = $column_info;
+    
+            if ( $column_name === 'order_status' ) {
+                $new_columns['montonio_shipping_status'] = __( 'Shipment status', 'montonio-for-woocommerce' );
+            }
+        }
+    
+        return $new_columns;
+    }
+    
+    /**
+     * Display shipping status column content
+     *
+     * @since 8.1.0
+     * @param string $column_name Column identifier.
+     * @param mixed $order_or_order_id WC_Order object or order ID.
+     * @return void
+     */
+    public function display_shipping_status_column_content( $column_name, $order_or_order_id ) {
+        $order = is_numeric( $order_or_order_id ) ? wc_get_order( $order_or_order_id ) : $order_or_order_id;
+        
+        if ( $column_name === 'montonio_shipping_status' && $order ) {
+            $status = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
+    
+            if ( ! empty( $status ) ) {
+                $formatted_status = preg_replace( '/(?<!^)([A-Z])/', ' $1', $status );
+                $formatted_status = ucfirst( strtolower( $formatted_status ) );
+    
+                echo '<mark class="order-status montonio-shippment-status montonio-shippment-status--' . esc_html( $status ) . '"><span>' . esc_html( $formatted_status ) . '</span></mark>';
+            } else {
+                echo '<span class="na">–</span>';
             }
         }
     }
@@ -523,14 +579,6 @@ class WC_Montonio_Shipping_Order {
      * @param object $payload The payload data
      * @return WP_REST_Response The response object
      */
-    /**
-     * @param $errors
-     * @param $messages
-     * @param $seen_messages
-     * @param $depth
-     * @param $max_depth
-     * @return null
-     */
     public static function handle_registration_failed_webhook( $payload ) {
         if ( empty( $payload ) ) {
             return new WP_REST_Response( ['message' => 'Response data missing'], 400 );
@@ -574,6 +622,7 @@ class WC_Montonio_Shipping_Order {
 
         $messages      = [];
         $seen_messages = [];
+
         if ( ! empty( $payload->data->errors ) ) {
             collect_error_messages( $payload->data->errors, $messages, $seen_messages );
         }
@@ -589,6 +638,37 @@ class WC_Montonio_Shipping_Order {
 
         return new WP_REST_Response( ['message' => 'Shipment registration failed message added to order'], 200 );
     }
+
+    /**
+     * Handle 'shipment.statusUpdate' webhook
+     *
+     * @since 8.1.0
+     * @param object $payload The payload data
+     * @return WP_REST_Response The response object
+     */
+    public static function handle_status_update_webhook( $payload ) {
+        if ( empty( $payload ) ) {
+            return new WP_REST_Response( ['message' => 'Response data missing'], 400 );
+        }
+
+        $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
+        $order    = wc_get_order( $order_id );
+
+        // Verify that the meta data is correct with what we just searched for
+        if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
+            WC_Montonio_Logger::log( __( 'add_tracking_codes: Order not found.', 'montonio-for-woocommerce' ) );
+            return new WP_REST_Response( ['message' => 'Order not found'], 400 );
+        }
+
+        $status = sanitize_text_field( $payload->data->status );
+  
+        if ( ! empty( $status ) ) {
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $status );
+            $order->save_meta_data();
+        }
+
+        return new WP_REST_Response( ['message' => 'Shipment status update processed'], 200 );
+    } 
 }
 
 new WC_Montonio_Shipping_Order();

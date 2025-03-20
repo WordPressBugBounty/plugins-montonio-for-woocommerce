@@ -67,6 +67,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
 
             $order->update_meta_data( '_wc_montonio_shipping_shipment_id', $decoded_response->id );
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $decoded_response->status );
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', '' );
             $order->save_meta_data();
 
             return $response;
@@ -74,21 +75,18 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $e->getMessage(), true );
             $note             = '<strong>' . __( 'Shipment creation failed.', 'montonio-for-woocommerce' ) . '</strong>';
 
-            if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
-                if ( is_array( $decoded_response['message'] ) ) {
-                    $note .= '<br>' . implode( '<br>', $decoded_response['message'] );
-                } else {
-                    $note .= '<br>' . $decoded_response['message'];
-                }
-                $note .= '<br>' . $decoded_response['error'];
-            } else {
-                $note .= '<br>' . $e->getMessage();
-            }
+            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+
+            $note .= '<br>' . $error_reason;
 
             $order->add_order_note( $note );
+            
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'creationFailed' );
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $note );
             $order->save_meta_data();
+
             WC_Montonio_Logger::log( 'Shipment creation failed. Response: ' . $e->getMessage() );
+
             return;
         }
     }
@@ -118,6 +116,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $response );
 
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $decoded_response->status );
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', '' );
             $order->save_meta_data();
 
             return $response;
@@ -125,21 +124,17 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $e->getMessage(), true );
             $note             = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
 
-            if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
-                if ( is_array( $decoded_response['message'] ) ) {
-                    $note .= '<br>' . implode( '<br>', $decoded_response['message'] );
-                } else {
-                    $note .= '<br>' . $decoded_response['message'];
-                }
-                $note .= '<br>' . $decoded_response['error'];
-            } else {
-                $note .= $e->getMessage();
-            }
+            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+
+            $note .= '<br>' . $error_reason;
 
             $order->add_order_note( $note );
-            $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'updateFailed' );
+
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $note );
             $order->save_meta_data();
+
             WC_Montonio_Logger::log( 'Shipment update failed. Response: ' . $e->getMessage() );
+
             return;
         }
     }
@@ -214,9 +209,9 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $data['receiver']['region']        = $address_data['region'];
         }
 
-        $parcels                  = array();
-        $products                 = array();
-        $skip_product_array       = false;
+        $parcels            = array();
+        $products           = array();
+        $skip_product_array = false;
 
         foreach ( $order->get_items() as $item ) {
             $product  = $item->get_product();
@@ -279,5 +274,22 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         return $data;
     }
 
+    private function extract_shipment_api_error_reason( $decoded_response, Exception $e ): string {
+        $error_reason = '';
+
+        if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
+            if ( is_array( $decoded_response['message'] ) ) {
+                $error_reason .= implode( '<br>', $decoded_response['message'] );
+            } else {
+                $error_reason .= $decoded_response['message'];
+            }
+
+            $error_reason .= '<br>' . $decoded_response['error'];
+        } else {
+            $error_reason .= $e->getMessage();
+        }
+
+        return $error_reason;
+    }
 }
 WC_Montonio_Shipping_Shipment_Manager::get_instance();

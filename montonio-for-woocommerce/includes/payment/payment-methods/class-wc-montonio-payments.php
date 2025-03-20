@@ -533,8 +533,12 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
      * @return bool True if the refund was successful, false otherwise.
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
-        $montonio_refund = new WC_Montonio_Refund( $this->sandbox_mode );
-        return $montonio_refund->init_refund( $order_id, $amount, $reason );
+        return WC_Montonio_Refund::init_refund( 
+            $order_id, 
+            $this->sandbox_mode,
+            $amount, 
+            $reason 
+        );
     }
 
     /**

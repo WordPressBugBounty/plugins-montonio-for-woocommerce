@@ -62,7 +62,7 @@ msgstr ""
 msgid "Pay with your credit or debit card via Montonio."
 msgstr "Оплачивайте кредитной или дебетовой картой через Montonio."
 
-#: includes/payment/class-wc-montonio-callbacks.php:191
+#: includes/payment/class-wc-montonio-callbacks.php:412
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
@@ -263,15 +263,15 @@ msgstr ""
 msgid "Pickup point dropdown"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:341
+#: includes/shipping/class-wc-montonio-shipping-order.php:397
 msgid "Select a destination country"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:381
+#: includes/shipping/class-wc-montonio-shipping-order.php:437
 msgid "Select pickup point"
 msgstr "Выберите способ доставки"
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:67
+#: includes/shipping/class-wc-montonio-shipping-order.php:76
 msgid "All shipping methods"
 msgstr ""
 
@@ -316,11 +316,11 @@ msgstr ""
 msgid "Print shipping labels"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:160
+#: includes/shipping/class-wc-montonio-shipping-order.php:169
 msgid "Tracking code(s)"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:173
+#: includes/shipping/class-wc-montonio-shipping-order.php:182
 msgid "Waiting for tracking codes from Montonio"
 msgstr ""
 
@@ -432,35 +432,35 @@ msgstr ""
 msgid "Venipak parcel shops"
 msgstr "Почтовый офис Venipak"
 
-#: templates/admin-order-shipping-panel.php:36
+#: templates/admin-order-shipping-panel.php:51
 msgid "We've noticed that this order includes Montonio's shipping method, but it seems that it's not registred in our Partner System yet, please click on \"Create shipment in Montonio\" to generate the shipment and obtain the tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:40
+#: templates/admin-order-shipping-panel.php:56
 msgid "Montonio shipment ID:"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:47
+#: templates/admin-order-shipping-panel.php:75
 msgid "Shipment registration in the carrier system failed."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:55
+#: templates/admin-order-shipping-panel.php:69
 msgid "Shipment successfully created in Montonio. Waiting for tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:63
+#: templates/admin-order-shipping-panel.php:62
 msgid "Shipment tracking code(s):"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:70
+#: templates/admin-order-shipping-panel.php:88
 msgid "Update shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:72
+#: templates/admin-order-shipping-panel.php:90
 msgid "Create shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:76
+#: templates/admin-order-shipping-panel.php:94
 msgid "Print label"
 msgstr ""
 
@@ -728,27 +728,27 @@ msgstr "Оплата тремя частями"
 msgid "Add %s to the cart to use this payment method"
 msgstr "Добавьте %s в корзину, чтобы использовать этот способ оплаты"
 
-#: includes/payment/class-wc-montonio-callbacks.php:82
+#: includes/payment/class-wc-montonio-callbacks.php:301
 msgid "There was a problem with processing the order."
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:162
+#: includes/payment/class-wc-montonio-callbacks.php:380
 msgid "Payment via Montonio, order ID: "
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:164
+#: includes/payment/class-wc-montonio-callbacks.php:382
 msgid "Payment method: "
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:165
+#: includes/payment/class-wc-montonio-callbacks.php:383
 msgid "Paid amount: "
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:172
+#: includes/payment/class-wc-montonio-callbacks.php:390
 msgid "Montonio: Payment is authorized but not yet processed by the bank, order ID: "
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:180
+#: includes/payment/class-wc-montonio-callbacks.php:398
 msgid "Montonio: Payment was rejected by the bank, order ID: "
 msgstr ""
 
@@ -876,32 +876,28 @@ msgstr "Германия"
 msgid "Montonio order UUID missing! Please refund this order manually in Montonio Partner System."
 msgstr ""
 
-#: includes/payment/class-wc-montonio-refund.php:47
-msgid "Refund via Montonio initiated successfully. Refund amount: "
-msgstr ""
-
 #: templates/shipping-pickup-points-dropdown.php:14
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 msgid "Select a pickup point"
 msgstr "Пожалуйста выберите способ доставки"
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:171
+#: includes/shipping/class-wc-montonio-shipping-order.php:180
 msgid "Unexpected error - Check status in Montonio Partner System"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:506
+#: includes/shipping/class-wc-montonio-shipping-order.php:562
 msgid "<strong>Shipment created.</strong><br>Tracking codes: "
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:581
+#: includes/shipping/class-wc-montonio-shipping-order.php:630
 msgid "Shipment registration failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:75
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:76
 msgid "Shipment creation failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:126
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:125
 msgid "Shipment update failed."
 msgstr ""
 
@@ -936,13 +932,13 @@ msgid ""
 "                    Status will only be changed when order's current status is \"Processing\"."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:186
-#: includes/shipping/class-wc-montonio-shipping-order.php:203
+#: includes/shipping/class-wc-montonio-shipping-order.php:242
+#: includes/shipping/class-wc-montonio-shipping-order.php:259
 msgctxt "Order status"
 msgid "Label printed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:191
+#: includes/shipping/class-wc-montonio-shipping-order.php:247
 msgid "Label printed (%s)"
 msgid_plural "Label printed (%s)"
 msgstr[0] ""
@@ -1075,11 +1071,7 @@ msgstr ""
 msgid "Please ensure activation of card payments v2 in partner system. <a href=\"%s\" target=\"_blank\">More information here</a>."
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:49
-msgid "Unable to finish the payment. \"order-token\" parameter is not set in order response."
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:186
+#: includes/payment/class-wc-montonio-callbacks.php:404
 msgid "Montonio: Payment session abandoned, order ID: "
 msgstr ""
 
@@ -1091,16 +1083,13 @@ msgstr ""
 msgid "Montonio Bank Payments"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:485
+#: includes/shipping/class-wc-montonio-shipping-order.php:541
+#: includes/shipping/class-wc-montonio-shipping-order.php:659
 msgid "add_tracking_codes: Order not found."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:11
 msgid "Montonio Shipping"
-msgstr ""
-
-#: templates/admin-order-shipping-panel.php:51
-msgid "Shipment update failed. Please view the error details in the order notes and try again."
 msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:113
@@ -1191,4 +1180,68 @@ msgstr ""
 
 #: blocks/build/wc-montonio-blik/index.js:1
 msgid "Payment intent not found in the response."
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:164
+msgid "<strong>Refund canceled.</strong><br>Refund ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:179
+#: includes/payment/class-wc-montonio-callbacks.php:219
+msgid "<strong>Refund rejected.</strong><br>Refund ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:188
+#: includes/payment/class-wc-montonio-callbacks.php:259
+#: includes/payment/class-wc-montonio-refund.php:69
+msgid "<strong>Refund of %s processed succesfully.</strong><br>Refund ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:267
+#: includes/payment/class-wc-montonio-refund.php:78
+msgid "<strong>Refund of %s pending.</strong><br>Refund ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:34
+msgid "No refund record found. Please refund this order manually in Montonio Partner System."
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:52
+msgid "Refund rejected. Refund ID: "
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:75
+msgid "Refund via Montonio pending.<br>Refund amount: "
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:103
+msgid "<strong>Refund failed.</strong><br>"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:117
+#: includes/payment/class-wc-montonio-refund.php:136
+msgctxt "Order status"
+msgid "Partially refunded"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-refund.php:122
+msgid "Partially refunded (%s)"
+msgid_plural "Partially refunded (%s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:202
+msgid "Shipment status"
+msgstr ""
+
+#: templates/admin-order-shipping-panel.php:32
+msgid "Shipment creation failed. Please check order notes for error reason."
+msgstr ""
+
+#: templates/admin-order-shipping-panel.php:34
+msgid "Shipment update failed. Please check order notes for error reason"
+msgstr ""
+
+#: templates/admin-order-shipping-panel.php:36
+msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
 msgstr ""

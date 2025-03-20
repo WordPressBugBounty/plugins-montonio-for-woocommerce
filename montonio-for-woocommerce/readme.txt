@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.0.5
+Version: 8.1.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, sales, hire-purchase, järelmaks, financing, krediidivahendaja, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 8.0.5
+Stable tag: 8.1.0
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,12 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 8.1.0 =
+* Added - Refund status updates from API
+* Added - Shipment status updates from API
+* Added - Shipment status column in the order list view for better tracking
+* Tweak - Improved shipment error handling and display for a better user experience
+
 = 8.0.5 =
 * Added - Embedded BLIK payment 'direct' flow integration
 * Tweak - Improved user-side error messages for better readability
