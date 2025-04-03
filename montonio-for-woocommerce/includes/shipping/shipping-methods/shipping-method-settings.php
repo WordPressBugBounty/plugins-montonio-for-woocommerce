@@ -116,6 +116,15 @@ $settings['enableFreeShippingThreshold'] = array(
     'default'     => 'no',
 );
 
+$settings['excludeVirtualFromThreshold'] = array(
+    'title'       => '',
+    'label'       => __( 'Exclude virtual products from free shipping threshold', 'montonio-for-woocommerce' ),
+    'type'        => 'checkbox',
+    'description' => __( 'When calculating the cart total for free shipping, exclude the price of virtual products', 'montonio-for-woocommerce' ),
+    'desc_tip'    => true,
+    'default'     => 'no',
+);
+
 $settings['freeShippingThreshold'] = array(
     'title'       => __( 'Free shipping threshold', 'montonio-for-woocommerce' ),
     'type'        => 'text',

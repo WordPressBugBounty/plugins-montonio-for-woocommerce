@@ -367,43 +367,61 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
             }
         }
 
-        $response_message = 'Order processed successfully';
+        if ( strpos( $order->get_payment_method(), 'wc_montonio_' ) === false ) {
+            WC_Montonio_Logger::log( 'Invalid payment method detected. Order ID: ' . $order_id );
 
-        if ( $order->has_status( array( 'processing', 'completed' ) ) ) {
-            $return_url       = $this->get_return_url( $order );
-            $response_message = 'The order already has the status \'Processing\' or \'Completed\'';
-            WC_Montonio_Logger::log( 'The order (#' . $order_id . ') already has the status "Processing" or "Completed"' );
+            if ( $this->is_webhook ) {
+                wp_send_json( array(
+                    'success' => false,
+                    'data'    => array(
+                        'message'       => 'Invalid payment method',
+                        'error_details' => 'Order contains payment method that is not supported by Montonio'
+                    )
+                ), 200 );
+            } else {
+                die( 'Order contains payment method that is not supported by Montonio' );
+            }
+        }
+
+        $response_message = 'The order has been processed successfully';
+
+        if ( $order->has_status( apply_filters( 'wc_montonio_processed_order_statuses', array( 'processing', 'completed', 'wc-mon-part-refund' ) ) ) && ! in_array( $payment_status, array( 'VOIDED', 'PARTIALLY_REFUNDED' ) ) ) {
+            $response_message = 'The order has already been processed, no status change applied';
+            WC_Montonio_Logger::log( 'The order (#' . $order_id . ') has already been processed, no status change applied' );
+
+            $return_url = $this->get_return_url( $order );
         } else {
             switch ( $payment_status ) {
                 case 'PAID':
                     $order->payment_complete();
-                    $order->add_order_note( __( 'Payment via Montonio, order ID: ', 'montonio-for-woocommerce' ) . $uuid );
+
                     $order->add_order_note(
-                        __( 'Payment method: ', 'montonio-for-woocommerce' ) . $payment_provider_name . '<br>' .
-                        __( 'Paid amount: ', 'montonio-for-woocommerce' ) . $grand_total . $currency
+                        sprintf(
+                            __( '<strong>Payment via Montonio.</strong><br>Order ID: %s<br>Payment method: %s<br>Paid amount: %s%s', 'montonio-for-woocommerce' ),
+                            $uuid,
+                            $payment_provider_name,
+                            $grand_total,
+                            $currency
+                        )
                     );
 
                     WC()->cart->empty_cart();
                     $return_url = $this->get_return_url( $order );
                     break;
                 case 'AUTHORIZED':
-                    $order->add_order_note( __( 'Montonio: Payment is authorized but not yet processed by the bank, order ID: ', 'montonio-for-woocommerce' ) . $uuid );
+                    $order->add_order_note( sprintf( __( 'Montonio: Payment is authorized but not yet processed by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
                     $order->update_status( apply_filters( 'wc_montonio_authorized_order_status', 'on-hold' ) );
 
                     WC()->cart->empty_cart();
                     $return_url = $this->get_return_url( $order );
                     break;
                 case 'VOIDED':
-                    if ( strpos( $order->get_payment_method(), 'wc_montonio_' ) !== false ) {
-                        $order->add_order_note( __( 'Montonio: Payment was rejected by the bank, order ID: ', 'montonio-for-woocommerce' ) . $uuid );
-                        $order->update_status( apply_filters( 'wc_montonio_voided_order_status', 'cancelled' ) );
-                    }
+                    $order->add_order_note( sprintf( __( 'Montonio: Payment was rejected by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
+                    $order->update_status( apply_filters( 'wc_montonio_voided_order_status', 'cancelled' ) );
                     break;
                 case 'ABANDONED':
-                    if ( strpos( $order->get_payment_method(), 'wc_montonio_' ) !== false && $order->has_status( 'pending' ) ) {
-                        $order->add_order_note( __( 'Montonio: Payment session abandoned, order ID: ', 'montonio-for-woocommerce' ) . $uuid );
-                        $order->update_status( apply_filters( 'wc_montonio_abandoned_order_status', 'cancelled' ) );
-                    }
+                    $order->add_order_note( sprintf( __( 'Montonio: Payment session abandoned, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
+                    $order->update_status( apply_filters( 'wc_montonio_abandoned_order_status', 'cancelled' ) );
                     break;
                 case 'PARTIALLY_REFUNDED':
                     $order->update_status( apply_filters( 'wc_montonio_partially_refunded_order_status', 'wc-mon-part-refund' ) );

@@ -80,7 +80,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $note .= '<br>' . $error_reason;
 
             $order->add_order_note( $note );
-            
+
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'creationFailed' );
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $note );
             $order->save_meta_data();
@@ -199,6 +199,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         );
 
         if ( 'create' === $type ) {
+            $data['orderComment'] = (string) sanitize_text_field( $order->get_customer_note() );
             $data['notificationUrl'] = esc_url_raw( rest_url( 'montonio/shipping/v2/webhook' ) );
         }
 
@@ -214,12 +215,13 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         $skip_product_array = false;
 
         foreach ( $order->get_items() as $item ) {
-            $product  = $item->get_product();
-            $sku      = $product->get_sku();
-            $barcode  = method_exists( $product, 'get_global_unique_id' ) ? $product->get_global_unique_id() : null;
-            $name     = $product->get_name();
-            $quantity = $item->get_quantity();
-            $weight   = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
+            $product    = $item->get_product();
+            $product_id = $product->get_id();
+            $sku        = $product->get_sku();
+            $barcode    = method_exists( $product, 'get_global_unique_id' ) ? $product->get_global_unique_id() : null;
+            $name       = $product->get_name();
+            $quantity   = $item->get_quantity();
+            $weight     = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
 
             if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
                 for ( $i = 0; $i < $quantity; $i++ ) {
@@ -238,9 +240,24 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 }
             }
 
-            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) || strlen( $name ) > 100 || false !== array_search( $sku, array_column( $products, 'sku' ) ) ) {
+            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) || strlen( $name ) > 100 ) {
                 $skip_product_array = true;
                 continue;
+            }
+
+            // Check for duplicate SKUs
+            $duplicate_index = array_search( $sku, array_column( $products, 'sku' ) );
+
+            if ( false !== $duplicate_index ) {
+                // SKU duplicate found, check if product IDs match
+                if ( isset( $product_ids[$duplicate_index] ) && $product_ids[$duplicate_index] === $product_id ) {
+                    // Same product (based on item ID), just increase quantity
+                    $products[$duplicate_index]['quantity'] += floatval( $quantity );
+                    continue;
+                } else {
+                    $skip_product_array = true;
+                    continue;
+                }
             }
 
             $product_data = array(
@@ -253,7 +270,8 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 $product_data['barcode'] = (string) $barcode;
             }
 
-            $products[] = $product_data;
+            $product_ids[] = $product_id;
+            $products[]    = $product_data;
         }
 
         // For combined parcel, if it exists and weight is 0, set to 1
@@ -274,7 +292,12 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         return $data;
     }
 
-    private function extract_shipment_api_error_reason( $decoded_response, Exception $e ): string {
+    /**
+     * @param $decoded_response
+     * @param Exception $e
+     * @return mixed
+     */
+    private function extract_shipment_api_error_reason( $decoded_response, Exception $e ) {
         $error_reason = '';
 
         if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {

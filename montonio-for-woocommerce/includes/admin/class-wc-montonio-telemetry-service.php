@@ -280,6 +280,7 @@ class WC_Montonio_Telemetry_Service {
             'settings' => [
                 'montonio_shipping_enabled'                     => get_option( 'montonio_shipping_enabled' ),
                 'montonio_shipping_orderStatusWhenLabelPrinted' => get_option( 'montonio_shipping_orderStatusWhenLabelPrinted' ),
+                'montonio_shipping_order_status_when_delivered' => get_option( 'montonio_shipping_order_status_when_delivered' ),
                 'montonio_email_tracking_code_text'             => get_option( 'montonio_email_tracking_code_text' ),
                 'montonio_shipping_show_address'                => get_option( 'montonio_shipping_show_address' ),
                 'montonio_shipping_show_provider_logos'         => get_option( 'montonio_shipping_show_provider_logos' ),

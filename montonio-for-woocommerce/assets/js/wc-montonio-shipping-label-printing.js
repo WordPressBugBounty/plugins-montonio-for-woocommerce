@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
     'use strict'; 
 
+    const { __, _x, _n, _nx } = wp.i18n;
     var labelPrintingInterval = null;
     var shippingPanel = $('.montonio-shipping-panel');
     
@@ -42,8 +43,8 @@ jQuery(document).ready(function($) {
         if (!wcMontonioShippingLabelPrintingData || !wcMontonioShippingLabelPrintingData.orderId) {
             if (wp && wp.data && wp.data.dispatch) {
                 wp.data.dispatch("core/notices").createNotice(
-                    "error",
-                    "Montonio: Missing wcMontonioShippingLabelPrintingData", // Text string to display.
+                    'error',
+                    __('Montonio: Missing wcMontonioShippingLabelPrintingData', 'montonio-for-woocommerce')
                 );
             }
             return;
@@ -62,8 +63,8 @@ jQuery(document).ready(function($) {
         if (!wcMontonioShippingLabelPrintingData || !wcMontonioShippingLabelPrintingData.createLabelsUrl) {
             if (wp && wp.data && wp.data.dispatch) {
                 wp.data.dispatch("core/notices").createNotice(
-                    "error",
-                    "Montonio: Missing wcMontonioShippingLabelPrintingData", // Text string to display.
+                    'error',
+                    __('Montonio: Missing wcMontonioShippingLabelPrintingData', 'montonio-for-woocommerce')
                 );
             }
             return;
@@ -71,8 +72,8 @@ jQuery(document).ready(function($) {
 
         if (wp && wp.data && wp.data.dispatch) {
             wp.data.dispatch("core/notices").createNotice(
-                "info",
-                "Montonio: Started downloading Shipping labels", // Text string to display.
+                'info',
+                __('Montonio: Started downloading Shipping labels', 'montonio-for-woocommerce')
             );
         }
 
@@ -95,8 +96,8 @@ jQuery(document).ready(function($) {
                     } else {
                         if (wp && wp.data && wp.data.dispatch) {
                             wp.data.dispatch("core/notices").createNotice(
-                                "error",
-                                "Montonio: Unable to start polling for labels", // Text string to display.
+                                'error',
+                                __('Montonio: Unable to start polling for labels', 'montonio-for-woocommerce')
                             );
                         }
                     }
@@ -108,11 +109,11 @@ jQuery(document).ready(function($) {
 
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch("core/notices").createNotice(
-                        "error",
-                        "Montonio: Failed to print labels", // Text string to display.
+                        'error',
+                        __('Montonio: Failed to print labels', 'montonio-for-woocommerce'),
                     );
                 } else {
-                    alert("Montonio: Failed to print labels");
+                    alert(__('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
                 }
             }
         });
@@ -132,8 +133,8 @@ jQuery(document).ready(function($) {
 
             if (wp && wp.data && wp.data.dispatch) {
                 wp.data.dispatch("core/notices").createNotice(
-                    "error",
-                    "Montonio: Missing wcMontonioShippingLabelPrintingData", // Text string to display.
+                    'error',
+                    __('Montonio: Missing wcMontonioShippingLabelPrintingData', 'montonio-for-woocommerce'),
                 );
             }
         }
@@ -156,11 +157,11 @@ jQuery(document).ready(function($) {
 
                     if (wp && wp.data && wp.data.dispatch) {
                         wp.data.dispatch("core/notices").createNotice(
-                            "success",
-                            "Montonio: Labels downloaded. Refresh the browser for updated order statuses", // Text string to display.
+                            'success',
+                            __('Montonio: Labels downloaded. Refresh the browser for updated order statuses', 'montonio-for-woocommerce'),
                         );
                     } else {
-                        alert("Montonio: Labels downloaded. Refresh the browser for updated order statuses");
+                        alert(__('Montonio: Labels downloaded. Refresh the browser for updated order statuses', 'montonio-for-woocommerce'));
                     }
 
                     shippingPanel.removeClass('montonio-shipping-panel--loading');
@@ -174,11 +175,11 @@ jQuery(document).ready(function($) {
 
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch("core/notices").createNotice(
-                        "error",
-                        "Montonio: Failed to print labels", // Text string to display.
+                        'error',
+                        __('Montonio: Failed to print labels', 'montonio-for-woocommerce'),
                     );
                 } else {
-                    alert("Montonio: Failed to print labels");
+                    alert(__('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
                 }
             }
         });

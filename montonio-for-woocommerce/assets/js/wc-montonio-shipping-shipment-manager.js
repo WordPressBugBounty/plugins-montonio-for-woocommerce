@@ -1,6 +1,7 @@
 (function($){
     'use strict';
 
+    const { __, _x, _n, _nx } = wp.i18n;
     var shippingPanel = $('.montonio-shipping-panel');
     var shipmentStatus = '';
 
@@ -9,8 +10,8 @@
         if (!wcMontonioShippingShipmentData || !wcMontonioShippingShipmentData.orderId) {
             if (wp && wp.data && wp.data.dispatch) {
                 wp.data.dispatch("core/notices").createNotice(
-                    "error",
-                    "Montonio: Missing wcMontonioShippingShipmentData", // Text string to display.
+                    'error',
+                    'Montonio: Missing wcMontonioShippingShipmentData',
                 );
             }
             return;
@@ -42,7 +43,7 @@
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch('core/notices').createNotice(
                         'success',
-                        'Montonio: Shipment created/updated successfully.',
+                        __('Montonio: Shipment created/updated successfully.', 'montonio-for-woocommerce'),
                     );
                 }
             },
@@ -50,7 +51,7 @@
                 if (wp && wp.data && wp.data.dispatch) {
                     wp.data.dispatch('core/notices').createNotice(
                         'error',
-                        'Montonio: Shipment creation/update failed. Check the order notes for details.',
+                        __('Montonio: Shipment creation/update failed.', 'montonio-for-woocommerce'),
                     );
                 }
             }
@@ -78,7 +79,7 @@
                     if (wp && wp.data && wp.data.dispatch) {
                         wp.data.dispatch('core/notices').createNotice(
                             'success',
-                            'Montonio: Shipment status updated.',
+                            __('Montonio: Shipment status updated.', 'montonio-for-woocommerce'),
                         );
                     }
                 }

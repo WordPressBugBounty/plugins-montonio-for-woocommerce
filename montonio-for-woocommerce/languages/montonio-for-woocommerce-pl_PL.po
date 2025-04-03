@@ -63,7 +63,7 @@ msgstr ""
 msgid "Pay with your credit or debit card via Montonio."
 msgstr "Zapłać swoją kartą kredytową lub debetową"
 
-#: includes/payment/class-wc-montonio-callbacks.php:412
+#: includes/payment/class-wc-montonio-callbacks.php:430
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
@@ -130,71 +130,71 @@ msgstr ""
 msgid "Allow free shipping if the cart total exceeds the specified amount"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:120
+#: includes/shipping/shipping-methods/shipping-method-settings.php:129
 msgid "Free shipping threshold"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:123
+#: includes/shipping/shipping-methods/shipping-method-settings.php:132
 msgid "Minimum cart total for free shipping"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:129
+#: includes/shipping/shipping-methods/shipping-method-settings.php:138
 msgid "Enable quantity based free shipping"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:131
+#: includes/shipping/shipping-methods/shipping-method-settings.php:140
 msgid "Allow free shipping if the product quantity in the cart equals or exceeds the specified amount"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:137
+#: includes/shipping/shipping-methods/shipping-method-settings.php:146
 msgid "Free shipping product quantity"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:139
+#: includes/shipping/shipping-methods/shipping-method-settings.php:148
 msgid "Minimum amount of items in the cart for free shipping (excludes virtual products)"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:146
+#: includes/shipping/shipping-methods/shipping-method-settings.php:155
 msgid "Enable free shipping rate text"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:148
+#: includes/shipping/shipping-methods/shipping-method-settings.php:157
 msgid "Display 0.00 amount or custom text for free shipping rate"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:154
+#: includes/shipping/shipping-methods/shipping-method-settings.php:163
 msgid "Free shipping rate text"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:156
+#: includes/shipping/shipping-methods/shipping-method-settings.php:165
 msgid "Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate."
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:161
+#: includes/shipping/shipping-methods/shipping-method-settings.php:170
 msgid "Measurement check options"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:169
+#: includes/shipping/shipping-methods/shipping-method-settings.php:178
 msgid "Enable package measurements check"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:171
+#: includes/shipping/shipping-methods/shipping-method-settings.php:180
 msgid "Hide this shipping method if package's weight or dimensions exceed limits"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:177
+#: includes/shipping/shipping-methods/shipping-method-settings.php:186
 msgid "Maximum weight (kg)"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:179
+#: includes/shipping/shipping-methods/shipping-method-settings.php:188
 msgid "The total weight of items in the cart that is allowed for this option to be displayed"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:185
+#: includes/shipping/shipping-methods/shipping-method-settings.php:194
 msgid "Hide when no measurements"
 msgstr ""
 
-#: includes/shipping/shipping-methods/shipping-method-settings.php:187
+#: includes/shipping/shipping-methods/shipping-method-settings.php:196
 msgid "Hide this shipping method when an item in cart has no set weight or dimensions"
 msgstr ""
 
@@ -220,55 +220,56 @@ msgid "Order status when label printed"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:83
+#: includes/shipping/class-wc-montonio-shipping-settings.php:97
 msgid "-- Do not change status --"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:91
+#: includes/shipping/class-wc-montonio-shipping-settings.php:104
 msgid "Tracking code text for e-mail"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:93
+#: includes/shipping/class-wc-montonio-shipping-settings.php:106
 msgid "Reset to default value"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:93
+#: includes/shipping/class-wc-montonio-shipping-settings.php:106
 #, php-format
 msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href=\"%s\" target=\"_blank\">Click here</a> to learn more about how to add the code to customer emails."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:94
+#: includes/shipping/class-wc-montonio-shipping-settings.php:107
 #: includes/shipping/class-wc-montonio-shipping.php:273
 msgid "Track your shipment:"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:97
+#: includes/shipping/class-wc-montonio-shipping-settings.php:111
 msgid "Show parcel machine address in dropdown in checkout"
 msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:183
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:201
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:214
-#: includes/shipping/class-wc-montonio-shipping-settings.php:98
+#: includes/shipping/class-wc-montonio-shipping-settings.php:112
 msgid "Enable"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:104
+#: includes/shipping/class-wc-montonio-shipping-settings.php:118
 msgid "Show shipping provider logos in checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:116
+#: includes/shipping/class-wc-montonio-shipping-settings.php:130
 msgid "Advanced"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:121
+#: includes/shipping/class-wc-montonio-shipping-settings.php:135
 msgid "Pickup point dropdown"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:397
+#: includes/shipping/class-wc-montonio-shipping-order.php:419
 msgid "Select a destination country"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:437
+#: includes/shipping/class-wc-montonio-shipping-order.php:459
 msgid "Select pickup point"
 msgstr ""
 
@@ -518,12 +519,12 @@ msgstr ""
 msgid "API Settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:170
+#: includes/admin/class-wc-montonio-display-admin-options.php:159
 #, php-format
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating Payment Methods in WooCommerce</a>"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:164
+#: includes/admin/class-wc-montonio-display-admin-options.php:153
 #, php-format
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
@@ -729,26 +730,6 @@ msgstr ""
 msgid "There was a problem with processing the order."
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:380
-msgid "Payment via Montonio, order ID: "
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:382
-msgid "Payment method: "
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:383
-msgid "Paid amount: "
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:390
-msgid "Montonio: Payment is authorized but not yet processed by the bank, order ID: "
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:398
-msgid "Montonio: Payment was rejected by the bank, order ID: "
-msgstr ""
-
 #: includes/payment/payment-methods/class-wc-montonio-card.php:34
 msgid "Allows card payments via Montonio"
 msgstr ""
@@ -882,11 +863,11 @@ msgstr ""
 msgid "Unexpected error - Check status in Montonio Partner System"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:562
+#: includes/shipping/class-wc-montonio-shipping-order.php:584
 msgid "<strong>Shipment created.</strong><br>Tracking codes: "
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:630
+#: includes/shipping/class-wc-montonio-shipping-order.php:652
 msgid "Shipment registration failed."
 msgstr ""
 
@@ -929,13 +910,13 @@ msgid ""
 "                    Status will only be changed when order's current status is \"Processing\"."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:242
-#: includes/shipping/class-wc-montonio-shipping-order.php:259
+#: includes/shipping/class-wc-montonio-shipping-order.php:252
+#: includes/shipping/class-wc-montonio-shipping-order.php:269
 msgctxt "Order status"
 msgid "Label printed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:247
+#: includes/shipping/class-wc-montonio-shipping-order.php:257
 msgid "Label printed (%s)"
 msgid_plural "Label printed (%s)"
 msgstr[0] ""
@@ -995,11 +976,11 @@ msgstr ""
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:151
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:157
 msgid "Change status to label printed"
 msgstr ""
 
-#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:175
+#: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:181
 msgid "Order marked as Label Printed."
 msgstr ""
 
@@ -1065,14 +1046,6 @@ msgstr ""
 msgid "Test mode is for integration testing only. Payments are not processed."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:154
-msgid "Please ensure activation of card payments v2 in partner system. <a href=\"%s\" target=\"_blank\">More information here</a>."
-msgstr ""
-
-#: includes/payment/class-wc-montonio-callbacks.php:404
-msgid "Montonio: Payment session abandoned, order ID: "
-msgstr ""
-
 #: includes/payment/payment-methods/class-wc-montonio-card.php:33
 msgid "Montonio Card Payments"
 msgstr ""
@@ -1081,8 +1054,8 @@ msgstr ""
 msgid "Montonio Bank Payments"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:541
-#: includes/shipping/class-wc-montonio-shipping-order.php:660
+#: includes/shipping/class-wc-montonio-shipping-order.php:563
+#: includes/shipping/class-wc-montonio-shipping-order.php:682
 msgid "add_tracking_codes: Order not found."
 msgstr ""
 
@@ -1120,15 +1093,15 @@ msgstr ""
 msgid "Sandbox Mode"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:105
+#: includes/shipping/class-wc-montonio-shipping-settings.php:119
 msgid "Enables"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:106
+#: includes/shipping/class-wc-montonio-shipping-settings.php:120
 msgid "Applicable only in legacy checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:125
+#: includes/shipping/class-wc-montonio-shipping-settings.php:139
 msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout)."
 msgstr ""
 
@@ -1144,24 +1117,38 @@ msgstr "Płatność nieudana. Spróbuj ponownie."
 #: includes/class-wc-montonio-helper.php:284
 #: includes/class-wc-montonio-helper.php:285
 #: includes/class-wc-montonio-helper.php:286
+#: includes/class-wc-montonio-helper.php:292
+#: includes/class-wc-montonio-helper.php:293
+#: includes/class-wc-montonio-helper.php:294
+#: includes/class-wc-montonio-helper.php:295
 msgid "Incorrect BLIK code was entered. Try again."
 msgstr "Podano błędny kod BLIK. Spróbuj ponownie."
 
 #: includes/class-wc-montonio-helper.php:287
 #: includes/class-wc-montonio-helper.php:289
+#: includes/class-wc-montonio-helper.php:296
+#: includes/class-wc-montonio-helper.php:298
+#: includes/class-wc-montonio-helper.php:301
 msgid "Check the reason in the banking application and try again."
 msgstr "Płatność nieudana. Sprawdź powód w aplikacji bankowej i spróbuj ponownie."
 
 #: includes/class-wc-montonio-helper.php:288
+#: includes/class-wc-montonio-helper.php:297
+#: includes/class-wc-montonio-helper.php:303
+#: includes/class-wc-montonio-helper.php:304
 msgid "Payment failed - not confirmed on time in the banking application. Try again."
 msgstr "Płatność nieudana - nie została potwierdzona na czas w aplikacji bankowej. Spróbuj ponownie."
 
 #: includes/class-wc-montonio-helper.php:290
 #: includes/class-wc-montonio-helper.php:291
+#: includes/class-wc-montonio-helper.php:299
+#: includes/class-wc-montonio-helper.php:300
+#: includes/class-wc-montonio-helper.php:308
+#: includes/class-wc-montonio-helper.php:309
 msgid "Payment failed. Try again."
 msgstr "Płatność nieudana. Spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:292
+#: includes/class-wc-montonio-helper.php:310
 msgid "This order has already been paid for."
 msgstr "To zamówienie zostało już opłacone."
 
@@ -1243,4 +1230,119 @@ msgstr ""
 
 #: templates/admin-order-shipping-panel.php:36
 msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:224
+msgid "Pending"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:225
+msgid "Creation failed"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:226
+msgid "Registered"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:227
+msgid "Registration failed"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:228
+msgid "Labels created"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:229
+msgid "In transit"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:230
+msgid "Awaiting collection"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:231
+msgid "Delivered"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:47
+#: assets/js/wc-montonio-shipping-label-printing.js:67
+#: assets/js/wc-montonio-shipping-label-printing.js:137
+msgid "Montonio: Missing wcMontonioShippingLabelPrintingData"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:76
+msgid "Montonio: Started downloading Shipping labels"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:100
+msgid "Montonio: Unable to start polling for labels"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:113
+#: assets/js/wc-montonio-shipping-label-printing.js:116
+#: assets/js/wc-montonio-shipping-label-printing.js:179
+#: assets/js/wc-montonio-shipping-label-printing.js:182
+msgid "Montonio: Failed to print labels"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:161
+#: assets/js/wc-montonio-shipping-label-printing.js:164
+msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:46
+msgid "Montonio: Shipment created/updated successfully."
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:54
+msgid "Montonio: Shipment creation/update failed."
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:82
+msgid "Montonio: Shipment status updated."
+msgstr ""
+
+#: includes/class-wc-montonio-helper.php:302
+msgid "Payment rejected in a banking application. Try again."
+msgstr ""
+
+#: includes/class-wc-montonio-helper.php:305
+msgid "Payment amount too high."
+msgstr ""
+
+#: includes/class-wc-montonio-helper.php:306
+#: includes/class-wc-montonio-helper.php:307
+msgid "Payment requires BLIK code."
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:400
+msgid "<strong>Payment via Montonio.</strong><br>Order ID: %s<br>Payment method: %s<br>Paid amount: %s%s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:412
+msgid "Montonio: Payment is authorized but not yet processed by the bank, order ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:419
+msgid "Montonio: Payment was rejected by the bank, order ID: %s"
+msgstr ""
+
+#: includes/payment/class-wc-montonio-callbacks.php:423
+msgid "Montonio: Payment session abandoned, order ID: %s"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:91
+msgid "Order status when shipment is delivered"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:94
+msgid "What status should the order be changed to in WooCommerce when the shipment is delivered?"
+msgstr ""
+
+#: includes/shipping/shipping-methods/shipping-method-settings.php:121
+msgid "Exclude virtual products from free shipping threshold"
+msgstr ""
+
+#: includes/shipping/shipping-methods/shipping-method-settings.php:123
+msgid "When calculating the cart total for free shipping, exclude the price of virtual products"
 msgstr ""

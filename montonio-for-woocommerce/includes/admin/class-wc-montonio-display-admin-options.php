@@ -148,17 +148,6 @@ class WC_Montonio_Display_Admin_Options {
             );
         }
 
-        if ( 'wc_montonio_card' === $id ) {
-            $banners[] = array(
-                'content' => sprintf(
-                    __( 'Please ensure activation of card payments v2 in partner system. <a href="%s" target="_blank">More information here</a>.', 'montonio-for-woocommerce' ),
-                    'https://help.montonio.com/en/articles/58670-woocommerce-x-montonio-card-payments-2023'
-                ),
-                'class'   => 'montonio-card--blue',
-                'icon'    => null
-            );
-        }
-
         if ( 'montonio_shipping' === $id ) {
             $banners[] = array(
                 'content' => sprintf( __( 'Follow these instructions to set up shipping: <a href="%s" target="_blank">How to set up Shipping solution</a>', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/57066-how-to-set-up-shipping-solution' ),

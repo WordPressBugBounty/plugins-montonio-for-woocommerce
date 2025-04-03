@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.1.1
+Version: 8.1.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: online payment, payment, payment gateway, sales, hire-purchase, järelmaks, financing, krediidivahendaja, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 8.1.1
+Stable tag: 8.1.2
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -81,6 +81,14 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 
 
 == Changelog ==
+= 8.1.2 =
+* Added - Option to exclude virtual products from the cart total when determining eligibility for free shipping
+* Added - Option to automatically update the order status when a shipment is marked as delivered
+* Added - 'orderComment' parameter in shipment data, populated with the customer checkout note
+* Added - Support for WPML-translated shipping classes
+* Tweak - Improved payment callback functionality
+* Tweak - Combine products with the same ID in the shipment data 'products' array
+
 = 8.1.1 =
 * Fix - Display shipment registration failure error messages correctly
 

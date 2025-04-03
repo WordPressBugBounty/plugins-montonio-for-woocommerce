@@ -86,7 +86,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * @var array
      * @since 7.0.0
      */
-    public $shipping_method_items = [];
+    public $shipping_method_items = array();
 
     /**
      * Constructor for the shipping method.
@@ -98,12 +98,12 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
         $this->enable_free_shipping_text = $this->get_option( 'enable_free_shipping_text' );
         $this->free_shipping_text        = $this->get_option( 'free_shipping_text' );
-        $this->country = WC_Montonio_Shipping_Helper::get_customer_shipping_country();
+        $this->country                   = WC_Montonio_Shipping_Helper::get_customer_shipping_country();
 
         $this->init_settings();
         $this->init_form_fields();
 
-        add_action( 'woocommerce_update_options_shipping_' . $this->id, [$this, 'process_admin_options'] );
+        add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 
         $this->init();
     }
@@ -125,7 +125,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         if ( ! $this->is_enabled() ) {
             return false;
         }
-        
+
         if ( ! WC_Montonio_Shipping_Item_Manager::shipping_method_items_exist( $this->country, $this->provider_name, $this->type_v2 ) ) {
             return false;
         }
@@ -145,15 +145,51 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         }
 
         // Check for disabled shipping classes
-        $disabled_classes = $this->get_option( 'disabled_shipping_classes', [] );
+        $disabled_classes = $this->get_option( 'disabled_shipping_classes', array() );
 
+        // Check if there are any disabled shipping classes configured
         if ( ! empty( $disabled_classes ) && is_array( $package['contents'] ) ) {
             foreach ( $package['contents'] as $item ) {
-                $product = $item['data'];
-                $shipping_class_id = $product->get_shipping_class_id();
-                
-                if ( in_array( $shipping_class_id, $disabled_classes ) ) {
+                $product                   = $item['data'];
+                $product_shipping_class_id = $product->get_shipping_class_id();
+
+                // No shipping class? Skip this item.
+                if ( ! $product_shipping_class_id ) {
+                    continue;
+                }
+
+                // Direct match check for performance
+                if ( in_array( $product_shipping_class_id, $disabled_classes ) ) {
                     return false;
+                }
+
+                // If WPML is active, we need to check the canonical ID
+                if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+                    $default_language = apply_filters( 'wpml_default_language', null );
+
+                    // Get the "canonical" ID for this shipping class (in default language)
+                    $product_canonical_id = apply_filters( 'wpml_object_id', $product_shipping_class_id, 'product_shipping_class', false, $default_language );
+
+                    if ( ! $product_canonical_id ) {
+                        continue; // Skip if we can't get a canonical ID
+                    }
+
+                    // Check each disabled class
+                    foreach ( $disabled_classes as $disabled_id ) {
+                        // Get the "canonical" ID for this disabled class
+                        $disabled_canonical_id = apply_filters( 'wpml_object_id', $disabled_id, 'product_shipping_class', false, $default_language );
+
+                        // If we can't get a canonical ID for the disabled class, skip it
+                        // This can happen if the disabled class is not translated in the current language
+                        if ( ! $disabled_canonical_id ) {
+                            continue;
+                        }
+
+                        // If the canonical IDs match, this is essentially the same shipping class in different languages
+                        if ( $product_canonical_id == $disabled_canonical_id ) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
@@ -168,10 +204,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * @return array An array of three dimensions [length, width, height] in cm.
      */
     protected function get_package_dimensions( $package ) {
-        $package_dimensions = [0, 0, 0];
+        $package_dimensions = array( 0, 0, 0 );
 
-        foreach( $package['contents'] as $item ) {
-            $item_dimensions = [];
+        foreach ( $package['contents'] as $item ) {
+            $item_dimensions   = array();
             $item_dimensions[] = (float) WC_Montonio_Helper::convert_to_cm( $item['data']->get_length() );
             $item_dimensions[] = (float) WC_Montonio_Helper::convert_to_cm( $item['data']->get_width() );
             $item_dimensions[] = (float) WC_Montonio_Helper::convert_to_cm( $item['data']->get_height() );
@@ -216,24 +252,24 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      *
      * @param array $package The package to calculate shipping for.
      */
-    public function calculate_shipping( $package = [] ) {
+    public function calculate_shipping( $package = array() ) {
         if ( get_option( 'montonio_shipping_enabled', 'no' ) !== 'yes' ) {
             return;
         }
 
-        $rate = [
+        $rate = array(
             'id'        => $this->get_rate_id(),
             'label'     => $this->title,
             'taxes'     => $this->get_option( 'tax_status' ) == 'none' ? false : '',
             'calc_tax'  => 'per_order',
             'cost'      => 0,
             'package'   => $package,
-            'meta_data' => [
+            'meta_data' => array(
                 'provider_name'     => $this->provider_name,
                 'type_v2'           => $this->type_v2,
-                'method_class_name' => get_class( $this ),
-            ]
-        ];
+                'method_class_name' => get_class( $this )
+            )
+        );
 
         // Calculate the costs
         $cost             = $this->get_option( 'price' );
@@ -243,10 +279,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         if ( '' !== $cost ) {
             $rate['cost'] = $this->evaluate_cost(
                 $cost,
-                [
+                array(
                     'qty'  => $this->get_package_item_qty( $package ),
                     'cost' => $package['contents_cost']
-                ]
+                )
             );
         }
 
@@ -269,10 +305,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
                 $class_cost = $this->evaluate_cost(
                     $class_cost_string,
-                    [
+                    array(
                         'qty'  => array_sum( wp_list_pluck( $products, 'quantity' ) ),
                         'cost' => array_sum( wp_list_pluck( $products, 'line_total' ) )
-                    ]
+                    )
                 );
 
                 if ( 'class' === $calculation_type ) {
@@ -287,8 +323,23 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             }
         }
 
-        if ( $this->get_option( 'enableFreeShippingThreshold' ) === 'yes' && (float) $cart_total > (float) $this->get_option( 'freeShippingThreshold' ) ) {
-            $rate['cost'] = 0;
+        if ( $this->get_option( 'enableFreeShippingThreshold' ) === 'yes' ) {
+            // Exclude virtual products if the option is enabled
+            if ( $this->get_option( 'excludeVirtualFromThreshold' ) === 'yes' ) {
+                $virtual_products_total = 0;
+
+                foreach ( WC()->cart->get_cart() as $cart_item ) {
+                    if ( $cart_item['data']->is_virtual() ) {
+                        $virtual_products_total += $cart_item['line_total'] + $cart_item['line_tax'];
+                    }
+                }
+
+                $cart_total = $cart_total - $virtual_products_total;
+            }
+
+            if ( wc_format_decimal( $cart_total, 2 ) > wc_format_decimal( $this->get_option( 'freeShippingThreshold' ), 2 ) ) {
+                $rate['cost'] = 0;
+            }
         }
 
         if ( $this->get_option( 'enableFreeShippingQty' ) === 'yes' && (float) $package_item_qty >= (float) $this->get_option( 'freeShippingQty' ) ) {
@@ -348,14 +399,14 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * @return array An array of shipping classes and their associated products.
      */
     public function find_shipping_classes( $package ) {
-        $found_shipping_classes = [];
+        $found_shipping_classes = array();
 
         foreach ( $package['contents'] as $item_id => $values ) {
             if ( $values['data']->needs_shipping() ) {
                 $found_class = $values['data']->get_shipping_class();
 
                 if ( ! isset( $found_shipping_classes[$found_class] ) ) {
-                    $found_shipping_classes[$found_class] = [];
+                    $found_shipping_classes[$found_class] = array();
                 }
 
                 $found_shipping_classes[$found_class][$item_id] = $values;
@@ -372,7 +423,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * @param array $args Arguments for evaluation, must contain 'cost' and 'qty' keys.
      * @return float The evaluated cost.
      */
-    protected function evaluate_cost( $sum, $args = [] ) {
+    protected function evaluate_cost( $sum, $args = array() ) {
         // Add warning for subclasses.
         if ( ! is_array( $args ) || ! array_key_exists( 'qty', $args ) || ! array_key_exists( 'cost', $args ) ) {
             wc_doing_it_wrong( __FUNCTION__, '$args must contain `cost` and `qty` keys.', '4.0.1' );
@@ -383,27 +434,27 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         // Allow 3rd parties to process shipping cost arguments.
         $args           = apply_filters( 'wc_montonio_evaluate_shipping_cost_args', $args, $sum, $this );
         $locale         = localeconv();
-        $decimals       = [wc_get_price_decimal_separator(), $locale['decimal_point'], $locale['mon_decimal_point'], ','];
+        $decimals       = array( wc_get_price_decimal_separator(), $locale['decimal_point'], $locale['mon_decimal_point'], ',' );
         $this->fee_cost = $args['cost'];
 
         // Expand shortcodes.
-        add_shortcode( 'fee', [$this, 'fee'] );
+        add_shortcode( 'fee', array( $this, 'fee' ) );
 
         $sum = do_shortcode(
             str_replace(
-                [
+                array(
                     '[qty]',
                     '[cost]'
-                ],
-                [
+                ),
+                array(
                     $args['qty'],
                     $args['cost']
-                ],
+                ),
                 $sum
             )
         );
 
-        remove_shortcode( 'fee', [$this, 'fee'] );
+        remove_shortcode( 'fee', array( $this, 'fee' ) );
 
         // Remove whitespace from string.
         $sum = preg_replace( '/\s+/', '', $sum );
@@ -426,11 +477,11 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      */
     public function fee( $atts ) {
         $atts = shortcode_atts(
-            [
+            array(
                 'percent' => '',
                 'min_fee' => '',
                 'max_fee' => ''
-            ],
+            ),
             $atts,
             'fee'
         );
@@ -462,15 +513,15 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     public function sanitize_cost( $value ) {
         $value = is_null( $value ) ? '' : $value;
         $value = wp_kses_post( trim( wp_unslash( $value ) ) );
-        $value = str_replace( [get_woocommerce_currency_symbol(), html_entity_decode( get_woocommerce_currency_symbol() )], '', $value );
+        $value = str_replace( array( get_woocommerce_currency_symbol(), html_entity_decode( get_woocommerce_currency_symbol() ) ), '', $value );
 
         // Thrown an error on the front end if the evaluate_cost will fail.
         $dummy_cost = $this->evaluate_cost(
             $value,
-            [
+            array(
                 'cost' => 1,
                 'qty'  => 1
-            ]
+            )
         );
 
         if ( false === $dummy_cost ) {

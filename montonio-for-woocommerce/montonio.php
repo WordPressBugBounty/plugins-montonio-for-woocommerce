@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           8.1.1
+ * Version:           8.1.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '8.1.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '8.1.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -282,8 +282,8 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_style( 'montonio-admin-style', WC_MONTONIO_PLUGIN_URL . '/assets/css/montonio-admin-style.css', array(), WC_MONTONIO_PLUGIN_VERSION );
             wp_register_script( 'montonio-admin-script', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-admin-script.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-admin', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-admin.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'wc-montonio-shipping-shipment-manager', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-shipment-manager.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'wc-montonio-shipping-label-printing', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-label-printing.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'wc-montonio-shipping-shipment-manager', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-shipment-manager.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'wc-montonio-shipping-label-printing', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-label-printing.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-admin-style' );
             wp_enqueue_script( 'montonio-admin-script' );

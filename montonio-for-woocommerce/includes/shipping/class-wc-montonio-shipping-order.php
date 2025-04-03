@@ -21,7 +21,7 @@ class WC_Montonio_Shipping_Order {
 
             // Add shipment status column
             add_filter( 'woocommerce_shop_order_list_table_columns', array( $this, 'add_shipping_status_column' ), 20 );
-            add_action( 'woocommerce_shop_order_list_table_custom_column', array( $this, 'display_shipping_status_column_content' ), 20, 2 );        
+            add_action( 'woocommerce_shop_order_list_table_custom_column', array( $this, 'display_shipping_status_column_content' ), 20, 2 );
         } else {
             // Add shipping method filter
             add_action( 'restrict_manage_posts', array( $this, 'add_orders_filter' ) );
@@ -36,7 +36,7 @@ class WC_Montonio_Shipping_Order {
         // Add custom order status
         add_action( 'init', array( $this, 'add_custom_order_status' ) );
         add_filter( 'wc_order_statuses', array( $this, 'add_custom_order_status_to_order_statuses' ) );
-        add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_status_order_action' ), 10, 2);
+        add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_custom_status_order_action' ), 10, 2 );
 
         // Hide metadata fields from order view
         add_filter( 'woocommerce_hidden_order_itemmeta', array( $this, 'hide_custom_order_itemmeta' ) );
@@ -193,19 +193,19 @@ class WC_Montonio_Shipping_Order {
      */
     public function add_shipping_status_column( $columns ) {
         $new_columns = array();
-    
+
         // Insert our column after the 'order_status' column
         foreach ( $columns as $column_name => $column_info ) {
             $new_columns[$column_name] = $column_info;
-    
+
             if ( $column_name === 'order_status' ) {
                 $new_columns['montonio_shipping_status'] = __( 'Shipment status', 'montonio-for-woocommerce' );
             }
         }
-    
+
         return $new_columns;
     }
-    
+
     /**
      * Display shipping status column content
      *
@@ -216,15 +216,25 @@ class WC_Montonio_Shipping_Order {
      */
     public function display_shipping_status_column_content( $column_name, $order_or_order_id ) {
         $order = is_numeric( $order_or_order_id ) ? wc_get_order( $order_or_order_id ) : $order_or_order_id;
-        
+
         if ( $column_name === 'montonio_shipping_status' && $order ) {
             $status = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
-    
+
+            $status_labels = array(
+                'pending'            => __( 'Pending', 'montonio-for-woocommerce' ),
+                'creationFailed'     => __( 'Creation failed', 'montonio-for-woocommerce' ),
+                'registered'         => __( 'Registered', 'montonio-for-woocommerce' ),
+                'registrationFailed' => __( 'Registration failed', 'montonio-for-woocommerce' ),
+                'labelsCreated'      => __( 'Labels created', 'montonio-for-woocommerce' ),
+                'inTransit'          => __( 'In transit', 'montonio-for-woocommerce' ),
+                'awaitingCollection' => __( 'Awaiting collection', 'montonio-for-woocommerce' ),
+                'delivered'          => __( 'Delivered', 'montonio-for-woocommerce' )
+            );
+
             if ( ! empty( $status ) ) {
-                $formatted_status = preg_replace( '/(?<!^)([A-Z])/', ' $1', $status );
-                $formatted_status = ucfirst( strtolower( $formatted_status ) );
-    
-                echo '<mark class="order-status montonio-shippment-status montonio-shippment-status--' . esc_html( $status ) . '"><span>' . esc_html( $formatted_status ) . '</span></mark>';
+                $status_label = isset( $status_labels[$status] ) ? $status_labels[$status] : ucfirst( strtolower( preg_replace( '/(?<!^)([A-Z])/', ' $1', $status ) ) );
+
+                echo '<mark class="order-status montonio-shippment-status montonio-shippment-status--' . esc_html( $status ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
             } else {
                 echo '<span class="na">–</span>';
             }
@@ -273,10 +283,10 @@ class WC_Montonio_Shipping_Order {
             $actions['complete'] = array(
                 'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=woocommerce_mark_order_status&status=completed&order_id=' . $order->get_id() ), 'woocommerce-mark-order-status' ),
                 'name'   => __( 'Complete', 'woocommerce' ),
-                'action' => 'complete',
+                'action' => 'complete'
             );
         }
-    
+
         return $actions;
     }
 
@@ -288,7 +298,7 @@ class WC_Montonio_Shipping_Order {
      * @return array The modified hidden order itemmeta fields
      */
     public function hide_custom_order_itemmeta( $hidden_order_itemmeta ) {
-        $add_to_hidden = [
+        $add_to_hidden = array(
             'shipping_method_identifier',
             'provider_name',
             'type',
@@ -296,7 +306,7 @@ class WC_Montonio_Shipping_Order {
             'method_class_name',
             'tracking_codes',
             'instance_id'
-        ];
+        );
 
         return array_merge( $hidden_order_itemmeta, $add_to_hidden );
     }
@@ -323,6 +333,12 @@ class WC_Montonio_Shipping_Order {
             )
         );
 
+        wp_set_script_translations(
+            'wc-montonio-shipping-label-printing',
+            'montonio-for-woocommerce',
+            WC_MONTONIO_PLUGIN_PATH . '/languages'
+        );
+
         wp_enqueue_script( 'wc-montonio-shipping-shipment-manager' );
 
         wp_localize_script(
@@ -335,13 +351,19 @@ class WC_Montonio_Shipping_Order {
             )
         );
 
+        wp_set_script_translations(
+            'wc-montonio-shipping-shipment-manager',
+            'montonio-for-woocommerce',
+            WC_MONTONIO_PLUGIN_PATH . '/languages'
+        );
+
         echo '<div class="montonio-shipping-panel-wrappper">';
 
         wc_get_template(
             'admin-order-shipping-panel.php',
-            [
+            array(
                 'order' => $order
-            ],
+            ),
             '',
             WC_MONTONIO_PLUGIN_PATH . '/templates/'
         );
@@ -360,9 +382,9 @@ class WC_Montonio_Shipping_Order {
         ob_start();
         wc_get_template(
             'admin-order-shipping-panel.php',
-            [
+            array(
                 'order' => $order
-            ],
+            ),
             '',
             WC_MONTONIO_PLUGIN_PATH . '/templates/'
         );
@@ -475,7 +497,7 @@ class WC_Montonio_Shipping_Order {
 
         $order = wc_get_order( $order_id );
 
-        if ( in_array( $type, ['parcelMachine', 'postOffice', 'parcelShop'] ) ) {
+        if ( in_array( $type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             // Set method type
             $type = 'pickupPoint';
 
@@ -494,14 +516,14 @@ class WC_Montonio_Shipping_Order {
 
             if ( method_exists( $order, 'set_shipping' ) ) {
                 $order->set_shipping(
-                    [
+                    array(
                         'address_1' => $shipping_method_item->item_name,
                         'address_2' => '',
                         'city'      => $shipping_method_item->locality,
                         'state'     => '',
                         'postcode'  => $shipping_method_item->postal_code,
                         'country'   => strtoupper( $shipping_method_item->country_code )
-                    ]
+                    )
                 );
             } else {
                 $order->update_meta_data( '_shipping_address_1', $shipping_method_item->item_name );
@@ -530,7 +552,7 @@ class WC_Montonio_Shipping_Order {
      */
     public static function add_tracking_codes( $payload ) {
         if ( empty( $payload ) ) {
-            return new WP_REST_Response( ['message' => 'Response data missing'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
         }
 
         $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
@@ -539,12 +561,12 @@ class WC_Montonio_Shipping_Order {
         // Verify that the meta data is correct with what we just searched for
         if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
             WC_Montonio_Logger::log( __( 'add_tracking_codes: Order not found.', 'montonio-for-woocommerce' ) );
-            return new WP_REST_Response( ['message' => 'Order not found'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
         }
 
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
         if ( empty( $shipping_method ) ) {
-            return new WP_REST_Response( ['message' => 'Order not using Montonio shipping method'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Order not using Montonio shipping method' ), 400 );
         }
 
         $tracking_links = '';
@@ -554,7 +576,7 @@ class WC_Montonio_Shipping_Order {
             $tracking_url = sanitize_text_field( $parcel->trackingLink );
 
             if ( ! empty( $tracking_url ) ) {
-                $tracking_links .= '<a href="' .  esc_url( $tracking_url ) . '" target="_blank">' . esc_html( $parcel_id ) . '</a><br>';
+                $tracking_links .= '<a href="' . esc_url( $tracking_url ) . '" target="_blank">' . esc_html( $parcel_id ) . '</a><br>';
             }
         }
 
@@ -569,7 +591,7 @@ class WC_Montonio_Shipping_Order {
         $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'registered' );
         $order->save_meta_data();
 
-        return new WP_REST_Response( ['message' => 'Tracking codes processed'], 200 );
+        return new WP_REST_Response( array( 'message' => 'Tracking codes processed' ), 200 );
     }
 
     /**
@@ -581,7 +603,7 @@ class WC_Montonio_Shipping_Order {
      */
     public static function handle_registration_failed_webhook( $payload ) {
         if ( empty( $payload ) ) {
-            return new WP_REST_Response( ['message' => 'Response data missing'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
         }
 
         $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
@@ -590,7 +612,7 @@ class WC_Montonio_Shipping_Order {
         // Verify that the meta data is correct with what we just searched for
         if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
             WC_Montonio_Logger::log( 'handle_registration_failed_webhook: Order not found.' );
-            return new WP_REST_Response( ['message' => 'Order not found'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
         }
 
         // Recursive function to traverse the nested errors and collect messages and descriptions
@@ -614,14 +636,14 @@ class WC_Montonio_Shipping_Order {
                     if ( is_array( $error->cause ) ) {
                         collect_error_messages( $error->cause, $messages, $seen_messages, $depth + 1, $max_depth );
                     } else {
-                        collect_error_messages( [$error->cause], $messages, $seen_messages, $depth + 1, $max_depth );
+                        collect_error_messages( array( $error->cause ), $messages, $seen_messages, $depth + 1, $max_depth );
                     }
                 }
             }
         }
 
-        $messages      = [];
-        $seen_messages = [];
+        $messages      = array();
+        $seen_messages = array();
 
         if ( ! empty( $payload->data->errors ) ) {
             collect_error_messages( $payload->data->errors, $messages, $seen_messages );
@@ -637,7 +659,7 @@ class WC_Montonio_Shipping_Order {
         $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $message );
         $order->save_meta_data();
 
-        return new WP_REST_Response( ['message' => 'Shipment registration failed message added to order'], 200 );
+        return new WP_REST_Response( array( 'message' => 'Shipment registration failed message added to order' ), 200 );
     }
 
     /**
@@ -649,7 +671,7 @@ class WC_Montonio_Shipping_Order {
      */
     public static function handle_status_update_webhook( $payload ) {
         if ( empty( $payload ) ) {
-            return new WP_REST_Response( ['message' => 'Response data missing'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
         }
 
         $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
@@ -658,18 +680,24 @@ class WC_Montonio_Shipping_Order {
         // Verify that the meta data is correct with what we just searched for
         if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
             WC_Montonio_Logger::log( __( 'add_tracking_codes: Order not found.', 'montonio-for-woocommerce' ) );
-            return new WP_REST_Response( ['message' => 'Order not found'], 400 );
+            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
         }
 
         $status = sanitize_text_field( $payload->data->status );
-  
+
         if ( ! empty( $status ) ) {
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $status );
             $order->save_meta_data();
+
+            $new_status = get_option( 'montonio_shipping_order_status_when_delivered', 'wc-completed'  );
+
+            if ( 'delivered' === $status && 'no-change' !== $new_status ) {
+                $order->update_status( $new_status );
+            }
         }
 
-        return new WP_REST_Response( ['message' => 'Shipment status update processed'], 200 );
-    } 
+        return new WP_REST_Response( array( 'message' => 'Shipment status update processed' ), 200 );
+    }
 }
 
 new WC_Montonio_Shipping_Order();

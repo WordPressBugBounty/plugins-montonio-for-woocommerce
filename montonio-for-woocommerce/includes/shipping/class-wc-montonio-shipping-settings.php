@@ -85,13 +85,27 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                     $order_statuses
                 ),
                 'id'      => 'montonio_shipping_orderStatusWhenLabelPrinted'
+            ),            
+            array(
+                'type'    => 'select',
+                'title'   => __( 'Order status when shipment is delivered', 'montonio-for-woocommerce' ),
+                'class'   => 'wc-enhanced-select',
+                'default' => 'wc-completed',
+                'desc'    => __( 'What status should the order be changed to in WooCommerce when the shipment is delivered?', 'montonio-for-woocommerce' ),
+                'options' => array_merge(
+                    array(
+                        'no-change' => __( '-- Do not change status --', 'montonio-for-woocommerce' )
+                    ),
+                    $order_statuses
+                ),
+                'id'      => 'montonio_shipping_order_status_when_delivered'
             ),
             array(
-                'id'      => 'montonio_email_tracking_code_text',
                 'title'   => __( 'Tracking code text for e-mail', 'montonio-for-woocommerce' ),
                 'type'    => 'text',
                 'desc' => '<a class="montonio-reset-email-tracking-code-text" href="#">' . __( 'Reset to default value', 'montonio-for-woocommerce' ) . '</a><br><br>' . sprintf( __( 'Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href="%s" target="_blank">Click here</a> to learn more about how to add the code to customer emails.', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/69258-adding-tracking-codes-to-e-mails' ),
-                'default' => __( 'Track your shipment:', 'montonio-for-woocommerce' )
+                'default' => __( 'Track your shipment:', 'montonio-for-woocommerce' ),
+                'id'      => 'montonio_email_tracking_code_text'
             ),
             array(
                 'title'       => __( 'Show parcel machine address in dropdown in checkout', 'montonio-for-woocommerce' ),

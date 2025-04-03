@@ -137,6 +137,12 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
             )
         );
 
+        wp_set_script_translations(
+            'wc-montonio-shipping-label-printing',
+            'montonio-for-woocommerce',
+            WC_MONTONIO_PLUGIN_PATH . '/languages'
+        );
+
         return $actions;
     }
 

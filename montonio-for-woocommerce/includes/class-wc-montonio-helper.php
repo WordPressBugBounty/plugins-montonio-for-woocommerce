@@ -148,14 +148,14 @@ class WC_Montonio_Helper {
      */
     public static function convert_to_kg( $weight ) {
         switch ( get_option( 'woocommerce_weight_unit' ) ) {
-        case 'g':
-            return (float) $weight * 0.001;
-        case 'lbs':
-            return (float) $weight * 0.45;
-        case 'oz':
-            return (float) $weight * 0.028;
-        default:
-            return (float) $weight;
+            case 'g':
+                return (float) $weight * 0.001;
+            case 'lbs':
+                return (float) $weight * 0.45;
+            case 'oz':
+                return (float) $weight * 0.028;
+            default:
+                return (float) $weight;
         }
     }
 
@@ -167,16 +167,16 @@ class WC_Montonio_Helper {
      */
     public static function convert_to_cm( $dimension ) {
         switch ( get_option( 'woocommerce_dimension_unit' ) ) {
-        case 'm':
-            return (float) $dimension * 100;
-        case 'mm':
-            return (float) $dimension * 0.1;
-        case 'in':
-            return (float) $dimension * 2.54;
-        case 'yd':
-            return (float) $dimension * 91.44;
-        default:
-            return (float) $dimension;
+            case 'm':
+                return (float) $dimension * 100;
+            case 'mm':
+                return (float) $dimension * 0.1;
+            case 'in':
+                return (float) $dimension * 2.54;
+            case 'yd':
+                return (float) $dimension * 91.44;
+            default:
+                return (float) $dimension;
         }
     }
 
@@ -188,18 +188,18 @@ class WC_Montonio_Helper {
      */
     public static function convert_to_meters( $dimension ) {
         switch ( get_option( 'woocommerce_dimension_unit' ) ) {
-        case 'cm':
-            return (float) $dimension * 0.01;
-        case 'mm':
-            return (float) $dimension * 0.001;
-        case 'in':
-            return (float) $dimension * 0.0254;
-        case 'yd':
-            return (float) $dimension * 0.9144;
-        case 'ft':
-            return (float) $dimension * 0.3048;
-        default:
-            return (float) $dimension;
+            case 'cm':
+                return (float) $dimension * 0.01;
+            case 'mm':
+                return (float) $dimension * 0.001;
+            case 'in':
+                return (float) $dimension * 0.0254;
+            case 'yd':
+                return (float) $dimension * 0.9144;
+            case 'ft':
+                return (float) $dimension * 0.3048;
+            default:
+                return (float) $dimension;
         }
     }
 
@@ -279,17 +279,35 @@ class WC_Montonio_Helper {
         $message       = isset( $decoded_error['message'] ) ? $decoded_error['message'] : '';
 
         $error_translations = array(
-            'ER_GENERAL'         => __( 'A general error has occurred. Please try again later.', 'montonio-for-woocommerce' ),
-            'ER_TIC_USED'        => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
-            'ER_TIC_STS'         => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
-            'ER_TIC_EXPIRED'     => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
-            'ER_WRONG_TICKET'    => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
-            'INSUFFICIENT_FUNDS' => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
-            'TIMEOUT'            => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
-            'ER_BAD_PIN'         => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
-            'GENERAL_ERROR'      => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
-            'ISSUER_DECLINED'    => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
-            'ALREADY_PAID_FOR'   => __( 'This order has already been paid for.', 'montonio-for-woocommerce' )
+            'ER_GENERAL'              => __( 'A general error has occurred. Please try again later.', 'montonio-for-woocommerce' ),
+            'ER_TIC_USED'             => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_TIC_STS'              => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_TIC_EXPIRED'          => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'ER_WRONG_TICKET'         => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'INSUFFICIENT_FUNDS'      => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'TIMEOUT'                 => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
+            'ER_BAD_PIN'              => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'GENERAL_ERROR'           => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'ISSUER_DECLINED'         => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_TIC_USED'        => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_TIC_STS'         => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_TIC_EXPIRED'     => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_WRONG_TICKET'    => __( 'Incorrect BLIK code was entered. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_INSUFFICIENT_FUNDS' => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'BLIK_TIMEOUT'            => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_BAD_PIN'         => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'BLIK_GENERAL_ERROR'      => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ISSUER_DECLINED'    => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_LIMIT_EXCEEDED'     => __( 'Check the reason in the banking application and try again.', 'montonio-for-woocommerce' ),
+            'BLIK_USER_DECLINED'      => __( 'Payment rejected in a banking application. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_USER_TIMEOUT'       => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_AM_TIMEOUT'         => __( 'Payment failed - not confirmed on time in the banking application. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_ER_DATAAMT_HUGE'    => __( 'Payment amount too high.', 'montonio-for-woocommerce' ),
+            'BLIK_ALIAS_DECLINED'     => __( 'Payment requires BLIK code.', 'montonio-for-woocommerce' ),
+            'BLIK_ALIAS_NOT_FOUND'    => __( 'Payment requires BLIK code.', 'montonio-for-woocommerce' ),
+            'BLIK_TAS_DECLINED'       => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'BLIK_SYSTEM_ERROR'       => __( 'Payment failed. Try again.', 'montonio-for-woocommerce' ),
+            'ALREADY_PAID_FOR'        => __( 'This order has already been paid for.', 'montonio-for-woocommerce' )
         );
 
         // Return the mapped message if we have one for this message
