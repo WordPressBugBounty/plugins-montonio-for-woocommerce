@@ -337,7 +337,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                 $cart_total = $cart_total - $virtual_products_total;
             }
 
-            if ( wc_format_decimal( $cart_total, 2 ) > wc_format_decimal( $this->get_option( 'freeShippingThreshold' ), 2 ) ) {
+            if ( wc_format_decimal( $cart_total, 2 ) > str_replace( ',', '.', $this->get_option( 'freeShippingThreshold' ) ) ) {
                 $rate['cost'] = 0;
             }
         }

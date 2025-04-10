@@ -28,7 +28,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'wc_montonio_hire_purchase';
-        $this->icon               = 'https://public.montonio.com/images/logos/inbank-general.svg';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/inbank.svg';
         $this->has_fields         = false;
         $this->method_title       = __( 'Montonio Financing', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Hire purchase provided in co-operation with Inbank', 'montonio-for-woocommerce' );
@@ -44,11 +44,15 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title        = __( $this->get_option( 'title', __( 'Financing', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
-        $this->description  = __( $this->get_option( 'description' ), 'montonio-for-woocommerce' );
+        $this->title        = $this->get_option( 'title', 'Financing' );
+        $this->description  = $this->get_option( 'description' );
         $this->enabled      = $this->get_option( 'enabled' );
         $this->sandbox_mode = $this->get_option( 'sandbox_mode' );
         $this->min_amount   = $this->get_option( 'min_amount', 100 );
+
+        if ( 'Financing' === $this->title ) {
+            $this->title = __( 'Financing', 'montonio-for-woocommerce' );
+        }
 
         if ( $this->sandbox_mode === 'yes' ) {
             $this->description = '<strong>' . __( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ) . '</strong><br>' . __( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) . '<br>' . $this->description;
@@ -161,14 +165,20 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
             // Disable the payment gateway if API keys are not provided
             if ( $settings['sandbox_mode'] === 'yes' ) {
                 if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Sandbox API keys missing. Montonio Card Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
                 }
             } else {
                 if ( empty( $api_settings['access_key'] ) || empty( $api_settings['secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Live API keys missing. Montonio Card Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Live API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
@@ -254,11 +264,11 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
      * @return bool
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
-        return WC_Montonio_Refund::init_refund( 
-            $order_id, 
+        return WC_Montonio_Refund::init_refund(
+            $order_id,
             $this->sandbox_mode,
-            $amount, 
-            $reason 
+            $amount,
+            $reason
         );
     }
 

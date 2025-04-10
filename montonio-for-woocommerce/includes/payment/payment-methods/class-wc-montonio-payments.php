@@ -48,13 +48,6 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
     public $hide_country_select;
 
     /**
-     * Should we echo scripts?
-     *
-     * @var bool
-     */
-    public $script_mode;
-
-    /**
      * Should we preselect country by user data?
      *
      * @var bool
@@ -63,7 +56,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'wc_montonio_payments';
-        $this->icon               = 'https://public.montonio.com/logo/montonio-logomark-s.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png';
         $this->has_fields         = true;
         $this->method_title       = __( 'Montonio Bank Payments', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Allows bank payments via the Montonio Payment Initiation Service.', 'montonio-for-woocommerce' );
@@ -79,7 +72,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title               = __( $this->get_option( 'title', __( 'Pay with your bank', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->title               = $this->get_option( 'title', 'Pay with your bank' );
         $this->description         = $this->get_option( 'description' );
         $this->enabled             = $this->get_option( 'enabled' );
         $this->sandbox_mode        = $this->get_option( 'sandbox_mode' );
@@ -87,9 +80,11 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
         $this->bank_list           = $this->get_option( 'bank_list' );
         $this->default_country     = $this->get_option( 'default_country', 'EE' );
         $this->hide_country_select = $this->get_option( 'hide_country_select' );
-        $this->script_mode         = $this->get_option( 'script_mode' );
-
         $this->preselect_country = $this->get_option( 'preselect_country' );
+
+        if ( 'Pay with your bank' === $this->title ) {
+            $this->title = __( 'Pay with your bank', 'montonio-for-woocommerce' );
+        }
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -97,6 +92,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
         add_action( 'woocommerce_api_' . $this->id, array( $this, 'get_order_response' ) );
         add_action( 'woocommerce_api_' . $this->id . '_notification', array( $this, 'get_order_notification' ) );
         add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 3 );
+        add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
         add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
         add_filter( 'montonio_ota_sync', array( $this, 'sync_banks_ota' ), 10, 1 );
     }
@@ -208,13 +204,6 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
                 'type'        => 'text',
                 'default'     => __( 'Payment for order {order_number}', 'montonio-for-woocommerce' ),
                 'description' => __( 'Available placeholders: {order_number}', 'montonio-for-woocommerce' )
-            ),
-            'script_mode'                => array(
-                'title'       => __( 'Echo CSS & JS', 'montonio-for-woocommerce' ),
-                'label'       => __( 'Enable', 'montonio-for-woocommerce' ),
-                'type'        => 'checkbox',
-                'description' => __( '<strong>[ADVANCED]</strong> If enqueue CSS and JavaScript is not working properly, please enable this option.', 'montonio-for-woocommerce' ),
-                'default'     => 'no'
             )
         );
     }
@@ -272,14 +261,20 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             // Disable the payment gateway if API keys are not provided
             if ( $settings['sandbox_mode'] === 'yes' ) {
                 if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Sandbox API keys missing. Montonio Bank Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
                 }
             } else {
                 if ( empty( $api_settings['access_key'] ) || empty( $api_settings['secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Live API keys missing. Montonio Bank Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Live API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
@@ -364,11 +359,12 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
         if ( $this->sandbox_mode === 'yes' ) {
-            echo '<strong>' . __( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ) . '</strong><br>' . __( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) . '<br>';
+            /* translators: 1) notice that test mode is enabled 2) explanation of test mode */
+            printf( '<strong>%1$s</strong><br>%2$s<br>', esc_html__( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ), esc_html__( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) );
         }
 
         if ( ! empty( $description ) ) {
-            echo apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id );
+            echo esc_html( apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id ) );
         }
 
         do_action( 'wc_montonio_before_bank_list', $this->id );
@@ -387,14 +383,14 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             if ( $this->hide_country_select !== 'yes' && count( $countries ) > 1 ) {
                 echo '<select class="montonio-payments-country-dropdown" name="montonio_payments_preferred_country">';
                 foreach ( $countries as $r => $list ) {
-                    echo '<option ' . ( $r == $this->default_country ? 'selected="selected"' : '' ) . ' value="' . $r . '">' . $available_countries[$r] . '</option>';
+                    echo '<option ' . ( $r == $this->default_country ? 'selected="selected"' : '' ) . ' value="' . esc_attr( $r ) . '">' . esc_html( $available_countries[$r] ) . '</option>';
                 }
                 echo '</select>';
             } else {
-                echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . $this->default_country . '">';
+                echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $this->default_country ) . '">';
             }
 
-            echo '<div id="montonio-payments-description" class="montonio-bank-items montonio-bank-items--' . $this->handle_style . '">';
+            echo '<div id="montonio-payments-description" class="montonio-bank-items montonio-bank-items--' . esc_attr( $this->handle_style ) . '">';
             $default_country = array_keys( $countries )[0];
             foreach ( $countries as $country => $value ) {
                 if ( $country === $this->default_country ) {
@@ -405,7 +401,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             foreach ( $countries as $r => $list ) {
                 foreach ( $list['paymentMethods'] as $key => $value ) {
                     if ( in_array( $currency, $value['supportedCurrencies'] ) ) {
-                        echo '<div class="bank-region-' . $r . ' montonio-bank-item' . ( $r == $default_country ? '' : ' montonio-bank-item--hidden' ) . '" data-bank="' . $value['code'] . '"><img class="montonio-bank-item-img" src="' . $value['logoUrl'] . '"  alt="' . $value['name'] . '"></div>';
+                        echo '<div class="bank-region-' . esc_attr( $r ) . ' montonio-bank-item' . ( $r == $default_country ? '' : ' montonio-bank-item--hidden' ) . '" data-bank="' . esc_attr( $value['code'] ) . '"><img class="montonio-bank-item-img" src="' . esc_url( $value['logoUrl'] ) . '"  alt="' . esc_attr( $value['name'] ) . '"></div>';
                     }
                 }
             }
@@ -413,16 +409,19 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             echo '<input type="hidden" name="montonio_payments_preselected_bank" id="montonio_payments_preselected_bank">';
             echo '</div>';
         } else {
-            echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . $this->default_country . '">';
+            echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $this->default_country ) . '">';
         }
 
         do_action( 'wc_montonio_after_payment_desc', $this->id );
+    }
 
-        if ( $this->script_mode !== 'yes' ) {
+    public function payment_scripts() {
+        if ( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) && ! is_add_payment_method_page() ) {
+            return;
+        }
+
+        if ( ! WC_Montonio_Helper::is_checkout_block() ) {
             wp_enqueue_script( 'montonio-pis' );
-        } else {
-            echo '<link rel="stylesheet" href="' . WC_MONTONIO_PLUGIN_URL . '/assets/css/montonio-style.css?ver=' . WC_MONTONIO_PLUGIN_VERSION . '">';
-            echo '<script type="text/javascript" src="' . WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-pis.js?ver=' . WC_MONTONIO_PLUGIN_VERSION . '"></script>';
         }
     }
 
@@ -451,11 +450,11 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             );
 
             if ( isset( $_POST['montonio_payments_preselected_bank'] ) ) {
-                $payment_data['payment']['methodOptions']['preferredProvider'] = sanitize_text_field( $_POST['montonio_payments_preselected_bank'] );
+                $payment_data['payment']['methodOptions']['preferredProvider'] = sanitize_text_field( wp_unslash( $_POST['montonio_payments_preselected_bank'] ) );
             }
 
             if ( isset( $_POST['montonio_payments_preferred_country'] ) ) {
-                $payment_data['payment']['methodOptions']['preferredCountry'] = sanitize_text_field( $_POST['montonio_payments_preferred_country'] );
+                $payment_data['payment']['methodOptions']['preferredCountry'] = sanitize_text_field( wp_unslash( $_POST['montonio_payments_preferred_country'] ) );
             }
 
             // Create new Montonio API instance
@@ -533,11 +532,11 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
      * @return bool True if the refund was successful, false otherwise.
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
-        return WC_Montonio_Refund::init_refund( 
-            $order_id, 
+        return WC_Montonio_Refund::init_refund(
+            $order_id,
             $this->sandbox_mode,
-            $amount, 
-            $reason 
+            $amount,
+            $reason
         );
     }
 
@@ -582,12 +581,12 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
      */
     public function sync_banks_ota( $status_report ) {
         try {
-            $settings  = get_option( 'woocommerce_wc_montonio_payments_settings', array(
+            $settings = get_option( 'woocommerce_wc_montonio_payments_settings', array(
                 'sandbox_mode' => 'no'
             ) );
-            
+
             $bank_list = $this->sync_banks( $settings );
-            
+
             if ( isset( $bank_list ) ) {
                 $settings['bank_list']                = $bank_list;
                 $settings['bank_list_fetch_datetime'] = time();

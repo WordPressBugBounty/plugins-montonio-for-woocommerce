@@ -19,18 +19,11 @@ class Montonio_Lock_Manager {
         global $wpdb;
 
         $lock_name  = sanitize_text_field( $lock_name );
-        $now        = current_time( 'mysql' );
-        $expires_at = date( 'Y-m-d H:i:s', strtotime( '+1 MINUTE', strtotime( $now ) ) );
+        $now        = gmdate('Y-m-d H:i:s');
+        $expires_at = gmdate( 'Y-m-d H:i:s', time() + 60 );
 
-        $table_name = $wpdb->prefix . 'montonio_locks';
-        $sql        = $wpdb->prepare(
-            "INSERT INTO `$table_name` (`lock_name`, `created_at`, `expires_at`)
-            VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE `expires_at` = IF(`expires_at` <= %s, VALUES(`expires_at`), `expires_at`)",
-            $lock_name, $now, $expires_at, $now
-        );
+        $wpdb->query( $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}montonio_locks` (`lock_name`, `created_at`, `expires_at`) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE `expires_at` = IF(`expires_at` <= %s, VALUES(`expires_at`), `expires_at`)", $lock_name, $now, $expires_at, $now ) );
 
-        $wpdb->query( $sql );
         return $wpdb->rows_affected > 0;
     }
 
@@ -45,10 +38,8 @@ class Montonio_Lock_Manager {
         global $wpdb;
 
         $lock_name  = sanitize_text_field( $lock_name );
-        $table_name = $wpdb->prefix . 'montonio_locks';
-        $sql        = $wpdb->prepare( "DELETE FROM `$table_name` WHERE `lock_name` = %s", $lock_name );
 
-        $wpdb->query( $sql );
+        $wpdb->query( $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}montonio_locks`  WHERE `lock_name` = %s", $lock_name ) );
     }
 
     /**
@@ -62,14 +53,10 @@ class Montonio_Lock_Manager {
         global $wpdb;
 
         $lock_name = sanitize_text_field( $lock_name );
-        $now       = current_time( 'mysql' );
+        $now       = gmdate( 'Y-m-d H:i:s' );
 
-        $table_name = $wpdb->prefix . 'montonio_locks';
-        $sql        = $wpdb->prepare(
-            "SELECT 1 FROM `$table_name` WHERE `lock_name` = %s AND `expires_at` > %s",
-            $lock_name, $now
-        );
+        $query = $wpdb->get_var( $wpdb->prepare( "SELECT 1 FROM `{$wpdb->prefix}montonio_locks` WHERE `lock_name` = %s AND `expires_at` > %s", $lock_name, $now ) );
 
-        return (bool) $wpdb->get_var( $sql );
+        return (bool) $query;
     }
 }

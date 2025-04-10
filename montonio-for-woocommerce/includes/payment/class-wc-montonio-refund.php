@@ -64,22 +64,13 @@ class WC_Montonio_Refund {
             $order->save();
 
             if ( 'SUCCESSFUL' === $status ) {
-                  $order->add_order_note(
-                    sprintf(
-                        __( '<strong>Refund of %s processed succesfully.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                        wc_price( $amount ),
-                        $uuid
-                    )
-                );
+                /* translators: 1) refund amount 2) refund UUID */
+                $message = sprintf( __( '<strong>Refund of %1$s processed succesfully.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $uuid );
+                $order->add_order_note( $message );
             } else {
-                $order->add_order_note( __( 'Refund via Montonio pending.<br>Refund amount: ', 'montonio-for-woocommerce' ) . wc_price( $amount ) );
-                $order->add_order_note(
-                    sprintf(
-                        __( '<strong>Refund of %s pending.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                        wc_price( $amount ),
-                        $uuid
-                    )
-                );
+                /* translators: 1) refund amount 2) refund UUID */
+                $message = sprintf( __( '<strong>Refund of %1$s pending.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $uuid );
+                $order->add_order_note( $message );
             }
 
             return true;
@@ -119,6 +110,7 @@ class WC_Montonio_Refund {
             'exclude_from_search'       => false,
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
+            /* translators: %s: number of orders */
             'label_count'               => _n_noop( 'Partially refunded (%s)', 'Partially refunded (%s)', 'montonio-for-woocommerce' )
         );
 
@@ -154,4 +146,3 @@ class WC_Montonio_Refund {
     }
 }
 new WC_Montonio_Refund();
-

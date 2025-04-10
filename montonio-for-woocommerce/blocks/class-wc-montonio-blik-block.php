@@ -29,13 +29,20 @@ class WC_Montonio_Blik_Block extends AbstractMontonioPaymentMethodBlock {
         $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
         $inline_checkout = $this->get_setting( 'blik_in_checkout', 'no' );
 
+        $title = $this->get_setting( 'title' );
+
+        if ( 'BLIK' === $title ) {
+            $title = __( 'BLIK', 'montonio-for-woocommerce' );
+        }
+
         return array(
-            'title'          => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
+            'title'          => $title,
             'description'    => $this->get_setting( 'description' ),
-            'iconurl'        => apply_filters( 'wc_montonio_blik_block_logo', 'https://public.montonio.com/images/logos/blik-logo.png' ),
+            'iconurl'        => apply_filters( 'wc_montonio_blik_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/blik.png' ),
             'sandboxMode'    => $sandbox_mode,
             'locale'         => $locale,
-            'inlineCheckout' => $inline_checkout
+            'inlineCheckout' => $inline_checkout,
+            'nonce'          => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
         );
     }
 }

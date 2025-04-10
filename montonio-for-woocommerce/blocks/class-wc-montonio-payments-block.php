@@ -90,10 +90,16 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             $default_country = 'PL';
         }
 
+        $title = $this->get_setting( 'title' );
+
+        if ( 'Pay with your bank' === $title ) {
+            $title = __( 'Pay with your bank', 'montonio-for-woocommerce' );
+        }
+
         return array(
-            'title'              => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
+            'title'              => $title,
             'description'        => $this->get_setting( 'description' ),
-            'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', 'https://public.montonio.com/logo/montonio-logomark-s.png' ),
+            'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png' ),
             'sandboxMode'        => $sandbox_mode,
             'accessKey'          => $api_keys['access_key'],
             'storeSetupData'     => $bank_list,

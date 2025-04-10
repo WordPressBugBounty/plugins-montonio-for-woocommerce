@@ -67,7 +67,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * @return void
      */
     public function handle_montonio_shipping_checkout( $order, $data ) {
-        $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( $_POST['montonio_pickup_point'] ) : null;
+        $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( wp_unslash( $_POST['montonio_pickup_point'] ) ) : null;
 
         $this->update_order_meta( $order, $shipping_method_item_id );
     }
@@ -182,8 +182,8 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      */
     public function sync_shipping_methods_ajax() {
         $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-        $url   = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
-        $token = WC_Montonio_Helper::create_jwt_token( $sandbox_mode, array(
+        $url          = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
+        $token        = WC_Montonio_Helper::create_jwt_token( $sandbox_mode, array(
             'hash' => md5( $url )
         ) );
 
@@ -210,8 +210,8 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
             $courier_services_synced = false;
             $pickup_point_countries  = array();
 
-            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $sandbox_mode     = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $shipping_api     = new WC_Montonio_Shipping_API( $sandbox_mode );
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
             foreach ( $shipping_methods['countries'] as $country ) {
@@ -270,8 +270,13 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
             if ( ! empty( $shipping_method ) ) {
                 $tracking_links = $shipping_method->get_meta( 'tracking_codes' );
-                $tracking_title = __( get_option( 'montonio_email_tracking_code_text', __( 'Track your shipment:', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
-                $tracking_info  = $tracking_links ? $tracking_title . ' ' . $tracking_links : '';
+                $tracking_title = get_option( 'montonio_email_tracking_code_text' );
+
+                if ( empty( $tracking_title ) || $tracking_title === 'Track your shipment:' ) {
+                    $tracking_title = __( 'Track your shipment:', 'montonio-for-woocommerce' );
+                }
+
+                $tracking_info = $tracking_links ? $tracking_title . ' ' . $tracking_links : '';
             }
         }
 

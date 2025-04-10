@@ -263,7 +263,7 @@ class WC_Montonio_Helper {
     public static function append_to_status_report( &$status_report, $status, $message ) {
         $status_report['sync_results'][] = array(
             'status'  => $status,
-            'message' => date( 'Y-m-d H:i:s' ) . ' - ' . $message
+            'message' => gmdate( 'Y-m-d H:i:s' ) . ' - ' . $message
         );
     }
 

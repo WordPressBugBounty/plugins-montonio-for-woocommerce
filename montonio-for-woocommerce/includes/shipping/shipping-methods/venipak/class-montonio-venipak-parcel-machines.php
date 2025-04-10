@@ -1,15 +1,15 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = [39.5, 41, 61]; // lowest to highest (cm)
+    const MAX_DIMENSIONS = array(39.5, 41, 61); // lowest to highest (cm)
 
-    public $default_title = 'Venipak parcel machine';
+    public $default_title      = 'Venipak parcel machines';
     public $default_max_weight = 30; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
@@ -23,9 +23,13 @@ class Montonio_Venipak_Parcel_Machines extends Montonio_Shipping_Method {
         );
 
         $this->provider_name = 'venipak';
-        $this->type_v2 = 'parcelMachine';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/venipak-logo.svg';
-        $this->title = __( $this->get_option( 'title', __( 'Venipak parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'parcelMachine';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/venipak.svg';
+        $this->title         = $this->get_option( 'title', __( 'Venipak parcel machines', 'montonio-for-woocommerce' ) );
+
+        if ( 'Venipak parcel machines' === $this->title ) {
+            $this->title = __( 'Venipak parcel machines', 'montonio-for-woocommerce' );
+        }
     }
 
     /**

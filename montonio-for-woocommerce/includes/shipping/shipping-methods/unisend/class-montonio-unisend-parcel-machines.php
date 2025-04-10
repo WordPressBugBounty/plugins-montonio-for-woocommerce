@@ -1,10 +1,10 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = [35, 61, 74.5]; // lowest to highest (cm)
+    const MAX_DIMENSIONS = array(35, 61, 74.5); // lowest to highest (cm)
 
-    public $default_title = 'Unisend parcel machine';
+    public $default_title      = 'Unisend parcel machines';
     public $default_max_weight = 30; // kg
 
     /**
@@ -22,9 +22,13 @@ class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
         );
 
         $this->provider_name = 'unisend';
-        $this->type_v2 = 'parcelMachine';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/unisend.png';
-        $this->title = __( $this->get_option( 'title', __( 'Unisend parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'parcelMachine';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/unisend.png';
+        $this->title         = $this->get_option( 'title', __( 'Unisend parcel machines', 'montonio-for-woocommerce' ) );
+
+        if ( 'Unisend parcel machines' === $this->title ) {
+            $this->title = __( 'Unisend parcel machines', 'montonio-for-woocommerce' );
+        }
     }
 
     /**
@@ -40,10 +44,10 @@ class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
     }
 
     /**
-	 * Check if the shipping method is available for use.
-	 *
-	 * @return bool
-	 */
+     * Check if the shipping method is available for use.
+     *
+     * @return bool
+     */
     public function is_available( $package ) {
         foreach ( $package['contents'] as $item ) {
             if ( get_post_meta( $item['product_id'], '_montonio_no_parcel_machine', true ) === 'yes' ) {

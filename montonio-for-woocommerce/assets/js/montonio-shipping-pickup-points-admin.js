@@ -11,6 +11,7 @@
             data = {
                 'action': 'get_country_select',
                 'shipping_method_id': shippingMethodId,
+                'nonce': montonio_shipping_pickup_points_admin_params.nonce
             };
 
         $('.montonio_carrier_country').remove();
@@ -37,6 +38,7 @@
                 'country': country,
                 'carrier': carrier,
                 'type': type,
+                'nonce': montonio_shipping_pickup_points_admin_params.nonce
             };
         
         $('.montonio_carrier_pickup_point').selectWoo('destroy');    
@@ -69,6 +71,7 @@
                 'country': country,
                 'carrier': carrier,
                 'type': type,
+                'nonce': montonio_shipping_pickup_points_admin_params.nonce
             };
 
         if (shippingMethodId.includes('montonio_')) {

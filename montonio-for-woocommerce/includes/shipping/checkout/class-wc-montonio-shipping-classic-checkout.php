@@ -41,7 +41,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             wp_enqueue_style( 'montonio-pickup-points' );
 
             if ( ! wp_script_is( 'selectWoo', 'registered' ) ) {
-                wp_register_script( 'selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.min.js', array( 'jquery' ) );
+                wp_register_script( 'selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.min.js', array( 'jquery' ), false, true );
             }
 
             wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
@@ -134,7 +134,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
         $method_type = $shipping_method->type_v2;
 
         if ( in_array( $method_type, ['parcelMachine', 'postOffice', 'parcelShop'] ) ) {
-            $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( $_POST['montonio_pickup_point'] ) : null;
+            $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( wp_unslash( $_POST['montonio_pickup_point'] ) ) : null;
 
             if ( empty( $shipping_method_item_id ) ) {
                 wc_add_notice( __( 'Please select a pickup point.', 'montonio-for-woocommerce' ), 'error' );

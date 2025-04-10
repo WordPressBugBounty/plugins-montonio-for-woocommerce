@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) or exit;
 
 class Montonio_Latvian_Post_Parcel_Machines extends Montonio_Shipping_Method {
-    public $default_title = 'Latvijas Pasts parcel machines';
+    public $default_title      = 'Latvijas Pasts parcel machines';
     public $default_max_weight = 30; // kg
 
     /**
@@ -22,8 +22,12 @@ class Montonio_Latvian_Post_Parcel_Machines extends Montonio_Shipping_Method {
 
         $this->provider_name = 'latvian_post';
         $this->type_v2       = 'parcelMachine';
-        $this->logo          = 'https://public.montonio.com/images/shipping_provider_logos/latvian-post.png';
-        $this->title         = __( $this->get_option( 'title', __( 'Latvijas Pasts parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/latvijas-pasts.svg';
+        $this->title         = $this->get_option( 'title', __( 'Latvijas Pasts parcel machines', 'montonio-for-woocommerce' ) );
+
+        if ( 'Latvijas Pasts parcel machines' === $this->title ) {
+            $this->title = __( 'Latvijas Pasts parcel machines', 'montonio-for-woocommerce' );
+        }
     }
 
     /**

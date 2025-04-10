@@ -48,8 +48,6 @@ class Montonio_Migration_6_4_2 {
                 update_option( 'woocommerce_wc_montonio_api_settings', $api_settings );
             }
         }
-
-        error_log( 'Montonio migration 6.4.2 completed' );
     }
 
 }

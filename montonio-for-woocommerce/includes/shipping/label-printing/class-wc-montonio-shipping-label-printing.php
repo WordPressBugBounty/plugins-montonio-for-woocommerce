@@ -83,7 +83,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
         foreach ( $order_ids as $order_id ) {
             $order = wc_get_order( $order_id );
 
-            if ( ! in_array( $order->get_meta( '_wc_montonio_shipping_shipment_status' ), array('registered', 'labelsCreated') ) ) {
+            if ( ! in_array( $order->get_meta( '_wc_montonio_shipping_shipment_status' ), array( 'registered', 'labelsCreated' ) ) ) {
                 continue;
             }
 
@@ -130,10 +130,8 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
             'wc-montonio-shipping-label-printing',
             'wcMontonioShippingLabelPrintingData',
             array(
-                'getLabelFileUrl'           => esc_url_raw( rest_url( 'montonio/shipping/v2/labels' ) ),
-                'createLabelsUrl'           => esc_url_raw( rest_url( 'montonio/shipping/v2/labels/create' ) ),
-                'markLabelsAsDownloadedUrl' => esc_url_raw( rest_url( 'montonio/shipping/v2/labels/mark-as-downloaded' ) ),
-                'nonce'                     => wp_create_nonce( 'wp_rest' )
+                'restUrl' => esc_url_raw( rest_url( 'montonio/shipping/v2' ) ),
+                'nonce'   => wp_create_nonce( 'wp_rest' )
             )
         );
 
@@ -176,6 +174,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
 
         foreach ( $post_ids as $post_id ) {
             $order = wc_get_order( $post_id );
+
             if ( $order && 'wc-mon-label-printed' !== $order->get_status() ) {
                 // Update order status to "Label Printed".
                 $order->update_status( 'wc-mon-label-printed', __( 'Order marked as Label Printed.', 'montonio-for-woocommerce' ) );
@@ -186,24 +185,6 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
         $redirect_to = add_query_arg( 'bulk_label_printed_orders', count( $post_ids ), $redirect_to );
 
         return $redirect_to;
-    }
-
-    /**
-     * Handles the label ready webhook from Montonio Shipping.
-     *
-     * @since 7.0.0
-     * @since 7.0.1 No longer uses Label_Printing_Repository. Only fires the wc_montonio_shipping_labels_ready action.
-     * @param object $payload The payload from the webhook
-     * @return WP_REST_Response|WP_Error The response object if everything went well, WP_Error if something went wrong
-     */
-    public function handle_label_ready_webhook( $payload ) {
-        if ( isset( $payload->data->shipmentIds ) ) {
-            $order_ids = $this->get_order_ids_from_shipment_ids( $payload->data->shipmentIds );
-            do_action( 'wc_montonio_shipping_labels_ready', $order_ids );
-            return new WP_REST_Response( 'labelFile.ready event handled successfully', 200 );
-        } else {
-            return new WP_Error( 'montonio_shipping_label_ready_webhook_failed', 'No shipment IDs found in the payload', array('status' => 400) );
-        }
     }
 
     /**
@@ -221,9 +202,9 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
 
             if ( $order->get_status() === 'processing' && 'no-change' !== $new_status ) {
                 $order->update_status( $new_status );
-                $current_time = current_time( 'timestamp' );
-                WC_Montonio_Logger::log( 'Shipping -> Label Printing -> Order ' . $order_id . ' status changed from processing to ' . $new_status, $current_time, $current_time );
                 $order->add_order_note( 'Montonio shipping label printed' );
+
+                WC_Montonio_Logger::log( 'Shipping -> Label Printing -> Order ' . $order_id . ' status changed from processing to ' . $new_status );
             }
 
             $order->update_meta_data( '_wc_montonio_shipping_label_printed', 'yes' );

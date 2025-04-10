@@ -8,10 +8,10 @@ $include_address = get_option( 'montonio_shipping_show_address' );
 <tr class="montonio-pickup-point">
     <td colspan="2" class="forminp">
         <div class="montonio-pickup-point-select-wrapper">
-            <label for="montonio-shipping-pickup-point-dropdown"><?php echo __('Pickup point', 'montonio-for-woocommerce'); ?> <abbr class="required" title="required">*</abbr></label>
-            <select name="montonio_pickup_point" id="montonio-shipping-pickup-point-dropdown" class="montonio-shipping-pickup-point-dropdown montonio-pickup-point-select" data-shipping-method="<?php echo $shipping_method; ?>">
+            <label for="montonio-shipping-pickup-point-dropdown"><?php echo esc_html__('Pickup point', 'montonio-for-woocommerce'); ?> <abbr class="required" title="required">*</abbr></label>
+            <select name="montonio_pickup_point" id="montonio-shipping-pickup-point-dropdown" class="montonio-shipping-pickup-point-dropdown montonio-pickup-point-select" data-shipping-method="<?php echo esc_attr( $shipping_method ); ?>">
                 <!-- Default option -->
-                <option value=""><?php echo __('Select a pickup point', 'montonio-for-woocommerce'); ?></option>
+                <option value=""><?php echo esc_html__('Select a pickup point', 'montonio-for-woocommerce'); ?></option>
                 <?php foreach ( $shipping_method_items as $locality => $items ): ?>
                 <optgroup label="<?php echo esc_attr( $locality ); ?>">
                     <?php foreach ( $items as $item ): ?>

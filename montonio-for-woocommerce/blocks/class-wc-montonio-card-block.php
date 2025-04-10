@@ -28,16 +28,23 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
         $sandbox_mode    = $this->get_setting( 'sandbox_mode', 'no' );
         $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
         $inline_checkout = $this->get_setting( 'inline_checkout', 'no' );
-        $icon            = $inline_checkout === 'yes' ? 'https://public.montonio.com/images/logos/visa-mc.png' : 'https://public.montonio.com/images/logos/visa-mc-ap-gp.png';
+        $icon            = $inline_checkout === 'yes' ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
         $icon            = apply_filters( 'wc_montonio_card_block_logo', $icon );
 
+        $title = $this->get_setting( 'title' );
+
+        if ( 'Card Payment' === $title ) {
+            $title = __( 'Card Payment', 'montonio-for-woocommerce' );
+        }
+
         return array(
-            'title'          => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
+            'title'          => $title,
             'description'    => $this->get_setting( 'description' ),
             'iconurl'        => $icon,
             'sandboxMode'    => $sandbox_mode,
             'locale'         => $locale,
-            'inlineCheckout' => $inline_checkout
+            'inlineCheckout' => $inline_checkout,
+            'nonce'          => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
         );
     }
 }

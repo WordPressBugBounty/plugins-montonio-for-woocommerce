@@ -25,10 +25,16 @@ class WC_Montonio_BNPL_Block extends AbstractMontonioPaymentMethodBlock {
      * @return array Payment method data.
      */
     public function get_payment_method_data() {
+        $title = $this->get_setting( 'title' );
+
+        if ( 'Pay Later' === $title ) {
+            $title = __( 'Pay Later', 'montonio-for-woocommerce' );
+        }
+
         return array(
-            'title'       => __( $this->get_setting( 'title' ), 'montonio-for-woocommerce' ),
+            'title'       => $title,
             'description' => $this->get_setting( 'description' ),
-            'iconurl'     => apply_filters( 'wc_montonio_bnpl_block_logo', 'https://public.montonio.com/images/logos/inbank-general.svg' ),
+            'iconurl'     => apply_filters( 'wc_montonio_bnpl_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/inbank.svg' ),
             'sandboxMode' => $this->get_setting( 'sandbox_mode', 'no' )
         );
     }

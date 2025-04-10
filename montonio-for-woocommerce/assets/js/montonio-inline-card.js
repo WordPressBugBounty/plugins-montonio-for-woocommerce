@@ -40,7 +40,8 @@ jQuery(document).ready(function($) {
         let data = {
             'action': 'get_payment_intent',
             'method': 'cardPayments',
-            'sandbox_mode': params.sandbox_mode
+            'sandbox_mode': params.sandbox_mode,
+            'nonce': params.nonce
         };
 
         $.post(woocommerce_params.ajax_url, data, function(response) {       

@@ -1,15 +1,15 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_Smartpost_Courier extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = [60, 60, 120]; // lowest to highest (cm)
+    const MAX_DIMENSIONS = array(60, 60, 120); // lowest to highest (cm)
 
-    public $default_title = 'SmartPosti courier';
+    public $default_title      = 'SmartPosti courier';
     public $default_max_weight = 35; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
@@ -23,9 +23,13 @@ class Montonio_Smartpost_Courier extends Montonio_Shipping_Method {
         );
 
         $this->provider_name = 'smartpost';
-        $this->type_v2 = 'courier';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/smartposti.svg';
-        $this->title = __( $this->get_option( 'title', __( 'SmartPosti courier', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'courier';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/smartposti.svg';
+        $this->title         = $this->get_option( 'title', __( 'SmartPosti courier', 'montonio-for-woocommerce' ) );
+
+        if ( 'SmartPosti courier' === $this->title ) {
+            $this->title = __( 'SmartPosti courier', 'montonio-for-woocommerce' );
+        }
     }
 
     /**

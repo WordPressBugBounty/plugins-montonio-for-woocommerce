@@ -41,12 +41,10 @@ class WC_Montonio_Shipping_Webhooks {
             return WC_Montonio_Shipping_Order::add_tracking_codes( $payload );
         case 'shipment.registrationFailed':
             return WC_Montonio_Shipping_Order::handle_registration_failed_webhook( $payload );
-        case 'labelFile.ready':
-            return WC_Montonio_Shipping_Label_Printing::get_instance()->handle_label_ready_webhook( $payload );        
         case 'shipment.statusUpdated':
             return WC_Montonio_Shipping_Order::handle_status_update_webhook( $payload );
         default:
-            WC_Montonio_Logger::log( 'Received unknown webhook event type: ' . $payload->eventType );
+            WC_Montonio_Logger::log( 'Received unhandled webhook event type: ' . $payload->eventType );
             return new WP_REST_Response( array( 'message' => 'Not handling this event type' ), 200 );
         }
     }

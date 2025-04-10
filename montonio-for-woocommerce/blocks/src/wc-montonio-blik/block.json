@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "montonio/wc-montonio-blik",
+	"version": "0.1.0",
+	"title": "Montonio Blik Block",
+	"category": "woocommerce",
+	"icon": "bank",
+	"description": "Bank Selection screen at Checkout",
+	"keywords": ["checkout", "payment", "montonio", "blik"],
+	"supports": {
+		"html": false,
+		"multiple": false
+	},
+	"editorScript": "file:./index.js",
+	"viewScript": ["file:./index.js", "file:./index-v1.js"],
+	"textdomain": "montonio-for-woocommerce"
+}

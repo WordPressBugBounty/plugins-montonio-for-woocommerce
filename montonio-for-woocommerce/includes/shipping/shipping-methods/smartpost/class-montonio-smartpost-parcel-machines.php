@@ -1,21 +1,21 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_Smartpost_Parcel_Machines extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = [36, 60, 60]; // lowest to highest (cm)
+    const MAX_DIMENSIONS = array(36, 60, 60); // lowest to highest (cm)
 
-    public $default_title = 'SmartPosti parcel machine';
+    public $default_title      = 'SmartPosti parcel machines';
     public $default_max_weight = 35; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
         $this->id                 = 'montonio_itella_parcel_machines';
-        $this->method_title       = __('Montonio SmartPosti parcel machines', 'montonio-for-woocommerce');
-        $this->method_description = __('SmartPosti parcel machines', 'montonio-for-woocommerce');
+        $this->method_title       = __( 'Montonio SmartPosti parcel machines', 'montonio-for-woocommerce' );
+        $this->method_description = __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' );
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
@@ -23,10 +23,14 @@ class Montonio_Smartpost_Parcel_Machines extends Montonio_Shipping_Method {
         );
 
         $this->provider_name = 'smartpost';
-        
+
         $this->type_v2 = 'parcelMachine';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/smartposti.svg';
-        $this->title = __( $this->get_option( 'title', __( 'SmartPosti parcel machines', 'montonio-for-woocommerce') ), 'montonio-for-woocommerce' );
+        $this->logo    = WC_MONTONIO_PLUGIN_URL . '/assets/images/smartposti.svg';
+        $this->title   = $this->get_option( 'title', __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' ) );
+
+        if ( 'SmartPosti parcel machines' === $this->title ) {
+            $this->title = __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' );
+        }
     }
 
     /**

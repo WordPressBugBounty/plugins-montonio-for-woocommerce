@@ -1,16 +1,16 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_Omniva_Post_Offices extends Montonio_Shipping_Method {
-    const MAX_LENGHT = 150; // cm (longest side)
+    const MAX_LENGHT                  = 150; // cm (longest side)
     const MAX_SUM_OF_LENGHT_AND_GIRTH = 300; // cm
 
-    public $default_title = 'Omniva post office';
+    public $default_title      = 'Omniva post offices';
     public $default_max_weight = 30; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
@@ -24,9 +24,13 @@ class Montonio_Omniva_Post_Offices extends Montonio_Shipping_Method {
         );
 
         $this->provider_name = 'omniva';
-        $this->type_v2 = 'postOffice';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/omniva.png';
-        $this->title = __( $this->get_option( 'title', __( 'Omniva post offices', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'postOffice';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/omniva.svg';
+        $this->title         = $this->get_option( 'title', __( 'Omniva post offices', 'montonio-for-woocommerce' ) );
+
+        if ( 'Omniva post offices' === $this->title ) {
+            $this->title = __( 'Omniva post offices', 'montonio-for-woocommerce' );
+        }
     }
 
     /**
@@ -43,7 +47,7 @@ class Montonio_Omniva_Post_Offices extends Montonio_Shipping_Method {
         }
 
         $sum_of_lenght_and_girth = 2 * ( $package_dimensions[0] + $package_dimensions[1] ) + $package_dimensions[2];
-        
+
         if ( $sum_of_lenght_and_girth > self::MAX_SUM_OF_LENGHT_AND_GIRTH ) {
             return false;
         }

@@ -199,7 +199,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         );
 
         if ( 'create' === $type ) {
-            $data['orderComment'] = (string) sanitize_text_field( $order->get_customer_note() );
+            $data['orderComment']    = (string) sanitize_text_field( $order->get_customer_note() );
             $data['notificationUrl'] = esc_url_raw( rest_url( 'montonio/shipping/v2/webhook' ) );
         }
 
@@ -210,14 +210,13 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $data['receiver']['region']        = $address_data['region'];
         }
 
-        $parcels            = array();
-        $products           = array();
-        $skip_product_array = false;
+        $parcels  = array();
+        $products = array();
 
         foreach ( $order->get_items() as $item ) {
             $product    = $item->get_product();
             $product_id = $product->get_id();
-            $sku        = $product->get_sku();
+            $sku        = ! empty( $product->get_sku() ) ? $product->get_sku() : 'woomon_' . $product_id;
             $barcode    = method_exists( $product, 'get_global_unique_id' ) ? $product->get_global_unique_id() : null;
             $name       = $product->get_name();
             $quantity   = $item->get_quantity();
@@ -240,11 +239,6 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 }
             }
 
-            if ( empty( $sku ) || empty( $name ) || empty( $quantity ) || strlen( $name ) > 100 ) {
-                $skip_product_array = true;
-                continue;
-            }
-
             // Check for duplicate SKUs
             $duplicate_index = array_search( $sku, array_column( $products, 'sku' ) );
 
@@ -254,21 +248,15 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                     // Same product (based on item ID), just increase quantity
                     $products[$duplicate_index]['quantity'] += floatval( $quantity );
                     continue;
-                } else {
-                    $skip_product_array = true;
-                    continue;
                 }
             }
 
             $product_data = array(
                 'sku'      => (string) $sku,
                 'name'     => (string) $name,
-                'quantity' => floatval( $quantity )
+                'quantity' => floatval( $quantity ),
+                'barcode'  => (string) $barcode
             );
-
-            if ( ! empty( $barcode ) && strlen( $barcode ) <= 100 ) {
-                $product_data['barcode'] = (string) $barcode;
-            }
 
             $product_ids[] = $product_id;
             $products[]    = $product_data;
@@ -280,7 +268,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         // Only add products array if all products were valid
-        if ( 'create' === $type && ! $skip_product_array && ! empty( $products ) ) {
+        if ( 'create' === $type && ! empty( $products ) ) {
             $data['products'] = $products;
         }
 

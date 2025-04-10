@@ -4,8 +4,8 @@ defined( 'ABSPATH' ) or exit;
 class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
 
     /**
-	 * Constructor
-	 */
+     * Constructor
+     */
     public function __construct() {
         $this->id    = 'montonio_shipping';
         $this->label = __( 'Montonio Shipping', 'montonio-for-woocommerce' );
@@ -19,12 +19,12 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
     public function output() {
         $settings = $this->get_settings();
         ob_start();
-		WC_Admin_Settings::output_fields( $settings );
-		$shipping_options = ob_get_contents();
-		ob_end_clean();
-		
-        WC_Montonio_Display_Admin_Options::display_options( 
-            $this->label, 
+        WC_Admin_Settings::output_fields( $settings );
+        $shipping_options = ob_get_contents();
+        ob_end_clean();
+
+        WC_Montonio_Display_Admin_Options::display_options(
+            $this->label,
             $shipping_options,
             $this->id
         );
@@ -32,7 +32,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
 
     /**
      * Legacy support for Woocommerce 5.4 and earlier
-     * 
+     *
      * @return array
      */
     public function get_settings() {
@@ -41,32 +41,32 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
 
     /**
      * Used when creating Montonio shipping settings tab
-     * 
+     *
      * @return array
      */
     public function get_settings_for_default_section() {
-        $countries     = array( '' => '-- Choose country --' );
-        $countries     = array_merge( $countries, (new WC_Countries() )->get_countries() );
+        $countries      = array( '' => '-- Choose country --' );
+        $countries      = array_merge( $countries, ( new WC_Countries() )->get_countries() );
         $order_statuses = wc_get_order_statuses();
 
-        if ( ! array_key_exists('wc-mon-label-printed', $order_statuses ) ) {
+        if ( ! array_key_exists( 'wc-mon-label-printed', $order_statuses ) ) {
             $order_statuses['wc-mon-label-printed'] = __( 'Label printed', 'montonio-for-woocommerce' );
         }
 
         return array(
             array(
-                'title'       => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
-                'desc'       => __( 'Enable Montonio Shipping', 'montonio-for-woocommerce' ),
-                'type'        => 'checkbox',
-                'default'     => 'no',
-                'id'          => 'montonio_shipping_enabled'
+                'title'   => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
+                'desc'    => __( 'Enable Montonio Shipping', 'montonio-for-woocommerce' ),
+                'type'    => 'checkbox',
+                'default' => 'no',
+                'id'      => 'montonio_shipping_enabled'
             ),
             array(
-                'title'       => __( 'Sandbox Mode', 'montonio-for-woocommerce' ),
-                'desc'       => __( 'Enable Sandbox Mode', 'montonio-for-woocommerce' ),
-                'type'        => 'checkbox',
-                'default'     => 'no',
-                'id'          => 'montonio_shipping_sandbox_mode'
+                'title'   => __( 'Sandbox Mode', 'montonio-for-woocommerce' ),
+                'desc'    => __( 'Enable Sandbox Mode', 'montonio-for-woocommerce' ),
+                'type'    => 'checkbox',
+                'default' => 'no',
+                'id'      => 'montonio_shipping_sandbox_mode'
             ),
             array(
                 'type'    => 'select',
@@ -85,7 +85,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                     $order_statuses
                 ),
                 'id'      => 'montonio_shipping_orderStatusWhenLabelPrinted'
-            ),            
+            ),
             array(
                 'type'    => 'select',
                 'title'   => __( 'Order status when shipment is delivered', 'montonio-for-woocommerce' ),
@@ -103,24 +103,25 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             array(
                 'title'   => __( 'Tracking code text for e-mail', 'montonio-for-woocommerce' ),
                 'type'    => 'text',
-                'desc' => '<a class="montonio-reset-email-tracking-code-text" href="#">' . __( 'Reset to default value', 'montonio-for-woocommerce' ) . '</a><br><br>' . sprintf( __( 'Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href="%s" target="_blank">Click here</a> to learn more about how to add the code to customer emails.', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/69258-adding-tracking-codes-to-e-mails' ),
+                /* translators: help article url */
+                'desc'    => '<a class="montonio-reset-email-tracking-code-text" href="#">' . __( 'Reset to default value', 'montonio-for-woocommerce' ) . '</a><br><br>' . sprintf( __( 'Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href="%s" target="_blank">Click here</a> to learn more about how to add the code to customer emails.', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/69258-adding-tracking-codes-to-e-mails' ),
                 'default' => __( 'Track your shipment:', 'montonio-for-woocommerce' ),
                 'id'      => 'montonio_email_tracking_code_text'
             ),
             array(
-                'title'       => __( 'Show parcel machine address in dropdown in checkout', 'montonio-for-woocommerce' ),
-                'desc'       => __('Enable', 'montonio-for-woocommerce' ),
-                'type'        => 'checkbox',
-                'default'     => 'no',
-                'id'          => 'montonio_shipping_show_address'
+                'title'   => __( 'Show parcel machine address in dropdown in checkout', 'montonio-for-woocommerce' ),
+                'desc'    => __( 'Enable', 'montonio-for-woocommerce' ),
+                'type'    => 'checkbox',
+                'default' => 'no',
+                'id'      => 'montonio_shipping_show_address'
             ),
             array(
-                'title'       => __( 'Show shipping provider logos in checkout', 'montonio-for-woocommerce' ),
-                'desc'       => __( 'Enables', 'montonio-for-woocommerce' ),
-                'desc_tip'    => __( 'Applicable only in legacy checkout', 'montonio-for-woocommerce' ),
-                'type'        => 'checkbox',
-                'default'     => 'no',
-                'id'          => 'montonio_shipping_show_provider_logos'
+                'title'    => __( 'Show shipping provider logos in checkout', 'montonio-for-woocommerce' ),
+                'desc'     => __( 'Enables', 'montonio-for-woocommerce' ),
+                'desc_tip' => __( 'Applicable only in legacy checkout', 'montonio-for-woocommerce' ),
+                'type'     => 'checkbox',
+                'default'  => 'no',
+                'id'       => 'montonio_shipping_show_provider_logos'
             ),
             array(
                 'type' => 'sectionend',
@@ -132,16 +133,16 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'id'    => 'montonio_shipping_advanced'
             ),
             array(
-                'title' => __( 'Pickup point dropdown', 'montonio-for-woocommerce' ),
-                'type' => 'select',
-                'class' => 'wc-enhanced-select',
+                'title'   => __( 'Pickup point dropdown', 'montonio-for-woocommerce' ),
+                'type'    => 'select',
+                'class'   => 'wc-enhanced-select',
                 'default' => 'choices',
-                'desc' =>  __( 'Select the type of dropdown to use for pickup points. We recommend using the "Choices" dropdown as it offers a better user experience and interface. The "SelectWoo" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout).', 'montonio-for-woocommerce' ),
-                'options'     => array(
+                'desc'    => __( 'Select the type of dropdown to use for pickup points. We recommend using the "Choices" dropdown as it offers a better user experience and interface. The "SelectWoo" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout).', 'montonio-for-woocommerce' ),
+                'options' => array(
                     'choices' => 'Choices dropdown (recommended)',
-                    'select2' => 'SelectWoo dropdown (legacy)',
+                    'select2' => 'SelectWoo dropdown (legacy)'
                 ),
-                'id' => 'montonio_shipping_dropdown_type',
+                'id'      => 'montonio_shipping_dropdown_type'
             ),
             array(
                 'type' => 'sectionend',

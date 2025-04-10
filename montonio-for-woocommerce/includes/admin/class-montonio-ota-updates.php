@@ -254,20 +254,20 @@ class Montonio_OTA_Updates {
      */
     public function trigger_ota_sync( $request ) {
         try {
-            WC_Montonio_Logger::log( 'OTA Sync started by Montonio at ' . date( 'Y-m-d H:i:s' ) );
+            WC_Montonio_Logger::log( 'OTA Sync started by Montonio at ' . gmdate( 'Y-m-d H:i:s' ) );
 
             /**
              * @hooked WC_Montonio_Payments::sync_banks_ota - 10
              * @hooked WC_Montonio_Shipping::sync_shipping_methods_ota - 20
              */
             $result = apply_filters( 'montonio_ota_sync', array(
-                'started_at'   => date( 'Y-m-d H:i:s' ),
+                'started_at'   => gmdate( 'Y-m-d H:i:s' ),
                 'sync_results' => array(),
             ) );
 
             do_action( 'montonio_send_telemetry_data' );
 
-            $result['finished_at'] = date( 'Y-m-d H:i:s' );
+            $result['finished_at'] = gmdate( 'Y-m-d H:i:s' );
 
             WC_Montonio_Logger::log( 'OTA Sync finished at ' . $result['finished_at'] );
 

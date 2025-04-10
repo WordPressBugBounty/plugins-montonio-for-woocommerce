@@ -9,12 +9,11 @@ class Montonio_Migration_7_0_0 {
         self::create_montonio_shipping_method_items_table();
         self::create_montonio_shipping_labels_table();
         self::create_montonio_locks_table();
-
-        error_log( 'Montonio migration 7.0.0 completed' );
     }
 
     public static function create_montonio_locks_table() {
         global $wpdb;
+
         $table_name = $wpdb->prefix . 'montonio_locks';
         $collate    = $wpdb->get_charset_collate();
         $sql = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -29,6 +28,7 @@ class Montonio_Migration_7_0_0 {
 
     public static function create_montonio_shipping_method_items_table() {
         global $wpdb;
+
         $table_name = $wpdb->prefix . 'montonio_shipping_method_items';
         $collate = $wpdb->get_charset_collate();
         $sql     = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -48,6 +48,7 @@ class Montonio_Migration_7_0_0 {
 
     public static function create_montonio_shipping_labels_table() {
         global $wpdb;
+        
         $table_name = $wpdb->prefix . 'montonio_shipping_labels';
 
         $collate = $wpdb->get_charset_collate();

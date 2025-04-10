@@ -57,8 +57,8 @@ class WC_Montonio_Shipping_Product {
      * @return void
      */
     public function save_product_shipping_options( $post_id ) {
-        $no_parcel_machine = isset( $_POST['_montonio_no_parcel_machine'] ) ? sanitize_text_field( $_POST['_montonio_no_parcel_machine'] ) : null;
-        $separate_label = isset( $_POST['_montonio_separate_label'] ) ? sanitize_text_field( $_POST['_montonio_separate_label'] ) : null;
+        $no_parcel_machine = isset( $_POST['_montonio_no_parcel_machine'] ) ? sanitize_text_field( wp_unslash( $_POST['_montonio_no_parcel_machine'] ) ) : null;
+        $separate_label = isset( $_POST['_montonio_separate_label'] ) ? sanitize_text_field( wp_unslash( $_POST['_montonio_separate_label'] ) ) : null;
 
         update_post_meta( $post_id, '_montonio_no_parcel_machine', $no_parcel_machine );
         update_post_meta( $post_id, '_montonio_separate_label', $separate_label );

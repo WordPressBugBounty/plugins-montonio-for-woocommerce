@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           8.1.2
+ * Version:           9.0.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 9.7.1
+ * WC tested up to: 9.8.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '8.1.2' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -75,7 +75,9 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function init() {
             if ( ! class_exists( 'WooCommerce' ) ) {
-                $this->add_admin_notice( sprintf( esc_html__( 'Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'montonio-for-woocommerce' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>' ), 'error' );
+                /* translators: link to WooCommerce plugin page */
+                $message = sprintf( esc_html__( 'Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'montonio-for-woocommerce' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>' );
+                $this->add_admin_notice( $message, 'error' );
                 return;
             }
 

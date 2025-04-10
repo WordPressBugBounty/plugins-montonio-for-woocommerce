@@ -41,51 +41,51 @@ if ( ! empty( $shipment_status_reason ) ) {
 <div class="montonio-shipping-panel">
     <div class="montonio-shipping-panel__body">
         <div class="montonio-shipping-panel__header">
-            <h3 class="montonio-shipping-panel__title"><strong><?php echo $title; ?></strong></h3>
-            <img class="montonio-shipping-panel__logo<?php echo empty( $shipping_method ) ? ' default-logo' : null; ?>"  src="<?php echo $logo; ?>">
+            <h3 class="montonio-shipping-panel__title"><strong><?php echo esc_html( $title ); ?></strong></h3>
+            <img class="montonio-shipping-panel__logo<?php echo empty( $shipping_method ) ? ' default-logo' : null; ?>"  src="<?php echo esc_url( $logo ); ?>">
         </div>
 
         <?php if ( empty( $shipment_id ) ): ?>
             <?php if ( empty( $error_reason ) ): ?>
                 <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--yellow">
-                    <p><?php echo __( 'We\'ve noticed that this order includes Montonio\'s shipping method, but it seems that it\'s not registred in our Partner System yet, please click on "Create shipment in Montonio" to generate the shipment and obtain the tracking codes.', 'montonio-for-woocommerce' ); ?></p>
+                    <p><?php echo esc_html__( 'We\'ve noticed that this order includes Montonio\'s shipping method, but it seems that it\'s not registred in our Partner System yet, please click on "Create shipment in Montonio" to generate the shipment and obtain the tracking codes.', 'montonio-for-woocommerce' ); ?></p>
                 </div>
             <?php endif; ?>
         <?php else: ?>
             <div class="montonio-shipping-panel__row">
-                <h4><?php echo __( 'Montonio shipment ID:', 'montonio-for-woocommerce' ); ?></h4>
-                <strong><?php echo $shipment_id; ?></strong>
+                <h4><?php echo esc_html__( 'Montonio shipment ID:', 'montonio-for-woocommerce' ); ?></h4>
+                <strong><?php echo esc_html( $shipment_id ); ?></strong>
             </div>
 
             <?php if ( ! empty( $tracking_codes ) && 'pending' !== $shipment_status ): ?>
                 <div class="montonio-shipping-panel__row">
-                    <h4><?php echo __( 'Shipment tracking code(s):', 'montonio-for-woocommerce' ); ?></h4>
-                    <?php echo $tracking_codes; ?>
+                    <h4><?php echo esc_html__( 'Shipment tracking code(s):', 'montonio-for-woocommerce' ); ?></h4>
+                    <?php echo wp_kses_post( $tracking_codes ); ?>
                 </div>
             <?php endif; ?>
 
             <?php if ( 'pending' === $shipment_status ): ?>
                 <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--blue">
-                    <p><?php echo __( 'Shipment successfully created in Montonio. Waiting for tracking codes.', 'montonio-for-woocommerce' ); ?></p>
+                    <p><?php echo esc_html__( 'Shipment successfully created in Montonio. Waiting for tracking codes.', 'montonio-for-woocommerce' ); ?></p>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
 
         <?php if ( ! empty( $error_reason ) ): ?>
             <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--red">
-                <p><?php echo $error_reason; ?></p>
+                <p><?php echo wp_kses_post( $error_reason ); ?></p>
             </div>
         <?php endif; ?>
 
         <div class="montonio-shipping-panel__actions">
             <?php if ( ! empty( $shipment_id ) && in_array( $shipment_status, array( 'registered', 'registrationFailed', 'labelsCreated', 'updateFailed' ) ) ): ?>
-                <a id="montonio-shipping-send-shipment" data-type="update" class="montonio-button montonio-button--secondary"><?php echo __( 'Update shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
+                <a id="montonio-shipping-send-shipment" data-type="update" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Update shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
             <?php elseif ( empty( $shipment_id ) ): ?>
-                <a id="montonio-shipping-send-shipment" data-type="create" class="montonio-button montonio-button--secondary"><?php echo __( 'Create shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
+                <a id="montonio-shipping-send-shipment" data-type="create" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Create shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
             <?php endif; ?>
 
             <?php if ( ! empty( $tracking_codes ) && 'registered' === $shipment_status ): ?>
-                <a id="montonio-shipping-print-label" class="montonio-button"><?php echo __( 'Print label', 'montonio-for-woocommerce' ); ?></a>
+                <a id="montonio-shipping-print-label" class="montonio-button"><?php echo esc_html__( 'Print label', 'montonio-for-woocommerce' ); ?></a>
             <?php endif; ?>
         </div>
     </div>

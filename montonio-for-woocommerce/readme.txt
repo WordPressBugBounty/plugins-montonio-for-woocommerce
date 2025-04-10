@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 8.1.2
+Version: 9.0.0
 Date: 2019-09-04
 Contributors: Montonio
-Tags: online payment, payment, payment gateway, sales, hire-purchase, järelmaks, financing, krediidivahendaja, montonio, woocommerce
+Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
-Tested up to: 6.7.2
-Stable tag: 8.1.2
+Tested up to: 6.7
+Stable tag: 9.0.0
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -46,7 +46,6 @@ Adding Montonio to your store is only a matter of minutes.
 2. Verify your identity and confirm your account with Montonio
 3. Set up the plugin, insert API keys and start using Montonio. More details on how to install and set up the plugin can be found in the Installation tab.
 
- 
 = Availability = 
 Montonio currently offers services in these countries:
 * Payments: Estonia, Finland, Latvia, Lithuania, Poland
@@ -61,8 +60,6 @@ Any questions? Just drop us an email at support@montonio.com.
 
 = WANT TO KNOW MORE? =
 More information about our solutions can be found on our [website](https://montonio.com).
-
-To ensure the best compatibility experience, Montonio collects and uses store telemetry data, without collecting irrelevant customer data.
 
 == Installation ==
 
@@ -79,8 +76,73 @@ To ensure the best compatibility experience, Montonio collects and uses store te
 3. After activating the plugin, you need to connect your Montonio API keys to your WooCommerce store. To do this, go to WooCommerce > Settings > Payments > Montonio Bank Payments (2023). Under API settings tab you can enter your API keys that are easily accessible through [https://partner.montonio.com](https://partner.montonio.com). For step-by-step instructions on where to find API keys [click here](https://help.montonio.com/en/articles/79609-how-to-find-api-keys-for-integration).
 4. Save changes, and enable payment methods you want to use in your store.
 
+== External Services ==
+
+This plugin connects to multiple Montonio services to provide payment processing, shipping management, and service improvements:
+
+= Montonio Payment Gateway (Stargate) =
+What it does: Processes various payment methods including bank payments, card payments, BLIK payments, hire purchase and pay later options.
+
+Data transmitted: Order information (total amount, currency, order items), customer details (name, email, billing/shipping addresses), payment method selection, and merchant identification.
+
+When transmitted: During checkout when a payment is initiated, when checking payment status, and when processing refunds.
+
+Service URLs:
+* Production: https://stargate.montonio.com/api
+* Sandbox: https://sandbox-stargate.montonio.com/api
+
+Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/montonio_general/v3.0/montonio_general_ee.pdf) | [Privacy Policy](https://montonio.com/legal/privacy-policy/)
+
+= Montonio Shipping API =
+What it does: Manages shipping methods, pickup points, courier services, label generation and shipment tracking.
+
+Data transmitted: Shipping addresses, order details, selected shipping methods, parcel information (weight, dimensions), and shipment tracking information.
+
+When transmitted: When retrieving available shipping methods, displaying pickup points, creating shipments, and generating shipping labels.
+
+Service URLs:
+* Production: https://shipping.montonio.com/api
+* Sandbox: https://sandbox-shipping.montonio.com/api
+
+Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/shipping/v3.0/shipping_international.pdf) | [Privacy Policy](https://montonio.com/legal/privacy-policy/)
+
+= Montonio JavaScript SDK =
+What it does: Client-side library that renders payment forms, handles payment method selection and processes transactions.
+
+Data transmitted: Payment form inputs, selected payment method details, transaction authentication data.
+
+When transmitted: During checkout when payment forms are displayed and when customers interact with payment elements.
+
+Service URLs:
+* SDK bundle: https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js
+* Card payments API (Production): https://api.card-payments.montonio.com/payment-intents
+* Card payments API (Sandbox): https://api.sandbox-card-payments.montonio.com/payment-intents
+* Payment intents API (Production): https://stargate.montonio.com/api/payment-intents
+* Payment intents API (Sandbox): https://sandbox-stargate.montonio.com/api/payment-intents
+
+Service information: [Bank Payment Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/payment_initiation/v3.0/payment_initiation_international.pdf) | [Card Payment Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/card_payments/v3.0/card_payments_international.pdf) | [Privacy Policy](https://montonio.com/legal/privacy-policy/)
+
+= Montonio Telemetry Service =
+What it does: Sends Store URL, WordPress/WooCommerce version information and plugin configuration settings to offer better customer support when troubleshooting issues. No sensitive or private data is collected.
+
+Data transmitted: Store URL, WordPress/WooCommerce version information, plugin configuration settings (with sensitive data removed).
+
+When transmitted: Upon plugin activation, deactivation, settings changes, and periodically (once per day).
+
+Service URL: https://plugin-telemetry.montonio.com/api
+
+Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/montonio_general/v3.0/montonio_general_ee.pdf) | [Privacy Policy](https://montonio.com/legal/privacy-policy/)
+
 
 == Changelog ==
+= 9.0.0 =
+* Tweak - Code refactoring, compatibility and security improvements
+
+= 8.1.3 =
+* Tweak - Refactored "labels printed" order status update logic to trigger after labels have been printed
+* Tweak - Always send the full 'products' array in shipment data, without filtering or removing items
+* Fix - Free shipping threshold calculation issue when using an incorrect decimal separator
+
 = 8.1.2 =
 * Added - Option to exclude virtual products from the cart total when determining eligibility for free shipping
 * Added - Option to automatically update the order status when a shipment is marked as delivered

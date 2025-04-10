@@ -93,7 +93,7 @@ class WC_Montonio_Display_Admin_Options {
         <div class="<?php echo esc_attr( implode( ' ', array( 'montonio-card', $class, ! empty( $icon ) ? 'montonio-card--icon' : '' ) ) ); ?>">
             <div class="montonio-card__body">
                 <?php if ( ! empty( $icon ) ) : ?>
-                    <span class="dashicons <?php echo $icon; ?>"></span>
+                    <span class="dashicons <?php echo esc_attr( $icon ); ?>"></span>
                 <?php endif;?>
 
                 <p><?php echo wp_kses_post( $content ); ?></p>
@@ -108,16 +108,16 @@ class WC_Montonio_Display_Admin_Options {
 
         <div class="montonio-card">
             <div class="montonio-card__body">
-                <h4><?php echo __( 'API keys status', 'montonio-for-woocommerce' ); ?></h4>
+                <h4><?php echo esc_html__( 'API keys status', 'montonio-for-woocommerce' ); ?></h4>
                 <div class="montonio-api-status">
-                    <p><?php echo __( 'Live keys:', 'montonio-for-woocommerce' ); ?></p>
+                    <p><?php echo esc_html__( 'Live keys:', 'montonio-for-woocommerce' ); ?></p>
                     <?php if ( ! empty( $api_settings['access_key'] ) && ! empty( $api_settings['secret_key'] ) ) {
                         echo '<span class="api-status--green"><span class="dashicons dashicons-yes-alt"></span>Added</span>';
                     } else {
                         echo '<span class="api-status--gray"><span class="dashicons dashicons-warning"></span>Not Added</span>';
                     }?>
 
-                    <p><?php echo __( 'Sandbox keys:', 'montonio-for-woocommerce' ); ?></p>
+                    <p><?php echo esc_html__( 'Sandbox keys:', 'montonio-for-woocommerce' ); ?></p>
                     <?php if ( ! empty( $api_settings['sandbox_access_key'] ) && ! empty( $api_settings['sandbox_secret_key'] ) ) {
                         echo '<span class="api-status--green"><span class="dashicons dashicons-yes-alt"></span>Added</span>';
                     } else {
@@ -127,7 +127,7 @@ class WC_Montonio_Display_Admin_Options {
             </div>
 
             <div class="montonio-card__footer">
-                <a href="<?php echo admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ); ?>" class="components-button is-secondary"><?php echo __( 'Edit account keys', 'montonio-for-woocommerce' ); ?></a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ); ?>" class="components-button is-secondary"><?php echo esc_html__( 'Edit account keys', 'montonio-for-woocommerce' ); ?></a>
             </div>
         </div>
         <?php
@@ -150,12 +150,14 @@ class WC_Montonio_Display_Admin_Options {
 
         if ( 'montonio_shipping' === $id ) {
             $banners[] = array(
+                /* translators: help article url */
                 'content' => sprintf( __( 'Follow these instructions to set up shipping: <a href="%s" target="_blank">How to set up Shipping solution</a>', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/57066-how-to-set-up-shipping-solution' ),
                 'class'   => null,
                 'icon'    => 'dashicons-info-outline'
             );
         } else {
             $banners[] = array(
+                /* translators: help article url */
                 'content' => sprintf( __( 'Follow these instructions to set up payment methods: <a href="%s" target="_blank">Activating Payment Methods in WooCommerce</a>', 'montonio-for-woocommerce' ), 'https://help.montonio.com/en/articles/68142-activating-payment-methods-in-woocommerce' ),
                 'class'   => null,
                 'icon'    => 'dashicons-info-outline'
@@ -164,14 +166,14 @@ class WC_Montonio_Display_Admin_Options {
         ?>
 
         <h2>
-            <?php echo $title; ?>
+            <?php echo esc_html( $title ); ?>
             <small class="wc-admin-breadcrumb">
-                <a href="<?php echo admin_url( 'admin.php?page=wc-settings&tab=checkout' ); ?>" aria-label="Return to payments">⤴</a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>" aria-label="Return to payments">⤴</a>
             </small>
         </h2>
 
-        <div class="montonio-options-wrapper <?php echo $id; ?>">
-            <img class="montonio-logo" src="https://montonio.com/wp-content/themes/montonio-theme/assets/img/logo.svg">
+        <div class="montonio-options-wrapper <?php echo esc_attr( $id ); ?>">
+            <img class="montonio-logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo.svg' ); ?>" alt="Montonio logo" />
 
             <?php
             self::montonio_admin_menu( $id );

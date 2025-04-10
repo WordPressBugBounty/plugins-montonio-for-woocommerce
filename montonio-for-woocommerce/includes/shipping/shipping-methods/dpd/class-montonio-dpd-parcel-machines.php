@@ -1,15 +1,15 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = [36, 43, 61]; // lowest to highest (cm)
+    const MAX_DIMENSIONS = array(36, 43, 61); // lowest to highest (cm)
 
-    public $default_title = 'DPD parcel machines';
+    public $default_title      = 'DPD parcel machines';
     public $default_max_weight = 20; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
@@ -19,13 +19,17 @@ class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
-            'instance-settings-modal',
+            'instance-settings-modal'
         );
 
         $this->provider_name = 'dpd';
-        $this->type_v2 = 'parcelMachine';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/dpd.png';
-        $this->title = __( $this->get_option( 'title', __( 'DPD parcel machines', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'parcelMachine';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd.svg';
+        $this->title         = $this->get_option( 'title', __( 'DPD parcel machines', 'montonio-for-woocommerce' ) );
+
+        if ( 'DPD parcel machines' === $this->title ) {
+            $this->title = __( 'DPD parcel machines', 'montonio-for-woocommerce' );
+        }
     }
 
     /**

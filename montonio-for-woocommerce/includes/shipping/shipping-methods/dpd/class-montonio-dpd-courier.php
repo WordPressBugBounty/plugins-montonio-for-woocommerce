@@ -1,16 +1,16 @@
 <?php
-defined('ABSPATH') or exit;
+defined( 'ABSPATH' ) or exit;
 
 class Montonio_DPD_Courier extends Montonio_Shipping_Method {
-    const MAX_LENGHT = 175; // cm (longest side)
+    const MAX_LENGHT                  = 175; // cm (longest side)
     const MAX_SUM_OF_LENGHT_AND_GIRTH = 300; // cm
 
-    public $default_title = 'DPD courier';
+    public $default_title      = 'DPD courier';
     public $default_max_weight = 31.5; // kg
 
     /**
      * Called from parent's constructor
-     * 
+     *
      * @return void
      */
     protected function init() {
@@ -20,13 +20,17 @@ class Montonio_DPD_Courier extends Montonio_Shipping_Method {
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
-            'instance-settings-modal',
+            'instance-settings-modal'
         );
 
         $this->provider_name = 'dpd';
-        $this->type_v2 = 'courier';
-        $this->logo = 'https://public.montonio.com/images/shipping_provider_logos/dpd.png';
-        $this->title = __( $this->get_option( 'title', __( 'DPD courier', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
+        $this->type_v2       = 'courier';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd.svg';
+        $this->title         = $this->get_option( 'title', __( 'DPD courier', 'montonio-for-woocommerce' ) );
+
+        if ( 'DPD courier' === $this->title ) {
+            $this->title = __( 'DPD courier', 'montonio-for-woocommerce' );
+        }
     }
 
     /**
@@ -37,7 +41,7 @@ class Montonio_DPD_Courier extends Montonio_Shipping_Method {
      */
     protected function validate_package_dimensions( $package ) {
         $package_dimensions = $this->get_package_dimensions( $package );
-        
+
         if ( $package_dimensions[2] > self::MAX_LENGHT ) {
             return false;
         }

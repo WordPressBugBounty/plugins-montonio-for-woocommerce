@@ -42,23 +42,23 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
      * @return void
      */
     public function process_webhook() {
-        if ( ! empty( $_REQUEST['refund-token'] ) ) {
-            $token = sanitize_text_field( $_REQUEST['refund-token'] );
+        if ( ! empty( $_GET['refund-token'] ) ) {
+            $token = sanitize_text_field( wp_unslash( $_GET['refund-token'] ) );
             $this->process_refund_webhook( $token );
 
             return;
         }
 
-        if ( ! empty( $_REQUEST['order-token'] ) ) {
-            $token = sanitize_text_field( $_REQUEST['order-token'] );
+        if ( ! empty( $_GET['order-token'] ) ) {
+            $token = sanitize_text_field( wp_unslash( $_GET['order-token'] ) );
 
             $this->process_order_webhook( $token );
 
             return;
         }
 
-        if ( ! empty( $_REQUEST['error-message'] ) ) {
-            $error_message = rawurldecode( $_REQUEST['error-message'] );
+        if ( ! empty( $_GET['error-message'] ) ) {
+            $error_message = sanitize_text_field( rawurldecode( wp_unslash( $_GET['error-message'] ) ) );
 
             WC_Montonio_Logger::log( 'Payment error: ' . $error_message );
 
@@ -159,12 +159,9 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         wp_delete_post( $refund->get_id(), true );
                     }
 
-                    $order->add_order_note(
-                        sprintf(
-                            __( '<strong>Refund canceled.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                            $refund_uuid
-                        )
-                    );
+                    /* translators: refund UUID */
+                    $message = sprintf( __( '<strong>Refund canceled.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ), $refund_uuid );
+                    $order->add_order_note( $message );
 
                     break;
                 case 'REJECTED':
@@ -174,22 +171,15 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         wp_delete_post( $refund->get_id(), true );
                     }
 
-                    $order->add_order_note(
-                        sprintf(
-                            __( '<strong>Refund rejected.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                            $refund_uuid
-                        )
-                    );
+                    /* translators: refund UUID */
+                    $message = sprintf( __( '<strong>Refund rejected.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ), $refund_uuid );
+                    $order->add_order_note( $message );
 
                     break;
                 case 'SUCCESSFUL':
-                    $order->add_order_note(
-                        sprintf(
-                            __( '<strong>Refund of %s processed succesfully.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                            wc_price( $amount ),
-                            $refund_uuid
-                        )
-                    );
+                    /* translators: 1) refund amount 2) refund UUID */
+                    $message = sprintf( __( '<strong>Refund of %1$s processed succesfully.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $refund_uuid );
+                    $order->add_order_note( $message );
 
                     break;
                 default:
@@ -197,7 +187,7 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         'success' => false,
                         'data'    => array(
                             'message'       => 'Invalid Status',
-                            'error_details' => sprintf( 'Unknown refund status received: %s', $status )
+                            'error_details' => 'Unknown refund status received: ' . $status
                         )
                     ), 200 );
             }
@@ -208,21 +198,18 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
             $order->save();
 
             wp_send_json_success( array(
-                'message' => sprintf( 'Refund status updated' )
+                'message' => 'Refund status updated'
             ) );
         }
 
         // Handle new refund
         if ( 'REJECTED' === $status || 'CANCELED' === $status ) {
-            $order->add_order_note(
-                sprintf(
-                    __( '<strong>Refund rejected.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                    $refund_uuid
-                )
-            );
+            /* translators: refund UUID */
+            $message = sprintf( __( '<strong>Refund rejected.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ), $refund_uuid );
+            $order->add_order_note( $message );
 
             wp_send_json_success( array(
-                'message' => sprintf( 'Refund status updated' )
+                'message' => 'Refund status updated'
             ) );
         }
 
@@ -254,25 +241,17 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         $order->save();
 
         if ( 'SUCCESSFUL' === $status ) {
-            $order->add_order_note(
-                sprintf(
-                    __( '<strong>Refund of %s processed succesfully.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                    wc_price( $amount ),
-                    $refund_uuid
-                )
-            );
+            // translators: 1) refund amount 2) refund UUID
+            $message = sprintf( __( '<strong>Refund of %1$s processed succesfully.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $refund_uuid );
+            $order->add_order_note( $message );
         } else {
-            $order->add_order_note(
-                sprintf(
-                    __( '<strong>Refund of %s pending.</strong><br>Refund ID: %s', 'montonio-for-woocommerce' ),
-                    wc_price( $amount ),
-                    $refund_uuid
-                )
-            );
+            // translators: 1) refund amount 2) refund UUID
+            $message = sprintf( __( '<strong>Refund of %1$s pending.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $refund_uuid );
+            $order->add_order_note( $message );
         }
 
         wp_send_json_success( array(
-            'message' => sprintf( 'Refund created successfully' )
+            'message' => 'Refund created successfully'
         ) );
 
     }
@@ -395,32 +374,35 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                 case 'PAID':
                     $order->payment_complete();
 
-                    $order->add_order_note(
-                        sprintf(
-                            __( '<strong>Payment via Montonio.</strong><br>Order ID: %s<br>Payment method: %s<br>Paid amount: %s%s', 'montonio-for-woocommerce' ),
-                            $uuid,
-                            $payment_provider_name,
-                            $grand_total,
-                            $currency
-                        )
-                    );
+                    /* translators: 1) order UUID 2) payment method 3) amount 4) currency */
+                    $message = sprintf( __( '<strong>Payment via Montonio.</strong><br>Order ID: %1$s<br>Payment method: %2$s<br>Paid amount: %3$s%4$s', 'montonio-for-woocommerce' ), $uuid, $payment_provider_name, $grand_total, $currency );
+                    $order->add_order_note( $message );
 
                     WC()->cart->empty_cart();
                     $return_url = $this->get_return_url( $order );
                     break;
                 case 'AUTHORIZED':
-                    $order->add_order_note( sprintf( __( 'Montonio: Payment is authorized but not yet processed by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
+                    /* translators: order UUID */
+                    $message = sprintf( __( 'Montonio: Payment is authorized but not yet processed by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid );
+                    $order->add_order_note( $message );
+
                     $order->update_status( apply_filters( 'wc_montonio_authorized_order_status', 'on-hold' ) );
 
                     WC()->cart->empty_cart();
                     $return_url = $this->get_return_url( $order );
                     break;
                 case 'VOIDED':
-                    $order->add_order_note( sprintf( __( 'Montonio: Payment was rejected by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
+                    /* translators: order UUID */
+                    $message = sprintf( __( 'Montonio: Payment was rejected by the bank, order ID: %s', 'montonio-for-woocommerce' ), $uuid );
+                    $order->add_order_note( $message );
+
                     $order->update_status( apply_filters( 'wc_montonio_voided_order_status', 'cancelled' ) );
                     break;
                 case 'ABANDONED':
-                    $order->add_order_note( sprintf( __( 'Montonio: Payment session abandoned, order ID: %s', 'montonio-for-woocommerce' ), $uuid ) );
+                    /* translators: order UUID */
+                    $message = sprintf( __( 'Montonio: Payment session abandoned, order ID: %s', 'montonio-for-woocommerce' ), $uuid );
+                    $order->add_order_note( $message );
+
                     $order->update_status( apply_filters( 'wc_montonio_abandoned_order_status', 'cancelled' ) );
                     break;
                 case 'PARTIALLY_REFUNDED':
@@ -428,6 +410,7 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                     break;
                 default:
                     wc_add_notice( __( 'Unable to finish the payment. Please try again or choose a different payment method.', 'montonio-for-woocommerce' ), 'notice' );
+
                     WC_Montonio_Logger::log( 'Not handling this payment status. Payment status: ' . $payment_status );
                     break;
             }

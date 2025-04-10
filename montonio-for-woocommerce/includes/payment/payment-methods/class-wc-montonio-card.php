@@ -28,7 +28,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'wc_montonio_card';
-        $this->icon               = 'https://public.montonio.com/images/logos/visa-mc-ap-gp.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
         $this->has_fields         = false;
         $this->method_title       = __( 'Montonio Card Payments', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Allows card payments via Montonio', 'montonio-for-woocommerce' );
@@ -44,15 +44,19 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title           = __( $this->get_option( 'title', __( 'Card Payment', 'montonio-for-woocommerce' ) ), 'montonio-for-woocommerce' );
-        $this->description     = __( $this->get_option( 'description' ), 'montonio-for-woocommerce' );
+        $this->title           = $this->get_option( 'title', 'Card Payment' );
+        $this->description     = $this->get_option( 'description' );
         $this->enabled         = $this->get_option( 'enabled' );
         $this->sandbox_mode    = $this->get_option( 'sandbox_mode' );
         $this->inline_checkout = $this->get_option( 'inline_checkout' );
 
+        if ( 'Card Payment' === $this->title ) {
+            $this->title = __( 'Card Payment', 'montonio-for-woocommerce' );
+        }
+
         if ( $this->inline_checkout === 'yes' ) {
             $this->has_fields = true;
-            $this->icon       = 'https://public.montonio.com/images/logos/visa-mc.png';
+            $this->icon       = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png';
         }
 
         // Hooks
@@ -156,14 +160,20 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             // Disable the payment gateway if API keys are not provided
             if ( $settings['sandbox_mode'] === 'yes' ) {
                 if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Sandbox API keys missing. Montonio Card Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
                 }
             } else {
                 if ( empty( $api_settings['access_key'] ) || empty( $api_settings['secret_key'] ) ) {
-                    $this->add_admin_notice( sprintf( __( 'Live API keys missing. Montonio Card Payments was disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ), 'error' );
+                    /* translators: API Settings page url */
+                    $message = sprintf( __( 'Live API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
+                    $this->add_admin_notice( $message, 'error' );
+
                     $settings['enabled'] = 'no';
 
                     return $settings;
@@ -209,7 +219,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             );
 
             if ( $this->inline_checkout === 'yes' ) {
-                $payment_intent_uuid = isset( $_POST['montonio_card_payment_intent_uuid'] ) ? sanitize_text_field( $_POST['montonio_card_payment_intent_uuid'] ) : null;
+                $payment_intent_uuid = isset( $_POST['montonio_card_payment_intent_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_card_payment_intent_uuid'] ) ) : null;
 
                 if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
                     wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
@@ -264,11 +274,12 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
         if ( $this->sandbox_mode === 'yes' ) {
-            echo '<strong>' . __( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ) . '</strong><br>' . __( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) . '<br>';
+            /* translators: 1) notice that test mode is enabled 2) explanation of test mode */
+            printf( '<strong>%1$s</strong><br>%2$s<br>', esc_html__( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ), esc_html__( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) );
         }
 
         if ( ! empty( $description ) ) {
-            echo apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id );
+            echo esc_html( apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id ) );
         }
 
         if ( $this->inline_checkout === 'yes' ) {
@@ -290,7 +301,8 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             $wc_montonio_inline_cc_params = array(
                 'sandbox_mode' => $this->sandbox_mode,
                 'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
-                'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) )
+                'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
+                'nonce'        => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
             );
 
             wp_localize_script( 'montonio-inline-card', 'wc_montonio_inline_cc', $wc_montonio_inline_cc_params );
@@ -306,11 +318,11 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      * @return bool
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
-        return WC_Montonio_Refund::init_refund( 
-            $order_id, 
+        return WC_Montonio_Refund::init_refund(
+            $order_id,
             $this->sandbox_mode,
-            $amount, 
-            $reason 
+            $amount,
+            $reason
         );
     }
 
