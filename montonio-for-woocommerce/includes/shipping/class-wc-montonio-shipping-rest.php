@@ -94,14 +94,6 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
                 'permission_callback' => array( $this, 'check_sync_shipping_method_items_permissions' )
             )
         );
-
-        register_rest_route( $this->namespace, '/shipment/mark-as-labels-printed',
-            array(
-                'methods'             => 'POST',
-                'callback'            => array( $this, 'mark_as_labels_printed' ),
-                'permission_callback' => array( $this, 'permissions_check' )
-            )
-        );
     }
 
     /**
@@ -351,32 +343,6 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             'status' => $current_status,
             'panel'  => $panel_content
         ) );
-    }
-
-    /**
-     * Mark shipments as having their labels printed and trigger follow-up actions.
-     *
-     * @since 8.1.3
-     * @param WP_REST_Request $request The request object containing shipmentIds parameter
-     * @return WP_REST_Response|WP_Error Success message on success, or WP_Error on invalid input
-     */
-    public function mark_as_labels_printed( $request ) {
-        $shipment_ids = $request->get_param( 'shipmentIds' );
-
-        if ( empty( $shipment_ids ) ) {
-            return new WP_Error( 'wc_montonio_shipping_mark_as_labels_printed_failed', 'No shipment IDs found in the payload', array( 'status' => 400 ) );
-        }
-
-        $handler   = WC_Montonio_Shipping_Label_Printing::get_instance();
-        $order_ids = $handler->get_order_ids_from_shipment_ids( $shipment_ids );
-
-        if ( empty( $order_ids ) ) {
-            return new WP_Error( 'wc_montonio_shipping_invalid_order_ids', 'Could not find order IDs from the provided shipping IDs.', array( 'status' => 400 ) );
-        }
-
-        do_action( 'wc_montonio_shipping_labels_ready', $order_ids );
-
-        return rest_ensure_response( array( 'message' => 'Order statuses updated successfully.' ) );
     }
 }
 

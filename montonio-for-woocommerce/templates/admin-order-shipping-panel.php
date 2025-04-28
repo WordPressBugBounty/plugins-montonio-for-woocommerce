@@ -84,7 +84,7 @@ if ( ! empty( $shipment_status_reason ) ) {
                 <a id="montonio-shipping-send-shipment" data-type="create" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Create shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
             <?php endif; ?>
 
-            <?php if ( ! empty( $tracking_codes ) && 'registered' === $shipment_status ): ?>
+            <?php if ( ! empty( $tracking_codes ) && ! in_array( $shipment_status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) )  ): ?>
                 <a id="montonio-shipping-print-label" class="montonio-button"><?php echo esc_html__( 'Print label', 'montonio-for-woocommerce' ); ?></a>
             <?php endif; ?>
         </div>

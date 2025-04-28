@@ -33,10 +33,6 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
-        $shipping_method_items_data = [
-            'shippingDropdownType' => get_option( 'montonio_shipping_dropdown_type' )
-        ];
-
         if ( get_option( 'montonio_shipping_dropdown_type' ) === 'select2' ) {
             wp_enqueue_style( 'montonio-pickup-points' );
 
@@ -45,10 +41,8 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             }
 
             wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
-            wp_localize_script( 'montonio-shipping-pickup-points-legacy', 'wcMontonioShippingMethodItemsData', $shipping_method_items_data );
         } else {
             wp_enqueue_script( 'montonio-shipping-pickup-points' );
-            wp_localize_script( 'montonio-shipping-pickup-points', 'wcMontonioShippingMethodItemsData', $shipping_method_items_data );
         }
     }
 

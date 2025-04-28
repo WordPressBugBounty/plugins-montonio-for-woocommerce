@@ -80,7 +80,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
         $this->bank_list           = $this->get_option( 'bank_list' );
         $this->default_country     = $this->get_option( 'default_country', 'EE' );
         $this->hide_country_select = $this->get_option( 'hide_country_select' );
-        $this->preselect_country = $this->get_option( 'preselect_country' );
+        $this->preselect_country   = $this->get_option( 'preselect_country' );
 
         if ( 'Pay with your bank' === $this->title ) {
             $this->title = __( 'Pay with your bank', 'montonio-for-woocommerce' );
@@ -391,6 +391,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             }
 
             echo '<div id="montonio-payments-description" class="montonio-bank-items montonio-bank-items--' . esc_attr( $this->handle_style ) . '">';
+
             $default_country = array_keys( $countries )[0];
             foreach ( $countries as $country => $value ) {
                 if ( $country === $this->default_country ) {
@@ -405,6 +406,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
                     }
                 }
             }
+            
             echo '</div>';
             echo '<input type="hidden" name="montonio_payments_preselected_bank" id="montonio_payments_preselected_bank">';
             echo '</div>';
@@ -420,9 +422,11 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
             return;
         }
 
-        if ( ! WC_Montonio_Helper::is_checkout_block() ) {
-            wp_enqueue_script( 'montonio-pis' );
+        if ( ! isset( $_GET['pay_for_order'] ) && WC_Montonio_Helper::is_checkout_block() ) {
+            return;
         }
+
+        wp_enqueue_script( 'montonio-pis' );
     }
 
     /**

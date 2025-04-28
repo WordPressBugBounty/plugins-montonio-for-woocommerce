@@ -5,7 +5,18 @@ jQuery(document).ready(function($) {
     var labelPrintingInterval = null;
     var shippingPanel = $('.montonio-shipping-panel');
     
-    // This is used in the orders list page
+    $(document).on('click', '.wc-action-button-montonio_print_label', function(event) {
+        event.preventDefault();
+
+        var order_id = $(this).attr('href').replace('#', '');
+
+        var data = {
+            order_ids: [order_id]
+        };
+        
+        createMontonioShippingLabels(data);
+    });
+
     $(document).on('click', '#doaction', function(event) {
         if ($('#bulk-action-selector-top').val() !== 'wc_montonio_print_labels') {
             return;
@@ -51,6 +62,7 @@ jQuery(document).ready(function($) {
         var data = {
             order_ids: [wcMontonioShippingLabelPrintingData.orderId]
         };
+
         createMontonioShippingLabels(data);
         
     });
@@ -124,9 +136,7 @@ jQuery(document).ready(function($) {
                     clearInterval(labelPrintingInterval);
                     labelPrintingInterval = null;
 
-                    showNotice('success',  __('Montonio: Labels downloaded.', 'montonio-for-woocommerce'));
-
-                    updateOrderStatus(response.data.shipmentIds);
+                    showNotice('success',  __('Montonio: Labels downloaded. Refresh the browser for updated order statuses', 'montonio-for-woocommerce'));
                 } else if (response && response.data && response.data.status === 'failed') {
                     shippingPanel.removeClass('montonio-shipping-panel--loading');
                     clearInterval(labelPrintingInterval);
@@ -142,27 +152,6 @@ jQuery(document).ready(function($) {
                 labelPrintingInterval = null;
 
                 showNotice('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
-            }
-        });
-    }
-
-    function updateOrderStatus(shipmentIds) {
-        var data = {
-            shipmentIds: shipmentIds
-        };
-
-        $.ajax({
-            url: wcMontonioShippingLabelPrintingData.restUrl + '/shipment/mark-as-labels-printed',
-            type: 'POST',
-            data: data,
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('X-WP-Nonce', wcMontonioShippingLabelPrintingData.nonce);
-            },
-            success: function(response) {
-                showNotice('error', __('Montonio: Order statuses updated successfully. Refresh the browser to view the updates', 'montonio-for-woocommerce'));
-            },
-            error: function(response) {
-                showNotice('error', __('Montonio: Order status update failed', 'montonio-for-woocommerce'));
             }
         });
     }

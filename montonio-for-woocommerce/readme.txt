@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.0
+Version: 9.0.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
-Tested up to: 6.7
-Stable tag: 9.0.0
+Tested up to: 6.8
+Stable tag: 9.0.1
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -135,6 +135,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.0.1 =
+* Added - "Print label" action button in the order list view
+* Added - Product price and currency to the shipment 'products' array data
+* Tweak - Improved shipping method dropdown compatibility with custom checkout layouts
+* Fix - Order status now correctly updates when the label is printed through the Partner system
+
 = 9.0.0 =
 * Tweak - Code refactoring, compatibility and security improvements
 

@@ -219,6 +219,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $sku        = ! empty( $product->get_sku() ) ? $product->get_sku() : 'woomon_' . $product_id;
             $barcode    = method_exists( $product, 'get_global_unique_id' ) ? $product->get_global_unique_id() : null;
             $name       = $product->get_name();
+            $price      = wc_get_price_including_tax( $product );
             $quantity   = $item->get_quantity();
             $weight     = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
 
@@ -246,7 +247,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 // SKU duplicate found, check if product IDs match
                 if ( isset( $product_ids[$duplicate_index] ) && $product_ids[$duplicate_index] === $product_id ) {
                     // Same product (based on item ID), just increase quantity
-                    $products[$duplicate_index]['quantity'] += floatval( $quantity );
+                    $products[$duplicate_index]['quantity'] += (float) $quantity;
                     continue;
                 }
             }
@@ -254,8 +255,10 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $product_data = array(
                 'sku'      => (string) $sku,
                 'name'     => (string) $name,
-                'quantity' => floatval( $quantity ),
-                'barcode'  => (string) $barcode
+                'quantity' => (float) $quantity,
+                'barcode'  => (string) $barcode,
+                'price'    => (float) wc_format_decimal( $price, 2 ),
+                'currency' => (string) $order->get_currency()
             );
 
             $product_ids[] = $product_id;

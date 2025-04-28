@@ -269,15 +269,15 @@ msgstr ""
 msgid "Pickup point dropdown"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:430
+#: includes/shipping/class-wc-montonio-shipping-order.php:463
 msgid "Select a destination country"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:474
+#: includes/shipping/class-wc-montonio-shipping-order.php:507
 msgid "Select pickup point"
 msgstr "Pasirinkite atsiėmimo tašką"
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:84
+#: includes/shipping/class-wc-montonio-shipping-order.php:87
 msgid "All shipping methods"
 msgstr ""
 
@@ -297,7 +297,7 @@ msgstr ""
 msgid "Create a separate Montonio shipping label for each of these products"
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:140
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:134
 msgid "Please select a pickup point."
 msgstr "Pasirinkite atsiėmimo būdą."
 
@@ -322,11 +322,11 @@ msgstr ""
 msgid "Print shipping labels"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:177
+#: includes/shipping/class-wc-montonio-shipping-order.php:181
 msgid "Tracking code(s)"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:190
+#: includes/shipping/class-wc-montonio-shipping-order.php:194
 msgid "Waiting for tracking codes from Montonio"
 msgstr ""
 
@@ -657,7 +657,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:254
 #: includes/payment/payment-methods/class-wc-montonio-card.php:265
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:252
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:483
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:487
 msgid "Montonio: There was a problem processing the payment. Response: "
 msgstr ""
 
@@ -870,15 +870,15 @@ msgstr ""
 msgid "Select a pickup point"
 msgstr "Pasirinkite atsiėmimo būdą"
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:188
+#: includes/shipping/class-wc-montonio-shipping-order.php:192
 msgid "Unexpected error - Check status in Montonio Partner System"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:603
+#: includes/shipping/class-wc-montonio-shipping-order.php:637
 msgid "<strong>Shipment created.</strong><br>Tracking codes: "
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:671
+#: includes/shipping/class-wc-montonio-shipping-order.php:705
 msgid "Shipment registration failed."
 msgstr ""
 
@@ -922,14 +922,14 @@ msgid ""
 "                    Status will only be changed when order's current status is \"Processing\"."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:260
-#: includes/shipping/class-wc-montonio-shipping-order.php:278
+#: includes/shipping/class-wc-montonio-shipping-order.php:293
+#: includes/shipping/class-wc-montonio-shipping-order.php:311
 msgctxt "Order status"
 msgid "Label printed"
 msgstr ""
 
 #. translators: %s: number of orders
-#: includes/shipping/class-wc-montonio-shipping-order.php:266
+#: includes/shipping/class-wc-montonio-shipping-order.php:299
 msgid "Label printed (%s)"
 msgid_plural "Label printed (%s)"
 msgstr[0] ""
@@ -998,7 +998,7 @@ msgstr ""
 msgid "Select shipping classes for which this method should be disabled. If the cart contains any product from these selected shipping classes, this shipping method will not be available."
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:147
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:141
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
@@ -1081,7 +1081,7 @@ msgstr ""
 msgid "Montonio Bank Payments"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:582
+#: includes/shipping/class-wc-montonio-shipping-order.php:615
 msgid "add_tracking_codes: Order not found."
 msgstr ""
 
@@ -1233,7 +1233,7 @@ msgid_plural "Partially refunded (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:210
+#: includes/shipping/class-wc-montonio-shipping-order.php:214
 msgid "Shipment status"
 msgstr ""
 
@@ -1249,49 +1249,49 @@ msgstr ""
 msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:232
+#: includes/shipping/class-wc-montonio-shipping-order.php:236
 msgid "Pending"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:233
+#: includes/shipping/class-wc-montonio-shipping-order.php:237
 msgid "Creation failed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:234
+#: includes/shipping/class-wc-montonio-shipping-order.php:238
 msgid "Registered"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:235
+#: includes/shipping/class-wc-montonio-shipping-order.php:239
 msgid "Registration failed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:236
+#: includes/shipping/class-wc-montonio-shipping-order.php:240
 msgid "Labels created"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:237
+#: includes/shipping/class-wc-montonio-shipping-order.php:241
 msgid "In transit"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:238
+#: includes/shipping/class-wc-montonio-shipping-order.php:242
 msgid "Awaiting collection"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:239
+#: includes/shipping/class-wc-montonio-shipping-order.php:243
 msgid "Delivered"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:65
+#: assets/js/wc-montonio-shipping-label-printing.js:77
 msgid "Montonio: Started downloading Shipping labels"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:85
+#: assets/js/wc-montonio-shipping-label-printing.js:97
 msgid "Montonio: Unable to start polling for labels"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:93
-#: assets/js/wc-montonio-shipping-label-printing.js:135
-#: assets/js/wc-montonio-shipping-label-printing.js:144
+#: assets/js/wc-montonio-shipping-label-printing.js:105
+#: assets/js/wc-montonio-shipping-label-printing.js:145
+#: assets/js/wc-montonio-shipping-label-printing.js:154
 msgid "Montonio: Failed to print labels"
 msgstr ""
 
@@ -1351,25 +1351,13 @@ msgstr ""
 msgid "When calculating the cart total for free shipping, exclude the price of virtual products"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:701
+#: includes/shipping/class-wc-montonio-shipping-order.php:735
 msgid "handle_status_update_webhook: Order not found."
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:44
-#: assets/js/wc-montonio-shipping-label-printing.js:60
+#: assets/js/wc-montonio-shipping-label-printing.js:55
+#: assets/js/wc-montonio-shipping-label-printing.js:72
 msgid "Montonio: Failed to print labels, missing wcMontonioShippingLabelPrintingData"
-msgstr ""
-
-#: assets/js/wc-montonio-shipping-label-printing.js:127
-msgid "Montonio: Labels downloaded."
-msgstr ""
-
-#: assets/js/wc-montonio-shipping-label-printing.js:162
-msgid "Montonio: Order statuses updated successfully. Refresh the browser to view the updates"
-msgstr ""
-
-#: assets/js/wc-montonio-shipping-label-printing.js:165
-msgid "Montonio: Order status update failed"
 msgstr ""
 
 #. translators: 1) refund amount 2) refund UUID
@@ -1408,7 +1396,7 @@ msgstr ""
 msgid "Live API keys missing. The Montonio payment method has been automatically disabled. <a href=\"%s\">Add API keys here</a>."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:294
+#: includes/shipping/class-wc-montonio-shipping-order.php:327
 msgid "Complete"
 msgstr ""
 
@@ -1466,4 +1454,12 @@ msgstr ""
 
 #: includes/shipping/shipping-methods/shipping-method-settings.php:88
 msgid "Per order: Charge shipping for the most expensive shipping class"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-order.php:277
+msgid "Print shipping label"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:139
+msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""

@@ -177,14 +177,15 @@ class WC_Montonio_API {
 
         // Add products & shipping to Payment Data
         if ( ! empty( $order->get_items() ) ) {
-            foreach ( $order->get_items() as $item_id => $item_data ) {
-                $product = $item_data->get_product();
-                $product_price = $item_data->get_total() + $item_data->get_total_tax();
+            foreach ( $order->get_items() as $item ) {
+                $product = $item->get_product();
+                $product_price = $item->get_total() + $item->get_total_tax();
+                
                 if ( ! empty( $product ) ) {
                     $order_data['lineItems'][] = array(
                         'name'        => $product->get_name(),
                         'finalPrice' => (float) $product_price,
-                        'quantity'    => (int) $item_data->get_quantity(),
+                        'quantity'    => (int) $item->get_quantity(),
                     );
                 }
             }

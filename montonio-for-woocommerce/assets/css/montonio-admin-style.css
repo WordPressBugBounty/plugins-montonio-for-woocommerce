@@ -498,3 +498,16 @@ label[for*=montonio_shipping_sender]::after {
   background-color: #eefaf6;
   color: #1bb07a;
 }
+
+.wc-action-button-montonio_print_label {
+  background: #442dd2 !important;
+  border-color: #442dd2 !important;
+  color: var(--neutral-00) !important;
+}
+.wc-action-button-montonio_print_label:hover {
+  background: var(--brand-30) !important;
+}
+.wc-action-button-montonio_print_label::after {
+  font-family: Dashicons;
+  content: "\f193" !important;
+}

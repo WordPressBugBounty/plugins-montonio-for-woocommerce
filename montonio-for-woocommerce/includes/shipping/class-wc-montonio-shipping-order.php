@@ -33,6 +33,9 @@ class WC_Montonio_Shipping_Order {
             add_action( 'manage_shop_order_posts_custom_column', array( $this, 'display_shipping_status_column_content' ), 20, 2 );
         }
 
+        // Add print label action button
+        add_filter( 'woocommerce_admin_order_actions', array( $this, 'add_montonio_print_label_action' ), 999, 2 );
+
         // Add custom order status
         add_action( 'init', array( $this, 'add_custom_order_status' ) );
         add_filter( 'wc_order_statuses', array( $this, 'add_custom_order_status_to_order_statuses' ) );
@@ -168,6 +171,7 @@ class WC_Montonio_Shipping_Order {
         }
 
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+
         if ( empty( $shipping_method ) ) {
             return;
         }
@@ -247,6 +251,35 @@ class WC_Montonio_Shipping_Order {
                 echo '<span class="na">–</span>';
             }
         }
+    }
+
+    /**
+     * Add Montonio Print Label action to WooCommerce orders
+     *
+     * @since 9.0.1
+     * @param array $actions Existing order actions.
+     * @param WC_Order $order WC_Order object.
+     * @return array Modified actions array.
+     */
+    public function add_montonio_print_label_action( $actions, $order ) {
+        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+
+        if ( empty( $shipping_method ) ) {
+            return $actions;
+        }
+
+        $status         = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
+        $tracking_codes = $shipping_method->get_meta( 'tracking_codes' );
+
+        if ( ! empty( $tracking_codes ) && ! in_array( $status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) ) ) {
+            $actions['montonio_print_label'] = array(
+                'url'    => '#' . $order->get_id(),
+                'name'   => __( 'Print shipping label', 'montonio-for-woocommerce' ),
+                'action' => 'montonio_print_label'
+            );
+        }
+
+        return $actions;
     }
 
     /**
@@ -504,7 +537,7 @@ class WC_Montonio_Shipping_Order {
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'montonio_shipping_pickup_points_admin_nonce' ) ) {
             wp_send_json_error( 'Unable to verify your request. Please reload the page and try again.', 403 );
         }
-        
+
         if ( ! isset( $_POST['order_id'] ) || ! isset( $_POST['country'] ) || ! isset( $_POST['carrier'] ) || ! isset( $_POST['type'] ) ) {
             wp_send_json_error();
         }
@@ -584,6 +617,7 @@ class WC_Montonio_Shipping_Order {
         }
 
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+
         if ( empty( $shipping_method ) ) {
             return new WP_REST_Response( array( 'message' => 'Order not using Montonio shipping method' ), 400 );
         }

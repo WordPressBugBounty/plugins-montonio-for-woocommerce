@@ -28,13 +28,15 @@ jQuery(document).ready(function($) {
         if ($('.montonio-shipping-pickup-point-dropdown').length) {
                 $('.montonio_pickup_point_value').val('');
                 
-                if ($('form[name="checkout"] [name="montonio_pickup_point"]').length == 0) {
-                    $('form[name="checkout"]').append('<input type="hidden" class="montonio_pickup_point_value" name="montonio_pickup_point" value="">');
-
-                    $(document).on('change', '.montonio-shipping-pickup-point-dropdown', function() {
-                        $('.montonio_pickup_point_value').val( $(this).val() );
-                    });
-                }
+                setTimeout(function() {
+                    if ($('form[name="checkout"] [name="montonio_pickup_point"]').length == 0) {
+                        $('form[name="checkout"]').prepend('<input type="hidden" class="montonio_pickup_point_value" name="montonio_pickup_point" value="">');
+                
+                        $(document).on('change', '.montonio-shipping-pickup-point-dropdown', function() {
+                            $('.montonio_pickup_point_value').val($(this).val());
+                        });
+                    }
+                }, 500);
         } else {
             $('form[name="checkout"] .montonio_pickup_point_value').remove();
         }

@@ -188,6 +188,25 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
     }
 
     /**
+     * Handles the labels created webhook from Montonio Shipping.
+     *
+     * @since 9.0.1
+     * @param object $payload The payload from the webhook
+     * @return WP_REST_Response|WP_Error The response object if everything went well, WP_Error if something went wrong
+     */
+    public function handle_labels_created_webhook( $payload ) {
+        if ( isset( $payload->data->id ) ) {
+            $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->data->id, '_wc_montonio_shipping_shipment_id' );
+
+            do_action( 'wc_montonio_shipping_labels_ready', array( $order_id ) );
+
+            return new WP_REST_Response( 'labelFile.ready event handled successfully', 200 );
+        } else {
+            return new WP_Error( 'montonio_shipping_label_created_webhook_failed', 'No shipment ID found in the payload', array( 'status' => 400 ) );
+        }
+    }
+
+    /**
      * Mark orders as labels printed. This is used after the label file has been downloaded.
      *
      * @since 7.0.0
