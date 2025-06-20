@@ -37,6 +37,14 @@
         });
       
     }
-   
+
+    // Move the p.submit element inside .montonio-options__content
+    if ($('.montonio-options').next('p.submit').length > 0) {
+        $('.montonio-options').next('p.submit')
+        .appendTo('.montonio-options .montonio-options__container .montonio-options__content')
+        .find('button.woocommerce-save-button')
+        .removeClass('components-button is-primary')
+        .addClass('montonio-button');
+    }
 
 })(jQuery);

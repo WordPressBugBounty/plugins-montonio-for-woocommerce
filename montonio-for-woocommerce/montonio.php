@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.0.1
+ * Version:           9.0.3
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 9.8.2
+ * WC tested up to: 9.9.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.3' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -147,6 +147,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             }
 
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
+            add_action( 'admin_notices', array( $this, 'live_api_keys_notice' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts' ) );
             add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ) );
             add_filter( 'woocommerce_payment_gateways', array( $this, 'add_payment_methods' ) );
@@ -331,6 +332,37 @@ if ( ! class_exists( 'Montonio' ) ) {
                 echo '<p>' . wp_kses_post( $notice['message'] ) . '</p>';
                 echo '</div>';
             }
+        }
+
+        public function live_api_keys_notice() {
+            $api_keys = WC_Montonio_Helper::get_api_keys();
+
+            if ( empty( $api_keys['access_key'] ) || empty( $api_keys['secret_key'] ) ): ?>
+                <div class="notice notice-warning is-dismissible montonio-notice">
+                    <div class="montonio-notice__content">
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo.svg' ); ?>">
+                        <h3><?php echo esc_html__( 'Start using Montonio', 'montonio-for-woocommerce' ) ?></h3>
+                        <p>
+                            <?php echo esc_html__( 'You haven\'t entered the Live API keys for the Montonio Payments module.', 'montonio-for-woocommerce' ); ?>
+                            <br>
+                            <?php
+                                printf(
+                                    /* translators: 1) HTML anchor open tag 2) HTML anchor closing tag */
+                                    esc_html__( '%1$sClick here%2$s to enter your Live API keys and start using Montonio.', 'montonio-for-woocommerce' ),
+                                    '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
+                                    '</a>'
+                                );
+                            ?>
+                        </p>
+
+                        <h3><?php echo esc_html__( 'Need help?', 'montonio-for-woocommerce' ) ?></h3>
+                        <a href="https://help.montonio.com/en/articles/68142-activating-payment-methods-in-woocommerce" target="_blank" rel="noopener">
+                            <?php echo esc_html__( 'How to activate Montonio payment methods', 'montonio-for-woocommerce' ); ?>
+                        </a>
+                    </div>
+                </div>
+            <?php
+            endif;
         }
     }
     Montonio::get_instance();

@@ -60,8 +60,8 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             'DE' => __( 'Germany', 'montonio-for-woocommerce' )
         );
 
-        $sandbox_mode        = $this->get_setting( 'sandbox_mode', 'no' );
-        $api_keys            = WC_Montonio_Helper::get_api_keys( $sandbox_mode );
+        $test_mode        = $this->get_setting( 'test_mode', 'no' );
+        $api_keys            = WC_Montonio_Helper::get_api_keys( $test_mode );
         $hide_country_select = $this->get_setting( 'hide_country_select' );
         $currency            = WC_Montonio_Helper::get_currency();
         $default_country     = $this->get_default_country( $available_countries );
@@ -69,7 +69,7 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
 
         if ( $this->get_setting( 'bank_list_fetch_datetime' ) < time() - 86400 ) {
             try {
-                $montonio_api = new WC_Montonio_API( $sandbox_mode );
+                $montonio_api = new WC_Montonio_API( $test_mode );
                 $response     = json_decode( $montonio_api->fetch_payment_methods() );
 
                 if ( ! isset( $response->paymentMethods->paymentInitiation ) ) {
@@ -100,7 +100,7 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             'title'              => $title,
             'description'        => $this->get_setting( 'description' ),
             'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png' ),
-            'sandboxMode'        => $sandbox_mode,
+            'sandboxMode'        => $test_mode,
             'accessKey'          => $api_keys['access_key'],
             'storeSetupData'     => $bank_list,
             'currency'           => $currency,

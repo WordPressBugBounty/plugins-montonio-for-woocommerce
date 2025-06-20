@@ -124,6 +124,15 @@ $settings['excludeVirtualFromThreshold'] = array(
     'default'     => 'no'
 );
 
+$settings['excludeCouponsFromThreshold'] = array(
+    'title'       => '',
+    'label'       => __( 'Use full cart price (before coupons) for free shipping threshold', 'montonio-for-woocommerce' ),
+    'type'        => 'checkbox',
+    'description' => __( 'When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout', 'montonio-for-woocommerce' ),
+    'desc_tip'    => true,
+    'default'     => 'no'
+);
+
 $settings['freeShippingThreshold'] = array(
     'title'             => __( 'Free shipping threshold', 'montonio-for-woocommerce' ),
     'type'              => 'text',

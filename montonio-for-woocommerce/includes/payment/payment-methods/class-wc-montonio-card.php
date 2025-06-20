@@ -17,7 +17,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      *
      * @var string
      */
-    public $sandbox_mode;
+    public $test_mode;
 
     /**
      * Display card fields in checkout?
@@ -47,11 +47,15 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
         $this->title           = $this->get_option( 'title', 'Card Payment' );
         $this->description     = $this->get_option( 'description' );
         $this->enabled         = $this->get_option( 'enabled' );
-        $this->sandbox_mode    = $this->get_option( 'sandbox_mode' );
+        $this->test_mode    = $this->get_option( 'test_mode' );
         $this->inline_checkout = $this->get_option( 'inline_checkout' );
 
         if ( 'Card Payment' === $this->title ) {
             $this->title = __( 'Card Payment', 'montonio-for-woocommerce' );
+        }
+
+        if ( isset( $_GET['pay_for_order'] ) ) {
+            $this->inline_checkout = 'no';
         }
 
         if ( $this->inline_checkout === 'yes' ) {
@@ -92,11 +96,11 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
                 'description' => '',
                 'default'     => 'no'
             ),
-            'sandbox_mode'    => array(
+            'test_mode'    => array(
                 'title'       => 'Test mode',
                 'label'       => 'Enable Test Mode',
                 'type'        => 'checkbox',
-                'description' => __( 'Use the Sandbox environment for testing only.', 'montonio-for-woocommerce' ),
+                'description' => __( 'Whether the provider is in test mode (sandbox) for payments processing.', 'montonio-for-woocommerce' ),
                 'default'     => 'no',
                 'desc_tip'    => true
             ),
@@ -158,7 +162,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
 
             // Disable the payment gateway if API keys are not provided
-            if ( $settings['sandbox_mode'] === 'yes' ) {
+            if ( $settings['test_mode'] === 'yes' ) {
                 if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
                     /* translators: API Settings page url */
                     $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
@@ -181,7 +185,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             }
 
             try {
-                $montonio_api = new WC_Montonio_API( $settings['sandbox_mode'] );
+                $montonio_api = new WC_Montonio_API( $settings['test_mode'] );
                 $response     = json_decode( $montonio_api->fetch_payment_methods() );
 
                 if ( ! isset( $response->paymentMethods->cardPayments ) ) {
@@ -234,7 +238,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             }
 
             // Create new Montonio API instance
-            $montonio_api               = new WC_Montonio_API( $this->sandbox_mode );
+            $montonio_api               = new WC_Montonio_API( $this->test_mode );
             $montonio_api->order        = $order;
             $montonio_api->payment_data = $payment_data;
 
@@ -273,7 +277,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
-        if ( $this->sandbox_mode === 'yes' ) {
+        if ( $this->test_mode === 'yes' ) {
             /* translators: 1) notice that test mode is enabled 2) explanation of test mode */
             printf( '<strong>%1$s</strong><br>%2$s<br>', esc_html__( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ), esc_html__( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) );
         }
@@ -291,22 +295,20 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
     }
 
     public function payment_scripts() {
-        if ( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) && ! is_add_payment_method_page() ) {
+        if ( ! is_cart() && ! is_checkout() || $this->inline_checkout !== 'yes' || WC_Montonio_Helper::is_checkout_block() ) {
             return;
         }
 
-        if ( $this->inline_checkout === 'yes' && ! WC_Montonio_Helper::is_checkout_block() ) {
-            wp_enqueue_script( 'montonio-inline-card' );
+        wp_enqueue_script( 'montonio-inline-card' );
 
-            $wc_montonio_inline_cc_params = array(
-                'sandbox_mode' => $this->sandbox_mode,
-                'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
-                'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
-                'nonce'        => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
-            );
+        $wc_montonio_inline_cc_params = array(
+            'test_mode' => $this->test_mode,
+            'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
+            'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
+            'nonce'        => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
+        );
 
-            wp_localize_script( 'montonio-inline-card', 'wc_montonio_inline_cc', $wc_montonio_inline_cc_params );
-        }
+        wp_localize_script( 'montonio-inline-card', 'wc_montonio_inline_cc', $wc_montonio_inline_cc_params );
     }
 
     /**
@@ -320,7 +322,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
         return WC_Montonio_Refund::init_refund(
             $order_id,
-            $this->sandbox_mode,
+            $this->test_mode,
             $amount,
             $reason
         );
@@ -331,7 +333,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      */
     public function get_order_notification() {
         new WC_Montonio_Callbacks(
-            $this->sandbox_mode,
+            $this->test_mode,
             true
         );
     }
@@ -342,7 +344,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      */
     public function get_order_response() {
         new WC_Montonio_Callbacks(
-            $this->sandbox_mode,
+            $this->test_mode,
             false
         );
     }
@@ -355,7 +357,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             $this->method_title,
             $this->generate_settings_html( array(), false ),
             $this->id,
-            $this->sandbox_mode
+            $this->test_mode
         );
     }
 

@@ -324,7 +324,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         }
 
         if ( $this->get_option( 'enableFreeShippingThreshold' ) === 'yes' ) {
-            // Exclude virtual products if the option is enabled
+            // Exclude virtual products
             if ( $this->get_option( 'excludeVirtualFromThreshold' ) === 'yes' ) {
                 $virtual_products_total = 0;
 
@@ -335,6 +335,12 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                 }
 
                 $cart_total = $cart_total - $virtual_products_total;
+            }
+
+            // Use full cart price (add back coupon discounts) for threshold calculation
+            if ( $this->get_option( 'excludeCouponsFromThreshold' ) === 'yes' ) {
+                $discount_total = WC()->cart->get_discount_total();
+                $cart_total = $cart_total + $discount_total;
             }
 
             if ( wc_format_decimal( $cart_total, 2 ) > str_replace( ',', '.', $this->get_option( 'freeShippingThreshold' ) ) ) {

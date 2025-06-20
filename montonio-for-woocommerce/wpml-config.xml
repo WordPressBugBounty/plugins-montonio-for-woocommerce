@@ -1,0 +1,6 @@
+<wpml-config>
+    <custom-fields>
+        <custom-field action="copy">_montonio_no_parcel_machine</custom-field>
+        <custom-field action="copy">_montonio_separate_label</custom-field>
+    </custom-fields>
+</wpml-config>

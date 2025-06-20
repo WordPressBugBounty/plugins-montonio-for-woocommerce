@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.1
+Version: 9.0.3
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.0.1
+Stable tag: 9.0.3
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -135,6 +135,16 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.0.3 =
+* Fix - Payment test mode badge now displays correctly in admin settings page
+
+= 9.0.2 =
+* Added - Option to calculate free shipping threshold using cart total before coupon codes are applied
+* Added - WPML configuration file (wpml-config.xml) for improved translation management
+* Tweak - Enhanced options page and shipment widget UI/UX design
+* Tweak - Implemented two-digit decimal rounding for finalPrice within lineItems array
+* Tweak - Renamed sandbox_mode to test_mode for better WooCommerce compatibility
+
 = 9.0.1 =
 * Added - "Print label" action button in the order list view
 * Added - Product price and currency to the shipment 'products' array data

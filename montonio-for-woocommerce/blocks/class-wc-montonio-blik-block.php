@@ -25,7 +25,7 @@ class WC_Montonio_Blik_Block extends AbstractMontonioPaymentMethodBlock {
      * @return array Payment method data.
      */
     public function get_payment_method_data() {
-        $sandbox_mode    = $this->get_setting( 'sandbox_mode', 'no' );
+        $test_mode    = $this->get_setting( 'test_mode', 'no' );
         $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
         $inline_checkout = $this->get_setting( 'blik_in_checkout', 'no' );
 
@@ -39,7 +39,7 @@ class WC_Montonio_Blik_Block extends AbstractMontonioPaymentMethodBlock {
             'title'          => $title,
             'description'    => $this->get_setting( 'description' ),
             'iconurl'        => apply_filters( 'wc_montonio_blik_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/blik.png' ),
-            'sandboxMode'    => $sandbox_mode,
+            'sandboxMode'    => $test_mode,
             'locale'         => $locale,
             'inlineCheckout' => $inline_checkout,
             'nonce'          => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
