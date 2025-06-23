@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
         let data = {
             'action': 'get_payment_intent',
             'method': 'cardPayments',
-            'sandbox_mode': params.sandbox_mode,
+            'sandbox_mode': params.test_mode,
             'nonce': params.nonce
         };
 
@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 
     async function confirmPayment() {
         try {
-            const result = await embeddedPayment.confirmPayment(params.sandbox_mode === 'yes');
+            const result = await embeddedPayment.confirmPayment(params.test_mode === 'yes');
 
             window.location.replace(result.returnUrl);
         } catch (error) {

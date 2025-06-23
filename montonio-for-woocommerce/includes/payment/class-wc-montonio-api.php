@@ -54,7 +54,7 @@ class WC_Montonio_API {
      */
     const MONTONIO_API_URL = 'https://stargate.montonio.com/api';
 
-    public function __construct( $sandbox_mode ) {
+    public function __construct( $sandbox_mode = 'no' ) {
         $this->sandbox_mode = $sandbox_mode;
 
         $api_keys = WC_Montonio_Helper::get_api_keys( $this->sandbox_mode );

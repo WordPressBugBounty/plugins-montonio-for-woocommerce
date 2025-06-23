@@ -40,7 +40,7 @@ jQuery(document).ready(function ($) {
 
         window.embeddedPayment = new Montonio.Checkout.Blik({
             locale: wc_montonio_embedded_blik.locale,
-            environment: wc_montonio_embedded_blik.sandbox_mode === 'yes' ? 'sandbox' : 'production',
+            environment: wc_montonio_embedded_blik.test_mode === 'yes' ? 'sandbox' : 'production',
             targetElement: targetElement.get(0),
         });
 

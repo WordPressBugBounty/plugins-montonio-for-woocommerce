@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.3
+Version: 9.0.4
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.0.3
+Stable tag: 9.0.4
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -135,6 +135,9 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.0.4 =
+* Fix - Embedded payment fields not working properly in checkout
+
 = 9.0.3 =
 * Fix - Payment test mode badge now displays correctly in admin settings page
 

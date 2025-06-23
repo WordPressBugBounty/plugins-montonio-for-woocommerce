@@ -300,7 +300,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
      */
     public function sync_banks( $settings ) {
         try {
-            $montonio_api = new WC_Montonio_API( $settings['test_mode'] );
+            $montonio_api = new WC_Montonio_API( $settings['test_mode'] ?? 'no' );
             $response     = json_decode( $montonio_api->fetch_payment_methods() );
 
             if ( ! isset( $response->paymentMethods->paymentInitiation ) ) {
