@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.4
+Version: 9.0.5
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.0.4
+Stable tag: 9.0.5
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -135,6 +135,11 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.0.5 =
+* Added – wc_montonio_shipping_shipment_status_update action hook to handle shipment status update webhooks
+* Added – Product announcement banner in the admin interface
+* Tweak – Refactored pickup point dropdown initialization for improved compatibility
+
 = 9.0.4 =
 * Fix - Embedded payment fields not working properly in checkout
 

@@ -47,4 +47,30 @@
         .addClass('montonio-button');
     }
 
+    // Hide the Montonio banner when the dismiss button or close button is clicked
+	$('.montonio-banner__close').on( 'click', function(e) {
+		e.preventDefault();
+
+        var bannerId = $(this).closest('.montonio-banner').attr('id');
+        
+        $(this).closest('.montonio-banner').addClass('hidden');
+
+        updateBannerVisibility(bannerId);
+	});
+
+    function updateBannerVisibility(bannerId) {
+        $.post(
+			ajaxurl,
+			{
+				action: 'update_montonio_banner_visibility',
+				id: bannerId,
+				_ajax_nonce: $( '#' + bannerId + ' #_wpnonce').val()
+			},
+			function() {
+                console.log('Banner visibility updated');
+			}
+		);
+    }
+
+
 })(jQuery);

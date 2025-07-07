@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Satoshi';
+  src: url("../fonts/Satoshi-Variable.woff2") format('woff2') tech('variations'),
+       url("../fonts/Satoshi-Variable.woff2") format('woff2 supports variations'),
+       url('../fonts/Satoshi-Variable.woff2') format('woff2-variations'),
+       url('../fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+}
+
 .montonio-button {
     font-size: 13px;
     letter-spacing: 0;
@@ -13,7 +22,7 @@
     box-shadow: 0px 1px 2px 0px rgba(15, 26, 42, 0.08);
 
     &:hover {
-        background-color: #5c14eb;
+        background: #5c14eb;
         color: #fff !important;
     }
 
@@ -28,7 +37,7 @@
 
     &:disabled,
     &[disabled] {
-        background-color: #F8F6F4;
+        background: #F8F6F4;
         color: #94A3B8 !important;
     }
 
@@ -37,14 +46,6 @@
         padding: 7px 11px;
         color: #3C3C3C !important;
         border: 1px solid #ADADB0;
-
-        &.button--sm {
-            padding: 3px 11px;
-        }
-
-        &.button--lg {
-            padding: 11px 23px;
-        }
 
         &:hover {
             background: #fff;
@@ -59,6 +60,44 @@
             color: #260071 !important;
             box-shadow: none;
         }
+    }
+
+    &--beige {
+        background: #F9E0C0;
+        color: #1B1B1B !important;
+
+        &:hover {
+            background: #E2BF92;
+            color: #1B1B1B !important;
+        }
+
+        &:active {
+            background: #E2BF92;
+        }
+
+        &:focus {
+            background: #E2BF92;
+        }
+    }
+
+    &--lg {
+        font-size: 15px;
+        padding: 15px 24px; 
+
+        .montonio-button--secondary {
+            padding: 14px 23px;
+        }
+    }
+}
+
+.montonio-icon {
+    &--circle {       
+        display: inline-flex;
+        align-items: center; 
+        background: #F0EBFF;
+        padding: 12px;
+        border: 3px solid #F5F1FF;
+        border-radius: 40px;
     }
 }
 
@@ -569,7 +608,7 @@ label[for*=montonio_shipping_sender] {
     }
 }
 
-.montonio-notice {
+.montonio-api-key-notice {
     &__content{
         padding: 20px 10px;
         font-size: 14px;
@@ -704,5 +743,103 @@ label[for*=montonio_shipping_sender] {
     &::after {
         font-family: Dashicons;
         content: "\f193" !important;
+    }
+}
+
+.montonio-banner {
+    position: relative;
+    background: #260071;
+    color: #F9E0C0;
+    border: none;
+    box-shadow: none;
+    padding: 42px !important; 
+    border-radius: 24px;
+    overflow: hidden;
+    
+    @media screen and (max-width: 860px) {
+        padding: 32px 24px !important; 
+    }
+
+    &__logo {
+        margin-bottom: 32px;
+        text-align: center;
+    }
+    
+    &__close {
+        position: absolute;
+        right: 30px;
+        top: 36px;
+        z-index: 2;
+
+        @media screen and (max-width: 860px) {
+            right: 19px;
+            top: 20px;
+        }
+    }
+    
+    &__content {
+        max-width: 1600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+
+        ul {
+            display: flex;
+            gap: 14px 24px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            @media screen and (max-width: 819px) {
+                flex-direction: column;
+            }
+
+            li {
+                background: #E4DBFA;
+                flex: 1;
+                padding: 24px;
+                margin: 0;
+                border-radius: 16px;
+
+                .montonio-icon {
+                    margin-bottom: 8px;
+                }
+
+                h3 {
+                    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+                    font-size: 24px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 150%;
+                    letter-spacing: -0.48px;
+                    color: #260071;
+                    margin: 0 0 4px;
+                }
+
+                p {
+                    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+                    font-size: 15px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: 160%;
+                    color: #260071;
+                }
+            }
+        }
+    }
+    
+    &__button {
+        text-align: center;
+        margin-top: 32px;
+    }
+
+    &__pattern {
+        position: absolute;
+        width: 100%;
+        height: 78px;
+        bottom: 0;
+        left: 0;
+        background: url('../images/pattern.svg') repeat-x center;
+        z-index: 1;
     }
 }

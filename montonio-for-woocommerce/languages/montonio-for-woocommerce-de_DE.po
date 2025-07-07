@@ -69,7 +69,7 @@ msgstr "Bezahlen Sie mit ihr Kredit-oder Debitkarte über Montonio."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:239
+#: montonio.php:240
 msgid "Settings"
 msgstr ""
 
@@ -451,35 +451,35 @@ msgstr ""
 msgid "Venipak parcel shops"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:87
+#: templates/admin-order-shipping-panel.php:97
 msgid "We've noticed that this order includes Montonio's shipping method, but it seems that it's not registred in our Partner System yet, please click on \"Create shipment in Montonio\" to generate the shipment and obtain the tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:92
+#: templates/admin-order-shipping-panel.php:102
 msgid "Montonio shipment ID:"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:105
+#: templates/admin-order-shipping-panel.php:115
 msgid "Shipment successfully created in Montonio. Waiting for tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:98
+#: templates/admin-order-shipping-panel.php:108
 msgid "Shipment tracking code(s):"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:124
+#: templates/admin-order-shipping-panel.php:134
 msgid "Update shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:126
+#: templates/admin-order-shipping-panel.php:136
 msgid "Create shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:130
+#: templates/admin-order-shipping-panel.php:140
 msgid "Print label"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:33
+#: templates/admin-order-shipping-panel.php:43
 #: templates/shipping-pickup-points-dropdown.php:11
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:217
@@ -1231,55 +1231,55 @@ msgstr[1] ""
 msgid "Shipment status"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:45
+#: templates/admin-order-shipping-panel.php:55
 msgid "Shipment creation failed. Please check order notes for error reason."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:47
+#: templates/admin-order-shipping-panel.php:57
 msgid "Shipment update failed. Please check order notes for error reason"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:49
+#: templates/admin-order-shipping-panel.php:59
 msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:236
-#: templates/admin-order-shipping-panel.php:66
+#: templates/admin-order-shipping-panel.php:76
 msgid "Pending"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:237
-#: templates/admin-order-shipping-panel.php:67
+#: templates/admin-order-shipping-panel.php:77
 msgid "Creation failed"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:238
-#: templates/admin-order-shipping-panel.php:68
+#: templates/admin-order-shipping-panel.php:78
 msgid "Registered"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:239
-#: templates/admin-order-shipping-panel.php:69
+#: templates/admin-order-shipping-panel.php:79
 msgid "Registration failed"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:240
-#: templates/admin-order-shipping-panel.php:70
+#: templates/admin-order-shipping-panel.php:80
 msgid "Labels created"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:241
-#: templates/admin-order-shipping-panel.php:71
+#: templates/admin-order-shipping-panel.php:81
 msgid "In transit"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:242
-#: templates/admin-order-shipping-panel.php:72
+#: templates/admin-order-shipping-panel.php:82
 msgid "Awaiting collection"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:243
-#: templates/admin-order-shipping-panel.php:73
+#: templates/admin-order-shipping-panel.php:83
 msgid "Delivered"
 msgstr ""
 
@@ -1466,24 +1466,24 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:344
+#: montonio.php:345
 msgid "Start using Montonio"
 msgstr ""
 
-#: montonio.php:346
+#: montonio.php:347
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr ""
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:351
+#: montonio.php:352
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr ""
 
-#: montonio.php:358
+#: montonio.php:359
 msgid "Need help?"
 msgstr ""
 
-#: montonio.php:360
+#: montonio.php:361
 msgid "How to activate Montonio payment methods"
 msgstr ""
 
@@ -1503,6 +1503,34 @@ msgstr ""
 msgid "When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:36
+#: templates/admin-order-shipping-panel.php:46
 msgid "Courier"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:134
+msgid "Analytics are back!"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:135
+msgid "Check your sales volumes, most used payment methods & more."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:143
+msgid "Limited time offer"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:144
+msgid "Send Unisend parcels with only 1.3€ + VAT until October!"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:150
+msgid "Tracking page"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:151
+msgid "Set up a free tracking page with your logo to enrich your customer experience."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:156
+msgid "Try these features out"
 msgstr ""

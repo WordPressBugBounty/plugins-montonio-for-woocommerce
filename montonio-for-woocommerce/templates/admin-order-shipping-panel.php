@@ -10,6 +10,8 @@ $title                  = 'Montonio Shipping';
 $shipment_id            = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 $shipment_status        = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
 $shipment_status_reason = $order->get_meta( '_wc_montonio_shipping_shipment_status_reason' );
+$carrier_name = '';
+$type = '';
 
 $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
@@ -22,12 +24,20 @@ $shipping_method_item_id = $order->get_meta( '_montonio_pickup_point_uuid' );
 
 if ( ! empty( $shipping_method_item_id ) ) {
     $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
-    $carrier_name         = $shipping_method_item->carrier_code;
-    $type                 = $shipping_method_item->item_type;
-} else {
+    
+    if ( $shipping_method_item ) {
+        $carrier_name = $shipping_method_item->carrier_code ?? '';
+        $type         = $shipping_method_item->item_type ?? '';
+    }
+}
+
+if ( empty( $carrier_name ) || empty( $type ) ) {
     $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method->get_method_id(), $shipping_method->get_instance_id() );
-    $carrier_name             = $shipping_method_instance->provider_name;
-    $type                     = $shipping_method_instance->type_v2;
+    
+    if ( $shipping_method_instance ) {
+        $carrier_name = $shipping_method_instance->provider_name ?? '';
+        $type         = $shipping_method_instance->type_v2 ?? '';
+    }
 }
 
 $type_label = __( 'Pickup point', 'montonio-for-woocommerce' );

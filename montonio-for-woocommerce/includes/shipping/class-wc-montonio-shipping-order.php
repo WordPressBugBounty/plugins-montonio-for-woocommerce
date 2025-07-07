@@ -739,6 +739,8 @@ class WC_Montonio_Shipping_Order {
         $status = sanitize_text_field( $payload->data->status );
 
         if ( ! empty( $status ) ) {
+            do_action( 'wc_montonio_shipping_shipment_status_update', $status, $order );
+
             $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $status );
             $order->save_meta_data();
 

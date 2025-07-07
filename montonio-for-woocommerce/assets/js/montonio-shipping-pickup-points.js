@@ -6,22 +6,37 @@ jQuery(document).ready(function($) {
         customCheckoutCompatibility();
     });
 
-    function initPickupPointDropdown() {  
-        let shippingMethod = $('.montonio-shipping-pickup-point-dropdown').data('shipping-method');
-
-        if (typeof Montonio !== 'undefined' && Montonio.Checkout && Montonio.Checkout.ShippingDropdown) {
-            if (window.montonioShippingDropdown) {
-                window.montonioShippingDropdown = null;
-            }
-    
-            window.montonioShippingDropdown = new Montonio.Checkout.ShippingDropdown({
-                shippingMethod: shippingMethod,
-                targetId: 'montonio-shipping-pickup-point-dropdown',
-                shouldInjectCSS: true,
-            });
-    
-            window.montonioShippingDropdown.init();
+    function waitForDropdownElement(callback, maxAttempts = 3) {
+        if ($('.montonio-shipping-pickup-point-dropdown').length && !$('.montonio-shipping-pickup-point-dropdown').hasClass('montonio-shipping-pickup-point-dropdown--initialized')) {
+            let shippingMethod = $('.montonio-shipping-pickup-point-dropdown').data('shipping-method');
+            callback(shippingMethod);
+        } else if (maxAttempts > 0) {
+            setTimeout(function() {
+                waitForDropdownElement(callback, maxAttempts - 1);
+            }, 200);
+        } else {
+            return;
         }
+    }
+
+    function initPickupPointDropdown() {  
+        waitForDropdownElement(function(shippingMethod) {
+            if (typeof Montonio !== 'undefined' && Montonio.Checkout && Montonio.Checkout.ShippingDropdown) {
+                if (window.montonioShippingDropdown) {
+                    window.montonioShippingDropdown = null;
+                }
+        
+                window.montonioShippingDropdown = new Montonio.Checkout.ShippingDropdown({
+                    shippingMethod: shippingMethod,
+                    targetId: 'montonio-shipping-pickup-point-dropdown',
+                    shouldInjectCSS: true,
+                });
+        
+                window.montonioShippingDropdown.init();
+
+                $('.montonio-shipping-pickup-point-dropdown').addClass('montonio-shipping-pickup-point-dropdown--initialized');
+            }
+        });
     }
 
     function customCheckoutCompatibility() {
