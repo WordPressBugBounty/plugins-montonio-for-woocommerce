@@ -44,11 +44,11 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title        = $this->get_option( 'title', 'Financing' );
-        $this->description  = $this->get_option( 'description' );
-        $this->enabled      = $this->get_option( 'enabled' );
-        $this->test_mode = $this->get_option( 'test_mode' );
-        $this->min_amount   = $this->get_option( 'min_amount', 100 );
+        $this->title       = $this->get_option( 'title', 'Financing' );
+        $this->description = $this->get_option( 'description' );
+        $this->enabled     = $this->get_option( 'enabled' );
+        $this->test_mode   = $this->get_option( 'test_mode' );
+        $this->min_amount  = $this->get_option( 'min_amount', 100 );
 
         if ( 'Financing' === $this->title ) {
             $this->title = __( 'Financing', 'montonio-for-woocommerce' );
@@ -83,14 +83,14 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'      => array(
+            'enabled'             => array(
                 'title'       => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
                 'label'       => __( 'Enable Montonio Financing', 'montonio-for-woocommerce' ),
                 'type'        => 'checkbox',
                 'description' => '',
                 'default'     => 'no'
             ),
-            'test_mode' => array(
+            'test_mode'           => array(
                 'title'       => 'Test mode',
                 'label'       => 'Enable Test Mode',
                 'type'        => 'checkbox',
@@ -98,14 +98,14 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
                 'default'     => 'no',
                 'desc_tip'    => true
             ),
-            'title'        => array(
+            'title'               => array(
                 'title'       => __( 'Title', 'montonio-for-woocommerce' ),
                 'type'        => 'text',
                 'default'     => __( 'Financing', 'montonio-for-woocommerce' ),
                 'description' => __( 'Payment method title which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'description'  => array(
+            'description'         => array(
                 'title'       => __( 'Description', 'montonio-for-woocommerce' ),
                 'type'        => 'textarea',
                 'css'         => 'width: 400px;',
@@ -113,7 +113,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
                 'description' => __( 'Payment method description which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'min_amount'   => array(
+            'min_amount'          => array(
                 'title'             => __( 'Min cart amount', 'montonio-for-woocommerce' ),
                 'type'              => 'number',
                 'default'           => 100,
@@ -123,6 +123,63 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
                     'min'  => 100,
                     'step' => '1'
                 )
+            ),
+            'calculator_title'    => array(
+                'title'       => 'Financing calculator',
+                'type'        => 'title',
+                'description' => __( 'Display an interactive financing calculator that allows customers to see monthly payment breakdowns for their purchases.', 'montonio-for-woocommerce' )
+            ),
+            'calculator_enabled'  => array(
+                'title'       => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
+                'label'       => __( 'Enable Financing Calculator', 'montonio-for-woocommerce' ),
+                'type'        => 'checkbox',
+                'description' => '',
+                'default'     => 'no'
+            ),
+            'calculator_region'   => array(
+                'title'       => __( 'Region', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => 'ee',
+                'description' => __( 'Select the region for the calculator.', 'montonio-for-woocommerce' ),
+                'options'     => array(
+                    'ee' => 'Estonia',
+                    'lv' => 'Latvia',
+                    'lt' => 'Lithuania'
+                )
+            ),
+            'calculator_mode'     => array(
+                'title'       => __( 'Mode', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => 'lavender',
+                'description' => __( 'The background color of the calculator.', 'montonio-for-woocommerce' ),
+                'options'     => array(
+                    'lavender' => 'Lavender',
+                    'purple'   => 'Purple',
+                    'white'    => 'White'
+                )
+            ),
+            'calculator_template' => array(
+                'title'       => __( 'Template', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => 'no_editable_amount',
+                'description' => __( 'Whether the customer will be able to edit the loan amount in the calculator modal.', 'montonio-for-woocommerce' ),
+                'options'     => array(
+                    'editable_amount'    => 'Allow customers to edit loan amount',
+                    'no_editable_amount' => 'Non-editable loan amount'
+                )
+            ),
+            'calculator_hooks'    => array(
+                'title'       => __( 'Hooks', 'montonio-for-woocommerce' ),
+                'type'        => 'textarea',
+                'css'         => 'width: 400px;',
+                'description' => __(
+                    'Set where the loan calculator appears by entering WooCommerce hooks.<br />Separate multiple hooks with commas (e.g., my_hook_1, my_hook_2).<br />See <a href="https://docs.woocommerce.com/wc-apidocs/hook-docs.html" target="_blank">WooCommerce hook docs</a> for reference.<br /><br />Or use the shortcode <code>[montonio_calculator]</code> with the optional attribute product_id="123" to display the calculator for a specific product.',
+                    'montonio-for-woocommerce'
+                ),
+                'default'     => 'woocommerce_after_add_to_cart_button'
             )
         );
     }

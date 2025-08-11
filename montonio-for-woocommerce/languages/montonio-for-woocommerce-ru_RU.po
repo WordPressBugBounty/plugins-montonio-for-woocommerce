@@ -21,18 +21,14 @@ msgstr ""
 msgid "Enable Montonio Card Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:30
-#: includes/admin/class-wc-montonio-api-settings.php:47
+#: includes/admin/class-wc-montonio-api-settings.php:35
+#: includes/admin/class-wc-montonio-api-settings.php:52
 msgid "Access Key"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:36
-#: includes/admin/class-wc-montonio-api-settings.php:53
+#: includes/admin/class-wc-montonio-api-settings.php:41
+#: includes/admin/class-wc-montonio-api-settings.php:58
 msgid "Secret Key"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:22
-msgid "Live and Sandbox API keys can be obtained at <a target=\"_blank\" href=\"https://partner.montonio.com\">Montonio Partner System</a>"
 msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:124
@@ -68,7 +64,7 @@ msgstr "Оплачивайте кредитной или дебетовой ка
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:240
+#: montonio.php:241
 msgid "Settings"
 msgstr ""
 
@@ -209,6 +205,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:90
 #: includes/payment/payment-methods/class-wc-montonio-card.php:93
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:87
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:133
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:121
 #: includes/shipping/class-wc-montonio-shipping-settings.php:58
 msgid "Enable/Disable"
@@ -312,7 +309,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:216
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:200
 #: includes/payment/payment-methods/class-wc-montonio-card.php:198
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:199
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:256
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:313
 #: includes/shipping/class-wc-montonio-shipping.php:252
 msgid "Montonio API response: "
@@ -489,68 +486,69 @@ msgstr "Пункт доставки"
 msgid "Add API Keys"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:26
+#: includes/admin/class-wc-montonio-api-settings.php:31
 msgid "Live keys"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:27
+#: includes/admin/class-wc-montonio-api-settings.php:32
 msgid "Use live keys to receive real payments from your customers."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:43
+#: includes/admin/class-wc-montonio-api-settings.php:48
 msgid "Sandbox keys for testing"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:44
+#: includes/admin/class-wc-montonio-api-settings.php:49
 msgid "Use sandbox keys to test our services."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:60
+#: includes/admin/class-wc-montonio-api-settings.php:65
 msgid "General settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:63
+#: includes/admin/class-wc-montonio-api-settings.php:68
 msgid "Merchant reference type"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:65
+#: includes/admin/class-wc-montonio-api-settings.php:70
 msgid "<strong>Use order ID:</strong> Uses the default WooCommere order ID.<br><br><strong>Use order number:</strong> Allows you to use a custom order number. This option is useful if you have a custom order numbering system in place.<br><br><strong>Add prefix:</strong> Allows you to add a custom prefix to the default order ID."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:67
+#: includes/admin/class-wc-montonio-api-settings.php:72
 msgid "Use order ID"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:68
+#: includes/admin/class-wc-montonio-api-settings.php:73
 msgid "Use order number"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:69
+#: includes/admin/class-wc-montonio-api-settings.php:74
 msgid "Add custom prefix"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:73
+#: includes/admin/class-wc-montonio-api-settings.php:78
 msgid "Order ID prefix"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:82
+#: includes/admin/class-wc-montonio-api-settings.php:87
+#: includes/admin/class-wc-montonio-display-admin-options.php:40
 msgid "API Settings"
 msgstr ""
 
 #. translators: help article url
-#: includes/admin/class-wc-montonio-display-admin-options.php:176
+#: includes/admin/class-wc-montonio-display-admin-options.php:201
 #, php-format
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating Payment Methods in WooCommerce</a>"
 msgstr ""
 
 #. translators: help article url
-#: includes/admin/class-wc-montonio-display-admin-options.php:169
+#: includes/admin/class-wc-montonio-display-admin-options.php:194
 #, php-format
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
 
 #. translators: 1) notice that test mode is enabled 2) explanation of test mode
-#: includes/admin/class-wc-montonio-display-admin-options.php:158
+#: includes/admin/class-wc-montonio-display-admin-options.php:183
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:370
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:267
 #: includes/payment/payment-methods/class-wc-montonio-card.php:282
@@ -571,19 +569,19 @@ msgstr ""
 msgid "TEST MODE ENABLED!"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:126
+#: includes/admin/class-wc-montonio-display-admin-options.php:151
 msgid "API keys status"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:128
+#: includes/admin/class-wc-montonio-display-admin-options.php:153
 msgid "Live keys:"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:135
+#: includes/admin/class-wc-montonio-display-admin-options.php:160
 msgid "Sandbox keys:"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:145
+#: includes/admin/class-wc-montonio-display-admin-options.php:170
 msgid "Edit account keys"
 msgstr ""
 
@@ -600,6 +598,7 @@ msgid "Separate BLIK Payment option for checkout"
 msgstr ""
 
 #: blocks/class-wc-montonio-blik-block.php:35
+#: includes/admin/class-wc-montonio-display-admin-options.php:58
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:62
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:126
 #: blocks/build/wc-montonio-blik/index-v1.js:1
@@ -649,7 +648,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:299
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:254
 #: includes/payment/payment-methods/class-wc-montonio-card.php:269
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:252
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:309
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:487
 msgid "Montonio: There was a problem processing the payment. Response: "
 msgstr ""
@@ -684,6 +683,7 @@ msgid "Pay in multiple parts provided in co-operation with Inbank"
 msgstr "Оплачивайте несколькими частями, которые предоставляются в сотрудничестве с Inbank"
 
 #: blocks/class-wc-montonio-bnpl-block.php:31
+#: includes/admin/class-wc-montonio-display-admin-options.php:64
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:60
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:107
 #: blocks/build/wc-montonio-bnpl/index.js:1
@@ -760,6 +760,7 @@ msgid "Hire purchase provided in co-operation with Inbank"
 msgstr ""
 
 #: blocks/class-wc-montonio-hire-purchase-block.php:31
+#: includes/admin/class-wc-montonio-display-admin-options.php:70
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:54
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:104
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
@@ -775,7 +776,7 @@ msgstr ""
 msgid "Pay in 3-72 months."
 msgstr "Оплачивайте в течение 3-72 месяцев."
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:193
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:250
 msgid "Financing is not enabled in Montonio partner system."
 msgstr ""
 
@@ -1062,7 +1063,7 @@ msgstr ""
 msgid "DPD parcel machines"
 msgstr "Посылочный автомат DPD"
 
-#: includes/admin/class-wc-montonio-display-admin-options.php:159
+#: includes/admin/class-wc-montonio-display-admin-options.php:184
 msgid "Test mode is for integration testing only. Payments are not processed."
 msgstr ""
 
@@ -1383,7 +1384,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:184
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:170
 #: includes/payment/payment-methods/class-wc-montonio-card.php:168
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:169
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:226
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:265
 msgid "Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href=\"%s\">Add API keys here</a>."
 msgstr ""
@@ -1392,7 +1393,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:194
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:180
 #: includes/payment/payment-methods/class-wc-montonio-card.php:178
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:179
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:236
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:275
 msgid "Live API keys missing. The Montonio payment method has been automatically disabled. <a href=\"%s\">Add API keys here</a>."
 msgstr ""
@@ -1465,20 +1466,20 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:345
+#: montonio.php:346
 msgid "Start using Montonio"
 msgstr ""
 
-#: montonio.php:347
+#: montonio.php:348
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr ""
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:352
+#: montonio.php:353
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr ""
 
-#: montonio.php:359
+#: montonio.php:360
 msgid "Need help?"
 msgstr ""
 
@@ -1502,7 +1503,7 @@ msgstr ""
 msgid "Courier"
 msgstr ""
 
-#: montonio.php:361
+#: montonio.php:362
 msgid "How to activate Montonio payment methods"
 msgstr ""
 
@@ -1532,4 +1533,61 @@ msgstr ""
 
 #: includes/admin/class-wc-montonio-banners.php:156
 msgid "Try these features out"
+msgstr ""
+
+#. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
+#: includes/admin/class-wc-montonio-api-settings.php:24
+msgid "Live and Sandbox API keys can be obtained at %1$sMontonio Partner System%2$s"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-display-admin-options.php:46
+msgid "Bank Payments"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-display-admin-options.php:52
+msgid "Card Payments"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-display-admin-options.php:76
+msgid "Shipping"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:134
+msgid "Enable Financing Calculator"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:140
+msgid "Region"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:144
+msgid "Select the region for the calculator."
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:152
+msgid "Mode"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:156
+msgid "The background color of the calculator."
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:164
+msgid "Template"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:168
+msgid "Whether the customer will be able to edit the loan amount in the calculator modal."
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:175
+msgid "Hooks"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:178
+msgid "Set where the loan calculator appears by entering WooCommerce hooks.<br />Separate multiple hooks with commas (e.g., my_hook_1, my_hook_2).<br />See <a href=\"https://docs.woocommerce.com/wc-apidocs/hook-docs.html\" target=\"_blank\">WooCommerce hook docs</a> for reference.<br /><br />Or use the shortcode <code>[montonio_calculator]</code> with the optional attribute product_id=\"123\" to display the calculator for a specific product."
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:130
+msgid "Display an interactive financing calculator that allows customers to see monthly payment breakdowns for their purchases."
 msgstr ""

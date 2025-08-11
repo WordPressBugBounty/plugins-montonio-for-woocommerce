@@ -103,7 +103,7 @@
 
 
 .montonio-logo {
-    max-width: 150px;
+    max-width: 130px;
     margin-bottom: 30px;
 }
 
@@ -139,7 +139,7 @@
                 border-radius: 4px;
                 
                 a {
-                    color: #260071;
+                    color: #1b1b1b;
                 }
             }
 
@@ -430,8 +430,13 @@
     }
 
     .submit {
-        margin: 0;
+        margin-bottom: 0;
         padding: 0;
+
+        .montonio-button {
+            font-size: 14px;
+            padding: 13px 19px;
+        }
     }
 
     ~ p.submit {

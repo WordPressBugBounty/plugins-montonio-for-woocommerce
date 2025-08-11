@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.0.5
+ * Version:           9.0.6
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 9.9.5
+ * WC tested up to: 10.0.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.5' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.6' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -112,6 +112,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-blik.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-bnpl.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-hire-purchase.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-inbank-calculator.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-inline-checkout.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-display-admin-options.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-banners.php';

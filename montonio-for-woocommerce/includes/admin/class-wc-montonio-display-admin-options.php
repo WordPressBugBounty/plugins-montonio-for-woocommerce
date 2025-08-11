@@ -15,89 +15,114 @@ class WC_Montonio_Display_Admin_Options {
     }
 
     public static function save() {
+        if ( ! is_admin() ) {
+            return;
+        }
+        
         global $current_section;
-        if ( $current_section && ! did_action( 'woocommerce_update_options_checkout_' . $current_section ) ) {
+
+        // Validate current section exists and is a Montonio section
+        if ( empty( $current_section ) || ! self::is_montonio_section( $current_section ) ) {
+            return;
+        }
+
+        if ( ! did_action( 'woocommerce_update_options_checkout_' . $current_section ) ) {
             do_action( 'woocommerce_update_options_checkout_' . $current_section );
         }
     }
 
-    public static function montonio_admin_menu( $id = null ) {
+    /**
+     * Get menu items configuration with caching
+     */
+    private static function get_menu_items() {
         $menu_items = array(
             'wc_montonio_api'           => array(
-                'title'        => 'API Settings',
+                'title'        => __( 'API Settings', 'montonio-for-woocommerce' ),
                 'type'         => 'settings',
-                'check_status' => false
+                'check_status' => false,
+                'icon'         => 'dashicons-admin-network'
             ),
             'wc_montonio_payments'      => array(
-                'title'        => 'Bank Payments',
+                'title'        => __( 'Bank Payments', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-building'
             ),
             'wc_montonio_card'          => array(
-                'title'        => 'Card Payments',
+                'title'        => __( 'Card Payments', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-credit-card'
             ),
             'wc_montonio_blik'          => array(
-                'title'        => 'BLIK',
+                'title'        => __( 'BLIK', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-smartphone'
             ),
             'wc_montonio_bnpl'          => array(
-                'title'        => 'Pay Later',
+                'title'        => __( 'Pay Later', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-calendar-alt'
             ),
             'wc_montonio_hire_purchase' => array(
-                'title'        => 'Financing',
+                'title'        => __( 'Financing', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-chart-line'
             ),
             'montonio_shipping'         => array(
-                'title'        => 'Shipping',
+                'title'        => __( 'Shipping', 'montonio-for-woocommerce' ),
                 'type'         => 'shipping',
-                'check_status' => true
+                'check_status' => true,
+                'icon'         => 'dashicons-cart'
             )
         );
+        
+        return $menu_items;
+    }
+
+    public static function montonio_admin_menu( $id = null ) {
+        $menu_items = self::get_menu_items();
         ?>
 
         <div class="montonio-menu">
             <ul class="montonio-menu__list">
-            <?php foreach ( $menu_items as $key => $value ): ?>
-                <?php
-                // Determine URL based on menu item type
-                $url = $key === 'montonio_shipping'
-                ? admin_url( 'admin.php?page=wc-settings&tab=' . $key )
-                : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $key );
+                <?php foreach ( $menu_items as $key => $value ) :
+                    // Determine URL based on menu item type
+                    $url = $key === 'montonio_shipping'
+                    ? admin_url( 'admin.php?page=wc-settings&tab=' . $key )
+                    : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $key );
 
-                // Check if this is an enabled payment method
-                $is_enabled      = false;
-                $is_sandbox_mode = false;
+                    // Check if this is an enabled payment method
+                    $is_enabled      = false;
+                    $is_sandbox_mode = false;
 
-                if ( $value['check_status'] ) {
-                    if ( $value['type'] === 'payment_method' ) {
-                        $settings        = get_option( 'woocommerce_' . $key . '_settings' );
-                        $is_enabled      = ( isset( $settings['enabled'] ) && $settings['enabled'] === 'yes' );
-                        $is_sandbox_mode = ( isset( $settings['test_mode'] ) && $settings['test_mode'] === 'yes' );
-                    } elseif ( $value['type'] === 'shipping' ) {
-                        $is_enabled      = ( get_option( 'montonio_shipping_enabled' ) === 'yes' );
-                        $is_sandbox_mode = ( get_option( 'montonio_shipping_sandbox_mode' ) === 'yes' );
+                    if ( $value['check_status'] ) {
+                        if ( $value['type'] === 'payment_method' ) {
+                            $settings        = get_option( 'woocommerce_' . $key . '_settings' );
+                            $is_enabled      = ( isset( $settings['enabled'] ) && $settings['enabled'] === 'yes' );
+                            $is_sandbox_mode = ( isset( $settings['test_mode'] ) && $settings['test_mode'] === 'yes' );
+                        } elseif ( $value['type'] === 'shipping' ) {
+                            $is_enabled      = ( get_option( 'montonio_shipping_enabled' ) === 'yes' );
+                            $is_sandbox_mode = ( get_option( 'montonio_shipping_sandbox_mode' ) === 'yes' );
+                        }
                     }
-                }
-                ?>
+                    ?>
 
-                <li class="<?php echo $key . ( $id === $key ? ' active' : '' ); ?>">
-                    <a href="<?php echo esc_url( $url ); ?>">
-                        <?php echo esc_html( $value['title'] ); ?>
+                    <li class="<?php echo $key . ( $id === $key ? ' active' : '' ); ?>">
+                        <a href="<?php echo esc_url( $url ); ?>">
+                            <?php echo esc_html( $value['title'] ); ?>
 
-                        <?php if ( $is_enabled ): ?>
-                            <span class="montonio-status <?php echo $is_sandbox_mode ? 'montonio-status--sandbox' : 'montonio-status--live'; ?>">
-                                <span class="montonio-status__text"><?php echo $is_sandbox_mode ? 'Test mode' : 'Active'; ?></span>
-                            </span>
-                        <?php endif; ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
+                            <?php if ( $is_enabled ): ?>
+                                <span class="montonio-status <?php echo $is_sandbox_mode ? 'montonio-status--sandbox' : 'montonio-status--live'; ?>">
+                                    <span class="montonio-status__text"><?php echo $is_sandbox_mode ? 'Test mode' : 'Active'; ?></span>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <?php
@@ -220,6 +245,11 @@ class WC_Montonio_Display_Admin_Options {
         </div>
 
         <?php
+    }
+
+    private static function is_montonio_section( $section ) {
+        $montonio_sections = array_keys( self::get_menu_items() );
+        return in_array( $section, $montonio_sections, true );
     }
 }
 WC_Montonio_Display_Admin_Options::init();

@@ -11,6 +11,7 @@
     // Conditionaliy toggle order prefix id field visibility
     function togglePrefixfield() {
         var selectedVal = $('#woocommerce_wc_montonio_api_merchant_reference_type').val();
+
         if (selectedVal === 'add_prefix') {
             $('#woocommerce_wc_montonio_api_order_prefix').closest('tr').show();
         } else {
@@ -39,13 +40,30 @@
     }
 
     // Move the p.submit element inside .montonio-options__content
-    if ($('.montonio-options').next('p.submit').length > 0) {
-        $('.montonio-options').next('p.submit')
-        .appendTo('.montonio-options .montonio-options__container .montonio-options__content')
-        .find('button.woocommerce-save-button')
-        .removeClass('components-button is-primary')
-        .addClass('montonio-button');
+    function adjustOptionsLayout() {
+        var $montonioOptions = $('.montonio-options');
+        var $montonioOptionsContent = $('.montonio-options .montonio-options__container .montonio-options__content');
+        var $submitButton = $('p.submit');
+        
+        if ($montonioOptions.length === 0 || $submitButton.length === 0) {
+            return;
+        }
+        
+        // Check if submit button is already inside .montonio-options
+        if ($montonioOptions.find('p.submit').length > 0) {
+            return;
+        }
+        
+        // Find all elements between .montonio-options and p.submit (inclusive)
+        var $elementsToWrap = $montonioOptions.nextUntil('p.submit').add($submitButton);
+        
+        // Move elements into .montonio-options
+        $elementsToWrap.appendTo($montonioOptionsContent);
+
+        $montonioOptions.find('button.woocommerce-save-button').removeClass('components-button is-primary button-primary').addClass('montonio-button');
     }
+
+    adjustOptionsLayout();
 
     // Hide the Montonio banner when the dismiss button or close button is clicked
 	$('.montonio-banner__close').on( 'click', function(e) {

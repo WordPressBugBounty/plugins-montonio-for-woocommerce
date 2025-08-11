@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.5
+Version: 9.0.6
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.0.5
+Stable tag: 9.0.6
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -135,8 +135,14 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.0.6 =
+* Added – Financing calculator widget
+* Tweak – Improved admin options saving function for better compatibility
+* Fix – Input field validation error causing embedded BLIK modal infinite loading
+* Fix – Smartposti logo not displaying in the shipping panel
+
 = 9.0.5 =
-* Added – wc_montonio_shipping_shipment_status_update action hook to handle shipment status update webhooks
+* Added – 'wc_montonio_shipping_shipment_status_update' action hook (via do_action) to allow custom handling of shipment status updates received via webhook
 * Added – Product announcement banner in the admin interface
 * Tweak – Refactored pickup point dropdown initialization for improved compatibility
 

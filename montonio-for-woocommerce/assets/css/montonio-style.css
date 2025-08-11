@@ -201,3 +201,7 @@ img.montonio-payment-method-icon {
   align-items: center;
   justify-content: space-between;
 }
+
+.montonio-inbank-calculator {
+  margin: 10px 0;
+}
