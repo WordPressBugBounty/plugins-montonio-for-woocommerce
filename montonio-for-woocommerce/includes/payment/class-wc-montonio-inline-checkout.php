@@ -8,6 +8,8 @@ class WC_Montonio_Inline_Checkout {
     public function __construct() {
         add_action( 'wp_ajax_get_payment_intent', array( $this, 'get_payment_intent' ) );
         add_action( 'wp_ajax_nopriv_get_payment_intent', array( $this, 'get_payment_intent' ) );
+        add_action( 'wp_ajax_get_session_uuid', array( $this, 'get_session_uuid' ) );
+        add_action( 'wp_ajax_nopriv_get_session_uuid', array( $this, 'get_session_uuid' ) );
     }
 
     /**
@@ -20,7 +22,7 @@ class WC_Montonio_Inline_Checkout {
      */
     public function get_payment_intent() {
         try {
-            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'montonio_embedded_payment_intent_nonce' ) ) {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'montonio_embedded_checkout_nonce' ) ) {
                 throw new Exception( 'Unable to verify your request. Please reload the page and try again.' );
             }
 
@@ -36,7 +38,7 @@ class WC_Montonio_Inline_Checkout {
 
             wp_send_json_success( $response );
         } catch ( Exception $e ) {
-            WC_Montonio_Logger::log( 'Montonio Inline Checkout: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Montonio Embedded Checkout: ' . $e->getMessage() );
 
             try {
                 $response = json_decode( $e->getMessage() );
@@ -50,6 +52,30 @@ class WC_Montonio_Inline_Checkout {
             } catch ( Exception $e ) {
                 WC_Montonio_Logger::log( 'Error parsing JSON response: ' . $e->getMessage() );
             }
+
+            wp_send_json_error( $e->getMessage() );
+        }
+    }
+
+
+    public function get_session_uuid() {
+        try {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'montonio_embedded_checkout_nonce' ) ) {
+                throw new Exception( 'Unable to verify your request. Please reload the page and try again.' );
+            }
+
+            $sandbox_mode = isset( $_POST['sandbox_mode'] ) ? sanitize_key( wp_unslash( $_POST['sandbox_mode'] ) ) : null;
+
+            if ( empty( $sandbox_mode ) ) {
+                throw new Exception( 'Missing required parameters.' );
+            }
+
+            $montonio_api = new WC_Montonio_API( $sandbox_mode );
+            $response     = $montonio_api->get_session_uuid();
+
+            wp_send_json_success( json_decode( $response ) );
+        } catch ( Exception $e ) {
+            WC_Montonio_Logger::log( 'Montonio Embedded Checkout: ' . $e->getMessage() );
 
             wp_send_json_error( $e->getMessage() );
         }

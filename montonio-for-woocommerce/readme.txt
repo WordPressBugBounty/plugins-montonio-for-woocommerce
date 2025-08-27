@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.0.6
+Version: 9.1.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.0.6
+Stable tag: 9.1.0
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -114,7 +114,8 @@ Data transmitted: Payment form inputs, selected payment method details, transact
 When transmitted: During checkout when payment forms are displayed and when customers interact with payment elements.
 
 Service URLs:
-* SDK bundle: https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js
+* Montonio JS: https://js.montonio.com/1.x.x/montonio.umd.js
+* Montonio JS (Legacy): https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js
 * Card payments API (Production): https://api.card-payments.montonio.com/payment-intents
 * Card payments API (Sandbox): https://api.sandbox-card-payments.montonio.com/payment-intents
 * Payment intents API (Production): https://stargate.montonio.com/api/payment-intents
@@ -135,6 +136,15 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.1.0 =
+* Added – Integration of new card payment processor flow
+* Fix – Financing calculator not displaying in Estonian language when locale is set to Estonian
+* Dev - Renamed montonio-inline-card.js to montonio-embedded-card-legacy.js
+* Dev - Renamed montonio-inline-blik.js to montonio-embedded-blik-legacy.js
+* Dev - Renamed script handle from montonio-sdk to montonio-js-legacy
+* Dev - Renamed script handle from montonio-inline-card to montonio-embedded-card-legacy
+* Dev - Renamed script handle from montonio-inline-blik to montonio-embedded-blik-legacy
+
 = 9.0.6 =
 * Added – Financing calculator widget
 * Tweak – Improved admin options saving function for better compatibility

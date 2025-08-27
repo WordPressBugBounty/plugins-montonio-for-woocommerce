@@ -64,6 +64,23 @@ class WC_Montonio_API {
     }
 
     /**
+     * Get session UUID
+     *
+     * @return object
+     */
+    public function get_session_uuid() {
+        $args = array(
+            'headers' => array(
+                'Content-Type' => 'application/json'
+            ),
+            'method'  => 'POST',
+            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode ) ) )
+        );
+
+        return $this->request( '/sessions', $args );
+    }
+
+    /**
      * Create payment intent
      *
      * @return object
@@ -173,6 +190,10 @@ class WC_Montonio_API {
 
         if ( ! empty( $this->payment_data['paymentIntentUuid'] ) ) {
             $order_data['paymentIntentUuid'] = (string) $this->payment_data['paymentIntentUuid'];
+        }
+
+        if ( ! empty( $this->payment_data['sessionUuid'] ) ) {
+            $order_data['sessionUuid'] = (string) $this->payment_data['sessionUuid'];
         }
 
         // Add products & shipping to Payment Data

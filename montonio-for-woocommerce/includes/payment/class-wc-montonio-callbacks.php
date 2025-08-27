@@ -407,6 +407,9 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                     break;
                 case 'PARTIALLY_REFUNDED':
                     $order->update_status( apply_filters( 'wc_montonio_partially_refunded_order_status', 'wc-mon-part-refund' ) );
+                    break;                
+                case 'PENDING':
+                    wc_add_notice( __( 'Payment status "PENDING". Please wait for the payment to be processed.', 'montonio-for-woocommerce' ), 'notice' );
                     break;
                 default:
                     wc_add_notice( __( 'Unable to finish the payment. Please try again or choose a different payment method.', 'montonio-for-woocommerce' ), 'notice' );

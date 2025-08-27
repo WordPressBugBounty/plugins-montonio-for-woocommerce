@@ -26,6 +26,13 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      */
     public $inline_checkout;
 
+    /**
+     * Processor which handles the transaction in Montonio
+     *
+     * @var string
+     */
+    public $processor;
+
     public function __construct() {
         $this->id                 = 'wc_montonio_card';
         $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
@@ -47,8 +54,9 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
         $this->title           = $this->get_option( 'title', 'Card Payment' );
         $this->description     = $this->get_option( 'description' );
         $this->enabled         = $this->get_option( 'enabled' );
-        $this->test_mode    = $this->get_option( 'test_mode' );
+        $this->test_mode       = $this->get_option( 'test_mode' );
         $this->inline_checkout = $this->get_option( 'inline_checkout' );
+        $this->processor       = $this->get_option( 'processor' );
 
         if ( 'Card Payment' === $this->title ) {
             $this->title = __( 'Card Payment', 'montonio-for-woocommerce' );
@@ -60,7 +68,11 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 
         if ( $this->inline_checkout === 'yes' ) {
             $this->has_fields = true;
-            $this->icon       = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png';
+
+            // Show all options for Adyen but hide wallets for other processors
+            if ( 'adyen' !== $this->processor ) {
+                $this->icon = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png';
+            }
         }
 
         // Hooks
@@ -96,7 +108,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
                 'description' => '',
                 'default'     => 'no'
             ),
-            'test_mode'    => array(
+            'test_mode'       => array(
                 'title'       => 'Test mode',
                 'label'       => 'Enable Test Mode',
                 'type'        => 'checkbox',
@@ -146,6 +158,14 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             return false;
         }
 
+        $settings = get_option( 'woocommerce_wc_montonio_card_settings' );
+
+        if ( empty( $settings['sync_timestamp'] ) || $settings['sync_timestamp'] < time() - 86400 || empty( $settings['processor'] ) ) {
+            $settings                   = $this->validate_settings( $settings );
+            $settings['sync_timestamp'] = time();
+            update_option( 'woocommerce_wc_montonio_card_settings', $settings );
+        }
+
         return true;
     }
 
@@ -191,6 +211,8 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
                 if ( ! isset( $response->paymentMethods->cardPayments ) ) {
                     throw new Exception( __( 'Card payments method is not enabled in Montonio partner system.', 'montonio-for-woocommerce' ) );
                 }
+
+                $settings['processor'] = $response->paymentMethods->cardPayments->processor ?? null;
             } catch ( Exception $e ) {
                 $settings['enabled'] = 'no';
 
@@ -208,7 +230,6 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
      * We're processing the payments here
      */
     public function process_payment( $order_id ) {
-
         $order = wc_get_order( $order_id );
 
         try {
@@ -223,18 +244,35 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             );
 
             if ( $this->inline_checkout === 'yes' ) {
-                $payment_intent_uuid = isset( $_POST['montonio_card_payment_intent_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_card_payment_intent_uuid'] ) ) : null;
+                $session_uuid = null;
 
-                if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
-                    wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
-                    WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: paymentIntentUuid is empty. ' . $this->id );
+                if ( $this->processor === 'adyen' ) {
+                    $session_uuid = isset( $_POST['montonio_card_payment_session_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_card_payment_session_uuid'] ) ) : null;
 
-                    return array(
-                        'result' => 'failure'
-                    );
+                    if ( empty( $session_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $session_uuid ) ) {
+                        wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
+                        WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: sessionUuid is empty. ' . $this->id );
+
+                        return array(
+                            'result' => 'failure'
+                        );
+                    }
+
+                    $payment_data['sessionUuid'] = $session_uuid;
+                } else {
+                    $session_uuid = isset( $_POST['montonio_card_payment_intent_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_card_payment_intent_uuid'] ) ) : null;
+
+                    if ( empty( $session_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $session_uuid ) ) {
+                        wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
+                        WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: paymentIntentUuid is empty. ' . $this->id );
+
+                        return array(
+                            'result' => 'failure'
+                        );
+                    }
+
+                    $payment_data['paymentIntentUuid'] = $session_uuid;
                 }
-
-                $payment_data['paymentIntentUuid'] = $payment_intent_uuid;
             }
 
             // Create new Montonio API instance
@@ -253,7 +291,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             if ( $this->inline_checkout === 'yes' ) {
                 return array(
                     'result'   => 'success',
-                    'redirect' => '#confirm-pi-' . $payment_intent_uuid
+                    'redirect' => '#confirm-session-' . $session_uuid
                 );
             } else {
                 return array(
@@ -288,7 +326,12 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
 
         if ( $this->inline_checkout === 'yes' ) {
             echo '<div id="montonio-card-form"></div>';
-            echo '<input type="hidden" name="montonio_card_payment_intent_uuid" value="">';
+
+            if ( $this->processor === 'adyen' ) {
+                echo '<input type="hidden" name="montonio_card_payment_session_uuid" value="">';
+            } else {
+                echo '<input type="hidden" name="montonio_card_payment_intent_uuid" value="">';
+            }
         }
 
         do_action( 'wc_montonio_after_payment_desc', $this->id );
@@ -299,16 +342,26 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
             return;
         }
 
-        wp_enqueue_script( 'montonio-inline-card' );
+        $locale = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
 
-        $wc_montonio_inline_cc_params = array(
-            'test_mode' => $this->test_mode,
-            'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
-            'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
-            'nonce'        => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
+        if ( ! in_array( $locale, array( 'en', 'et', 'fi', 'lt', 'lv', 'pl', 'ru' ) ) ) {
+            $locale = 'en';
+        }
+
+        $script_data = array(
+            'test_mode'  => $this->test_mode,
+            'return_url' => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
+            'locale'     => $locale,
+            'nonce'      => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
         );
 
-        wp_localize_script( 'montonio-inline-card', 'wc_montonio_inline_cc', $wc_montonio_inline_cc_params );
+        if ( $this->processor === 'adyen' ) {
+            wp_enqueue_script( 'montonio-embedded-card' );
+            wp_localize_script( 'montonio-embedded-card', 'wc_montonio_embedded_card', $script_data );
+        } else {
+            wp_enqueue_script( 'montonio-embedded-card-legacy' );
+            wp_localize_script( 'montonio-embedded-card-legacy', 'wc_montonio_embedded_card', $script_data );
+        }
     }
 
     /**

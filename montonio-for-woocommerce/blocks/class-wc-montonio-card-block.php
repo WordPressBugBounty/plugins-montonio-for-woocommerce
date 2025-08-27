@@ -25,11 +25,15 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
      * @return array Payment method data.
      */
     public function get_payment_method_data() {
-        $test_mode    = $this->get_setting( 'test_mode', 'no' );
-        $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
+        $test_mode       = $this->get_setting( 'test_mode', 'no' );
+        $processor       = $this->get_setting( 'processor' );
         $inline_checkout = $this->get_setting( 'inline_checkout', 'no' );
-        $icon            = $inline_checkout === 'yes' ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
-        $icon            = apply_filters( 'wc_montonio_card_block_logo', $icon );
+        $icon            = $inline_checkout === 'yes' && $processor !== 'adyen' ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
+        $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
+
+        if ( ! in_array( $locale, array( 'en', 'et', 'fi', 'lt', 'lv', 'pl', 'ru' ) ) ) {
+            $locale = 'en';
+        }
 
         $title = $this->get_setting( 'title' );
 
@@ -44,7 +48,7 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
             'sandboxMode'    => $test_mode,
             'locale'         => $locale,
             'inlineCheckout' => $inline_checkout,
-            'nonce'          => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
+            'nonce'          => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
         );
     }
 }

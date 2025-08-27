@@ -21,12 +21,12 @@ jQuery(document).ready(function($) {
 
     function initPickupPointDropdown() {  
         waitForDropdownElement(function(shippingMethod) {
-            if (typeof Montonio !== 'undefined' && Montonio.Checkout && Montonio.Checkout.ShippingDropdown) {
+            if (typeof MontonioLegacy !== 'undefined' && MontonioLegacy.Checkout && MontonioLegacy.Checkout.ShippingDropdown) {
                 if (window.montonioShippingDropdown) {
                     window.montonioShippingDropdown = null;
                 }
         
-                window.montonioShippingDropdown = new Montonio.Checkout.ShippingDropdown({
+                window.montonioShippingDropdown = new MontonioLegacy.Checkout.ShippingDropdown({
                     shippingMethod: shippingMethod,
                     targetId: 'montonio-shipping-pickup-point-dropdown',
                     shouldInjectCSS: true,

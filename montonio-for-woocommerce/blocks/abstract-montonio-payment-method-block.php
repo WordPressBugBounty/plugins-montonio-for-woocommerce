@@ -75,7 +75,19 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
     public function get_payment_method_script_handles() {
         $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index.js';
         $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index.asset.php';
+        $dependency = 'montonio-js-legacy';
 
+        if ( 'wc_montonio_card' === $this->name) {
+            $card_settings = get_option( 'woocommerce_wc_montonio_card_settings' );
+
+            if ( empty( $card_settings['processor'] ) || 'adyen' !== $card_settings['processor'] ) {
+                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
+                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';        
+            } else {
+                $dependency = 'montonio-js';    
+            }
+        }        
+        
         if ( 'wc_montonio_blik' === $this->name) {
             $blik_settings = get_option( 'woocommerce_wc_montonio_blik_settings' );
 
@@ -84,8 +96,8 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
             }
 
             if ( empty( $blik_settings['processor'] ) || 'stripe' === $blik_settings['processor'] ) {
-                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-v1.js';
-                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-v1.asset.php';        
+                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
+                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';        
             }
         }
 
@@ -97,9 +109,10 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
                 'version'      => WC_MONTONIO_PLUGIN_VERSION,
             );
 
-        $script_asset['dependencies'][] = 'montonio-sdk';    
+        $script_asset['dependencies'][] = $dependency;
 
-        wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+        wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+        wp_register_script( 'montonio-js', 'https://js.montonio.com/1.x.x/montonio.umd.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
         wp_register_script(
             $handle,

@@ -282,29 +282,10 @@ class WC_Montonio_Inbank_Calculator {
      * @return string Complete HTML and JavaScript for calculator widget
      */
     private function generate_calculator_html( $amount ) {
-        $lang          = $this->determine_language( $this->region );
+        $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
         $calculator_id = 'inbank-calculator-' . uniqid();
 
-        return $this->render_calculator_widget( $calculator_id, $amount, $lang );
-    }
-
-    /**
-     * Determine appropriate language based on region and WordPress locale
-     *
-     * @since 9.0.6
-     * @param string $region The configured calculator region
-     * @return string Language code for calculator localization
-     */
-    private function determine_language( $region ) {
-        $current_locale = apply_filters( 'wpml_current_language', get_locale() );
-        $lang           = WC_Montonio_Helper::get_locale( $current_locale );
-
-        // Handle Estonian language mapping
-        if ( 'et' === $lang ) {
-            $lang = 'ee';
-        }
-
-        return $lang;
+        return $this->render_calculator_widget( $calculator_id, $amount, $locale );
     }
 
     /**

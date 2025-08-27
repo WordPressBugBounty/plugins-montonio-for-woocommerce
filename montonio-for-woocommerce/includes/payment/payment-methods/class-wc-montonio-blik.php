@@ -398,14 +398,14 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
                 'test_mode' => $this->test_mode,
                 'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
                 'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
-                'nonce'        => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
+                'nonce'        => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
             );
             if ( $this->processor === 'blik' ) {
                 wp_enqueue_script( 'montonio-embedded-blik' );
                 wp_localize_script( 'montonio-embedded-blik', 'wc_montonio_embedded_blik', $embedded_blik_params );
             } else {
-                wp_enqueue_script( 'montonio-inline-blik' );
-                wp_localize_script( 'montonio-inline-blik', 'wc_montonio_inline_blik', $embedded_blik_params );
+                wp_enqueue_script( 'montonio-embedded-blik-legacy' );
+                wp_localize_script( 'montonio-embedded-blik-legacy', 'wc_montonio_inline_blik', $embedded_blik_params );
             }
         }
     }

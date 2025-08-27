@@ -33,12 +33,12 @@ jQuery(document).ready(function ($) {
             },
         });
 
-        if (typeof Montonio === 'undefined' || typeof Montonio.Checkout === 'undefined') {
+        if (typeof MontonioLegacy === 'undefined' || typeof MontonioLegacy.Checkout === 'undefined') {
             console.error('Montonio SDK not loaded');
             return;
         }
 
-        window.embeddedPayment = new Montonio.Checkout.Blik({
+        window.embeddedPayment = new MontonioLegacy.Checkout.Blik({
             locale: wc_montonio_embedded_blik.locale,
             environment: wc_montonio_embedded_blik.test_mode === 'yes' ? 'sandbox' : 'production',
             targetElement: targetElement.get(0),

@@ -63,9 +63,9 @@ class WC_Montonio_Shipping_Checkout_Dropdown_Block implements IntegrationInterfa
 				'version'      => WC_MONTONIO_PLUGIN_VERSION,
 			);
 		
-		$script_asset['dependencies'][] = 'montonio-sdk';
+		$script_asset['dependencies'][] = 'montonio-js-legacy';
 
-		wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+		wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
 		wp_register_script(
 			'wc-montonio-shipping-dropdown-block',

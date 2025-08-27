@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.0.6
+ * Version:           9.1.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 10.0.4
+ * WC tested up to: 10.1.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.0.6' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.1.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -266,13 +266,15 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_style( 'montonio-style', WC_MONTONIO_PLUGIN_URL . '/assets/css/montonio-style.css', array(), WC_MONTONIO_PLUGIN_VERSION );
             wp_register_style( 'montonio-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/css/pickup-points.css', array(), WC_MONTONIO_PLUGIN_VERSION );
 
-            wp_register_script( 'montonio-sdk', 'https://public.montonio.com/assets/montonio-js/2.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-js', 'https://js.montonio.com/1.x.x/montonio.umd.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-pis', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-pis.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-bnpl', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-bnpl.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-inline-card', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-inline-card.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-inline-blik', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-inline-blik.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-embedded-blik', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-blik.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points.js', array( 'jquery', 'montonio-sdk' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-embedded-card-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card-legacy.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-embedded-blik-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-blik-legacy.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-embedded-blik', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-blik.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-embedded-card', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card.js', array( 'jquery', 'montonio-js' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );

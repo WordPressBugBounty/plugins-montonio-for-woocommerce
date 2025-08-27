@@ -42,7 +42,7 @@ class WC_Montonio_Blik_Block extends AbstractMontonioPaymentMethodBlock {
             'sandboxMode'    => $test_mode,
             'locale'         => $locale,
             'inlineCheckout' => $inline_checkout,
-            'nonce'          => wp_create_nonce( 'montonio_embedded_payment_intent_nonce' )
+            'nonce'          => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
         );
     }
 }

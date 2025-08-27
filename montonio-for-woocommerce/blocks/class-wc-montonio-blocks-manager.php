@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema;
 
@@ -78,7 +78,7 @@ class WC_Montonio_Blocks_Manager {
      * @return void
      */
     private function register_payment_methods() {
-        add_action( 'woocommerce_blocks_payment_method_type_registration', function( $registry ) {
+        add_action( 'woocommerce_blocks_payment_method_type_registration', function ( $registry ) {
             $methods = array(
                 'WC_Montonio_Payments_Block',
                 'WC_Montonio_BNPL_Block',
@@ -90,7 +90,7 @@ class WC_Montonio_Blocks_Manager {
             foreach ( $methods as $method ) {
                 $registry->register( new $method() );
             }
-        });
+        } );
     }
 
     /**
@@ -100,9 +100,9 @@ class WC_Montonio_Blocks_Manager {
      * @return void
      */
     private function register_shipping_dropdown() {
-        add_action( 'woocommerce_blocks_checkout_block_registration', function( $registry ) {
+        add_action( 'woocommerce_blocks_checkout_block_registration', function ( $registry ) {
             $registry->register( new WC_Montonio_Shipping_Checkout_Dropdown_Block() );
-        });
+        } );
     }
 
     /**
@@ -119,7 +119,7 @@ class WC_Montonio_Blocks_Manager {
                     'namespace'       => self::IDENTIFIER,
                     'data_callback'   => array( $this, 'data_callback' ),
                     'schema_callback' => array( $this, 'schema_callback' ),
-                    'schema_type'     => ARRAY_A,
+                    'schema_type'     => ARRAY_A
                 )
             );
         }
@@ -133,7 +133,7 @@ class WC_Montonio_Blocks_Manager {
      */
     public function data_callback() {
         return array(
-            'selected_pickup_point' => '',
+            'selected_pickup_point' => ''
         );
     }
 
@@ -145,11 +145,11 @@ class WC_Montonio_Blocks_Manager {
      */
     public function schema_callback() {
         return array(
-            'selected_pickup_point'  => array(
+            'selected_pickup_point' => array(
                 'description' => __( 'Selected Pickup Point', 'montonio-for-woocommerce' ),
                 'type'        => array( 'string', 'null' ),
-                'readonly'    => true,
-            ),
+                'readonly'    => true
+            )
         );
     }
 
@@ -163,9 +163,9 @@ class WC_Montonio_Blocks_Manager {
      */
     public function update_order_meta_data( $order, $request ) {
         $data = isset( $request['extensions'][self::IDENTIFIER] ) ? $request['extensions'][self::IDENTIFIER] : array();
-        
+
         $handler = WC_Montonio_Shipping::get_instance();
-        $handler->update_order_meta( $order, $data['selected_pickup_point'] );
+        $handler->update_order_meta( $order, isset( $data['selected_pickup_point'] ) ? $data['selected_pickup_point'] : null );
     }
 }
 new WC_Montonio_Blocks_Manager();
