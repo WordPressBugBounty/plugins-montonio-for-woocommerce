@@ -23,7 +23,7 @@ class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
 
         $this->provider_name = 'unisend';
         $this->type_v2       = 'parcelMachine';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/unisend.png';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/unisend-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Unisend parcel machines', 'montonio-for-woocommerce' ) );
 
         if ( 'Unisend parcel machines' === $this->title ) {

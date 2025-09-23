@@ -54,7 +54,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
         $this->title            = $this->get_option( 'title', 'BLIK' );
         $this->description      = $this->get_option( 'description' );
         $this->enabled          = $this->get_option( 'enabled' );
-        $this->test_mode     = $this->get_option( 'test_mode' );
+        $this->test_mode        = $this->get_option( 'test_mode' );
         $this->blik_in_checkout = $this->get_option( 'blik_in_checkout' );
         $this->processor        = $this->get_option( 'processor', 'stripe' );
 
@@ -104,7 +104,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
                 'description' => '',
                 'default'     => 'no'
             ),
-            'test_mode'     => array(
+            'test_mode'        => array(
                 'title'       => 'Test mode',
                 'label'       => 'Enable Test Mode',
                 'type'        => 'checkbox',
@@ -178,7 +178,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
             $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
 
             // Disable the payment gateway if API keys are not provided
-            if ( $settings['test_mode'] === 'yes' ) {
+            if ( isset( $settings['test_mode'] ) && $settings['test_mode'] === 'yes' ) {
                 if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
                     /* translators: API Settings page url */
                     $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
@@ -201,7 +201,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
             }
 
             try {
-                $montonio_api = new WC_Montonio_API( $settings['test_mode'] );
+                $montonio_api = new WC_Montonio_API( $settings['test_mode'] ?? 'no' );
                 $response     = json_decode( $montonio_api->fetch_payment_methods() );
 
                 if ( ! isset( $response->paymentMethods->blik ) || ! isset( $response->paymentMethods->blik->processor ) ) {
@@ -393,20 +393,19 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
             return;
         }
 
-        if ( $this->blik_in_checkout === 'yes' && ! WC_Montonio_Helper::is_checkout_block() ) {
-            $embedded_blik_params = array(
-                'test_mode' => $this->test_mode,
-                'return_url'   => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
-                'locale'       => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
-                'nonce'        => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
-            );
-            if ( $this->processor === 'blik' ) {
-                wp_enqueue_script( 'montonio-embedded-blik' );
-                wp_localize_script( 'montonio-embedded-blik', 'wc_montonio_embedded_blik', $embedded_blik_params );
-            } else {
-                wp_enqueue_script( 'montonio-embedded-blik-legacy' );
-                wp_localize_script( 'montonio-embedded-blik-legacy', 'wc_montonio_inline_blik', $embedded_blik_params );
-            }
+        $embedded_blik_params = array(
+            'test_mode'  => $this->test_mode,
+            'return_url' => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
+            'locale'     => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
+            'nonce'      => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
+        );
+
+        if ( $this->processor === 'blik' ) {
+            wp_enqueue_script( 'montonio-embedded-blik' );
+            wp_localize_script( 'montonio-embedded-blik', 'wc_montonio_embedded_blik', $embedded_blik_params );
+        } else {
+            wp_enqueue_script( 'montonio-embedded-blik-legacy' );
+            wp_localize_script( 'montonio-embedded-blik-legacy', 'wc_montonio_inline_blik', $embedded_blik_params );
         }
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -14,36 +13,10 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @since 7.0.0
      */
     protected function __construct() {
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 20 );
         add_filter( 'woocommerce_cart_shipping_method_full_label', array( $this, 'update_shipping_method_label' ), 10, 2 );
         add_action( 'woocommerce_review_order_after_shipping', array( $this, 'render_shipping_method_items_dropdown' ) );
         add_filter( 'woocommerce_order_shipping_to_display', array( $this, 'add_details_to_shipping_label_ordered' ), 10, 2 );
         add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_pickup_point' ) );
-    }
-
-    /**
-     * Enqueues the Montonio SDK script.
-     *
-     * @since 7.0.1 - Removed sync of shipping method items in here
-     * @since 7.0.0
-     * @return null
-     */
-    public function enqueue_scripts() {
-        if ( ! is_checkout() ) {
-            return;
-        }
-
-        if ( get_option( 'montonio_shipping_dropdown_type' ) === 'select2' ) {
-            wp_enqueue_style( 'montonio-pickup-points' );
-
-            if ( ! wp_script_is( 'selectWoo', 'registered' ) ) {
-                wp_register_script( 'selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.min.js', array( 'jquery' ), false, true );
-            }
-
-            wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
-        } else {
-            wp_enqueue_script( 'montonio-shipping-pickup-points' );
-        }
     }
 
     /**
@@ -78,15 +51,29 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
     }
 
     /**
-     * Will render the shipping method items dropdown using the montonio-js sdk.
+     * Will render the shipping method items dropdown or search element.
      *
      * @since 7.0.0
+     * @since 9.1.1 Added support for pickup point search element
      * @return void
      */
     public function render_shipping_method_items_dropdown() {
         $montonio_shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
-
         if ( ! is_a( $montonio_shipping_method, 'Montonio_Shipping_Method' ) ) {
+            return;
+        }
+
+        if ( is_a( $montonio_shipping_method, 'Montonio_Inpost_Parcel_Machines' ) ) {
+            wc_get_template(
+                'shipping-pickup-points-search.php',
+                array(
+                    'carrier' => $montonio_shipping_method->provider_name,
+                    'country' => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
+                ),
+                '',
+                WC_MONTONIO_PLUGIN_PATH . '/templates/'
+            );
+
             return;
         }
 
@@ -98,10 +85,10 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
 
         wc_get_template(
             'shipping-pickup-points-dropdown.php',
-            [
+            array(
                 'shipping_method'       => $montonio_shipping_method->id,
                 'shipping_method_items' => $shipping_method_items
-            ],
+            ),
             '',
             WC_MONTONIO_PLUGIN_PATH . '/templates/'
         );
@@ -124,10 +111,10 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
-        $carrier = $shipping_method->provider_name;
+        $carrier     = $shipping_method->provider_name;
         $method_type = $shipping_method->type_v2;
 
-        if ( in_array( $method_type, ['parcelMachine', 'postOffice', 'parcelShop'] ) ) {
+        if ( in_array( $method_type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( wp_unslash( $_POST['montonio_pickup_point'] ) ) : null;
 
             if ( empty( $shipping_method_item_id ) ) {
@@ -136,7 +123,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             }
 
             $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
-            
+
             if ( $carrier != $shipping_method_item->carrier_code ) {
                 wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
             }

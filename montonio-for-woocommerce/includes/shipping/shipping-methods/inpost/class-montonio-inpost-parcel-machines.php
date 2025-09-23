@@ -1,11 +1,11 @@
 <?php
 defined( 'ABSPATH' ) or exit;
 
-class Montonio_Smartpost_Parcel_Machines extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = array(36, 60, 60); // lowest to highest (cm)
+class Montonio_Inpost_Parcel_Machines extends Montonio_Shipping_Method {
+    const MAX_DIMENSIONS = array(38, 41, 64); // lowest to highest (cm)
 
-    public $default_title      = 'SmartPosti parcel machines';
-    public $default_max_weight = 35; // kg
+    public $default_title      = 'Inpost parcel machines';
+    public $default_max_weight = 25; // kg
 
     /**
      * Called from parent's constructor
@@ -13,23 +13,22 @@ class Montonio_Smartpost_Parcel_Machines extends Montonio_Shipping_Method {
      * @return void
      */
     protected function init() {
-        $this->id                 = 'montonio_itella_parcel_machines';
-        $this->method_title       = __( 'Montonio SmartPosti parcel machines', 'montonio-for-woocommerce' );
-        $this->method_description = __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' );
+        $this->id                 = 'montonio_inpost_parcel_machines';
+        $this->method_title       = __( 'Montonio Inpost parcel machines', 'montonio-for-woocommerce' );
+        $this->method_description = __( 'Inpost parcel machines', 'montonio-for-woocommerce' );
         $this->supports           = array(
             'shipping-zones',
             'instance-settings',
             'instance-settings-modal'
         );
 
-        $this->provider_name = 'smartpost';
+        $this->provider_name = 'inpost';
+        $this->type_v2       = 'parcelMachine';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/inpost-rect.svg';
+        $this->title         = $this->get_option( 'title', __( 'Inpost parcel machines', 'montonio-for-woocommerce' ) );
 
-        $this->type_v2 = 'parcelMachine';
-        $this->logo    = WC_MONTONIO_PLUGIN_URL . '/assets/images/smartposti-rect.svg';
-        $this->title   = $this->get_option( 'title', __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' ) );
-
-        if ( 'SmartPosti parcel machines' === $this->title ) {
-            $this->title = __( 'SmartPosti parcel machines', 'montonio-for-woocommerce' );
+        if ( 'Inpost parcel machines' === $this->title ) {
+            $this->title = __( 'Inpost parcel machines', 'montonio-for-woocommerce' );
         }
     }
 

@@ -18,7 +18,7 @@ $include_address = get_option( 'montonio_shipping_show_address' );
                     <option value="<?php echo esc_attr( $item['id'] ); ?>">
                         <?php echo esc_html( $item['name'] ); ?>
 
-                        <?php if ( $include_address === 'yes' && ! empty( trim( $item['address'] ) ) ) {
+                        <?php if ( $include_address !== 'no' && ! empty( trim( $item['address'] ) ) ) {
                             echo ' - ' . esc_html( $item['address'] ) . ', ' . esc_attr( $locality );
                         } ?>
                     </option>

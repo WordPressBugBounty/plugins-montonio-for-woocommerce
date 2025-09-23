@@ -23,7 +23,7 @@ class Montonio_Venipak_Courier extends Montonio_Shipping_Method {
 
         $this->provider_name = 'venipak';
         $this->type_v2       = 'courier';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/venipak.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/venipak-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Venipak courier', 'montonio-for-woocommerce' ) );
 
         if ( 'Venipak courier' === $this->title ) {

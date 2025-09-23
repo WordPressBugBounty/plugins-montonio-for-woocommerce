@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.1.0
+ * Version:           9.1.1
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.1.0' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.1.1' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -127,23 +127,19 @@ if ( ! class_exists( 'Montonio' ) ) {
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-courier.php';
-
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php';
-
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php';
-
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-shops.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-courier.php';
-
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php';
-
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php';
+                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php';
 
                 add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_methods' ) );
             }
@@ -204,26 +200,22 @@ if ( ! class_exists( 'Montonio' ) ) {
          * @return array The updated array of shipping methods.
          */
         public function add_shipping_methods( $methods ) {
-            $methods['montonio_omniva_parcel_machines'] = 'Montonio_Omniva_Parcel_Machines';
-            $methods['montonio_omniva_post_offices']    = 'Montonio_Omniva_Post_Offices';
-            $methods['montonio_omniva_courier']         = 'Montonio_Omniva_Courier';
-
-            $methods['montonio_dpd_parcel_machines'] = 'Montonio_DPD_Parcel_Machines';
-            $methods['montonio_dpd_parcel_shops']    = 'Montonio_DPD_Parcel_Shops';
-            $methods['montonio_dpd_courier']         = 'Montonio_DPD_Courier';
-
-            $methods['montonio_venipak_parcel_machines'] = 'Montonio_Venipak_Parcel_Machines';
-            $methods['montonio_venipak_post_offices']    = 'Montonio_Venipak_Parcel_Shops';
-            $methods['montonio_venipak_courier']         = 'Montonio_Venipak_Courier';
-
-            $methods['montonio_itella_parcel_machines'] = 'Montonio_Smartpost_Parcel_Machines';
-            $methods['montonio_itella_post_offices']    = 'Montonio_Smartpost_Post_Offices';
-            $methods['montonio_itella_courier']         = 'Montonio_Smartpost_Courier';
-
-            $methods['montonio_unisend_parcel_machines'] = 'Montonio_Unisend_Parcel_Machines';
-
+            $methods['montonio_omniva_parcel_machines']       = 'Montonio_Omniva_Parcel_Machines';
+            $methods['montonio_omniva_post_offices']          = 'Montonio_Omniva_Post_Offices';
+            $methods['montonio_omniva_courier']               = 'Montonio_Omniva_Courier';
+            $methods['montonio_dpd_parcel_machines']          = 'Montonio_DPD_Parcel_Machines';
+            $methods['montonio_dpd_parcel_shops']             = 'Montonio_DPD_Parcel_Shops';
+            $methods['montonio_dpd_courier']                  = 'Montonio_DPD_Courier';
+            $methods['montonio_venipak_parcel_machines']      = 'Montonio_Venipak_Parcel_Machines';
+            $methods['montonio_venipak_post_offices']         = 'Montonio_Venipak_Parcel_Shops';
+            $methods['montonio_venipak_courier']              = 'Montonio_Venipak_Courier';
+            $methods['montonio_itella_parcel_machines']       = 'Montonio_Smartpost_Parcel_Machines';
+            $methods['montonio_itella_post_offices']          = 'Montonio_Smartpost_Post_Offices';
+            $methods['montonio_itella_courier']               = 'Montonio_Smartpost_Courier';
+            $methods['montonio_unisend_parcel_machines']      = 'Montonio_Unisend_Parcel_Machines';
             $methods['montonio_latvian_post_parcel_machines'] = 'Montonio_Latvian_Post_Parcel_Machines';
             $methods['montonio_latvian_post_courier']         = 'Montonio_Latvian_Post_Courier';
+            $methods['montonio_inpost_parcel_machines']       = 'Montonio_Inpost_Parcel_Machines';
 
             return $methods;
         }
@@ -275,6 +267,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'montonio-embedded-blik', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-blik.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-embedded-card', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card.js', array( 'jquery', 'montonio-js' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-shipping-pickup-points-search', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-search.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );
@@ -350,13 +343,13 @@ if ( ! class_exists( 'Montonio' ) ) {
                             <?php echo esc_html__( 'You haven\'t entered the Live API keys for the Montonio Payments module.', 'montonio-for-woocommerce' ); ?>
                             <br>
                             <?php
-                                printf(
-                                    /* translators: 1) HTML anchor open tag 2) HTML anchor closing tag */
-                                    esc_html__( '%1$sClick here%2$s to enter your Live API keys and start using Montonio.', 'montonio-for-woocommerce' ),
-                                    '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
-                                    '</a>'
-                                );
-                            ?>
+printf(
+                /* translators: 1) HTML anchor open tag 2) HTML anchor closing tag */
+                esc_html__( '%1$sClick here%2$s to enter your Live API keys and start using Montonio.', 'montonio-for-woocommerce' ),
+                '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
+                '</a>'
+            );
+            ?>
                         </p>
 
                         <h3><?php echo esc_html__( 'Need help?', 'montonio-for-woocommerce' ) ?></h3>
@@ -366,7 +359,7 @@ if ( ! class_exists( 'Montonio' ) ) {
                     </div>
                 </div>
             <?php
-            endif;
+endif;
         }
     }
     Montonio::get_instance();

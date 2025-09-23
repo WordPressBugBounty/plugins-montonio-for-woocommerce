@@ -24,7 +24,7 @@ class Montonio_Smartpost_Courier extends Montonio_Shipping_Method {
 
         $this->provider_name = 'smartpost';
         $this->type_v2       = 'courier';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/smartposti.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/smartposti-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'SmartPosti courier', 'montonio-for-woocommerce' ) );
 
         if ( 'SmartPosti courier' === $this->title ) {

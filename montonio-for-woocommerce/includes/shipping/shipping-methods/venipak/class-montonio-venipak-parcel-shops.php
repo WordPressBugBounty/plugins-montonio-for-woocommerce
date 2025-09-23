@@ -24,7 +24,7 @@ class Montonio_Venipak_Parcel_Shops extends Montonio_Shipping_Method {
 
         $this->provider_name = 'venipak';
         $this->type_v2       = 'parcelShop';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/venipak.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/venipak-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Venipak parcel shops', 'montonio-for-woocommerce' ) );
 
         if ( 'Venipak parcel shops' === $this->title ) {

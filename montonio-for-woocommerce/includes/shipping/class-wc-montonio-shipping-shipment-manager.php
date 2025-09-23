@@ -222,21 +222,32 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $price      = wc_get_price_including_tax( $product );
             $quantity   = $item->get_quantity();
             $weight     = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
+            $length     = WC_Montonio_Helper::convert_to_meters( $product->get_length() );
+            $width      = WC_Montonio_Helper::convert_to_meters( $product->get_width() );
+            $height     = WC_Montonio_Helper::convert_to_meters( $product->get_height() );
 
             if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
                 for ( $i = 0; $i < $quantity; $i++ ) {
                     $parcels[] = array(
                         'weight' => $weight > 0 ? $weight : 1,
-                        'length' => WC_Montonio_Helper::convert_to_meters( $product->get_length() ),
-                        'width'  => WC_Montonio_Helper::convert_to_meters( $product->get_width() ),
-                        'height' => WC_Montonio_Helper::convert_to_meters( $product->get_height() )
+                        'length' => $length,
+                        'width'  => $width,
+                        'height' => $height
                     );
                 }
             } else {
                 if ( array_key_exists( 'combined', $parcels ) ) {
                     $parcels['combined']['weight'] += $weight * $quantity;
+                    $parcels['combined']['length'] = max( $parcels['combined']['length'], $length );
+                    $parcels['combined']['width']  = max( $parcels['combined']['width'], $width );
+                    $parcels['combined']['height'] = max( $parcels['combined']['height'], $height );
                 } else {
-                    $parcels['combined']['weight'] = $weight * $quantity;
+                    $parcels['combined'] = array(
+                        'weight' => $weight * $quantity,
+                        'length' => $length,
+                        'width'  => $width,
+                        'height' => $height
+                    );
                 }
             }
 
@@ -266,7 +277,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         // For combined parcel, if it exists and weight is 0, set to 1
-        if ( array_key_exists( 'combined', $parcels ) && ! $parcels['combined']['weight'] > 0 ) {
+        if ( array_key_exists( 'combined', $parcels ) && $parcels['combined']['weight'] <= 0 ) {
             $parcels['combined']['weight'] = 1;
         }
 

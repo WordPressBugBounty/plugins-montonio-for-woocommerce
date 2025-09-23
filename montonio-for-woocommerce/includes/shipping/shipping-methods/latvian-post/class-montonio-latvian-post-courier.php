@@ -22,7 +22,7 @@ class Montonio_Latvian_Post_Courier extends Montonio_Shipping_Method {
 
         $this->provider_name = 'latvian_post';
         $this->type_v2       = 'courier';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/latvijas-pasts.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/latvian_post-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Latvijas Pasts courier', 'montonio-for-woocommerce' ) );
 
         if ( 'Latvijas Pasts courier' === $this->title ) {

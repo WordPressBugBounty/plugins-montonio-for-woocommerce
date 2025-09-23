@@ -44,10 +44,6 @@ class WC_Montonio_Banners {
         $id = $_POST['id'];
         check_ajax_referer( $id . '_nonce' );
 
-        if ( ! current_user_can( 'edit_theme_options' ) ) {
-            wp_die( -1 );
-        }
-
         // Get existing banner settings or initialize empty array
         $montonio_banners = get_user_meta( get_current_user_id(), 'montonio_banners', true );
         if ( ! is_array( $montonio_banners ) ) {

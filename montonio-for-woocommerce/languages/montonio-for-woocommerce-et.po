@@ -65,7 +65,7 @@ msgstr "Maksa krediit- või deebetkaardiga Montonio vahendusel."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:241
+#: montonio.php:233
 msgid "Settings"
 msgstr ""
 
@@ -241,7 +241,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:108
-#: includes/shipping/class-wc-montonio-shipping.php:276
+#: includes/shipping/class-wc-montonio-shipping.php:318
 msgid "Track your shipment:"
 msgstr "Jälgi oma saadetist:"
 
@@ -295,15 +295,15 @@ msgstr ""
 msgid "Create a separate Montonio shipping label for each of these products"
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:134
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:121
 msgid "Please select a pickup point."
 msgstr "Palun vali pakipunkt."
 
-#: includes/shipping/class-wc-montonio-shipping.php:170
+#: includes/shipping/class-wc-montonio-shipping.php:213
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:249
+#: includes/shipping/class-wc-montonio-shipping.php:291
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
@@ -312,7 +312,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-card.php:220
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:256
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:313
-#: includes/shipping/class-wc-montonio-shipping.php:252
+#: includes/shipping/class-wc-montonio-shipping.php:294
 msgid "Montonio API response: "
 msgstr ""
 
@@ -478,6 +478,7 @@ msgstr ""
 
 #: templates/admin-order-shipping-panel.php:43
 #: templates/shipping-pickup-points-dropdown.php:11
+#: templates/shipping-pickup-points-search.php:9
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:217
 msgid "Pickup point"
@@ -863,7 +864,6 @@ msgid "Montonio order UUID missing! Please refund this order manually in Montoni
 msgstr ""
 
 #: templates/shipping-pickup-points-dropdown.php:14
-#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:198
 msgid "Select a pickup point"
 msgstr "Palun vali pakipunkt"
@@ -975,7 +975,6 @@ msgstr ""
 msgid "Please select a pickup point"
 msgstr "Palun vali pakiautomaat"
 
-#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:220
 msgid "Loading pickup points..."
 msgstr "Pakiautomaatide laadimine..."
@@ -997,7 +996,7 @@ msgstr ""
 msgid "Select shipping classes for which this method should be disabled. If the cart contains any product from these selected shipping classes, this shipping method will not be available."
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:141
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:128
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
@@ -1471,20 +1470,20 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:348
+#: montonio.php:341
 msgid "Start using Montonio"
 msgstr "Alusta Montonio kasutamist"
 
-#: montonio.php:350
+#: montonio.php:343
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr "Sa pole veel sisestanud Montonio makselahenduse API võtmeid"
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:355
+#: montonio.php:348
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr "%1$sVajuta siia%2$s, et lisada oma API võtmed ja hakata Montoniot kasutama"
 
-#: montonio.php:362
+#: montonio.php:355
 msgid "Need help?"
 msgstr "Vajad abi?"
 
@@ -1508,35 +1507,35 @@ msgstr ""
 msgid "Courier"
 msgstr ""
 
-#: montonio.php:364
+#: montonio.php:357
 msgid "How to activate Montonio payment methods"
 msgstr "Kuidas aktiveerida Montonio makselahendust"
 
-#: includes/admin/class-wc-montonio-banners.php:134
+#: includes/admin/class-wc-montonio-banners.php:130
 msgid "Analytics are back!"
 msgstr "Analüütika on tagasi!"
 
-#: includes/admin/class-wc-montonio-banners.php:135
+#: includes/admin/class-wc-montonio-banners.php:131
 msgid "Check your sales volumes, most used payment methods & more."
 msgstr "Vaata oma müügimahtu, enimkasutatavaid makseviise ja palju muud."
 
-#: includes/admin/class-wc-montonio-banners.php:143
+#: includes/admin/class-wc-montonio-banners.php:139
 msgid "Limited time offer"
 msgstr "Eripakkumine"
 
-#: includes/admin/class-wc-montonio-banners.php:144
+#: includes/admin/class-wc-montonio-banners.php:140
 msgid "Send Unisend parcels with only 1.3€ + VAT until October!"
 msgstr "Saada Unisendi pakke vaid 1,3 € + KM kuni oktoobrini!"
 
-#: includes/admin/class-wc-montonio-banners.php:150
+#: includes/admin/class-wc-montonio-banners.php:146
 msgid "Tracking page"
 msgstr "Jälgimisleht"
 
-#: includes/admin/class-wc-montonio-banners.php:151
+#: includes/admin/class-wc-montonio-banners.php:147
 msgid "Set up a free tracking page with your logo to enrich your customer experience."
 msgstr "Loo tasuta jälgimisleht oma logoga, et pakkuda paremat kliendikogemust"
 
-#: includes/admin/class-wc-montonio-banners.php:156
+#: includes/admin/class-wc-montonio-banners.php:152
 msgid "Try these features out"
 msgstr "Kliki siia, et neid uuendusi proovida"
 
@@ -1600,3 +1599,30 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:178
 msgid "Set where the loan calculator appears by entering WooCommerce hooks.<br />Separate multiple hooks with commas (e.g., my_hook_1, my_hook_2).<br />See <a href=\"https://docs.woocommerce.com/wc-apidocs/hook-docs.html\" target=\"_blank\">WooCommerce hook docs</a> for reference.<br /><br />Or use the shortcode <code>[montonio_calculator]</code> with the optional attribute product_id=\"123\" to display the calculator for a specific product."
 msgstr ""
+
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:17
+msgid "Montonio Inpost parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:18
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:28
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:31
+msgid "Inpost parcel machines"
+msgstr ""
+
+#: templates/shipping-pickup-points-search.php:17
+#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
+msgid "Type at least 3 characters to search..."
+msgstr "Sisesta otsimiseks vähemalt 3 tähemärki..."
+
+#: includes/shipping/class-wc-montonio-shipping.php:98
+msgid "Searching pickup points..."
+msgstr "Pakiautomaatide otsimine..."
+
+#: includes/shipping/class-wc-montonio-shipping.php:99
+msgid "Failed to load pickup points. Please try again."
+msgstr "Pakiautomaatide laadimine ebaõnnestus. Palun proovi uuesti."
+
+#: includes/shipping/class-wc-montonio-shipping.php:100
+msgid "No pickup points found"
+msgstr "Pakiautomaate ei leitud"

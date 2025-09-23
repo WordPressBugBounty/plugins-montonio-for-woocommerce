@@ -64,7 +64,7 @@ class WC_Montonio_Shipping_API {
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @return string The body of the response. Empty string if no body or incorrect parameter given. as a JSON string
      */
-    public function get_pickup_points( $carrier = null, $country = null ) {
+    public function get_pickup_points( $carrier = null, $country = null, $search = null ) {
         $path = '/v3/shipping-methods/pickup-points';
         $query_params = array();
 
@@ -74,6 +74,10 @@ class WC_Montonio_Shipping_API {
         
         if ( $country !== null ) {
             $query_params['countryCode'] = $country;
+        }
+
+        if ( $search !== null ) {
+            $query_params['search'] = $search;
         }
         
         if ( ! empty( $query_params ) ) {

@@ -310,22 +310,23 @@ class WC_Montonio_Helper {
             'ALREADY_PAID_FOR'        => __( 'This order has already been paid for.', 'montonio-for-woocommerce' )
         );
 
-        // Return the mapped message if we have one for this message
-        if ( ! empty( $message ) && isset( $error_translations[$message] ) ) {
-            return $error_translations[$message];
-        }
-
-        // First fallback: Use the decoded message if it exists
+        // Handle the message
         if ( ! empty( $message ) ) {
-
             if ( is_array( $message ) ) {
-                $message = implode( '; ', $message );
+                // Arrays won't match translations, so just convert and return
+                return implode( '; ', $message );
             }
-
+            
+            // Check if we have a translation for this string message
+            if ( isset( $error_translations[$message] ) ) {
+                return $error_translations[$message];
+            }
+            
+            // Return the original string message if no translation found
             return $message;
         }
 
-        // Second fallback: Return the original error
+        // Fallback: Return the original error
         return $raw_error;
     }
 }

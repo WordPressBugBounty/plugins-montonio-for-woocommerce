@@ -112,7 +112,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'title'   => __( 'Show parcel machine address in dropdown in checkout', 'montonio-for-woocommerce' ),
                 'desc'    => __( 'Enable', 'montonio-for-woocommerce' ),
                 'type'    => 'checkbox',
-                'default' => 'no',
+                'default' => 'yes',
                 'id'      => 'montonio_shipping_show_address'
             ),
             array(

@@ -25,7 +25,7 @@ class Montonio_DPD_Courier extends Montonio_Shipping_Method {
 
         $this->provider_name = 'dpd';
         $this->type_v2       = 'courier';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'DPD courier', 'montonio-for-woocommerce' ) );
 
         if ( 'DPD courier' === $this->title ) {

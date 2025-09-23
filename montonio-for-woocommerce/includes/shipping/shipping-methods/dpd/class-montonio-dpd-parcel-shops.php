@@ -24,7 +24,7 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
 
         $this->provider_name = 'dpd';
         $this->type_v2       = 'parcelShop';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'DPD parcel shops', 'montonio-for-woocommerce' ) );
 
         if ( 'DPD parcel shops' === $this->title ) {

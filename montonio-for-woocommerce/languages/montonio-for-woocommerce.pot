@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 9.1.0\n"
+"Project-Id-Version: Montonio for WooCommerce 9.1.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-27T11:58:29+00:00\n"
+"POT-Creation-Date: 2025-09-23T08:10:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -237,31 +237,31 @@ msgstr ""
 msgid "API Settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:134
+#: includes/admin/class-wc-montonio-banners.php:130
 msgid "Analytics are back!"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:135
+#: includes/admin/class-wc-montonio-banners.php:131
 msgid "Check your sales volumes, most used payment methods & more."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:143
+#: includes/admin/class-wc-montonio-banners.php:139
 msgid "Limited time offer"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:144
+#: includes/admin/class-wc-montonio-banners.php:140
 msgid "Send Unisend parcels with only 1.3€ + VAT until October!"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:150
+#: includes/admin/class-wc-montonio-banners.php:146
 msgid "Tracking page"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:151
+#: includes/admin/class-wc-montonio-banners.php:147
 msgid "Set up a free tracking page with your logo to enrich your customer experience."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:156
+#: includes/admin/class-wc-montonio-banners.php:152
 msgid "Try these features out"
 msgstr ""
 
@@ -573,7 +573,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-card.php:220
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:256
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:313
-#: includes/shipping/class-wc-montonio-shipping.php:252
+#: includes/shipping/class-wc-montonio-shipping.php:294
 msgid "Montonio API response: "
 msgstr ""
 
@@ -850,11 +850,11 @@ msgstr ""
 msgid "Bank list sync failed. Please try again later."
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:134
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:121
 msgid "Please select a pickup point."
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:141
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:128
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
@@ -1037,7 +1037,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:108
-#: includes/shipping/class-wc-montonio-shipping.php:276
+#: includes/shipping/class-wc-montonio-shipping.php:318
 msgid "Track your shipment:"
 msgstr ""
 
@@ -1077,11 +1077,23 @@ msgstr ""
 msgid "Shipment update failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:170
+#: includes/shipping/class-wc-montonio-shipping.php:98
+msgid "Searching pickup points..."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping.php:99
+msgid "Failed to load pickup points. Please try again."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping.php:100
+msgid "No pickup points found"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping.php:213
 msgid "Please add Montonio API keys!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:249
+#: includes/shipping/class-wc-montonio-shipping.php:291
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
@@ -1125,6 +1137,16 @@ msgstr ""
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:28
 #: includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php:31
 msgid "DPD parcel shops"
+msgstr ""
+
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:17
+msgid "Montonio Inpost parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:18
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:28
+#: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:31
+msgid "Inpost parcel machines"
 msgstr ""
 
 #: includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php:15
@@ -1420,33 +1442,34 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: montonio.php:241
+#: montonio.php:233
 msgid "Settings"
 msgstr ""
 
-#: montonio.php:348
+#: montonio.php:341
 msgid "Start using Montonio"
 msgstr ""
 
-#: montonio.php:350
+#: montonio.php:343
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr ""
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:355
+#: montonio.php:348
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr ""
 
-#: montonio.php:362
+#: montonio.php:355
 msgid "Need help?"
 msgstr ""
 
-#: montonio.php:364
+#: montonio.php:357
 msgid "How to activate Montonio payment methods"
 msgstr ""
 
 #: templates/admin-order-shipping-panel.php:43
 #: templates/shipping-pickup-points-dropdown.php:11
+#: templates/shipping-pickup-points-search.php:9
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:217
 msgid "Pickup point"
@@ -1497,9 +1520,13 @@ msgid "Print label"
 msgstr ""
 
 #: templates/shipping-pickup-points-dropdown.php:14
-#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:198
 msgid "Select a pickup point"
+msgstr ""
+
+#: templates/shipping-pickup-points-search.php:17
+#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
+msgid "Type at least 3 characters to search..."
 msgstr ""
 
 #: assets/js/wc-montonio-shipping-label-printing.js:55
@@ -1589,7 +1616,6 @@ msgstr ""
 msgid "Please select a pickup point"
 msgstr ""
 
-#: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 #: blocks/src/wc-montonio-shipping-dropdown/view.js:220
 msgid "Loading pickup points..."
 msgstr ""

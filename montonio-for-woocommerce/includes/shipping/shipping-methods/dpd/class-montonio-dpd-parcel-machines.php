@@ -24,7 +24,7 @@ class Montonio_DPD_Parcel_Machines extends Montonio_Shipping_Method {
 
         $this->provider_name = 'dpd';
         $this->type_v2       = 'parcelMachine';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd.svg';
+        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'DPD parcel machines', 'montonio-for-woocommerce' ) );
 
         if ( 'DPD parcel machines' === $this->title ) {
