@@ -65,7 +65,7 @@ msgstr "Maksa krediit- või deebetkaardiga Montonio vahendusel."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:233
+#: montonio.php:235
 msgid "Settings"
 msgstr ""
 
@@ -348,13 +348,13 @@ msgstr ""
 msgid "DPD parcel shops"
 msgstr ""
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:18
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:15
 msgid "Montonio Omniva courier"
 msgstr ""
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:19
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:16
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:26
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:29
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:32
 msgid "Omniva courier"
 msgstr "Omniva kuller"
 
@@ -1470,20 +1470,20 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:341
+#: montonio.php:343
 msgid "Start using Montonio"
 msgstr "Alusta Montonio kasutamist"
 
-#: montonio.php:343
+#: montonio.php:345
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr "Sa pole veel sisestanud Montonio makselahenduse API võtmeid"
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:348
+#: montonio.php:350
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr "%1$sVajuta siia%2$s, et lisada oma API võtmed ja hakata Montoniot kasutama"
 
-#: montonio.php:355
+#: montonio.php:357
 msgid "Need help?"
 msgstr "Vajad abi?"
 
@@ -1507,7 +1507,7 @@ msgstr ""
 msgid "Courier"
 msgstr ""
 
-#: montonio.php:357
+#: montonio.php:359
 msgid "How to activate Montonio payment methods"
 msgstr "Kuidas aktiveerida Montonio makselahendust"
 
@@ -1626,3 +1626,13 @@ msgstr "Pakiautomaatide laadimine ebaõnnestus. Palun proovi uuesti."
 #: includes/shipping/class-wc-montonio-shipping.php:100
 msgid "No pickup points found"
 msgstr "Pakiautomaate ei leitud"
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:17
+msgid "Montonio Orlen parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:18
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:28
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:31
+msgid "Orlen parcel machines"
+msgstr ""

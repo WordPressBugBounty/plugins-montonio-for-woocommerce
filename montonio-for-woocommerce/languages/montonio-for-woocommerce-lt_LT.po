@@ -65,7 +65,7 @@ msgstr "Mokėkite kreditine arba debetine kortele per Montonio."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:233
+#: montonio.php:235
 msgid "Settings"
 msgstr ""
 
@@ -348,13 +348,13 @@ msgstr ""
 msgid "DPD parcel shops"
 msgstr "DPD ofisas"
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:18
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:15
 msgid "Montonio Omniva courier"
 msgstr ""
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:19
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:16
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:26
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:29
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:32
 msgid "Omniva courier"
 msgstr "Omniva kurjeris"
 
@@ -694,7 +694,7 @@ msgstr ""
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:15
 msgid "Pay Later"
-msgstr ""
+msgstr "Mokėk vėliau"
 
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:91
 msgid "Enable Montonio Pay Later"
@@ -720,25 +720,25 @@ msgstr ""
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:46
 msgid "Pay next month"
-msgstr ""
+msgstr "Pirk dabar, atsiskaityk kitą mėnesį"
 
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:281
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:47
 msgid "Pay in two parts"
-msgstr ""
+msgstr "Mokėk 2 dalimis be pabrangimo"
 
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:286
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:48
 msgid "Pay in three parts"
-msgstr ""
+msgstr "Mokėk 3 dalimis be pabrangimo"
 
 #. translators: additional amount needed
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:304
 #, php-format
 msgid "Add %s to the cart to use this payment method"
-msgstr ""
+msgstr "Norėdami naudoti šį mokėjimo būdą, į krepšelį įdėkite prekių už dar %s"
 
 #: includes/payment/class-wc-montonio-callbacks.php:280
 msgid "There was a problem with processing the order."
@@ -1470,20 +1470,20 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:341
+#: montonio.php:343
 msgid "Start using Montonio"
 msgstr "Pradėkite naudotis Montonio"
 
-#: montonio.php:343
+#: montonio.php:345
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr "Jūs dar neįvedėte Live API raktų Montonio mokėjimų modulio nustatymuose."
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:348
+#: montonio.php:350
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr "%1$sSpauskite čia%2$s, kad įvestumėte Live API raktus ir pradėtumėte naudotis Montonio."
 
-#: montonio.php:355
+#: montonio.php:357
 msgid "Need help?"
 msgstr "Reikia pagalbos?"
 
@@ -1507,7 +1507,7 @@ msgstr ""
 msgid "Courier"
 msgstr ""
 
-#: montonio.php:357
+#: montonio.php:359
 msgid "How to activate Montonio payment methods"
 msgstr "Kaip aktyvuoti Montonio mokėjimo metodus?"
 
@@ -1626,3 +1626,13 @@ msgstr "Nepavyko įkelti atsiėmimo punktų. Bandykite dar kartą."
 #: includes/shipping/class-wc-montonio-shipping.php:100
 msgid "No pickup points found"
 msgstr "Atsiėmimo punktų nerasta"
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:17
+msgid "Montonio Orlen parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:18
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:28
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:31
+msgid "Orlen parcel machines"
+msgstr ""

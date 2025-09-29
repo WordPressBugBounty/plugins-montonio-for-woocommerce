@@ -65,7 +65,7 @@ msgstr "Maksājiet ar savu kredītkarti, debetkarti, Apple Pay vai Google Pay"
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:233
+#: montonio.php:235
 msgid "Settings"
 msgstr ""
 
@@ -348,13 +348,13 @@ msgstr ""
 msgid "DPD parcel shops"
 msgstr "DPD saņemšanas punkts"
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:18
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:15
 msgid "Montonio Omniva courier"
 msgstr ""
 
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:19
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:16
+#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:26
 #: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:29
-#: includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php:32
 msgid "Omniva courier"
 msgstr "Omniva kurjers"
 
@@ -1470,20 +1470,20 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:341
+#: montonio.php:343
 msgid "Start using Montonio"
 msgstr "Sāciet lietot Montonio"
 
-#: montonio.php:343
+#: montonio.php:345
 msgid "You haven't entered the Live API keys for the Montonio Payments module."
 msgstr "Jūs neesat ievadījis Live API atslēgas Montonio maksājumu modulī."
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:348
+#: montonio.php:350
 msgid "%1$sClick here%2$s to enter your Live API keys and start using Montonio."
 msgstr "%1$sNoklikšķiniet šeit%2$s, lai ievadītu savas Live API atslēgas un sāktu lietot Montonio."
 
-#: montonio.php:355
+#: montonio.php:357
 msgid "Need help?"
 msgstr "Nepieciešama palīdzība?"
 
@@ -1507,7 +1507,7 @@ msgstr ""
 msgid "Courier"
 msgstr ""
 
-#: montonio.php:357
+#: montonio.php:359
 msgid "How to activate Montonio payment methods"
 msgstr "Kā aktivizēt Montonio maksājumu metodes"
 
@@ -1626,3 +1626,13 @@ msgstr "Neizdevās ielādēt pakomātu sarakstu. Lūdzu, mēģiniet vēlreiz."
 #: includes/shipping/class-wc-montonio-shipping.php:100
 msgid "No pickup points found"
 msgstr "Nav atrasti pakomāti"
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:17
+msgid "Montonio Orlen parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:18
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:28
+#: includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php:31
+msgid "Orlen parcel machines"
+msgstr ""

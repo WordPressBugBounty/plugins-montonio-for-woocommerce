@@ -2,9 +2,6 @@
 defined( 'ABSPATH' ) or exit;
 
 class Montonio_Omniva_Courier extends Montonio_Shipping_Method {
-    const MAX_LENGHT                  = 150; // cm (longest side)
-    const MAX_SUM_OF_LENGHT_AND_GIRTH = 300; // cm
-
     public $default_title      = 'Omniva courier';
     public $default_max_weight = 30; // kg
 
@@ -40,18 +37,6 @@ class Montonio_Omniva_Courier extends Montonio_Shipping_Method {
      * @return bool True if the package dimensions are valid, false otherwise.
      */
     protected function validate_package_dimensions( $package ) {
-        $package_dimensions = $this->get_package_dimensions( $package );
-
-        if ( $package_dimensions[2] > self::MAX_LENGHT ) {
-            return false;
-        }
-
-        $sum_of_lenght_and_girth = 2 * ( $package_dimensions[0] + $package_dimensions[1] ) + $package_dimensions[2];
-
-        if ( $sum_of_lenght_and_girth > self::MAX_SUM_OF_LENGHT_AND_GIRTH ) {
-            return false;
-        }
-
         return true;
     }
 }

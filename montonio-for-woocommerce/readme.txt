@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.1.1
+Version: 9.1.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 9.1.1
+Stable tag: 9.1.2
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 3.2 or greater
 License: GPLv3
@@ -136,6 +136,9 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.1.2 =
+* Added – Orlen shipping method
+
 = 9.1.1 =
 * Added – InPost shipping method
 * Added – New pickup-point search and selection dropdown

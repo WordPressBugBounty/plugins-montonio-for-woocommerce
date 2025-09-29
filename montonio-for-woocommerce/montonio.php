@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.1.1
+ * Version:           9.1.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.1.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.1.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -140,6 +140,7 @@ if ( ! class_exists( 'Montonio' ) ) {
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php';
                 require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php';
+                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php';
 
                 add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_methods' ) );
             }
@@ -216,6 +217,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             $methods['montonio_latvian_post_parcel_machines'] = 'Montonio_Latvian_Post_Parcel_Machines';
             $methods['montonio_latvian_post_courier']         = 'Montonio_Latvian_Post_Courier';
             $methods['montonio_inpost_parcel_machines']       = 'Montonio_Inpost_Parcel_Machines';
+            $methods['montonio_orlen_parcel_machines']        = 'Montonio_Orlen_Parcel_Machines';
 
             return $methods;
         }
