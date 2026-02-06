@@ -30,6 +30,10 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             return;
         }
 
+        if ( ! apply_filters( 'wc_montonio_create_shipment_on_processing', true, $order_id, $order ) ) {
+            return;
+        }
+
         // Check if order has Montonio shipping method and no tracking code has already been generated
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
@@ -58,8 +62,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
                 $data['montonioOrderUuid'] = (string) $montonio_order_uuid;
             }
 
-            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $shipping_api = new WC_Montonio_Shipping_API();
             $response     = $shipping_api->create_shipment( $data );
 
             WC_Montonio_Logger::log( 'Create shipment response: ' . $response );
@@ -108,8 +111,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
 
         try {
             $data         = $this->get_shipment_data( $order, 'update' );
-            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $shipping_api = new WC_Montonio_Shipping_API();
             $response     = $shipping_api->update_shipment( $shipment_id, $data );
 
             WC_Montonio_Logger::log( 'Update shipment response: ' . $response );
@@ -148,6 +150,12 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @return array The formatted shipment data ready for API submission.
      */
     public function get_shipment_data( $order, $type = 'create' ) {
+        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+
+        if ( empty( $shipping_method ) ) {
+            return;
+        }
+
         $method_type = $order->get_meta( '_wc_montonio_shipping_method_type' );
         $method_id   = $order->get_meta( '_montonio_pickup_point_uuid' );
 
@@ -190,7 +198,14 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             ),
             'metadata'       => array(
                 'platform'        => 'wordpress ' . get_bloginfo( 'version' ) . ' woocommerce ' . WC()->version,
-                'platformVersion' => WC_MONTONIO_PLUGIN_VERSION
+                'platformVersion' => WC_MONTONIO_PLUGIN_VERSION,
+                'context'         => array(
+                    'woocommerceVersion' => (string) WC()->version,
+                    'storeUrl'           => (string) get_site_url(),
+                    'orderId'            => (int) $order->get_id(),
+                    'orderKey'           => (string) $order->get_order_key(),
+                    'billingEmail'      => (string) $order->get_billing_email()
+                )
             ),
             'shippingMethod' => array(
                 'type' => (string) $method_type,
@@ -198,7 +213,29 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             )
         );
 
+        // Check if payment method is COD and add additional services
+        if ( 'cod' === $order->get_payment_method() ) {
+            $data['shippingMethod']['additionalServices'] = array(
+                array(
+                    'code'   => 'cod',
+                    'params' => array(
+                        'amount' => (float) wc_format_decimal( $order->get_total(), 2 )
+                    )
+                )
+            );
+        }
+
         if ( 'create' === $type ) {
+            $data['orderData'] = array(
+                'orderTotal'    => (float) wc_format_decimal( $order->get_total(), 2 ),
+                'orderSubtotal' => (float) wc_format_decimal( $order->get_subtotal(), 2 ),
+                'shippingCost'  => (float) wc_format_decimal( $order->get_shipping_total(), 2 ),
+                'taxTotal'      => (float) wc_format_decimal( $order->get_total_tax(), 2 ),
+                'productsTax'   => (float) wc_format_decimal( $order->get_total_tax() - $order->get_shipping_tax(), 2 ),
+                'shippingTax'   => (float) wc_format_decimal( $order->get_shipping_tax(), 2 ),
+                'currency'      => (string) $order->get_currency()
+            );
+
             $data['orderComment']    = (string) sanitize_text_field( $order->get_customer_note() );
             $data['notificationUrl'] = esc_url_raw( rest_url( 'montonio/shipping/v2/webhook' ) );
         }
@@ -221,10 +258,23 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $name       = $product->get_name();
             $price      = wc_get_price_including_tax( $product );
             $quantity   = $item->get_quantity();
-            $weight     = WC_Montonio_Helper::convert_to_kg( $product->get_weight() );
-            $length     = WC_Montonio_Helper::convert_to_meters( $product->get_length() );
-            $width      = WC_Montonio_Helper::convert_to_meters( $product->get_width() );
-            $height     = WC_Montonio_Helper::convert_to_meters( $product->get_height() );
+
+            // Get raw dimensions
+            $dimensions = array(
+                'weight' => $product->get_weight(),
+                'length' => $product->get_length(),
+                'width'  => $product->get_width(),
+                'height' => $product->get_height(),
+            );
+
+            // Apply fallbacks if applicable
+            $dimensions = $this->maybe_apply_dimension_fallbacks( $dimensions, $shipping_method );
+
+            // Convert to metric
+            $weight = WC_Montonio_Helper::convert_to_kg( $dimensions['weight'] );
+            $length = WC_Montonio_Helper::convert_to_meters( $dimensions['length'] );
+            $width  = WC_Montonio_Helper::convert_to_meters( $dimensions['width'] );
+            $height = WC_Montonio_Helper::convert_to_meters( $dimensions['height'] );
 
             if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
                 for ( $i = 0; $i < $quantity; $i++ ) {
@@ -264,12 +314,14 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             }
 
             $product_data = array(
-                'sku'      => (string) $sku,
-                'name'     => (string) $name,
-                'quantity' => (float) $quantity,
-                'barcode'  => (string) $barcode,
-                'price'    => (float) wc_format_decimal( $price, 2 ),
-                'currency' => (string) $order->get_currency()
+                'sku'             => (string) $sku,
+                'name'            => (string) $name,
+                'quantity'        => (float) $quantity,
+                'barcode'         => (string) $barcode,
+                'price'           => (float) wc_format_decimal( $price, 2 ),
+                'currency'        => (string) $order->get_currency(),
+                'imageUrl'        => (string) wp_get_attachment_url( $product->get_image_id() ),
+                'storeProductUrl' => (string) $product->get_permalink()
             );
 
             $product_ids[] = $product_id;
@@ -292,6 +344,56 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         WC_Montonio_Logger::log( 'Create shipment payload: ' . json_encode( $data ) );
 
         return $data;
+    }
+
+    /**
+     * Apply fallback dimensions and weight if needed for the shipping method.
+     *
+     * @param array  $dimensions Array with 'weight', 'length', 'width', 'height' keys.
+     * @param object $shipping_method The shipping method object.
+     * @return array The dimensions with fallbacks applied if applicable.
+     */
+    private function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
+        $shipping_method_id = $shipping_method->get_method_id();
+        $apply_fallback     = false;
+
+        // International shipping - always apply fallback
+        if ( strpos( $shipping_method_id, 'montonio_international_shipping' ) === 0 ) {
+            $apply_fallback = true;
+        }
+
+        // DPD methods - only if pricing_type is dynamic
+        $dpd_methods = array(
+            'montonio_dpd_parcel_machines',
+            'montonio_dpd_parcel_shops',
+            'montonio_dpd_courier'
+        );
+
+        if ( in_array( $shipping_method_id, $dpd_methods, true ) ) {
+            $instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
+            
+            if ( 'dynamic' === $instance->get_option( 'pricing_type' ) ) {
+                $apply_fallback = true;
+            }
+        }
+
+        if ( ! $apply_fallback ) {
+            return $dimensions;
+        }
+
+        $instance = $instance ?? WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
+
+        if ( empty( $dimensions['length'] ) || empty( $dimensions['width'] ) || empty( $dimensions['height'] ) ) {
+            $dimensions['length'] = $instance->get_option( 'default_length', 0 );
+            $dimensions['width']  = $instance->get_option( 'default_width', 0 );
+            $dimensions['height'] = $instance->get_option( 'default_height', 0 );
+        }
+
+        if ( empty( $dimensions['weight'] ) ) {
+            $dimensions['weight'] = $instance->get_option( 'default_weight', 0 );
+        }
+
+        return $dimensions;
     }
 
     /**

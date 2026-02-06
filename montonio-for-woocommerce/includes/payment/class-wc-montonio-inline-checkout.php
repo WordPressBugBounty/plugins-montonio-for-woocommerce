@@ -26,14 +26,13 @@ class WC_Montonio_Inline_Checkout {
                 throw new Exception( 'Unable to verify your request. Please reload the page and try again.' );
             }
 
-            $sandbox_mode = isset( $_POST['sandbox_mode'] ) ? sanitize_key( wp_unslash( $_POST['sandbox_mode'] ) ) : null;
-            $method       = isset( $_POST['method'] ) ? sanitize_text_field( wp_unslash( $_POST['method'] ) ) : null;
+            $method = isset( $_POST['method'] ) ? sanitize_text_field( wp_unslash( $_POST['method'] ) ) : null;
 
-            if ( empty( $sandbox_mode ) || empty( $method ) ) {
-                throw new Exception( 'Missing required parameters.' );
+            if ( empty( $method ) ) {
+                throw new Exception( 'Missing payment method parameter.' );
             }
 
-            $montonio_api = new WC_Montonio_API( $sandbox_mode );
+            $montonio_api = new WC_Montonio_API();
             $response     = $montonio_api->create_payment_intent( $method );
 
             wp_send_json_success( $response );
@@ -44,8 +43,7 @@ class WC_Montonio_Inline_Checkout {
                 $response = json_decode( $e->getMessage() );
 
                 if ( $response->message === 'PAYMENT_METHOD_PROCESSOR_MISMATCH' ) {
-                    $blik_gateway = new WC_Montonio_Blik();
-                    $blik_gateway->sync_blik_settings();
+                    WC_Montonio_Data_Sync::sync_data();
 
                     wp_send_json_error( array( 'message' => $e->getMessage(), 'reload' => true ) );
                 }
@@ -64,13 +62,7 @@ class WC_Montonio_Inline_Checkout {
                 throw new Exception( 'Unable to verify your request. Please reload the page and try again.' );
             }
 
-            $sandbox_mode = isset( $_POST['sandbox_mode'] ) ? sanitize_key( wp_unslash( $_POST['sandbox_mode'] ) ) : null;
-
-            if ( empty( $sandbox_mode ) ) {
-                throw new Exception( 'Missing required parameters.' );
-            }
-
-            $montonio_api = new WC_Montonio_API( $sandbox_mode );
+            $montonio_api = new WC_Montonio_API();
             $response     = $montonio_api->get_session_uuid();
 
             wp_send_json_success( json_decode( $response ) );

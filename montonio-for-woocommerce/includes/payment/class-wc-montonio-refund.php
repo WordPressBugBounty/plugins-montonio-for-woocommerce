@@ -18,7 +18,7 @@ class WC_Montonio_Refund {
      * @param string $reason reason of refund.
      * @return bool
      */
-    public static function init_refund( $order_id, $sandbox_mode, $amount, $reason ) {
+    public static function init_refund( $order_id, $amount, $reason ) {
         if ( 0 >= $amount ) {
             return false;
         }
@@ -41,7 +41,7 @@ class WC_Montonio_Refund {
             }
 
             // Create new Montonio API instance
-            $montonio_api = new WC_Montonio_API( $sandbox_mode );
+            $montonio_api = new WC_Montonio_API();
             $response     = $montonio_api->create_refund_request( $order_uuid, $amount, $idempotency_key );
             $response     = json_decode( $response );
 
@@ -93,7 +93,7 @@ class WC_Montonio_Refund {
 
             $order->add_order_note( __( '<strong>Refund failed.</strong><br>', 'montonio-for-woocommerce' ) . $message );
 
-            return new WP_Error( 'error', $message );
+            return new WP_Error( 'wc_montonio_refund_error', $message );
         }
     }
 

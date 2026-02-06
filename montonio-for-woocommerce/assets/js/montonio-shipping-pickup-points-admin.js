@@ -84,7 +84,7 @@
                         $('#_shipping_address_2, #_shipping_postcode, #_shipping_state').val('');
 
                         // Update address preview
-                        $('.order_data_column:has(.montonio-shipping-panel-wrappper)')
+                        $('.order_data_column:has(.montonio-shipping-panel-wrapper)')
                         .find('.address p:first-child')
                         .html(function(index, oldHtml) {
                             var parts = oldHtml.split('<br>', 1);

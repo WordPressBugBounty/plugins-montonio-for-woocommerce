@@ -82,20 +82,25 @@ if ( ! empty( $shipping_classes ) ) {
         'title'   => __( 'Calculation type', 'montonio-for-woocommerce' ),
         'type'    => 'select',
         'class'   => 'wc-enhanced-select',
-        'default' => 'order',
+        'default' => 'class',
         'options' => array(
             'class' => __( 'Per class: Charge shipping for each shipping class individually', 'montonio-for-woocommerce' ),
             'order' => __( 'Per order: Charge shipping for the most expensive shipping class', 'montonio-for-woocommerce' )
         )
     );
 
+    $settings['shipping_class_restrictions_title'] = array(
+        'title' => __( 'Shipping class restrictions', 'montonio-for-woocommerce' ),
+        'type'  => 'title',
+    );
+
     $settings['disabled_shipping_classes'] = array(
-        'title'    => __( 'Disable method for these shipping classes', 'montonio-for-woocommerce' ),
+        'title'    => __( 'Disable for shipping classes', 'montonio-for-woocommerce' ),
         'type'     => 'multiselect',
         'class'    => 'wc-enhanced-select',
         'default'  => '',
         'options'  => $shipping_classes_options,
-        'desc_tip' => __( 'Select shipping classes for which this method should be disabled. If the cart contains any product from these selected shipping classes, this shipping method will not be available.', 'montonio-for-woocommerce' )
+        'desc_tip' => __( 'This method will be hidden if the cart contains products from any of the selected shipping classes.', 'montonio-for-woocommerce' )
     );
 }
 
@@ -138,7 +143,7 @@ $settings['freeShippingThreshold'] = array(
     'type'              => 'text',
     'class'             => 'wc-shipping-modal-price',
     'description'       => __( 'Minimum cart total for free shipping', 'montonio-for-woocommerce' ),
-    'default'           => 50,
+    'default'           => 200,
     'sanitize_callback' => array( $this, 'sanitize_cost' )
 );
 

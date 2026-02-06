@@ -39,7 +39,6 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'get_session_uuid',
-                    sandbox_mode: params.test_mode,
                     nonce: params.nonce
                 },
                 success: function(response) {
@@ -92,11 +91,41 @@ jQuery(document).ready(function($) {
 
     // Function to initialize Montonio checkout
     async function initializeMontonioCheckout(uuid) {
+        const $submitBtn = form.find('button[type="submit"]');
+        const $formSections = form.find('#customer_details, .shop_table');
+
         try {
             const checkoutOptions = {
                 sessionUuid: uuid,
-                environment: params.test_mode === 'yes' ? 'sandbox' : 'production',
-                locale: params.locale
+                environment: params.test_mode ? 'sandbox' : 'production',
+                locale: params.locale,
+                onSuccess: (result) => {
+                   window.location.href = result.returnUrl;
+                },
+                onError: (error) => {
+                    console.error(error);
+
+                    if (error.displayedInPaymentComponent) {
+                        $.scroll_to_notices($('#payment_method_wc_montonio_card'));
+                        $submitBtn.prop('disabled', false).unblock();
+                        $formSections.unblock();
+                        form.removeClass('processing').unblock();
+                    } else {
+                        window.location.href = params.return_url + '&error-message=' + encodeURIComponent(error.message);
+                    }
+                },
+                onActionRequired: () => {
+                    form.removeClass('processing').unblock();
+                    $formSections.block({
+                        message: null,
+                        overlayCSS: {
+                            background: '#fff',
+                            opacity: 0.6
+                        }
+                    });
+                    $submitBtn.prop('disabled', true).block({ message: null });
+                    $.scroll_to_notices($('#montonio-card-form'));
+                }
             };
 
             // Assign to the global variable instead of const
@@ -136,11 +165,10 @@ jQuery(document).ready(function($) {
 
             if (!isValid) {
                 $.scroll_to_notices( $('#payment_method_wc_montonio_card') );
-                form.removeClass( 'processing' ).unblock();
                 return;
             }
 
-            submitPayment();
+            montonioCheckout.submitPayment();
         }
     }
 
@@ -151,22 +179,6 @@ jQuery(document).ready(function($) {
         } catch (error) {
             console.error(error);
             return false;
-        }
-    }
-
-    async function submitPayment() {
-        try {
-            const result = await montonioCheckout.submitPayment();
-            window.location.href = result.returnUrl;
-        } catch (error) {
-            console.error(error);
-
-            if (error.displayedInPaymentComponent === true) {
-                $.scroll_to_notices( $('#payment_method_wc_montonio_card') );
-                form.removeClass( 'processing' ).unblock();
-            } else {
-                window.location.href = encodeURI(params.return_url + '&error-message=' + error.message);
-            }
         }
     }
 });

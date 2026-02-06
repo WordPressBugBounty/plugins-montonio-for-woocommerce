@@ -8,26 +8,68 @@ defined( 'ABSPATH' ) || exit;
  */
 class WC_Montonio_Shipping_Item_Manager {
     /**
-     * Sync shipping method items in the database
+     * Create temporary table for sync operations
      *
-     * @since 7.0.0
-     * @param string $carrier Carrier code
-     * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @param string $type Shipping method type
+     * @since 9.1.3
      * @return void
      */
-    public static function sync_method_items( $type, $carrier = null, $country = null ) {
+    public static function initialize_temp_table() {
         global $wpdb;
 
-        // Check if the plugin is in sandbox mode
-        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+        $table_main = "{$wpdb->prefix}montonio_shipping_method_items";
+        $table_temp = "{$wpdb->prefix}montonio_shipping_method_items_temp";
 
-        $montonio_shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+        $wpdb->query( "DROP TABLE IF EXISTS {$table_temp}" );
+        $wpdb->query( "CREATE TABLE {$table_temp} LIKE {$table_main}" );
+    }
 
-        if ( $type === 'courierServices' ) {
+    /**
+     * Swap temp table with main table atomically
+     *
+     * @since 9.1.3
+     * @return void
+     */
+    public static function replace_main_table_with_temp() {
+        global $wpdb;
+
+        $table_main = "{$wpdb->prefix}montonio_shipping_method_items";
+        $table_temp = "{$wpdb->prefix}montonio_shipping_method_items_temp";
+
+        $wpdb->query( "RENAME TABLE {$table_main} TO {$table_main}_old, {$table_temp} TO {$table_main}" );
+        $wpdb->query( "DROP TABLE IF EXISTS {$table_main}_old" );
+    }
+
+    /**
+     * Clean up temporary table
+     *
+     * @since 9.1.3
+     * @return void
+     */
+    public static function remove_temp_table() {
+        global $wpdb;
+        $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}montonio_shipping_method_items_temp" );
+    }
+
+    /**
+     * Sync shipping method items to temporary table
+     *
+     * @since 9.1.3
+     * @param string $type Shipping method type
+     * @param string $carrier Carrier code
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @return void
+     */
+    public static function import_shipping_items_to_temp( $type, $carrier = null, $country = null ) {
+        global $wpdb;
+
+        $montonio_shipping_api = new WC_Montonio_Shipping_API();
+
+        if ( $type === 'courier' ) {
             $response = $montonio_shipping_api->get_courier_services( $carrier, $country );
+            $data_key = 'courierServices';
         } else {
             $response = $montonio_shipping_api->get_pickup_points( $carrier, $country );
+            $data_key = 'pickupPoints';
         }
 
         // Handle invalid or empty response
@@ -38,69 +80,72 @@ class WC_Montonio_Shipping_Item_Manager {
         $data = json_decode( $response, true );
 
         // Check if essential data is present in the data
-        if ( empty( $data[$type] ) ) {
+        if ( empty( $data[$data_key] ) ) {
             return;
         }
 
         // Filter out B2B-only items only for courier services
-        $items_to_process = $data[$type];
-        if ( $type === 'courierServices' ) {
-            $items_to_process = array_filter( $data[$type], function ( $item ) {
+        $items_to_process = $data[$data_key];
+        if ( $type === 'courier' ) {
+            $items_to_process = array_filter( $data[$data_key], function ( $item ) {
                 return ! isset( $item['b2bOnly'] ) || $item['b2bOnly'] === false;
             } );
         }
 
-        // Start transaction for data integrity
-        $wpdb->query( 'START TRANSACTION' );
+        // Batch insert for better performance with large datasets
+        if ( ! empty( $items_to_process ) ) {
+            self::bulk_insert_into_temp_table( $items_to_process, $type );
+        }
+    }
 
-        // Prepare a list of IDs for deletion query
-        $shipping_item_ids = array_column( $items_to_process, 'id' );
+    /**
+     * Batch insert items to temporary table for optimal performance
+     *
+     * @since 9.1.3
+     * @param array $items Items to insert
+     * @param string $type Method type
+     * @return void
+     */
+    private static function bulk_insert_into_temp_table( $items, $type ) {
+        global $wpdb;
+        $table_temp = "{$wpdb->prefix}montonio_shipping_method_items_temp";
 
-        // Delete pickup points not present in the updated list
-        $conditions = array();
-        $params     = array();
+        // Use smaller batches for wpdb->prepare() - 1000 records at a time
+        $batches = array_chunk( $items, 1000 );
 
-        $optional_filters = array(
-            'country_code' => $country,
-            'carrier_code' => $carrier,
-            'method_type'  => $type
-        );
+        foreach ( $batches as $batch ) {
+            $placeholders = array();
+            $values       = array();
 
-        foreach ( $optional_filters as $field => $value ) {
-            if ( $value !== null ) {
-                $conditions[] = "$field = %s";
-                $params[]     = $value;
+            foreach ( $batch as $item ) {
+                $placeholders[] = '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)';
+
+                // Encode additionalServices as JSON
+                $additional_services = isset( $item['additionalServices'] ) && is_array( $item['additionalServices'] )
+                ? json_encode( $item['additionalServices'] )
+                : null;
+
+                $values = array_merge( $values, array(
+                    $item['id'] ?? '',
+                    $item['name'] ?? '',
+                    $item['type'] ?? '',
+                    $type,
+                    $item['streetAddress'] ?? '',
+                    $item['locality'] ?? '',
+                    $item['postalCode'] ?? '',
+                    $item['carrierCode'] ?? '',
+                    $item['countryCode'] ?? '',
+                    $item['carrierAssignedId'] ?? '',
+                    $additional_services
+                ) );
             }
+
+            $sql = "INSERT INTO {$table_temp}
+                (item_id, item_name, item_type, method_type, street_address, locality, postal_code, carrier_code, country_code, carrier_assigned_id, additional_services)
+                VALUES " . implode( ',', $placeholders );
+
+            $wpdb->query( $wpdb->prepare( $sql, $values ) );
         }
-
-        // Create placeholders for item_ids
-        $placeholders     = implode( ',', array_fill( 0, count( $shipping_item_ids ), '%s' ) );
-        $where_conditions = implode( ' AND ', $conditions );
-        $sql              = "DELETE FROM {$wpdb->prefix}montonio_shipping_method_items WHERE item_id NOT IN ( $placeholders ) AND $where_conditions";
-        $params           = array_merge( $shipping_item_ids, $params );
-
-        $wpdb->query( $wpdb->prepare( $sql, $params ) );
-
-        // Insert or update records
-        foreach ( $items_to_process as $shipping_item_data ) {
-            $mapped_data = array(
-                'item_id'        => $shipping_item_data['id'] ?? null,
-                'item_name'      => $shipping_item_data['name'] ?? null,
-                'item_type'      => $shipping_item_data['type'] ?? null,
-                'method_type'    => $type,
-                'street_address' => $shipping_item_data['streetAddress'] ?? null,
-                'locality'       => $shipping_item_data['locality'] ?? null,
-                'postal_code'    => $shipping_item_data['postalCode'] ?? null,
-                'carrier_code'   => $shipping_item_data['carrierCode'] ?? null,
-                'country_code'   => $shipping_item_data['countryCode'] ?? null
-            );
-
-            // Use REPLACE INTO for insert or update operation
-            $wpdb->replace( $wpdb->prefix . 'montonio_shipping_method_items', $mapped_data );
-        }
-
-        // Commit the transaction
-        $wpdb->query( 'COMMIT' );
     }
 
     /**
@@ -136,6 +181,27 @@ class WC_Montonio_Shipping_Item_Manager {
     }
 
     /**
+     * Get additional services for a shipping method
+     *
+     * @since 9.3.1
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @param string $carrier Carrier code
+     * @param string $type Shipping method type (parcelShop, parcelMachine, postOffice, courier)
+     * @return array Array of additional services, each containing 'code' key
+     */
+    public static function get_additional_services( $country, $carrier, $type ) {
+        global $wpdb;
+
+        $query = $wpdb->get_var( $wpdb->prepare( "SELECT additional_services FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s", array( $country, $carrier, $type ) ) );
+
+        if ( empty( $query ) ) {
+            return array();
+        }
+
+        return json_decode( $query, true ) ?: array();
+    }
+
+    /**
      * Get courier ID by country and carrier
      *
      * @since 7.0.0
@@ -146,7 +212,7 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_courier_id( $country, $carrier ) {
         global $wpdb;
 
-        $query = $wpdb->get_var( $wpdb->prepare( "SELECT DISTINCT item_id FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = 'courier'", array( $country, $carrier ) ) );
+        $query = $wpdb->get_var( $wpdb->prepare( "SELECT DISTINCT item_id FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND method_type = 'courier'", array( $country, $carrier ) ) );
 
         return $query;
     }

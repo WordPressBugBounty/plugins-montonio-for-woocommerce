@@ -7,61 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * API for Montonio Payments.
  */
 class WC_Montonio_API {
-
     /**
-     * Instance of an WC_Order object
-     *
-     * @var object
+     * Root URL for the Montonio application
      */
-    public $order;
-
-    /**
-     * Payment Data for Montonio Payment Token generation
-     * @see https://docs.montonio.com/api/stargate/guides/orders#3-generating-the-jwt
-     *
-     * @var array
-     */
-    public $payment_data;
-
-    /**
-     * API access key
-     *
-     * @var string
-     */
-    public $access_key;
-
-    /**
-     * API secret key
-     *
-     * @var string
-     */
-    public $secret_key;
-
-    /**
-     * Is test mode active?
-     *
-     * @var bool
-     */
-    public $sandbox_mode;
+    const API_URL = 'https://stargate.montonio.com/api';
 
     /**
      * Root URL for the Montonio Sandbox application
      */
-    const MONTONIO_SANDBOX_API_URL = 'https://sandbox-stargate.montonio.com/api';
-
-    /**
-     * Root URL for the Montonio application
-     */
-    const MONTONIO_API_URL = 'https://stargate.montonio.com/api';
-
-    public function __construct( $sandbox_mode = 'no' ) {
-        $this->sandbox_mode = $sandbox_mode;
-
-        $api_keys = WC_Montonio_Helper::get_api_keys( $this->sandbox_mode );
-
-        $this->access_key = $api_keys['access_key'];
-        $this->secret_key = $api_keys['secret_key'];
-    }
+    const SANDBOX_API_URL = 'https://sandbox-stargate.montonio.com/api';
 
     /**
      * Get session UUID
@@ -74,7 +28,7 @@ class WC_Montonio_API {
                 'Content-Type' => 'application/json'
             ),
             'method'  => 'POST',
-            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode ) ) )
+            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token() ) )
         );
 
         return $this->request( '/sessions', $args );
@@ -95,7 +49,7 @@ class WC_Montonio_API {
                 'Content-Type' => 'application/json'
             ),
             'method'  => 'POST',
-            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
+            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $data ) ) )
         );
 
         $response = $this->request( '/payment-intents/draft', $args );
@@ -108,15 +62,15 @@ class WC_Montonio_API {
      *
      * @return object
      */
-    public function create_order() {
-        $data = $this->get_order_data();
+    public function create_order( $order, $payment_data ) {
+        $data = $this->build_order_data( $order, $payment_data );
 
         $args = array(
             'headers' => array(
                 'Content-Type' => 'application/json'
             ),
             'method'  => 'POST',
-            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
+            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $data ) ) )
         );
 
         $response = $this->request( '/orders', $args );
@@ -129,31 +83,21 @@ class WC_Montonio_API {
      *
      * @return array
      */
-    protected function get_order_data() {
-
-        $order = $this->order;
+    protected function build_order_data( $order, $payment_data ) {
         $order->add_order_note( __( 'Checkout via Montonio started.', 'montonio-for-woocommerce' ) );
 
-        $payment_method_id = $this->payment_data['paymentMethodId'];
-
-        $locale                 = '';
-        $wpml_customer_language = apply_filters( 'wpml_current_language', null );
-        if ( $wpml_customer_language ) {
-            $locale = WC_Montonio_Helper::get_locale( $wpml_customer_language );
-        } else {
-            $locale = WC_Montonio_Helper::get_locale( get_locale() );
-        }
+        $payment_method_id = $payment_data['paymentMethodId'];
 
         // Parse Order Data to correct data types and add additional data
         $order_data = array(
-            'accessKey'                => (string) $this->access_key,
+            'accessKey'                => (string) WC_Montonio_Helper::get_api_keys()['access_key'],
             'merchantReference'        => (string) apply_filters( 'wc_montonio_merchant_reference', $order->get_id(), $order ),
             'merchantReferenceDisplay' => (string) apply_filters( 'wc_montonio_merchant_reference_display', $order->get_order_number(), $order ),
             'notificationUrl'          => (string) apply_filters( 'wc_montonio_notification_url', add_query_arg( 'wc-api', $payment_method_id . '_notification', trailingslashit( get_home_url() ) ), $payment_method_id ),
             'returnUrl'                => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $payment_method_id, trailingslashit( get_home_url() ) ), $payment_method_id ),
             'grandTotal'               => (float) wc_format_decimal( $order->get_total(), 2 ),
             'currency'                 => (string) $order->get_currency(),
-            'locale'                   => (string) $locale,
+            'locale'                   => (string) WC_Montonio_Helper::get_locale(),
             'billingAddress'           => array(
                 'firstName'    => (string) $order->get_billing_first_name(),
                 'lastName'     => (string) $order->get_billing_last_name(),
@@ -178,75 +122,77 @@ class WC_Montonio_API {
                 'postalCode'   => (string) $order->get_shipping_postcode(),
                 'country'      => (string) $order->get_shipping_country()
             ),
-            'lineItems'                => array(),
+            'lineItems'                => $this->get_line_items( $order ),
             'payment'                  => array(
-                'method'        => (string) $this->payment_data['payment']['method'],
-                'methodDisplay' => (string) $this->payment_data['payment']['methodDisplay'],
+                'method'        => (string) $payment_data['payment']['method'],
+                'methodDisplay' => (string) $payment_data['payment']['methodDisplay'],
                 'amount'        => (float) $order->get_total(),
                 'currency'      => (string) $order->get_currency(),
-                'methodOptions' => $this->payment_data['payment']['methodOptions']
+                'methodOptions' => $payment_data['payment']['methodOptions']
             )
         );
 
-        if ( ! empty( $this->payment_data['paymentIntentUuid'] ) ) {
-            $order_data['paymentIntentUuid'] = (string) $this->payment_data['paymentIntentUuid'];
+        if ( ! empty( $payment_data['paymentIntentUuid'] ) ) {
+            $order_data['paymentIntentUuid'] = (string) $payment_data['paymentIntentUuid'];
         }
 
-        if ( ! empty( $this->payment_data['sessionUuid'] ) ) {
-            $order_data['sessionUuid'] = (string) $this->payment_data['sessionUuid'];
-        }
-
-        // Add products & shipping to Payment Data
-        if ( ! empty( $order->get_items() ) ) {
-            foreach ( $order->get_items() as $item ) {
-                $product       = $item->get_product();
-                $product_price = $item->get_total() + $item->get_total_tax();
-
-                if ( ! empty( $product ) ) {
-                    $order_data['lineItems'][] = array(
-                        'name'       => $product->get_name(),
-                        'finalPrice' => (float) wc_format_decimal( $product_price, 2 ),
-                        'quantity'   => (int) $item->get_quantity()
-                    );
-                }
-            }
-        }
-
-        $shipping_price = $order->get_shipping_total() + $order->get_shipping_tax();
-        if ( $shipping_price && $shipping_price > 0 ) {
-            $order_data['lineItems'][] = array(
-                'name'       => 'SHIPPING',
-                'finalPrice' => (float) wc_format_decimal( $shipping_price, 2 ),
-                'quantity'   => 1
-            );
+        if ( ! empty( $payment_data['sessionUuid'] ) ) {
+            $order_data['sessionUuid'] = (string) $payment_data['sessionUuid'];
         }
 
         $order_data = apply_filters( 'wc_montonio_before_order_data_submission', $order_data, $order );
-
-        foreach ( $order_data as $key => $value ) {
-            if ( empty( $value ) || $value == '' ) {
-                unset( $order_data[$key] );
-            }
-        }
+        $order_data = array_filter( $order_data );
 
         // Add expiration time of the token for JWT validation
-        $exp               = time() + ( 10 * 60 );
-        $order_data['exp'] = $exp;
+        $order_data['exp'] = time() + 600;
 
         return $order_data;
     }
 
     /**
-     * Fetch info about banks and card processors that
-     * can be shown to the customer at checkout.
+     * Get line items from order.
      *
-     * @return string String containing the banklist
+     * @since 9.3.0
+     * @param WC_Order $order
+     * @return array
      */
-    public function fetch_payment_methods() {
+    protected function get_line_items( $order ) {
+        $items = array();
+
+        foreach ( $order->get_items() as $item ) {
+            $product = $item->get_product();
+
+            if ( $product ) {
+                $items[] = array(
+                    'name'       => $product->get_name(),
+                    'finalPrice' => (float) wc_format_decimal( $item->get_total() + $item->get_total_tax(), 2 ),
+                    'quantity'   => (int) $item->get_quantity()
+                );
+            }
+        }
+
+        $shipping = $order->get_shipping_total() + $order->get_shipping_tax();
+        if ( $shipping > 0 ) {
+            $items[] = array(
+                'name'       => 'SHIPPING',
+                'finalPrice' => (float) wc_format_decimal( $shipping, 2 ),
+                'quantity'   => 1
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all enabled payment methods for your store
+     *
+     * @return string String containing the enabled payment methods
+     */
+    public function get_payment_methods() {
         $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
@@ -272,7 +218,7 @@ class WC_Montonio_API {
                 'Content-Type' => 'application/json'
             ),
             'method'  => 'POST',
-            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode, $data ) ) )
+            'body'    => json_encode( array( 'data' => WC_Montonio_Helper::create_jwt_token( $data ) ) )
         );
 
         return $this->request( '/refunds', $args );
@@ -287,7 +233,7 @@ class WC_Montonio_API {
      * @return string
      */
     public function request( $path, $args ) {
-        $url = apply_filters( 'wc_montonio_request_url', $this->get_request_url() );
+        $url = apply_filters( 'wc_montonio_request_url', $this->get_api_url() );
         $url = trailingslashit( $url ) . ltrim( $path, '/' );
 
         $args          = apply_filters( 'wc_montonio_remote_request_args', $args );
@@ -298,7 +244,7 @@ class WC_Montonio_API {
             throw new Exception( json_encode( $response->errors ) );
         }
 
-        if ( $response_code !== 200 && $response_code !== 201 ) {
+        if ( ! in_array( $response_code, array( 200, 201 ) ) ) {
             throw new Exception( wp_remote_retrieve_body( $response ) );
         }
 
@@ -306,17 +252,11 @@ class WC_Montonio_API {
     }
 
     /**
-     * Get the API URL for the request.
+     * Get the API URL based on mode.
      *
      * @return string
      */
-    protected function get_request_url() {
-        $url = self::MONTONIO_API_URL;
-
-        if ( $this->sandbox_mode === 'yes' ) {
-            $url = self::MONTONIO_SANDBOX_API_URL;
-        }
-
-        return $url;
+    protected function get_api_url() {
+        return WC_Montonio_Helper::is_test_mode() ? self::SANDBOX_API_URL : self::API_URL;
     }
 }

@@ -32,19 +32,35 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return $label;
         }
 
-        $method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $method->get_method_id(), $method->get_instance_id() );
-        $method_settings = $method_instance->instance_settings;
+        $shipping_method_instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $method->get_instance_id() );
 
-        if ( ! ( $method->get_cost() > 0 ) && isset( $method_settings['enable_free_shipping_text'] ) && 'yes' === $method_settings['enable_free_shipping_text'] ) {
-            if ( isset( $method_settings['free_shipping_text'] ) && '' !== $method_settings['free_shipping_text'] ) {
-                $label .= ': <span class="montonio-free-shipping-text">' . $method_settings['free_shipping_text'] . '</span>';
+        if ( ! ( $method->get_cost() > 0 ) && 'yes' === $shipping_method_instance->get_option( 'enable_free_shipping_text' ) ) {
+            if ( ! empty( $shipping_method_instance->get_option( 'free_shipping_text' ) ) ) {
+                $label .= ': <span class="montonio-free-shipping-text">' . $shipping_method_instance->get_option( 'free_shipping_text' ) . '</span>';
             } else {
                 $label .= ': ' . wc_price( 0 );
             }
         }
 
-        if ( get_option( 'montonio_shipping_show_provider_logos' ) === 'yes' && $method_instance->logo ) {
-            $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-provider-logo" id="' . $method->get_id() . '_logo" src="' . $method_instance->logo . '" width="80">';
+        if ( get_option( 'montonio_shipping_show_provider_logos' ) === 'yes' ) {
+            $meta_data = $method->get_meta_data();
+
+            if ( ! empty( $meta_data['operators'] ) && is_array( $meta_data['operators'] ) ) {
+                $label = '<span class="montonio-shipping-label">' . $label . '</span>';
+                $label .= '<div class="montonio-shipping-carrier-logos">';
+
+                foreach ( $meta_data['operators'] as $operator ) {
+                    $logo_path = WC_MONTONIO_PLUGIN_PATH . '/assets/images/' . strtolower( $operator ) . '-rect.svg';
+
+                    if ( file_exists( $logo_path ) ) {
+                        $label .= '<img class="montonio-shipping-carrier-logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . strtolower( $operator ) . '-rect.svg' ) . '" width="50" alt="' . esc_attr( $operator ) . '">';
+                    }
+                }
+
+                $label .= '</div>';
+            } elseif ( ! empty( $meta_data['carrier_code'] ) ) {
+                $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-carrier-logo" id="' . $method->get_id() . '_logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . $meta_data['carrier_code'] . '-rect.svg' ) . '" width="50">';
+            }
         }
 
         return $label;
@@ -58,17 +74,28 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @return void
      */
     public function render_shipping_method_items_dropdown() {
-        $montonio_shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
-        if ( ! is_a( $montonio_shipping_method, 'Montonio_Shipping_Method' ) ) {
+        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
+
+        if ( empty( $shipping_method ) ) {
             return;
         }
 
-        if ( is_a( $montonio_shipping_method, 'Montonio_Inpost_Parcel_Machines' ) ) {
+        $carrier_code = $shipping_method->carrier_code;
+        $type         = $shipping_method->type;
+        $operators    = $shipping_method->operators ?? null;
+
+        if ( 'courier' === $type ) {
+            return;
+        }
+
+        if ( in_array( $carrier_code, array( 'inpost', 'orlen', 'novaPost' ) ) ) {
             wc_get_template(
                 'shipping-pickup-points-search.php',
                 array(
-                    'carrier' => $montonio_shipping_method->provider_name,
-                    'country' => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
+                    'carrier'   => $carrier_code,
+                    'type'      => $type,
+                    'operators' => $operators,
+                    'country'   => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
                 ),
                 '',
                 WC_MONTONIO_PLUGIN_PATH . '/templates/'
@@ -77,7 +104,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
-        $shipping_method_items = WC_Montonio_Shipping_Helper::get_items_for_montonio_shipping_method( $montonio_shipping_method );
+        $shipping_method_items = WC_Montonio_Shipping_Helper::get_items_for_montonio_shipping_method( $carrier_code, $type );
 
         if ( empty( $shipping_method_items ) ) {
             return;
@@ -86,7 +113,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
         wc_get_template(
             'shipping-pickup-points-dropdown.php',
             array(
-                'shipping_method'       => $montonio_shipping_method->id,
+                'shipping_method'       => $shipping_method->id,
                 'shipping_method_items' => $shipping_method_items
             ),
             '',
@@ -111,22 +138,36 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
-        $carrier     = $shipping_method->provider_name;
-        $method_type = $shipping_method->type_v2;
+        if ( ! in_array( $shipping_method->type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
+            return;
+        }
 
-        if ( in_array( $method_type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
-            $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( wp_unslash( $_POST['montonio_pickup_point'] ) ) : null;
+        $shipping_method_item_id = isset( $_POST['montonio_pickup_point'] ) ? sanitize_text_field( wp_unslash( $_POST['montonio_pickup_point'] ) ) : null;
 
-            if ( empty( $shipping_method_item_id ) ) {
-                wc_add_notice( __( 'Please select a pickup point.', 'montonio-for-woocommerce' ), 'error' );
-                return;
-            }
+        if ( empty( $shipping_method_item_id ) ) {
+            wc_add_notice( __( 'Please select a pickup point.', 'montonio-for-woocommerce' ), 'error' );
+            return;
+        }
 
-            $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
+        $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-            if ( $carrier != $shipping_method_item->carrier_code ) {
-                wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
-            }
+        if ( $shipping_method->carrier_code != $shipping_method_item->carrier_code ) {
+            wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
+            return;
+        }
+
+        $payment_method = isset( $_POST['payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['payment_method'] ) ) : '';
+
+        if ( 'cod' !== $payment_method ) {
+            return;
+        }
+
+        $additional_services = json_decode( $shipping_method_item->additional_services, true );
+        $supports_cod        = is_array( $additional_services ) && in_array( 'cod', array_column( $additional_services, 'code' ), true );
+
+        if ( ! $supports_cod ) {
+            wc_add_notice( __( 'Cash on Delivery is not available for the selected pickup point. Please choose a different pickup point or payment method.', 'montonio-for-woocommerce' ), 'error' );
+            return;
         }
     }
 
@@ -153,13 +194,13 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
 
         $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-        if ( empty( $shipping_method_item ) || $shipping_method_item->method_type !== 'pickupPoints' ) {
+        if ( empty( $shipping_method_item ) || 'pickupPoints' !== $shipping_method_item->method_type ) {
             return $shipping_label;
         }
 
         $shipping_method_info = $shipping_method_item->item_name;
 
-        if ( get_option( 'montonio_shipping_show_address' ) === 'yes' && ! empty( $shipping_method_item->street_address ) ) {
+        if ( 'yes' === get_option( 'montonio_shipping_show_address' ) && ! empty( $shipping_method_item->street_address ) ) {
             $shipping_method_info .= ', ' . $shipping_method_item->street_address;
         }
 

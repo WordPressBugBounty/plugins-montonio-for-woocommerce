@@ -124,10 +124,16 @@ img.montonio-payment-method-icon {
   padding: 25px 0;
 }
 
-.montonio-shipping-provider-logo {
+.montonio-shipping-carrier-logo {
   max-height: 33px !important;
   max-width: 50px !important;
   display: block !important;
+}
+
+.montonio-shipping-carrier-logos {
+  display: flex !important;
+  gap: 5px;
+  flex-wrap: wrap;
 }
 
 .montonio-pickup-point {
@@ -240,11 +246,6 @@ img.montonio-payment-method-icon {
   margin: 10px 0;
 }
 
-@keyframes montonio-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 .montonio-pickup-point {
   overflow: visible !important;
 }
@@ -260,13 +261,89 @@ img.montonio-payment-method-icon {
   width: 100%;
 }
 .montonio-pickup-point__search {
+  position: relative;
+}
+.montonio-pickup-point__search-logos {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 29px;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.montonio-pickup-point__search-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 44px;
+  height: 29px;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  background-image: url("../images/default-carrier-logo.svg");
+}
+.montonio-pickup-point__search-logo:only-child {
+  opacity: 1;
+}
+.montonio-pickup-point__search-logo--active {
+  opacity: 1;
+}
+.montonio-pickup-point__search-logo--omniva {
+  background-image: url(../images/omniva-rect.svg);
+}
+.montonio-pickup-point__search-logo--dpd {
+  background-image: url(../images/dpd-rect.svg);
+}
+.montonio-pickup-point__search-logo--latvian_post {
+  background-image: url(../images/latvian_post-rect.svg);
+}
+.montonio-pickup-point__search-logo--smartpost, .montonio-pickup-point__search-logo--smartposti {
+  background-image: url(../images/smartposti-rect.svg);
+}
+.montonio-pickup-point__search-logo--unisend {
+  background-image: url(../images/unisend-rect.svg);
+}
+.montonio-pickup-point__search-logo--venipak {
+  background-image: url(../images/venipak-rect.svg);
+}
+.montonio-pickup-point__search-logo--inpost {
+  background-image: url(../images/inpost-rect.svg);
+}
+.montonio-pickup-point__search-logo--orlen {
+  background-image: url(../images/orlen-rect.svg);
+}
+.montonio-pickup-point__search-logo--novapost {
+  background-image: url(../images/novaPost-rect.svg);
+}
+.montonio-pickup-point__search-logo--dhl {
+  background-image: url(../images/dhl-rect.svg);
+}
+.montonio-pickup-point__search-logo--expressone {
+  background-image: url(../images/expressone-rect.svg);
+}
+.montonio-pickup-point__search-logo--chronopost {
+  background-image: url(../images/chronopost-rect.svg);
+}
+.montonio-pickup-point__search-logo--gls {
+  background-image: url(../images/gls-rect.svg);
+}
+.montonio-pickup-point__search-logo--alzabox {
+  background-image: url(../images/alzabox-rect.svg);
+}
+.montonio-pickup-point__search-input {
   width: 100%;
   background-color: #fff !important;
   border: 1px solid #d8d8d8 !important;
-  background-image: url(../images/default-carrier-logo.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
   background-repeat: no-repeat;
-  background-size: auto 28px, 16px 16px;
-  background-position: 10px center, right 11px center;
+  background-size: 16px 16px;
+  background-position: right 11px center;
   border-radius: 2.5px;
   font-size: 14px;
   min-height: 48px;
@@ -275,38 +352,14 @@ img.montonio-payment-method-icon {
   box-shadow: none !important;
   padding: 10px 33px 10px 62px !important;
 }
-.montonio-pickup-point__search:focus {
+.montonio-pickup-point__search-input:focus {
   outline: none;
 }
-.montonio-pickup-point__search::-moz-placeholder {
+.montonio-pickup-point__search-input::-moz-placeholder {
   color: #7C7C7B;
 }
-.montonio-pickup-point__search::placeholder {
+.montonio-pickup-point__search-input::placeholder {
   color: #7C7C7B;
-}
-.montonio-pickup-point__search--omniva {
-  background-image: url(../images/omniva-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--dpd {
-  background-image: url(../images/dpd-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--latvian_post {
-  background-image: url(../images/latvian_post-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--smartpost, .montonio-pickup-point__search--smartposti {
-  background-image: url(../images/smartposti-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--unisend {
-  background-image: url(../images/unisend-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--venipak {
-  background-image: url(../images/venipak-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--inpost {
-  background-image: url(../images/inpost-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-.montonio-pickup-point__search--orlen {
-  background-image: url(../images/orlen-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 .montonio-pickup-point__dropdown {
   position: absolute;

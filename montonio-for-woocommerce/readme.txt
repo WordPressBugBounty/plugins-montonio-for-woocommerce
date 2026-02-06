@@ -1,13 +1,13 @@
 === Montonio for WooCommerce ===
-Version: 9.1.2
+Version: 9.3.5
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
-Tested up to: 6.8
-Stable tag: 9.1.2
+Tested up to: 6.9
+Stable tag: 9.3.5
 Requires PHP: 7.0
-Minimum requirements: WooCommerce 3.2 or greater
+Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
 License URL: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -136,6 +136,66 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.3.5 =
+* Fix – Card settings filter no longer causes infinite loop leading to memory exhaustion
+
+= 9.3.4 =
+* Tweak - Improved user experience for embedded card checkout flow
+
+= 9.3.3 =
+* Added – Additional order context data included in shipment metadata
+* Fix – Card payment loading animation not clearing on failed transactions
+
+= 9.3.2 =
+* Added – Dynamic pricing option for DPD shipping methods
+
+= 9.3.1 =
+* Added – Unisend Courier shipping method
+* Fix – COD payment method no longer incorrectly hidden for supported shipping methods
+* Fix – Cost field no longer disabled for default WooCommerce Flat Rate shipping method
+
+= 9.3.0 =
+* Added – Order totals data (subtotal, shipping, tax, total, currency) now included in shipment payload
+* Tweak – Test mode refactored as a global setting instead of per-method configuration
+* Tweak – Improved API key validation and error messaging
+* Tweak – Improved payment method synchronization functionality
+* Fix – Product measurements using comma decimal format (0,0) now correctly treated as empty
+* Dev – Renamed class-wc-montonio-display-admin-options.php to class-wc-montonio-admin-settings-page.php
+
+= 9.2.2 =
+* Added – Product image URL, product URL, and short description now included in shipment product data
+* Fix – International shipping rate calculation not working when WooCommerce dimension/weight units differ from cm/kg
+
+= 9.2.1 =
+* Fix – “Disable method for selected shipping classes” setting not working for Montonio International Shipping methods
+* Fix – Corrected shipping-class calculation mapping
+* Fix – Improved handling of Free Shipping threshold value conversion
+
+= 9.2.0 =
+* Added – Montonio International Shipping methods with live shipping rate calculations
+* Added – New filter 'wc_montonio_create_shipment_on_processing' to disable automatic shipment creation
+* Fix – Corrected argument count for the 'woocommerce_gateway_icon' filter to prevent errors
+
+= 9.1.7 =
+* Added – Nova Post shipping method
+* Tweak – Adjusted carrier max allowed dimensions
+
+= 9.1.6 =
+* Tweak – Updated embedded cards script for compatibility with latest Montonio JS payment validation flow
+
+= 9.1.5 =
+* Tweak – Updated shipment status to "Label printed" after labels are printed
+* Fix – Resolved issue where courier shipping method data was not being saved to order metadata, causing shipment creation failure
+
+= 9.1.4 =
+* Added – Cash on Delivery payment method support for supported shipping methods
+* Added – Carrier-assigned pickup point ID now saved in '_wc_montonio_carrier_pickup_point_id' meta data
+* Dev – Webhook action functions moved to WC_Montonio_Shipping_Webhooks class
+
+= 9.1.3 =
+* Tweak – Improved shipping method item sync logic for better performance and readability
+* Fix – Pickup-point selector not initiated when shipping costs are hidden until address entry or when forcing billing address as shipping address
+
 = 9.1.2 =
 * Added – Orlen shipping method
 

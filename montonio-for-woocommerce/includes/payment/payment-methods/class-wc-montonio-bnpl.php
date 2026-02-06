@@ -3,6 +3,12 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Montonio Pay Later (BNPL) Gateway
+ *
+ * @class       WC_Montonio_BNPL
+ * @extends     WC_Payment_Gateway
+ */
 class WC_Montonio_BNPL extends WC_Payment_Gateway {
 
     /**
@@ -33,6 +39,9 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
      */
     public $test_mode;
 
+    /**
+     * Constructor for the gateway.
+     */
     public function __construct() {
         $this->id                 = 'wc_montonio_bnpl';
         $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/inbank.svg';
@@ -51,10 +60,11 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title        = $this->get_option( 'title', 'Pay Later' );
-        $this->description  = $this->get_option( 'description' );
-        $this->enabled      = $this->get_option( 'enabled' );
-        $this->test_mode = $this->get_option( 'test_mode' );
+        $this->title       = $this->get_option( 'title', 'Pay Later' );
+        $this->description = $this->get_option( 'description' );
+        $this->enabled     = $this->get_option( 'enabled' );
+        $this->test_mode   = WC_Montonio_Helper::is_test_mode();
+        $this->max_amount  = 2500;
 
         if ( 'Pay Later' === $this->title ) {
             $this->title = __( 'Pay Later', 'montonio-for-woocommerce' );
@@ -62,53 +72,35 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'validate_settings' ) );
         add_action( 'woocommerce_api_' . $this->id, array( $this, 'get_order_response' ) );
         add_action( 'woocommerce_api_' . $this->id . '_notification', array( $this, 'get_order_notification' ) );
-        add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 3 );
+        add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 2 );
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
         add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
     }
 
     /**
-     * Edit gateway icon.
-     */
-    public function add_icon_class( $icon, $id ) {
-        if ( $id == $this->id ) {
-            return str_replace( 'src="', 'class="montonio-payment-method-icon montonio-bnpl-icon" src="', $icon );
-        }
-
-        return $icon;
-    }
-
-    /**
-     * Plugin options, we deal with it in Step 3 too
+     * Initialize gateway settings form fields.
+     *
+     * @return void
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'      => array(
+            'enabled'     => array(
                 'title'       => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
                 'label'       => __( 'Enable Montonio Pay Later', 'montonio-for-woocommerce' ),
                 'type'        => 'checkbox',
                 'description' => '',
                 'default'     => 'no'
             ),
-            'test_mode' => array(
-                'title'       => 'Test mode',
-                'label'       => 'Enable Test Mode',
-                'type'        => 'checkbox',
-                'description' => __( 'Whether the provider is in test mode (sandbox) for payments processing.', 'montonio-for-woocommerce' ),
-                'default'     => 'no',
-                'desc_tip'    => true
-            ),
-            'title'        => array(
+            'title'       => array(
                 'title'       => __( 'Title', 'montonio-for-woocommerce' ),
                 'type'        => 'text',
                 'default'     => __( 'Pay Later', 'montonio-for-woocommerce' ),
                 'description' => __( 'Payment method title which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'description'  => array(
+            'description' => array(
                 'title'       => __( 'Description', 'montonio-for-woocommerce' ),
                 'type'        => 'textarea',
                 'css'         => 'width: 400px;',
@@ -116,21 +108,27 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
                 'description' => __( 'Payment method description which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'min_amount'   => array(
+            'min_amount'  => array(
                 'title'       => __( 'Minimum cart amount', 'montonio-for-woocommerce' ),
                 'type'        => 'text',
                 'default'     => '30',
-                'description' => __( 'Display "Pay Later" payment method when the cart total is more than the specified amount. (Lowest allowed amount is 30 EUR).', 'montonio-for-woocommerce' ),
+                'description' => __( 'Display "Pay Later" payment method when the cart total is more than the specified amount.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             )
         );
     }
 
     /**
-     * Check if Montonio Card Payments should be available
+     * Checks to see if all criteria is met before showing payment method.
+     *
+     * @return bool True if the gateway is available, false otherwise.
      */
     public function is_available() {
-        if ( $this->enabled !== 'yes' ) {
+        if ( ! parent::is_available() ) {
+            return false;
+        }
+
+        if ( ! WC_Montonio_Helper::has_api_keys() ) {
             return false;
         }
 
@@ -143,7 +141,7 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
             $min_amount = is_numeric( $min_amount ) && $min_amount > 30 ? (float) $min_amount : 30;
             $cart_total = $this->get_order_total();
 
-            if ( $cart_total < $min_amount || $cart_total > 2500 ) {
+            if ( $cart_total < $min_amount ) {
                 return false;
             }
         }
@@ -152,117 +150,44 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
     }
 
     /**
-     * Perform validation on settings after saving them
+     * Add custom CSS class to the gateway icon.
+     *
+     * @param  string $icon The default icon HTML.
+     * @param  string $id   The gateway ID.
+     * @return string       Modified icon HTML with added classes.
      */
-    public function validate_settings( $settings ) {
-        if ( is_array( $settings ) ) {
-
-            if ( $settings['enabled'] === 'no' ) {
-                return $settings;
-            }
-
-            $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
-
-            // Disable the payment gateway if API keys are not provided
-            if ( $settings['test_mode'] === 'yes' ) {
-                if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
-                    /* translators: API Settings page url */
-                    $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
-                    $this->add_admin_notice( $message, 'error' );
-
-                    $settings['enabled'] = 'no';
-
-                    return $settings;
-                }
-            } else {
-                if ( empty( $api_settings['access_key'] ) || empty( $api_settings['secret_key'] ) ) {
-                    /* translators: API Settings page url */
-                    $message = sprintf( __( 'Live API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
-                    $this->add_admin_notice( $message, 'error' );
-
-                    $settings['enabled'] = 'no';
-
-                    return $settings;
-                }
-            }
-
-            try {
-                $montonio_api = new WC_Montonio_API( $settings['test_mode'] );
-                $response     = json_decode( $montonio_api->fetch_payment_methods() );
-
-                if ( ! isset( $response->paymentMethods->bnpl ) ) {
-                    throw new Exception( __( 'Pay Later is not enabled in Montonio partner system.', 'montonio-for-woocommerce' ) );
-                }
-            } catch ( Exception $e ) {
-                $settings['enabled'] = 'no';
-
-                if ( ! empty( $e->getMessage() ) ) {
-                    $this->add_admin_notice( __( 'Montonio API response: ', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
-                    WC_Montonio_Logger::log( $e->getMessage() );
-                }
-            }
+    public function add_icon_class( $icon, $id = '' ) {
+        if ( $id == $this->id ) {
+            return str_replace( 'src="', 'class="montonio-payment-method-icon montonio-bnpl-icon" src="', $icon );
         }
 
-        return $settings;
+        return $icon;
     }
 
-    /*
-     * We're processing the payments here
+    /**
+     * Enqueue payment scripts and styles for the frontend.
+     *
+     * @return void
      */
-    public function process_payment( $order_id ) {
-
-        $order = wc_get_order( $order_id );
-
-        try {
-            // Prepare Payment Data for Montonio Payments
-            $payment_data = array(
-                'paymentMethodId' => $this->id,
-                'payment'         => array(
-                    'method'        => 'bnpl',
-                    'methodDisplay' => $this->get_title(),
-                    'methodOptions' => null
-                )
-            );
-
-            if ( isset( $_POST['montonio_bnpl_period'] ) ) {
-                $payment_data['payment']['methodOptions']['period'] = (float) sanitize_key( wp_unslash( $_POST['montonio_bnpl_period'] ) );
-            }
-
-            // Create new Montonio API instance
-            $montonio_api               = new WC_Montonio_API( $this->test_mode );
-            $montonio_api->order        = $order;
-            $montonio_api->payment_data = $payment_data;
-
-            $response = $montonio_api->create_order();
-
-            $order->update_meta_data( '_montonio_uuid', $response->uuid );
-
-            if ( is_callable( array( $order, 'save' ) ) ) {
-                $order->save();
-            }
-
-            // Return response after which redirect to Montonio Payments will happen
-            return array(
-                'result'   => 'success',
-                'redirect' => $response->paymentUrl
-            );
-        } catch ( Exception $e ) {
-            $message = WC_Montonio_Helper::get_error_message( $e->getMessage() );
-
-            wc_add_notice( $message, 'error' );
-
-            $order->add_order_note( __( 'Montonio: There was a problem processing the payment. Response: ', 'montonio-for-woocommerce' ) . $e->getMessage() );
-
-            WC_Montonio_Logger::log( 'Order creation failure - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
+    public function payment_scripts() {
+        if ( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) && ! is_add_payment_method_page() ) {
+            return;
         }
+
+        wp_enqueue_script( 'montonio-bnpl' );
     }
 
+    /**
+     * Output the payment method fields on the checkout page.
+     *
+     * @return void
+     */
     public function payment_fields() {
         $description = $this->get_description();
 
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
-        if ( $this->test_mode === 'yes' ) {
+        if ( $this->test_mode ) {
             /* translators: 1) notice that test mode is enabled 2) explanation of test mode */
             printf( '<strong>%1$s</strong><br>%2$s<br>', esc_html__( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ), esc_html__( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) );
         }
@@ -322,71 +247,116 @@ class WC_Montonio_BNPL extends WC_Payment_Gateway {
         do_action( 'wc_montonio_after_payment_desc', $this->id );
     }
 
-    public function payment_scripts() {
-        if ( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) && ! is_add_payment_method_page() ) {
-            return;
-        }
+    /**
+     * Process the payment for an order.
+     *
+     * @param  int $order_id The ID of the order being processed.
+     * @return array         Result array with 'result' and 'redirect' keys.
+     */
+    public function process_payment( $order_id ) {
+        $order = wc_get_order( $order_id );
 
-        wp_enqueue_script( 'montonio-bnpl' );
+        try {
+            $payment_data = array(
+                'paymentMethodId' => $this->id,
+                'payment'         => array(
+                    'method'        => 'bnpl',
+                    'methodDisplay' => $this->get_title(),
+                    'methodOptions' => null
+                )
+            );
+
+            if ( isset( $_POST['montonio_bnpl_period'] ) ) {
+                $payment_data['payment']['methodOptions']['period'] = (float) sanitize_key( wp_unslash( $_POST['montonio_bnpl_period'] ) );
+            }
+
+            // Create new Montonio API instance
+            $montonio_api = new WC_Montonio_API();
+            $response     = $montonio_api->create_order( $order, $payment_data );
+
+            $order->update_meta_data( '_montonio_uuid', $response->uuid );
+            $order->save();
+
+            return array(
+                'result'   => 'success',
+                'redirect' => $response->paymentUrl
+            );
+        } catch ( Exception $e ) {
+            $message = WC_Montonio_Helper::get_error_message( $e->getMessage() );
+
+            wc_add_notice( $message, 'error' );
+
+            $order->add_order_note( __( 'Montonio: There was a problem processing the payment. Response: ', 'montonio-for-woocommerce' ) . $e->getMessage() );
+
+            WC_Montonio_Logger::log( 'Error (' . $this->id . ') - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
+
+            return array( 'result' => 'failure' );
+        }
     }
 
     /**
-     * Refunds amount from Montonio and return true/false as result
+     * Process a refund for an order.
      *
-     * @param string $order_id order id.
-     * @param string $amount refund amount.
-     * @param string $reason reason of refund.
-     * @return bool
+     * @param  int    $order_id The ID of the order to refund.
+     * @param  float  $amount   The amount to refund (null for full refund).
+     * @param  string $reason   The reason for the refund.
+     * @return bool             True on success, false on failure.
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
         return WC_Montonio_Refund::init_refund(
             $order_id,
-            $this->test_mode,
             $amount,
             $reason
         );
     }
 
     /**
-     * Check webhook notfications from Montonio
-     */
-    public function get_order_notification() {
-        new WC_Montonio_Callbacks(
-            $this->test_mode,
-            true
-        );
-    }
-
-    /**
-     * Check callback from Montonio
-     * and redirect user: thankyou page for success, checkout on declined/failure
+     * Handle the payment callback/return from Montonio.
+     *
+     * @return void
      */
     public function get_order_response() {
-        new WC_Montonio_Callbacks(
-            $this->test_mode,
-            false
-        );
+        new WC_Montonio_Callbacks( true );
     }
 
     /**
-     * Edit settings page layout
+     * Handle webhook notifications from Montonio.
+     *
+     * @return void
+     */
+    public function get_order_notification() {
+        new WC_Montonio_Callbacks();
+    }
+
+    /**
+     * Render the admin options/settings page.
+     *
+     * @return void
      */
     public function admin_options() {
-        WC_Montonio_Display_Admin_Options::display_options(
+        WC_Montonio_Admin_Settings_Page::render_options_page(
             $this->method_title,
             $this->generate_settings_html( array(), false ),
-            $this->id,
-            $this->test_mode
+            $this->id
         );
     }
 
     /**
-     * Display admin notices
+     * Add an admin notice to be displayed.
+     *
+     * @param  string $message The notice message content.
+     * @param  string $class   The CSS class for the notice (e.g., 'notice-error', 'notice-success').
+     * @return void
      */
     public function add_admin_notice( $message, $class ) {
         $this->admin_notices[] = array( 'message' => $message, 'class' => $class );
     }
 
+    /**
+     * Display all queued admin notices.
+     *
+     * @return void
+     */
     public function display_admin_notices() {
         foreach ( $this->admin_notices as $notice ) {
             echo '<div id="message" class="' . esc_attr( $notice['class'] ) . '">';

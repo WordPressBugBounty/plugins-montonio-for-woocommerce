@@ -74,7 +74,7 @@
             success: function(response) {
                 if (shipmentStatus !== response.status) {
                     shipmentStatus = response.status;
-                    $('.montonio-shipping-panel-wrappper').html(response.panel);
+                    $('.montonio-shipping-panel-wrapper').html(response.panel);
 
                     if (wp && wp.data && wp.data.dispatch) {
                         wp.data.dispatch('core/notices').createNotice(

@@ -2,10 +2,10 @@
 defined( 'ABSPATH' ) or exit;
 
 class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
-    const MAX_DIMENSIONS = array(36, 43, 61); // lowest to highest (cm)
+    protected $max_dimensions = array( 36, 43, 61 ); // lowest to highest (cm)
 
     public $default_title      = 'DPD parcel shops';
-    public $default_max_weight = 20; // kg
+    public $default_max_weight = 31.5; // kg
 
     /**
      * Called from parent's constructor
@@ -22,10 +22,9 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
             'instance-settings-modal'
         );
 
-        $this->provider_name = 'dpd';
-        $this->type_v2       = 'parcelShop';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/dpd-rect.svg';
-        $this->title         = $this->get_option( 'title', __( 'DPD parcel shops', 'montonio-for-woocommerce' ) );
+        $this->carrier_code = 'dpd';
+        $this->type_v2      = 'parcelShop';
+        $this->title        = $this->get_option( 'title', __( 'DPD parcel shops', 'montonio-for-woocommerce' ) );
 
         if ( 'DPD parcel shops' === $this->title ) {
             $this->title = __( 'DPD parcel shops', 'montonio-for-woocommerce' );
@@ -33,30 +32,136 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
     }
 
     /**
-     * Validate the dimensions of a package against maximum allowed dimensions.
-     *
-     * @param array $package The package to validate, containing items to be shipped.
-     * @return bool True if the package dimensions are valid, false otherwise.
+     * Initialize form fields for the shipping method settings.
      */
-    protected function validate_package_dimensions( $package ) {
-        $package_dimensions = $this->get_package_dimensions( $package );
-
-        return ( $package_dimensions[0] <= self::MAX_DIMENSIONS[0] ) && ( $package_dimensions[1] <= self::MAX_DIMENSIONS[1] ) && ( $package_dimensions[2] <= self::MAX_DIMENSIONS[2] );
+    public function init_form_fields() {
+        $this->instance_form_fields = require WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/dpd-settings.php';
     }
 
     /**
-     * Check if the shipping method is available for the current package.
+     * Calculate shipping costs and taxes for a package.
      *
-     * @param array $package The package to check, containing items to be shipped.
-     * @return bool True if the shipping method is available, false otherwise.
+     * @since 9.3.2
+     * @param array $package The package to calculate shipping for.
      */
-    public function is_available( $package ) {
-        foreach ( $package['contents'] as $item ) {
-            if ( get_post_meta( $item['product_id'], '_montonio_no_parcel_machine', true ) === 'yes' ) {
-                return false;
+    public function calculate_shipping( $package = array() ) {
+        $rate = array(
+            'id'        => $this->get_rate_id(),
+            'label'     => $this->title,
+            'cost'      => 0,
+            'package'   => $package,
+            'meta_data' => array(
+                'carrier_code'      => $this->carrier_code,
+                'type_v2'           => $this->type_v2,
+                'method_class_name' => get_class( $this )
+            )
+        );
+
+        // Calculate the costs
+        $flat_rate_cost   = $this->get_option( 'price' );
+        $cart_total       = $this->get_cart_total( $package );
+        $package_item_qty = $this->get_package_item_qty( $package );
+        $parcels          = $this->get_parcels_with_item_dimensions( $package );
+
+        if ( 'dynamic' === $this->get_option( 'pricing_type' ) ) {
+            $parcels = $this->get_parcels_with_item_dimensions( $package );
+
+            try {
+                $shipping_api = new WC_Montonio_Shipping_API();
+
+                $response = $shipping_api->get_shipping_rates( $this->country, 'pickupPoint', $parcels, 'dpd' );
+            } catch ( Exception $e ) {
+                WC_Montonio_Logger::log( 'Shipping rate API request failed: ' . $e->getMessage() );
+                return;
+            }
+
+            $rates = json_decode( $response, true );
+
+            // Check if carriers exist and are valid
+            if ( ! isset( $rates['carriers'] ) || ! is_array( $rates['carriers'] ) ) {
+                WC_Montonio_Logger::log( 'No carriers found in API response' );
+                return;
+            }
+
+            // Loop through each carrier and add rates
+            foreach ( $rates['carriers'] as $carrier ) {
+                if ( ! isset( $carrier['shippingMethods'] ) || ! is_array( $carrier['shippingMethods'] ) ) {
+                    continue;
+                }
+
+                foreach ( $carrier['shippingMethods'] as $method ) {
+                    if ( ! isset( $method['subtypes'] ) || ! is_array( $method['subtypes'] ) ) {
+                        continue;
+                    }
+
+                    foreach ( $method['subtypes'] as $subtype ) {
+                        if ( 'parcelShop' !== $subtype['code'] ) {
+                            continue;
+                        }
+
+                        // Set cost
+                        $rate['cost'] = $subtype['rate'];
+
+                        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+
+                        // Add the shipping rate
+                        $this->add_rate( $rate );
+                    }
+                }
+            }
+
+            return;
+        }
+
+        // Calculate the costs
+        if ( '' !== $flat_rate_cost ) {
+            $rate['cost'] = $this->evaluate_cost(
+                $flat_rate_cost,
+                array(
+                    'qty'  => $package_item_qty,
+                    'cost' => $package['contents_cost']
+                )
+            );
+        }
+
+        // Add shipping class costs
+        $shipping_classes = WC()->shipping()->get_shipping_classes();
+
+        if ( ! empty( $shipping_classes ) ) {
+            $found_shipping_classes = $this->find_shipping_classes( $package );
+            $highest_class_cost     = 0;
+
+            foreach ( $found_shipping_classes as $shipping_class => $products ) {
+                // Also handles BW compatibility when slugs were used instead of ids.
+                $shipping_class_term = get_term_by( 'slug', $shipping_class, 'product_shipping_class' );
+                $class_cost_string   = $shipping_class_term && $shipping_class_term->term_id ? $this->get_option( 'class_cost_' . $shipping_class_term->term_id, $this->get_option( 'class_cost_' . $shipping_class, '' ) ) : $this->get_option( 'no_class_cost', '' );
+
+                if ( '' === $class_cost_string ) {
+                    continue;
+                }
+
+                $class_cost = $this->evaluate_cost(
+                    $class_cost_string,
+                    array(
+                        'qty'  => array_sum( wp_list_pluck( $products, 'quantity' ) ),
+                        'cost' => array_sum( wp_list_pluck( $products, 'line_total' ) )
+                    )
+                );
+
+                if ( 'class' === $this->calc_type ) {
+                    $rate['cost'] += $class_cost;
+                } else {
+                    $highest_class_cost = $class_cost > $highest_class_cost ? $class_cost : $highest_class_cost;
+                }
+            }
+
+            if ( 'order' === $this->calc_type && $highest_class_cost ) {
+                $rate['cost'] += $highest_class_cost;
             }
         }
 
-        return parent::is_available( $package );
+        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+
+        $this->add_rate( $rate );
     }
 }

@@ -282,7 +282,7 @@ class WC_Montonio_Inbank_Calculator {
      * @return string Complete HTML and JavaScript for calculator widget
      */
     private function generate_calculator_html( $amount ) {
-        $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
+        $locale          = WC_Montonio_Helper::get_locale();
         $calculator_id = 'inbank-calculator-' . uniqid();
 
         return $this->render_calculator_widget( $calculator_id, $amount, $locale );

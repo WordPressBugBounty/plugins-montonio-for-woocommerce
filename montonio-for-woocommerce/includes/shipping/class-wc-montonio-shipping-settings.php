@@ -23,7 +23,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
         $shipping_options = ob_get_contents();
         ob_end_clean();
 
-        WC_Montonio_Display_Admin_Options::display_options(
+        WC_Montonio_Admin_Settings_Page::render_options_page(
             $this->label,
             $shipping_options,
             $this->id
@@ -60,13 +60,6 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'type'    => 'checkbox',
                 'default' => 'no',
                 'id'      => 'montonio_shipping_enabled'
-            ),
-            array(
-                'title'   => __( 'Sandbox Mode', 'montonio-for-woocommerce' ),
-                'desc'    => __( 'Enable Sandbox Mode', 'montonio-for-woocommerce' ),
-                'type'    => 'checkbox',
-                'default' => 'no',
-                'id'      => 'montonio_shipping_sandbox_mode'
             ),
             array(
                 'type'    => 'select',

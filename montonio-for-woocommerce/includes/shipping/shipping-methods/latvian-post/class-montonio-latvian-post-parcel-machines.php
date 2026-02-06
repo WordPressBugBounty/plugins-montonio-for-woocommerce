@@ -2,6 +2,8 @@
 defined( 'ABSPATH' ) or exit;
 
 class Montonio_Latvian_Post_Parcel_Machines extends Montonio_Shipping_Method {
+    protected $max_dimensions = array( 38, 38, 58 );
+
     public $default_title      = 'Latvijas Pasts parcel machines';
     public $default_max_weight = 30; // kg
 
@@ -20,51 +22,17 @@ class Montonio_Latvian_Post_Parcel_Machines extends Montonio_Shipping_Method {
             'instance-settings-modal'
         );
 
-        $this->provider_name = 'latvian_post';
+        $this->carrier_code = 'latvian_post';
         $this->type_v2       = 'parcelMachine';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/latvian_post-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Latvijas Pasts parcel machines', 'montonio-for-woocommerce' ) );
 
         if ( 'Latvijas Pasts parcel machines' === $this->title ) {
             $this->title = __( 'Latvijas Pasts parcel machines', 'montonio-for-woocommerce' );
         }
-    }
 
-    /**
-     * Get maximum dimensions based on country
-     *
-     * @return array
-     */
-    protected function get_max_dimensions() {
-        return ( 'LT' === $this->country ) ? array( 35, 36, 61 ) : array( 38, 38, 58 );
-    }
-
-    /**
-     * Validate the dimensions of a package against maximum allowed dimensions.
-     *
-     * @param array $package The package to validate, containing items to be shipped.
-     * @return bool True if the package dimensions are valid, false otherwise.
-     */
-    protected function validate_package_dimensions( $package ) {
-        $package_dimensions = $this->get_package_dimensions( $package );
-        $max_dimensions     = $this->get_max_dimensions();
-
-        return ( $package_dimensions[0] <= $max_dimensions[0] ) && ( $package_dimensions[1] <= $max_dimensions[1] ) && ( $package_dimensions[2] <= $max_dimensions[2] );
-    }
-
-    /**
-     * Check if the shipping method is available for the current package.
-     *
-     * @param array $package The package to check, containing items to be shipped.
-     * @return bool True if the shipping method is available, false otherwise.
-     */
-    public function is_available( $package ) {
-        foreach ( $package['contents'] as $item ) {
-            if ( get_post_meta( $item['product_id'], '_montonio_no_parcel_machine', true ) === 'yes' ) {
-                return false;
-            }
+        // Adjust max dimensions for Lithuania
+        if ( 'LT' === $this->country ) {
+            $this->max_dimensions = array( 35, 36, 61 );
         }
-
-        return parent::is_available( $package );
     }
 }

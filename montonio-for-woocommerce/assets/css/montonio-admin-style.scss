@@ -64,11 +64,11 @@
 
     &--beige {
         background: #F9E0C0;
-        color: #1B1B1B !important;
+        color: #260071 !important;
 
         &:hover {
             background: #E2BF92;
-            color: #1B1B1B !important;
+            color: #260071 !important;
         }
 
         &:active {
@@ -77,6 +77,24 @@
 
         &:focus {
             background: #E2BF92;
+        }
+    }    
+    
+    &--transparent {
+        background: rgba(27, 5, 71, 0.50);
+        color: #fff !important;
+
+        &:hover {
+            background: rgba(27, 5, 71, 0.80);
+            color: #fff !important;
+        }
+
+        &:active {
+            background: rgba(27, 5, 71, 0.80);
+        }
+
+        &:focus {
+            background: rgba(27, 5, 71, 0.80);
         }
     }
 
@@ -352,8 +370,8 @@
             margin-bottom: 0;
             font-size: 19px;
             line-height: 1.6;
-            background: #F0EEFB;
-            border: 1px solid #D6D1F8;
+            background: #f0ebff;
+            border: 1px solid #E4DBFA;
             border-bottom: none;
             color: #0F1A2A;
             border-bottom: 0;
@@ -363,9 +381,9 @@
             border-top-right-radius: 6px;
             
             + p {
-                background: #F0EEFB;
+                background: #f0ebff;
                 color: #0F1A2A;
-                border: 1px solid #D6D1F8;
+                border: 1px solid #E4DBFA;
                 border-bottom: 0;
                 border-top: 0;
                 padding: 2px 10px 20px 20px;
@@ -373,9 +391,9 @@
                 
                 + .form-table {
                     display: block;
-                    background: #F0EEFB;
+                    background: #f0ebff;
                     color: #0F1A2A;
-                    border: 1px solid #D6D1F8;
+                    border: 1px solid #E4DBFA;
                     padding: 5px 20px 10px 20px;
                     margin: 0 0 30px;
                     border-bottom-left-radius: 6px;
@@ -662,8 +680,8 @@ label[for*=montonio_shipping_sender] {
 }
 
 .order-status.status-mon-label-printed {
-    background: #D6D1F8;
-    color: #442DD2;
+    background: #f0ebff;
+    color: #260071;
 }
 
 .montonio-admin-pickup-point-country-select,
@@ -736,7 +754,7 @@ label[for*=montonio_shipping_sender] {
         color: #e9283f;
     }    
     
-    &--labelPrinted {
+    &--labelsCreated {
         background-color: #f0ebff;
         color: #260071;
     }    
@@ -770,33 +788,69 @@ label[for*=montonio_shipping_sender] {
 }
 
 .montonio-banner {
+    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    max-width: 765px;
     position: relative;
-    background: #260071;
+    background: #260071 url('../images/banner_pattern.svg') no-repeat right bottom;
+    background-size: auto 100%;
     color: #F9E0C0;
     border: none;
     box-shadow: none;
-    padding: 42px !important; 
-    border-radius: 24px;
+    padding: 24px 32px !important; 
+    border-radius: 16px;
+    box-sizing: border-box;
     overflow: hidden;
     
-    @media screen and (max-width: 860px) {
+    @media screen and (max-width: 810px) {
         padding: 32px 24px !important; 
     }
 
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0;
+
+        @media screen and (max-width: 819px) {
+            display: none;
+        }
+    }
+
     &__logo {
-        margin-bottom: 32px;
-        text-align: center;
+        margin-bottom: 16px;
+
+        svg {
+            max-width: 115px;
+        }
     }
     
     &__close {
+        display: block;
         position: absolute;
-        right: 30px;
-        top: 36px;
+        right: 32px;
+        top: 24px;
         z-index: 2;
 
-        @media screen and (max-width: 860px) {
+        span {
+            display: none;
+        }
+
+        svg {
+            padding: 4px;
+        }
+
+        @media screen and (max-width: 810px) {
             right: 19px;
             top: 20px;
+        }
+    }
+
+    &__row {
+        display: flex;
+        gap: 28px;
+    
+        @media screen and (max-width: 810px) {
+            flex-direction: column;
         }
     }
     
@@ -805,6 +859,41 @@ label[for*=montonio_shipping_sender] {
         margin: 0 auto;
         position: relative;
         z-index: 2;
+
+        h2 {
+            color: #F9E0C0;
+            font-size: 32px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 100%;
+            letter-spacing: -0.64px;
+            margin: 0 0 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+
+            span {
+                background: #389D9D;
+                color: #fff;
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 116.667%;
+                letter-spacing: -0.24px;
+                padding: 8px 10px;
+                justify-content: center;
+                align-items: center;
+                flex-shrink: 0;
+                border-radius: 24px;
+            }
+        }
+
+        p {
+            color: #fff;
+            font-size: 13px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 138.462%;
+        }
 
         ul {
             display: flex;
@@ -829,7 +918,6 @@ label[for*=montonio_shipping_sender] {
                 }
 
                 h3 {
-                    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
                     font-size: 24px;
                     font-style: normal;
                     font-weight: 700;
@@ -840,7 +928,6 @@ label[for*=montonio_shipping_sender] {
                 }
 
                 p {
-                    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
                     font-size: 15px;
                     font-style: normal;
                     font-weight: 500;
@@ -850,19 +937,103 @@ label[for*=montonio_shipping_sender] {
             }
         }
     }
+
+    &__actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 32px;
+    
+        @media screen and (max-width: 465px) {
+            flex-direction: column;
+        }
+    }
     
     &__button {
-        text-align: center;
-        margin-top: 32px;
+        a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    }
+}
+
+.montonio-international-shipping-description-title {
+    display: none;
+
+    & + p:empty {
+        display: none;
+    }
+}
+
+.montonio-international-shipping-description {
+    background: #f0ebff;
+    border: 1px solid #E4DBFA;
+    color: #1b1b1b;
+    padding: 24px;
+    border-radius: 6px;
+    line-height: 1.5;
+
+    ul {
+        margin: 7px 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        li {
+            margin: 0;
+        }
+    }
+}
+
+.montonio-disabled-reason {
+    background: #fff6da;
+    color: #1b1b1b;
+    padding: 13px 16px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+/* Montonio Unified Shipping - Default Dimensi13px 16pxons Inline Layout */
+// For modal-based settings (shipping zone method modal)
+// Target only the container that comes after the default dimensions title
+[id*="default_dimensions_title"] + p + .wc-shipping-zone-method-fields {
+    // Use CSS Grid to arrange label+fieldset pairs in columns
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    gap: 0 15px;
+    align-items: start;
+
+    label[for*="default_length"],
+    label[for*="default_width"],
+    label[for*="default_height"],
+    label[for*="default_weight"] {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
     }
 
-    &__pattern {
-        position: absolute;
-        width: 100%;
-        height: 78px;
-        bottom: 0;
-        left: 0;
-        background: url('../images/pattern.svg') repeat-x center;
-        z-index: 1;
+    fieldset {
+        display: block;
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    // Hide descriptions for first 3 fields
+    label[for*="default_length"] + fieldset .description,
+    label[for*="default_width"] + fieldset .description,
+    label[for*="default_height"] + fieldset .description {
+        display: none;
+    }
+
+    // Show description only on weight field, positioned below the grid
+    label[for*="default_weight"] + fieldset .description {
+        display: block;
+        grid-column: 1 / -1;
+        margin-top: 10px;
+        font-size: 12px;
+        color: #666;
     }
 }

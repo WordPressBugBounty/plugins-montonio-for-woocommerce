@@ -14,38 +14,54 @@ class WC_Montonio_Shipping_Helper {
      * @return Montonio_Shipping_Method|null The chosen Montonio shipping method at checkout, or null if the chosen shipping method is not Montonio.
      */
     public static function get_chosen_montonio_shipping_method_at_checkout() {
-        if ( ! is_checkout() ) {
-            return;
+        if ( ! WC()->session ) {
+            return null;
         }
 
         $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods', array() );
 
         if ( empty( $chosen_shipping_methods ) ) {
-            return;
+            return null;
         }
 
-        $chosen_shipping_method_id = null;
         WC()->shipping()->calculate_shipping( WC()->cart->get_shipping_packages() );
-        
-        foreach ( WC()->shipping()->get_packages() as $i => $package ) {
-            if ( ! isset( $chosen_shipping_methods[$i], $package['rates'][$chosen_shipping_methods[$i]] ) ) {
-                return;
-            }
+    
+        $shipping_rate = null;
+        $chosen_shipping_method_id = null;
 
-            if ( strpos( $chosen_shipping_methods[$i], 'montonio_' ) === false ) {
-                return;
+        foreach ( WC()->shipping()->get_packages() as $i => $package ) {
+            if ( ! isset( $chosen_shipping_methods[$i] ) ) {
+                continue;
             }
 
             $chosen_shipping_method_id = $chosen_shipping_methods[$i];
+
+            if ( false === strpos( $chosen_shipping_method_id, 'montonio_' ) ) {
+                continue;
+            }
+
+            if ( isset( $package['rates'][$chosen_shipping_method_id] ) ) {
+                $shipping_rate = $package['rates'][$chosen_shipping_method_id];
+                break;
+            }
         }
 
-        if ( empty( $chosen_shipping_method_id ) ) {
-            return;
+        if ( empty( $shipping_rate ) ) {
+            return null;
         }
 
-        list( $method_id, $instance_id ) = explode( ':', $chosen_shipping_method_id );
+        $shipping_meta = $shipping_rate->get_meta_data();
 
-        return self::create_shipping_method_instance( $method_id, $instance_id );
+        if ( empty( $shipping_meta['carrier_code'] ) || empty( $shipping_meta['type_v2'] ) ) {
+            return null;
+        }
+
+        return (object) array(
+            'id'           => $chosen_shipping_method_id,
+            'carrier_code' => $shipping_meta['carrier_code'],
+            'type'         => $shipping_meta['type_v2'],
+            'operators'    => $shipping_meta['operators'] ?? null
+        );
     }
 
     /**
@@ -66,6 +82,7 @@ class WC_Montonio_Shipping_Helper {
         }
 
         $shipping_methods = $order->get_shipping_methods();
+
         if ( empty( $shipping_methods ) ) {
             return;
         }
@@ -96,24 +113,38 @@ class WC_Montonio_Shipping_Helper {
     }
 
     /**
+     * Get shipping method instance.
+     *
+     * @since 9.2.0
+     * @param int $instance_id The shipping method instance ID.
+     * @return Montonio_Shipping_Method The shipping method instance.
+     */
+    public static function get_shipping_method_instance( $instance_id ) {
+        $shipping_method_instance = WC_Shipping_Zones::get_shipping_method( $instance_id );
+
+        if ( empty( $shipping_method_instance ) ) {
+            return null;
+        }
+
+        return $shipping_method_instance;
+    }
+
+    /**
      * Gets the Montonio shipping method items for the given shipping method ID.
      *
      * @since 7.0.0
      * @param Montonio_Shipping_Method $montonio_shipping_method The Montonio shipping method to get items for.
      * @return array The Montonio shipping method items for the given ID. Returns an empty array if the shipping method ID does not exist or has no items.
      */
-    public static function get_items_for_montonio_shipping_method( $montonio_shipping_method, $country_code = null ) {
-        $type = $montonio_shipping_method->type_v2;
-
-        if ( ! in_array( $type, ['parcelMachine', 'parcelShop', 'postOffice'] ) ) {
-            return [];
+    public static function get_items_for_montonio_shipping_method( $carrier_code, $type, $country = null ) {
+        if ( ! in_array( $type, array( 'parcelMachine', 'parcelShop', 'postOffice' ) ) ) {
+            return array();
         }
 
-        $carrier_code          = $montonio_shipping_method->provider_name;
-        $country               = $country_code ? $country_code : self::get_customer_shipping_country();
+        $country               = $country ? $country : self::get_customer_shipping_country();
         $shipping_method_items = WC_Montonio_Shipping_Item_Manager::fetch_and_group_pickup_points( $country, $carrier_code, $type );
 
-        return is_array( $shipping_method_items ) ? $shipping_method_items : [];
+        return is_array( $shipping_method_items ) ? $shipping_method_items : array();
     }
 
     /**
@@ -200,10 +231,8 @@ class WC_Montonio_Shipping_Helper {
      * @return boolean True if it is time to sync the shipping method items, false otherwise.
      */
     public static function is_time_to_sync_shipping_method_items() {
-        $last_synced_at = get_option( 'montonio_shipping_sync_timestamp' );
-        $current_time   = time();
+        $last_synced_at = (int) get_option( 'montonio_shipping_sync_timestamp', 0 );
 
-        // Return true if never synced or if more than 24 hours have passed since last sync
-        return ! $last_synced_at || ( $current_time - $last_synced_at ) > 24 * 60 * 60;
+        return $last_synced_at === 0 || ( time() - $last_synced_at ) > DAY_IN_SECONDS;
     }
 }

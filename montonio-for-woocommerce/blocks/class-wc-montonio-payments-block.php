@@ -29,10 +29,10 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
         $default_country   = $this->get_setting( 'default_country', 'EE' );
         $preselect_country = $this->get_setting( 'preselect_country' );
 
-        if ( $preselect_country == 'locale' ) {
-            $user_country = strtoupper( WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ) );
+        if ( 'locale' === $preselect_country ) {
+            $user_country = strtoupper( WC_Montonio_Helper::get_locale() );
 
-            if ( $user_country === 'ET' ) {
+            if ( 'ET' === $user_country ) {
                 $user_country = 'EE';
             }
 
@@ -56,35 +56,15 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             'FI' => __( 'Finland', 'montonio-for-woocommerce' ),
             'LV' => __( 'Latvia', 'montonio-for-woocommerce' ),
             'LT' => __( 'Lithuania', 'montonio-for-woocommerce' ),
-            'PL' => __( 'Poland', 'montonio-for-woocommerce' ),
-            'DE' => __( 'Germany', 'montonio-for-woocommerce' )
+            'PL' => __( 'Poland', 'montonio-for-woocommerce' )
         );
 
-        $test_mode        = $this->get_setting( 'test_mode', 'no' );
-        $api_keys            = WC_Montonio_Helper::get_api_keys( $test_mode );
         $hide_country_select = $this->get_setting( 'hide_country_select' );
         $currency            = WC_Montonio_Helper::get_currency();
         $default_country     = $this->get_default_country( $available_countries );
         $preselect_country   = $this->get_setting( 'preselect_country' );
-
-        if ( $this->get_setting( 'bank_list_fetch_datetime' ) < time() - 86400 ) {
-            try {
-                $montonio_api = new WC_Montonio_API( $test_mode );
-                $response     = json_decode( $montonio_api->fetch_payment_methods() );
-
-                if ( ! isset( $response->paymentMethods->paymentInitiation ) ) {
-                    throw new Exception( __( 'PIS not enabled in partner system', 'montonio-for-woocommerce' ) );
-                }
-
-                $this->settings['bank_list']                = json_encode( $response->paymentMethods->paymentInitiation->setup );
-                $this->settings['bank_list_fetch_datetime'] = time();
-                update_option( 'woocommerce_wc_montonio_payments_settings', $this->settings );
-            } catch ( Exception $e ) {
-                WC_Montonio_Logger::log( 'Bank list sync failed: ' . $e->getMessage() );
-            }
-        }
-
-        $bank_list = $this->get_setting( 'bank_list' );
+        $payment_methods     = WC_Montonio_Helper::get_payment_methods( 'paymentInitiation' );
+        $setup_data          = $payment_methods['setup'] ?? null;
 
         if ( $currency == 'PLN' ) {
             $default_country = 'PL';
@@ -100,9 +80,9 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             'title'              => $title,
             'description'        => $this->get_setting( 'description' ),
             'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png' ),
-            'sandboxMode'        => $test_mode,
-            'accessKey'          => $api_keys['access_key'],
-            'storeSetupData'     => $bank_list,
+            'sandboxMode'        => WC_Montonio_Helper::is_test_mode(),
+            'accessKey'          => WC_Montonio_Helper::get_api_keys()['access_key'],
+            'storeSetupData'     => json_encode( $setup_data ),
             'currency'           => $currency,
             'preselectCountry'   => $preselect_country,
             'availableCountries' => array_keys( $available_countries ),

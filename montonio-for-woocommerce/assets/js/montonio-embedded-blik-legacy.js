@@ -39,7 +39,6 @@ jQuery(document).ready(function($) {
         let data = {
             'action': 'get_payment_intent',
             'method': 'blik',
-            'sandbox_mode': params.test_mode,
             'nonce': params.nonce,
         };
 
@@ -113,7 +112,7 @@ jQuery(document).ready(function($) {
 
     async function confirmPayment() {
         try {
-            const result = await embeddedPayment.confirmPayment(params.test_mode === 'yes');
+            const result = await embeddedPayment.confirmPayment(params.test_mode);
 
             window.location.replace(result.returnUrl);
         } catch (error) {

@@ -51,17 +51,31 @@
 }
 .montonio-button--beige {
   background: #F9E0C0;
-  color: #1B1B1B !important;
+  color: #260071 !important;
 }
 .montonio-button--beige:hover {
   background: #E2BF92;
-  color: #1B1B1B !important;
+  color: #260071 !important;
 }
 .montonio-button--beige:active {
   background: #E2BF92;
 }
 .montonio-button--beige:focus {
   background: #E2BF92;
+}
+.montonio-button--transparent {
+  background: rgba(27, 5, 71, 0.5);
+  color: #fff !important;
+}
+.montonio-button--transparent:hover {
+  background: rgba(27, 5, 71, 0.8);
+  color: #fff !important;
+}
+.montonio-button--transparent:active {
+  background: rgba(27, 5, 71, 0.8);
+}
+.montonio-button--transparent:focus {
+  background: rgba(27, 5, 71, 0.8);
 }
 .montonio-button--lg {
   font-size: 15px;
@@ -294,8 +308,8 @@
   margin-bottom: 0;
   font-size: 19px;
   line-height: 1.6;
-  background: #F0EEFB;
-  border: 1px solid #D6D1F8;
+  background: #f0ebff;
+  border: 1px solid #E4DBFA;
   border-bottom: none;
   color: #0F1A2A;
   border-bottom: 0;
@@ -305,9 +319,9 @@
   border-top-right-radius: 6px;
 }
 .montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p {
-  background: #F0EEFB;
+  background: #f0ebff;
   color: #0F1A2A;
-  border: 1px solid #D6D1F8;
+  border: 1px solid #E4DBFA;
   border-bottom: 0;
   border-top: 0;
   padding: 2px 10px 20px 20px;
@@ -315,9 +329,9 @@
 }
 .montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table {
   display: block;
-  background: #F0EEFB;
+  background: #f0ebff;
   color: #0F1A2A;
-  border: 1px solid #D6D1F8;
+  border: 1px solid #E4DBFA;
   padding: 5px 20px 10px 20px;
   margin: 0 0 30px;
   border-bottom-left-radius: 6px;
@@ -551,8 +565,8 @@ label[for*=montonio_shipping_sender]::after {
 }
 
 .order-status.status-mon-label-printed {
-  background: #D6D1F8;
-  color: #442DD2;
+  background: #f0ebff;
+  color: #260071;
 }
 
 .montonio-admin-pickup-point-country-select,
@@ -622,8 +636,8 @@ label[for*=montonio_shipping_sender]::after {
   background-color: #ffebeb;
   color: #e9283f;
 }
-.order-status.montonio-shippment-status--labelPrinted,
-.montonio-shipping-panel__status--labelPrinted {
+.order-status.montonio-shippment-status--labelsCreated,
+.montonio-shipping-panel__status--labelsCreated {
   background-color: #f0ebff;
   color: #260071;
 }
@@ -654,34 +668,67 @@ label[for*=montonio_shipping_sender]::after {
 }
 
 .montonio-banner {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  max-width: 765px;
   position: relative;
-  background: #260071;
+  background: #260071 url("../images/banner_pattern.svg") no-repeat right bottom;
+  background-size: auto 100%;
   color: #F9E0C0;
   border: none;
   box-shadow: none;
-  padding: 42px !important;
-  border-radius: 24px;
+  padding: 24px 32px !important;
+  border-radius: 16px;
+  box-sizing: border-box;
   overflow: hidden;
 }
-@media screen and (max-width: 860px) {
+@media screen and (max-width: 810px) {
   .montonio-banner {
     padding: 32px 24px !important;
   }
 }
+.montonio-banner img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+}
+@media screen and (max-width: 819px) {
+  .montonio-banner img {
+    display: none;
+  }
+}
 .montonio-banner__logo {
-  margin-bottom: 32px;
-  text-align: center;
+  margin-bottom: 16px;
+}
+.montonio-banner__logo svg {
+  max-width: 115px;
 }
 .montonio-banner__close {
+  display: block;
   position: absolute;
-  right: 30px;
-  top: 36px;
+  right: 32px;
+  top: 24px;
   z-index: 2;
 }
-@media screen and (max-width: 860px) {
+.montonio-banner__close span {
+  display: none;
+}
+.montonio-banner__close svg {
+  padding: 4px;
+}
+@media screen and (max-width: 810px) {
   .montonio-banner__close {
     right: 19px;
     top: 20px;
+  }
+}
+.montonio-banner__row {
+  display: flex;
+  gap: 28px;
+}
+@media screen and (max-width: 810px) {
+  .montonio-banner__row {
+    flex-direction: column;
   }
 }
 .montonio-banner__content {
@@ -689,6 +736,38 @@ label[for*=montonio_shipping_sender]::after {
   margin: 0 auto;
   position: relative;
   z-index: 2;
+}
+.montonio-banner__content h2 {
+  color: #F9E0C0;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: -0.64px;
+  margin: 0 0 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.montonio-banner__content h2 span {
+  background: #389D9D;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 116.667%;
+  letter-spacing: -0.24px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 24px;
+}
+.montonio-banner__content p {
+  color: #fff;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 138.462%;
 }
 .montonio-banner__content ul {
   display: flex;
@@ -713,7 +792,6 @@ label[for*=montonio_shipping_sender]::after {
   margin-bottom: 8px;
 }
 .montonio-banner__content ul li h3 {
-  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
@@ -723,23 +801,93 @@ label[for*=montonio_shipping_sender]::after {
   margin: 0 0 4px;
 }
 .montonio-banner__content ul li p {
-  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 15px;
   font-style: normal;
   font-weight: 500;
   line-height: 160%;
   color: #260071;
 }
-.montonio-banner__button {
-  text-align: center;
+.montonio-banner__actions {
+  display: flex;
+  gap: 16px;
   margin-top: 32px;
 }
-.montonio-banner__pattern {
-  position: absolute;
-  width: 100%;
-  height: 78px;
-  bottom: 0;
-  left: 0;
-  background: url("../images/pattern.svg") repeat-x center;
-  z-index: 1;
+@media screen and (max-width: 465px) {
+  .montonio-banner__actions {
+    flex-direction: column;
+  }
+}
+.montonio-banner__button a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.montonio-international-shipping-description-title {
+  display: none;
+}
+.montonio-international-shipping-description-title + p:empty {
+  display: none;
+}
+
+.montonio-international-shipping-description {
+  background: #f0ebff;
+  border: 1px solid #E4DBFA;
+  color: #1b1b1b;
+  padding: 24px;
+  border-radius: 6px;
+  line-height: 1.5;
+}
+.montonio-international-shipping-description ul {
+  margin: 7px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.montonio-international-shipping-description ul li {
+  margin: 0;
+}
+
+.montonio-disabled-reason {
+  background: #fff6da;
+  color: #1b1b1b;
+  padding: 13px 16px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* Montonio Unified Shipping - Default Dimensi13px 16pxons Inline Layout */
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: auto auto;
+  grid-auto-flow: column;
+  gap: 0 15px;
+  align-items: start;
+}
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_length],
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_width],
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_height],
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_weight] {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields fieldset {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_length] + fieldset .description,
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_width] + fieldset .description,
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_height] + fieldset .description {
+  display: none;
+}
+[id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields label[for*=default_weight] + fieldset .description {
+  display: block;
+  grid-column: 1/-1;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
 }

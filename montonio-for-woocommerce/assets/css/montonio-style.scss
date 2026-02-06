@@ -143,16 +143,22 @@ img {
     &:not(:first-child) {
         margin-top: 16px;
     }
-    
+
     &.loading {
         padding: 25px 0;
     }
 }
 
-.montonio-shipping-provider-logo {
+.montonio-shipping-carrier-logo {
     max-height: 33px !important;
     max-width: 50px !important;
     display: block !important;
+}
+
+.montonio-shipping-carrier-logos {
+    display: flex !important;
+    gap: 5px;
+    flex-wrap: wrap;
 }
 
 .montonio-pickup-point {
@@ -183,9 +189,9 @@ img {
         .has-error & {
             border-color: #cc1818;
         }
-    }  
+    }
 
-    .choices__list--dropdown .choices__item--selectable, 
+    .choices__list--dropdown .choices__item--selectable,
     .choices__list[aria-expanded] .choices__item--selectable {
         padding-right: 10px !important;
     }
@@ -203,7 +209,7 @@ img {
 
 #montonio-shipping-pickup-point-dropdown-wrapper {
     position: relative;
-    
+
     h2 {
         margin-bottom: 8px;
     }
@@ -290,14 +296,6 @@ img {
     margin: 10px 0;
 }
 
-
-
-@keyframes montonio-spin {
-  to { 
-    transform: rotate(360deg); 
-  }
-}
-
 .montonio-pickup-point {
     overflow: visible !important;
 
@@ -309,69 +307,131 @@ img {
     label {
         text-align: left;
     }
-    
+
     &__container {
         position: relative;
         width: 100%;
     }
 
     &__search {
-        width: 100%;
-        background-color: #fff !important;
-        border: 1px solid #d8d8d8 !important;
-        background-image: url(../images/default-carrier-logo.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        background-repeat: no-repeat;
-        background-size: auto 28px, 16px 16px;
-        background-position: 10px center, right 11px center;
-        border-radius: 2.5px;
-        font-size: 14px;
-        min-height: 48px;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        box-sizing: border-box;
-        box-shadow: none !important;
-        padding: 10px 33px 10px 62px !important;
+        position: relative;
 
-        &:focus {
-            outline: none;
+        &-logos {
+            position: absolute;
+            top: 50%;
+            left: 11px;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 29px;
+            overflow: hidden;
+            justify-content: flex-start;
         }
 
-        &::placeholder {
-            color: #7C7C7B;
+        &-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: block;
+            width: 44px;
+            height: 29px;
+            background-repeat: no-repeat;
+            background-size: 100% auto;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            background-image: url('../images/default-carrier-logo.svg');
+
+            &:only-child {
+                opacity: 1;
+            }
+
+            &--active {
+                opacity: 1;
+            }
+
+            &--omniva {
+                background-image: url(../images/omniva-rect.svg);
+            }
+
+            &--dpd {
+                background-image: url(../images/dpd-rect.svg);
+            }
+
+            &--latvian_post {
+                background-image: url(../images/latvian_post-rect.svg);
+            }
+
+            &--smartpost,
+            &--smartposti {
+                background-image: url(../images/smartposti-rect.svg);
+            }
+
+            &--unisend {
+                background-image: url(../images/unisend-rect.svg);
+            }
+
+            &--venipak {
+                background-image: url(../images/venipak-rect.svg);
+            }
+
+            &--inpost {
+                background-image: url(../images/inpost-rect.svg);
+            }
+
+            &--orlen {
+                background-image: url(../images/orlen-rect.svg);
+            }
+
+            &--novapost {
+                background-image: url(../images/novaPost-rect.svg);
+            }
+
+            &--dhl {
+                background-image: url(../images/dhl-rect.svg);
+            }
+
+            &--expressone {
+                background-image: url(../images/expressone-rect.svg);
+            }
+
+            &--chronopost {
+                background-image: url(../images/chronopost-rect.svg);
+            }
+
+            &--gls {
+                background-image: url(../images/gls-rect.svg);
+            }
+
+            &--alzabox {
+                background-image: url(../images/alzabox-rect.svg);
+            }
         }
 
-        &--omniva {
-            background-image: url(../images/omniva-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');;
-        }        
+        &-input {
+            width: 100%;
+            background-color: #fff !important;
+            border: 1px solid #d8d8d8 !important;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+            background-repeat: no-repeat;
+            background-size: 16px 16px;
+            background-position: right 11px center;
+            border-radius: 2.5px;
+            font-size: 14px;
+            min-height: 48px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+            box-shadow: none !important;
+            padding: 10px 33px 10px 62px !important;
 
-        &--dpd {
-            background-image: url(../images/dpd-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+            &:focus {
+                outline: none;
+            }
+
+            &::placeholder {
+                color: #7C7C7B;
+            }
         }
-
-        &--latvian_post {
-            background-image: url(../images/latvian_post-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }
-
-        &--smartpost, 
-        &--smartposti {
-            background-image: url(../images/smartposti-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }
-
-        &--unisend {
-            background-image: url(../images/unisend-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }
-
-        &--venipak {
-            background-image: url(../images/venipak-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }
-
-        &--inpost {
-            background-image: url(../images/inpost-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }          
-        
-        &--orlen {
-            background-image: url(../images/orlen-rect.svg), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 19L14.65 14.65M17 9C17 13.4183 13.4183 17 9 17C4.58172 17 1 13.4183 1 9C1 4.58172 4.58172 1 9 1C13.4183 1 17 4.58172 17 9Z" stroke="%2327364B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-        }
-
     }
 
     &__dropdown {

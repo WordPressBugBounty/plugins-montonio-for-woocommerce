@@ -10,31 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Montonio_Shipping_API {
     /**
      * @since 7.0.0
-     * @var string 'yes' if the API is in sandbox mode, 'no' otherwise
+     * @var string Root URL for the Montonio shipping application
      */
-    public $sandbox_mode;
+    const SHIPPING_API_URL = 'https://shipping.montonio.com/api';
 
     /**
      * @since 7.0.0
      * @var string Root URL for the Montonio shipping sandbox application
      */
-    const MONTONIO_SHIPPING_SANDBOX_API_URL = 'https://sandbox-shipping.montonio.com/api';
-
-    /**
-     * @since 7.0.0
-     * @var string Root URL for the Montonio shipping application
-     */
-    const MONTONIO_SHIPPING_API_URL = 'https://shipping.montonio.com/api';
-
-    /**
-     * WC_Montonio_Shipping_API constructor.
-     *
-     * @since 7.0.0
-     * @param string $sandbox_mode 'yes' if the API is in sandbox mode, 'no' otherwise
-     */
-    public function __construct( $sandbox_mode = 'no' ) {
-        $this->sandbox_mode = $sandbox_mode;
-    }
+    const SHIPPING_SANDBOX_API_URL = 'https://sandbox-shipping.montonio.com/api';
 
     /**
      * Get all store shipping methods
@@ -45,15 +29,15 @@ class WC_Montonio_Shipping_API {
     public function get_shipping_methods() {
         $path = '/v2/shipping-methods';
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -62,72 +46,121 @@ class WC_Montonio_Shipping_API {
      * @since 7.0.0
      * @param string $carrier Carrier code
      * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @param string $type Pickup point type (parcelMachine, postOffice, parcelShop)
+     * @param string $search Search term
      * @return string The body of the response. Empty string if no body or incorrect parameter given. as a JSON string
      */
-    public function get_pickup_points( $carrier = null, $country = null, $search = null ) {
-        $path = '/v3/shipping-methods/pickup-points';
+    public function get_pickup_points( $carrier = null, $country = null, $type = null, $search = null ) {
+        $path         = '/v3/shipping-methods/pickup-points';
         $query_params = array();
 
-        if ( $carrier !== null ) {
+        if ( ! empty( $carrier ) ) {
             $query_params['carrierCode'] = $carrier;
         }
-        
-        if ( $country !== null ) {
+
+        if ( ! empty( $country ) ) {
             $query_params['countryCode'] = $country;
         }
 
-        if ( $search !== null ) {
+        if ( ! empty( $type ) && in_array( $type, array( 'parcelMachine', 'postOffice', 'parcelShop' ), true ) ) {
+            $query_params['type'] = $type;
+        }
+
+        if ( ! empty( $search ) ) {
             $query_params['search'] = $search;
         }
-        
+
         if ( ! empty( $query_params ) ) {
             $path = add_query_arg( $query_params, $path );
         }
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
      * Get courier services
-     * 
+     *
      * @since 7.0.0
      * @param string $carrier Carrier code
      * @param string $country Country code (ISO 3166-1 alpha-2)
      * @return string The body of the response. Empty string if no body or incorrect parameter given. as a JSON string
      */
     public function get_courier_services( $carrier = null, $country = null ) {
-        $path = '/v3/shipping-methods/courier-services';
+        $path         = '/v3/shipping-methods/courier-services';
         $query_params = array();
-    
-        if ( $carrier !== null ) {
+
+        if ( ! empty( $carrier ) ) {
             $query_params['carrierCode'] = $carrier;
         }
-        
-        if ( $country !== null ) {
+
+        if ( ! empty( $country ) ) {
             $query_params['countryCode'] = $country;
         }
-        
+
         if ( ! empty( $query_params ) ) {
             $path = add_query_arg( $query_params, $path );
         }
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
+    }
+
+    /**
+     * Get shipping rates for given destination and parcels
+     *
+     * @since 9.2.0
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @param string $type shipping method type ('courier' or 'pickupPoint')
+     * @param array $parcels Array of parcels with nested item dimensions (length, width, height)
+     * @param string $carrier_code carrier code (e.g., 'novaPost')
+     * @return string The body of the response as a JSON string
+     */
+    public function get_shipping_rates( $country, $type, $parcels, $carrier = null ) {
+        $path = '/v2/shipping-methods/rates';
+        $query_params = array();
+
+        if ( ! empty( $carrier ) ) {
+            $query_params['carrierCode'] = $carrier;
+        }
+
+        if ( ! empty( $type ) ) {
+            $query_params['shippingMethodType'] = $type;
+        }
+
+        if ( ! empty( $query_params ) ) {
+            $path = add_query_arg( $query_params, $path );
+        }
+
+        $data = array(
+            'destination' => $country,
+            'parcels'    => $parcels
+        );
+
+        $args = array(
+            'headers' => array(
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+            ),
+            'method'  => 'POST',
+            'body'    => json_encode( $data )
+        );
+
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -140,16 +173,16 @@ class WC_Montonio_Shipping_API {
     public function create_shipment( $data ) {
         $path = '/v2/shipments';
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'POST',
             'body'    => json_encode( $data )
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -162,16 +195,16 @@ class WC_Montonio_Shipping_API {
     public function update_shipment( $id, $data ) {
         $path = '/v2/shipments/' . $id;
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'PATCH',
             'body'    => json_encode( $data )
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -184,15 +217,15 @@ class WC_Montonio_Shipping_API {
     public function get_shipment( $id ) {
         $path = '/v2/shipments/' . $id;
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -206,16 +239,16 @@ class WC_Montonio_Shipping_API {
     public function create_label( $data ) {
         $path = '/v2/label-files';
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'POST',
             'body'    => json_encode( $data )
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -229,15 +262,15 @@ class WC_Montonio_Shipping_API {
     public function get_label_file_by_id( $id ) {
         $path = '/v2/label-files/' . $id;
 
-        $options = array(
+        $args = array(
             'headers' => array(
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token( $this->sandbox_mode )
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
             ),
             'method'  => 'GET'
         );
 
-        return $this->api_request( $path, $options );
+        return $this->api_request( $path, $args );
     }
 
     /**
@@ -245,15 +278,15 @@ class WC_Montonio_Shipping_API {
      *
      * @since 7.0.0
      * @param string $path The path to the API endpoint
-     * @param array $options The options for the request
+     * @param array $args The options for the request
      * @return string The body of the response. Empty string if no body or incorrect parameter given.
      */
-    protected function api_request( $path, $options ) {
-        
-        $url     = $this->get_api_url() . $path;
-        $options = wp_parse_args( $options, array( 'timeout' => 30 ) );
+    protected function api_request( $path, $args ) {
+        $url = apply_filters( 'wc_montonio_shipping_request_url', $this->get_api_url() );
+        $url = trailingslashit( $url ) . ltrim( $path, '/' );
 
-        $response      = wp_remote_request( $url, $options );
+        $args          = wp_parse_args( $args, array( 'timeout' => 30 ) );
+        $response      = wp_remote_request( $url, $args );
         $response_code = wp_remote_retrieve_response_code( $response );
 
         if ( is_wp_error( $response ) ) {
@@ -274,12 +307,6 @@ class WC_Montonio_Shipping_API {
      * @return string The API URL
      */
     protected function get_api_url() {
-        $url = self::MONTONIO_SHIPPING_API_URL;
-
-        if ( 'yes' === $this->sandbox_mode ) {
-            $url = self::MONTONIO_SHIPPING_SANDBOX_API_URL;
-        }
-
-        return $url;
+        return WC_Montonio_Helper::is_test_mode() ? self::SHIPPING_SANDBOX_API_URL : self::SHIPPING_API_URL;
     }
 }

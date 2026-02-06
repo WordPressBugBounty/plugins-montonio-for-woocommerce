@@ -27,7 +27,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/webhooks/class-wc-montonio-shipping-webhooks.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-helper.php';
 
-        if ( get_option( 'montonio_shipping_enabled' ) === 'yes' ) {
+        if ( 'yes' === get_option( 'montonio_shipping_enabled' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-address-helper.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-product.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-order.php';
@@ -39,6 +39,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
             // Add shipping method items selection scripts
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 20 );
+
+            // Disable Cash on Delivery for unsupported courier methods
+            add_filter( 'woocommerce_available_payment_gateways', array( $this, 'disable_cod_for_shipping_method' ) );
 
             // Update order data when order is created
             add_action( 'woocommerce_checkout_create_order', array( $this, 'handle_montonio_shipping_checkout' ), 10, 2 );
@@ -54,12 +57,11 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         add_action( 'woocommerce_update_options_montonio_shipping', array( $this, 'process_shipping_options' ) );
 
         add_action( 'woocommerce_shipping_zone_method_added', array( $this, 'sync_shipping_methods_ajax' ) );
-        add_action( 'wc_montonio_shipping_sync_shipping_method_items', array( $this, 'sync_shipping_methods' ) );
 
         // Admin notices
         add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
 
-        add_filter( 'montonio_ota_sync', array( $this, 'sync_shipping_methods_ota' ), 20, 1 );        
+        add_filter( 'montonio_ota_sync', array( $this, 'sync_shipping_methods_ota' ), 20, 1 );
     }
 
     /**
@@ -130,31 +132,30 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
             return;
         }
 
-        $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method->get_method_id(), $shipping_method->get_instance_id() );
-        $carrier                  = $shipping_method_instance->provider_name;
-        $method_type              = $shipping_method_instance->type_v2;
+        $carrier = $shipping_method->get_meta( 'carrier_code' );
+        $type    = $shipping_method->get_meta( 'type_v2' );
 
-        if ( in_array( $method_type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
-            $method_type = 'pickupPoint';
-
-            // Check if pickup point is set
+        if ( in_array( $type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
+            // Handle pickup point methods
             if ( empty( $shipping_method_item_id ) ) {
                 return;
             }
 
-            // Get pickup point info
-            $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
+            $pickup_point = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-            // Update order meta data and shipping address
-            $order->update_meta_data( '_montonio_pickup_point_name', $shipping_method_item->item_name );
+            if ( empty( $pickup_point ) ) {
+                return;
+            }
+
+            $order->update_meta_data( '_montonio_pickup_point_name', $pickup_point->item_name ?? '' );
 
             if ( method_exists( $order, 'set_shipping' ) ) {
                 $shipping_data = array(
-                    'address_1' => $shipping_method_item->item_name,
+                    'address_1' => $pickup_point->item_name ?? '',
                     'address_2' => '',
-                    'city'      => $shipping_method_item->locality,
-                    'postcode'  => $shipping_method_item->postal_code,
-                    'country'   => strtoupper( $shipping_method_item->country_code )
+                    'city'      => $pickup_point->locality ?? '',
+                    'postcode'  => $pickup_point->postal_code ?? '',
+                    'country'   => strtoupper( $pickup_point->country_code ?? '' )
                 );
 
                 if ( ! WC_Montonio_Helper::is_checkout_block() ) {
@@ -163,17 +164,34 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
                 $order->set_shipping( $shipping_data );
             } else {
-                $order->update_meta_data( '_shipping_address_1', $shipping_method_item->item_name );
+                $order->update_meta_data( '_shipping_address_1', $pickup_point->item_name ?? '' );
                 $order->update_meta_data( '_shipping_address_2', '' );
-                $order->update_meta_data( '_shipping_city', $shipping_method_item->locality );
-                $order->update_meta_data( '_shipping_postcode', $shipping_method_item->postal_code );
+                $order->update_meta_data( '_shipping_city', $pickup_point->locality ?? '' );
+                $order->update_meta_data( '_shipping_postcode', $pickup_point->postal_code ?? '' );
             }
+
+            $carrier_assigned_id = $pickup_point->carrier_assigned_id ?? '';
+            $type                = 'pickupPoint';
         } else {
+            // Handle courier methods
             $shipping_method_item_id = WC_Montonio_Shipping_Item_Manager::get_courier_id( WC_Montonio_Shipping_Helper::get_customer_shipping_country(), $carrier );
+
+            if ( empty( $shipping_method_item_id ) ) {
+                return;
+            }
+
+            $courier_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
+
+            if ( empty( $courier_item ) ) {
+                return;
+            }
+
+            $carrier_assigned_id = $courier_item->carrier_assigned_id ?? '';
         }
 
         $order->update_meta_data( '_montonio_pickup_point_uuid', $shipping_method_item_id );
-        $order->update_meta_data( '_wc_montonio_shipping_method_type', $method_type );
+        $order->update_meta_data( '_wc_montonio_shipping_method_type', $type );
+        $order->update_meta_data( '_wc_montonio_carrier_pickup_point_id', $carrier_assigned_id );
         $order->save();
     }
 
@@ -183,20 +201,13 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * @since 7.0.1
      */
     public function maybe_sync_shipping_method_items() {
-        try {
-            if ( WC_Montonio_Shipping_Helper::is_time_to_sync_shipping_method_items() ) {
-                update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
-
-                $lock_manager = new Montonio_Lock_Manager();
-                $lock_exists  = $lock_manager->lock_exists( 'montonio_shipping_method_items_sync' );
-
-                if ( ! $lock_exists ) {
-                    $this->sync_shipping_methods_ajax();
-                }
-            }
-        } catch ( Exception $e ) {
-            WC_Montonio_Logger::log( 'Shipping method sync failed. Response: ' . $e->getMessage() );
+        if ( ! WC_Montonio_Shipping_Helper::is_time_to_sync_shipping_method_items() ) {
+            return;
         }
+
+        update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
+
+        $this->sync_shipping_methods_ajax();
     }
 
     /**
@@ -206,16 +217,23 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * @return void
      */
     public function process_shipping_options() {
-        if ( get_option( 'montonio_shipping_enabled' ) === 'yes' ) {
-            $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
-
-            if ( ! $api_settings ) {
-                $this->add_admin_notice( __( 'Please add Montonio API keys!', 'montonio-for-woocommerce' ), 'error' );
-                return;
-            }
-
-            $this->sync_shipping_methods();
+        if ( 'yes' !== get_option( 'montonio_shipping_enabled' ) ) {
+            return;
         }
+
+        if ( ! WC_Montonio_Helper::has_api_keys() ) {
+            $this->add_admin_notice(
+                sprintf(
+                    __( 'Montonio Shipping requires API credentials. Please <a href="%s">add them here</a>.', 'montonio-for-woocommerce' ),
+                    admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' )
+                ),
+                'error'
+            );
+
+            return;
+        }
+
+        $this->sync_shipping_methods();
     }
 
     /**
@@ -224,9 +242,12 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * @return void
      */
     public function sync_shipping_methods_ajax() {
-        $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-        $url          = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
-        $token        = WC_Montonio_Helper::create_jwt_token( $sandbox_mode, array(
+        if ( ! WC_Montonio_Helper::has_api_keys() ) {
+            return;
+        }
+
+        $url   = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
+        $token = WC_Montonio_Helper::create_jwt_token( array(
             'hash' => md5( $url )
         ) );
 
@@ -244,17 +265,26 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
      * Sync shipping methods
      *
      * @since 7.0.0
-     * @return void
+     * @since 9.1.3 - Use new methods in WC_Montonio_Shipping_Item_Manager
+     * @since 9.3.1 - Added concurrency lock
+     * @return true|WP_Error True on success, WP_Error on failure or if sync already in progress
      */
     public function sync_shipping_methods() {
+        $lock_manager = new Montonio_Lock_Manager();
+
+        if ( ! $lock_manager->acquire_lock( 'montonio_shipping_method_items_sync' ) ) {
+            return new WP_Error( 'wc_montonio_shipping_sync_locked', 'Sync already in progress.' );
+        }
+
         update_option( 'montonio_shipping_sync_timestamp', time(), 'no' );
 
         try {
-            $courier_services_synced = false;
-            $pickup_point_carriers  = array();
+            WC_Montonio_Shipping_Item_Manager::initialize_temp_table();
 
-            $sandbox_mode     = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $shipping_api     = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $courier_services_synced = false;
+            $pickup_point_carriers   = array();
+
+            $shipping_api     = new WC_Montonio_Shipping_API();
             $shipping_methods = json_decode( $shipping_api->get_shipping_methods(), true );
 
             foreach ( $shipping_methods['countries'] as $country ) {
@@ -268,7 +298,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                         if ( 'courier' === $method['type'] ) {
                             if ( false === $courier_services_synced ) {
                                 $courier_services_synced = true;
-                                WC_Montonio_Shipping_Item_Manager::sync_method_items( 'courierServices' );
+                                WC_Montonio_Shipping_Item_Manager::import_shipping_items_to_temp( 'courier' );
                             }
 
                             continue;
@@ -279,7 +309,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                         }
 
                         $pickup_point_carriers[] = $carrier_code;
-                        WC_Montonio_Shipping_Item_Manager::sync_method_items(
+                        WC_Montonio_Shipping_Item_Manager::import_shipping_items_to_temp(
                             'pickupPoints',
                             $carrier_code,
                             null
@@ -288,10 +318,19 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                 }
             }
 
+            WC_Montonio_Shipping_Item_Manager::replace_main_table_with_temp();
+
             $this->add_admin_notice( __( 'Montonio Shipping: Pickup point sync successful!', 'montonio-for-woocommerce' ), 'success' );
+
+            return true;
         } catch ( Exception $e ) {
+            WC_Montonio_Shipping_Item_Manager::remove_temp_table();
             WC_Montonio_Logger::log( 'Shipping method sync failed. Response: ' . $e->getMessage() );
             $this->add_admin_notice( __( 'Montonio API response: ', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
+
+            return new WP_Error( 'wc_montonio_shipping_sync_error', $e->getMessage(), array( 'status' => 500 ) );
+        } finally {
+            $lock_manager->release_lock( 'montonio_shipping_method_items_sync' );
         }
     }
 
@@ -355,14 +394,61 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
     public function sync_shipping_methods_ota( $status_report ) {
         try {
             $this->sync_shipping_methods();
-            WC_Montonio_Helper::append_to_status_report( $status_report, 'success', 'Shipping method sync successful!' );
+
+            $status_report['sync_results'][] = array(
+                'status'  => 'success',
+                'message' => 'Shipping method sync successful'
+            );
         } catch ( Exception $e ) {
-            WC_Montonio_Helper::append_to_status_report( $status_report, 'error', 'Shipping method sync failed. Response: ' . $e->getMessage() );
+            $status_report['sync_results'][] = array(
+                'status'  => 'error',
+                'message' => 'Shipping method sync failed: ' . $e->getMessage()
+            );
         }
 
         return $status_report;
     }
 
+    /**
+     * Disable Cash on Delivery payment method for Montonio courier shipping methods that do not support it
+     *
+     * @since 9.1.4
+     * @param array $available_gateways The available payment gateways
+     * @return array
+     */
+    public function disable_cod_for_shipping_method( $available_gateways ) {
+        if ( is_admin() ) {
+            return $available_gateways;
+        }
+
+        // Check if COD gateway exists
+        if ( ! isset( $available_gateways['cod'] ) ) {
+            return $available_gateways;
+        }
+
+        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
+
+        if ( empty( $shipping_method ) ) {
+            return $available_gateways;
+        }
+
+        $carrier = $shipping_method->carrier_code;
+        $type    = $shipping_method->type;
+
+        if ( 'courier' !== $type ) {
+            return $available_gateways;
+        }
+
+        $additional_services = WC_Montonio_Shipping_Item_Manager::get_additional_services( WC_Montonio_Shipping_Helper::get_customer_shipping_country(), $carrier, 'courier' );
+
+        $supports_cod = in_array( 'cod', array_column( $additional_services, 'code' ), true );
+
+        if ( ! $supports_cod ) {
+            unset( $available_gateways['cod'] );
+        }
+
+        return $available_gateways;
+    }
 }
 
 WC_Montonio_Shipping::get_instance();

@@ -7,30 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class for handling callbacks
  */
 class WC_Montonio_Callbacks extends WC_Payment_Gateway {
-
     /**
-     * Is test mode active?
+     * Whether this is a customer returning from payment gateway.
      *
      * @var bool
      */
-    public $sandbox_mode;
-
-    /**
-     * Check if the response is a webhook notification.
-     *
-     * @var bool
-     */
-    public $is_webhook;
+    public $is_customer_return;
 
     /**
      * Constructor.
      *
-     * @param $sandbox_mode
-     * @param $is_webhook
+     * @param bool $is_customer_return Whether customer is returning from payment (true) or this is a webhook (false)
      */
-    public function __construct( $sandbox_mode, $is_webhook ) {
-        $this->sandbox_mode = $sandbox_mode;
-        $this->is_webhook   = $is_webhook;
+    public function __construct( $is_customer_return = false ) {
+        $this->is_customer_return = $is_customer_return;
 
         $this->process_webhook();
     }
@@ -65,7 +55,10 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
             wc_add_notice( $error_message, 'error' );
         }
 
-        if ( $this->is_webhook ) {
+        if ( $this->is_customer_return ) {
+            wp_redirect( wc_get_checkout_url() );
+            exit;
+        } else {
             wp_send_json( array(
                 'success' => false,
                 'data'    => array(
@@ -73,9 +66,6 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                     'error_details' => 'Token is missing'
                 )
             ), 200 );
-        } else {
-            wp_redirect( wc_get_checkout_url() );
-            exit;
         }
     }
 
@@ -91,7 +81,7 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         sleep( 10 );
 
         try {
-            $decoded_token = WC_Montonio_Helper::decode_jwt_token( $token, $this->sandbox_mode );
+            $decoded_token = WC_Montonio_Helper::decode_jwt_token( $token );
         } catch ( Throwable $exception ) {
             wp_send_json( array(
                 'success' => false,
@@ -241,11 +231,11 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         $order->save();
 
         if ( 'SUCCESSFUL' === $status ) {
-            // translators: 1) refund amount 2) refund UUID
+            /* translators: 1) refund amount 2) refund UUID */
             $message = sprintf( __( '<strong>Refund of %1$s processed succesfully.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $refund_uuid );
             $order->add_order_note( $message );
         } else {
-            // translators: 1) refund amount 2) refund UUID
+            /* translators: 1) refund amount 2) refund UUID */
             $message = sprintf( __( '<strong>Refund of %1$s pending.</strong><br>Refund ID: %2$s', 'montonio-for-woocommerce' ), wc_price( $amount ), $refund_uuid );
             $order->add_order_note( $message );
         }
@@ -253,7 +243,6 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         wp_send_json_success( array(
             'message' => 'Refund created successfully'
         ) );
-
     }
 
     /**
@@ -266,21 +255,24 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         // Define default return url
         $return_url = wc_get_checkout_url();
 
-        if ( $this->is_webhook ) {
+        if ( $this->is_customer_return ) {
+            WC_Montonio_Logger::log( 'Order token: ' . $token );
+        } else {
             sleep( 10 );
             WC_Montonio_Logger::log( '(Webhook) Order token: ' . $token );
-        } else {
-            WC_Montonio_Logger::log( 'Order token: ' . $token );
         }
 
         try {
-            $response = WC_Montonio_Helper::decode_jwt_token( $token, $this->sandbox_mode );
+            $response = WC_Montonio_Helper::decode_jwt_token( $token );
             $response = apply_filters( 'wc_montonio_decoded_payment_token', $response );
         } catch ( Throwable $exception ) {
             wc_add_notice( __( 'There was a problem with processing the order.', 'montonio-for-woocommerce' ), 'error' );
             WC_Montonio_Logger::log( 'Unable to decode payment token: ' . $exception->getMessage() );
 
-            if ( $this->is_webhook ) {
+            if ( $this->is_customer_return ) {
+                wp_redirect( $return_url );
+                exit;
+            } else {
                 wp_send_json( array(
                     'success' => false,
                     'data'    => array(
@@ -288,9 +280,6 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         'error_details' => $exception->getMessage()
                     )
                 ), 200 );
-            } else {
-                wp_redirect( $return_url );
-                exit;
             }
         }
 
@@ -333,7 +322,9 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
         if ( empty( $order ) ) {
             WC_Montonio_Logger::log( 'Unable to locate an order with the specified UUID: ' . $uuid );
 
-            if ( $this->is_webhook ) {
+            if ( $this->is_customer_return ) {
+                die( 'Unable to locate an order with the specified UUID.' );
+            } else {
                 wp_send_json( array(
                     'success' => false,
                     'data'    => array(
@@ -341,15 +332,15 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         'error_details' => 'Unable to locate an order with the specified UUID'
                     )
                 ), 200 );
-            } else {
-                die( 'Unable to locate an order with the specified UUID.' );
             }
         }
 
         if ( strpos( $order->get_payment_method(), 'wc_montonio_' ) === false ) {
             WC_Montonio_Logger::log( 'Invalid payment method detected. Order ID: ' . $order_id );
 
-            if ( $this->is_webhook ) {
+            if ( $this->is_customer_return ) {
+                die( 'Order contains payment method that is not supported by Montonio' );
+            } else {
                 wp_send_json( array(
                     'success' => false,
                     'data'    => array(
@@ -357,8 +348,6 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                         'error_details' => 'Order contains payment method that is not supported by Montonio'
                     )
                 ), 200 );
-            } else {
-                die( 'Order contains payment method that is not supported by Montonio' );
             }
         }
 
@@ -407,7 +396,7 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                     break;
                 case 'PARTIALLY_REFUNDED':
                     $order->update_status( apply_filters( 'wc_montonio_partially_refunded_order_status', 'wc-mon-part-refund' ) );
-                    break;                
+                    break;
                 case 'PENDING':
                     wc_add_notice( __( 'Payment status "PENDING". Please wait for the payment to be processed.', 'montonio-for-woocommerce' ), 'notice' );
                     break;
@@ -419,13 +408,13 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
             }
         }
 
-        if ( $this->is_webhook ) {
+        if ( $this->is_customer_return ) {
+            wp_redirect( $return_url );
+            exit;
+        } else {
             wp_send_json_success( array(
                 'message' => $response_message
             ) );
-        } else {
-            wp_redirect( $return_url );
-            exit;
         }
     }
 }

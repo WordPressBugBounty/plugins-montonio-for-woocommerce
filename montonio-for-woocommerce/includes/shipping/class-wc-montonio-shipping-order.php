@@ -237,7 +237,7 @@ class WC_Montonio_Shipping_Order {
                 'creationFailed'     => __( 'Creation failed', 'montonio-for-woocommerce' ),
                 'registered'         => __( 'Registered', 'montonio-for-woocommerce' ),
                 'registrationFailed' => __( 'Registration failed', 'montonio-for-woocommerce' ),
-                'labelsCreated'      => __( 'Labels created', 'montonio-for-woocommerce' ),
+                'labelsCreated'      => __( 'Label printed', 'montonio-for-woocommerce' ),
                 'inTransit'          => __( 'In transit', 'montonio-for-woocommerce' ),
                 'awaitingCollection' => __( 'Awaiting collection', 'montonio-for-woocommerce' ),
                 'delivered'          => __( 'Delivered', 'montonio-for-woocommerce' )
@@ -342,6 +342,7 @@ class WC_Montonio_Shipping_Order {
     public function hide_custom_order_itemmeta( $hidden_order_itemmeta ) {
         $add_to_hidden = array(
             'shipping_method_identifier',
+            'carrier_code',
             'provider_name',
             'type',
             'type_v2',
@@ -397,7 +398,7 @@ class WC_Montonio_Shipping_Order {
             WC_MONTONIO_PLUGIN_PATH . '/languages'
         );
 
-        echo '<div class="montonio-shipping-panel-wrappper">';
+        echo '<div class="montonio-shipping-panel-wrapper">';
 
         wc_get_template(
             'admin-order-shipping-panel.php',
@@ -450,7 +451,7 @@ class WC_Montonio_Shipping_Order {
 
         $shipping_method_id       = sanitize_text_field( wp_unslash( $_POST['shipping_method_id'] ) );
         $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method_id );
-        $carrier                  = $shipping_method_instance->provider_name;
+        $carrier                  = $shipping_method_instance->carrier_code;
         $type                     = $shipping_method_instance->type_v2;
 
         $country_availability = WC_Montonio_Shipping_Item_Manager::get_shipping_method_countries( $carrier, $type );
@@ -593,165 +594,6 @@ class WC_Montonio_Shipping_Order {
         $order->save();
 
         wp_send_json_success( $shipping_method_item );
-    }
-
-    /**
-     * Add shipment tracking codes to order
-     *
-     * @since 7.0.0
-     * @param object $payload The payload data
-     * @return WP_REST_Response The response object
-     */
-    public static function add_tracking_codes( $payload ) {
-        if ( empty( $payload ) ) {
-            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
-        }
-
-        $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
-        $order    = wc_get_order( $order_id );
-
-        // Verify that the meta data is correct with what we just searched for
-        if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
-            WC_Montonio_Logger::log( __( 'add_tracking_codes: Order not found.', 'montonio-for-woocommerce' ) );
-            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
-        }
-
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
-
-        if ( empty( $shipping_method ) ) {
-            return new WP_REST_Response( array( 'message' => 'Order not using Montonio shipping method' ), 400 );
-        }
-
-        $tracking_links = '';
-
-        foreach ( $payload->data->parcels as $parcel ) {
-            $parcel_id    = sanitize_text_field( $parcel->carrierParcelId );
-            $tracking_url = sanitize_text_field( $parcel->trackingLink );
-
-            if ( ! empty( $tracking_url ) ) {
-                $tracking_links .= '<a href="' . esc_url( $tracking_url ) . '" target="_blank">' . esc_html( $parcel_id ) . '</a><br>';
-            }
-        }
-
-        if ( ! empty( $tracking_links ) ) {
-            $order->add_order_note( __( '<strong>Shipment created.</strong><br>Tracking codes: ', 'montonio-for-woocommerce' ) . $tracking_links );
-            $shipping_method->update_meta_data( 'tracking_codes', $tracking_links );
-            $shipping_method->save_meta_data();
-
-            $order->update_meta_data( '_montonio_tracking_info', $tracking_links );
-        }
-
-        $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'registered' );
-        $order->save_meta_data();
-
-        return new WP_REST_Response( array( 'message' => 'Tracking codes processed' ), 200 );
-    }
-
-    /**
-     * Handle 'shipment.registrationFailed' webhook
-     *
-     * @since 7.0.0
-     * @param object $payload The payload data
-     * @return WP_REST_Response The response object
-     */
-    public static function handle_registration_failed_webhook( $payload ) {
-        if ( empty( $payload ) ) {
-            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
-        }
-
-        $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
-        $order    = wc_get_order( $order_id );
-
-        // Verify that the meta data is correct with what we just searched for
-        if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
-            WC_Montonio_Logger::log( 'handle_registration_failed_webhook: Order not found.' );
-            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
-        }
-
-        // Recursive function to traverse the nested errors and collect messages and descriptions
-        function collect_error_messages( $errors, &$messages, &$seen_messages, $depth = 0, $max_depth = 5 ) {
-            if ( $depth > $max_depth ) {
-                return;
-            }
-
-            foreach ( $errors as $error ) {
-                if ( isset( $error->message ) && ! in_array( $error->message, $seen_messages ) ) {
-                    $sanitized_message = sanitize_text_field( $error->message );
-                    $messages[]        = $sanitized_message;
-                    $seen_messages[]   = $sanitized_message;
-                }
-                if ( isset( $error->description ) && ! in_array( $error->description, $seen_messages ) ) {
-                    $sanitized_description = sanitize_text_field( $error->description );
-                    $messages[]            = $sanitized_description;
-                    $seen_messages[]       = $sanitized_description;
-                }
-                if ( isset( $error->cause ) ) {
-                    if ( is_array( $error->cause ) ) {
-                        collect_error_messages( $error->cause, $messages, $seen_messages, $depth + 1, $max_depth );
-                    } else {
-                        collect_error_messages( array( $error->cause ), $messages, $seen_messages, $depth + 1, $max_depth );
-                    }
-                }
-            }
-        }
-
-        $messages      = array();
-        $seen_messages = array();
-
-        if ( ! empty( $payload->data->errors ) ) {
-            collect_error_messages( $payload->data->errors, $messages, $seen_messages );
-        }
-
-        $message = '<strong>' . __( 'Shipment registration failed.', 'montonio-for-woocommerce' ) . '</strong>';
-        if ( ! empty( $messages ) ) {
-            $message .= '<br>' . implode( '<br>', $messages );
-        }
-
-        $order->add_order_note( $message );
-        $order->update_meta_data( '_wc_montonio_shipping_shipment_status', 'registrationFailed' );
-        $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $message );
-        $order->save_meta_data();
-
-        return new WP_REST_Response( array( 'message' => 'Shipment registration failed message added to order' ), 200 );
-    }
-
-    /**
-     * Handle 'shipment.statusUpdate' webhook
-     *
-     * @since 8.1.0
-     * @param object $payload The payload data
-     * @return WP_REST_Response The response object
-     */
-    public static function handle_status_update_webhook( $payload ) {
-        if ( empty( $payload ) ) {
-            return new WP_REST_Response( array( 'message' => 'Response data missing' ), 400 );
-        }
-
-        $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $payload->shipmentId, '_wc_montonio_shipping_shipment_id' );
-        $order    = wc_get_order( $order_id );
-
-        // Verify that the meta data is correct with what we just searched for
-        if ( empty( $order ) || $order->get_meta( '_wc_montonio_shipping_shipment_id', true ) !== $payload->shipmentId ) {
-            WC_Montonio_Logger::log( __( 'handle_status_update_webhook: Order not found.', 'montonio-for-woocommerce' ) );
-            return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
-        }
-
-        $status = sanitize_text_field( $payload->data->status );
-
-        if ( ! empty( $status ) ) {
-            do_action( 'wc_montonio_shipping_shipment_status_update', $status, $order );
-
-            $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $status );
-            $order->save_meta_data();
-
-            $new_status = get_option( 'montonio_shipping_order_status_when_delivered', 'wc-completed' );
-
-            if ( 'delivered' === $status && 'no-change' !== $new_status ) {
-                $order->update_status( $new_status );
-            }
-        }
-
-        return new WP_REST_Response( array( 'message' => 'Shipment status update processed' ), 200 );
     }
 }
 

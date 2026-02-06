@@ -3,11 +3,11 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Montonio_OTA_Updates
- * 
+ *
  * Handles Over-The-Air (OTA) updates from Montonio for configuration and other data.
  * Montonio Admins can send authenticated requests using the merchant's API keys to perform various actions,
  * including updating configuration settings, triggering syncs, and retrieving status information.
- * 
+ *
  * @package Montonio
  * @since 7.1.2
  */
@@ -65,9 +65,9 @@ class Montonio_OTA_Updates {
      */
     public function get_config( $request ) {
         $payment_method_ids = $this->get_payment_method_ids();
-        $options_names = array_map( array( $this, 'get_payment_method_settings_option_name' ), $payment_method_ids );
-        $data = array();
-        
+        $options_names      = array_map( array( $this, 'get_payment_method_settings_option_name' ), $payment_method_ids );
+        $data               = array();
+
         foreach ( $options_names as $option_name ) {
             $settings = get_option( $option_name, false );
 
@@ -78,8 +78,7 @@ class Montonio_OTA_Updates {
             $data[$option_name] = $settings;
         }
 
-        $data['montonio_shipping_enabled'] = get_option( 'montonio_shipping_enabled', false );
-        $data['montonio_shipping_enable_v2'] = get_option( 'montonio_shipping_enable_v2', false );
+        $data['montonio_shipping_enabled']       = get_option( 'montonio_shipping_enabled', false );
         $data['montonio_shipping_dropdown_type'] = get_option( 'montonio_shipping_dropdown_type', false );
 
         return new WP_REST_Response( $data, 200 );
@@ -88,78 +87,36 @@ class Montonio_OTA_Updates {
     /**
      * Get the arguments for the config update endpoint.
      * Only these properties will be included in the callback, to prevent any unexpected data from being passed.
-     * So if you want to add a new property to the config, you need to add it here. 
-     * 
-     * @example when you pass in 'title' to 'woocommerce_montonio_payments_settings', 
+     * So if you want to add a new property to the config, you need to add it here.
+     *
+     * @example when you pass in 'title' to 'woocommerce_montonio_payments_settings',
      * it will normally be ignored, however if you add it here, you can update the title of the payment method.
      *
      * @since 7.1.2
-     * @return array The schema for the config update endpoint. 
+     * @return array The schema for the config update endpoint.
      */
     public function get_config_update_args() {
         return array(
-            'woocommerce_montonio_payments_settings'      => array(
-                'description' => __( 'Payment settings for Montonio Bank Payments V1', 'montonio-for-woocommerce' ),
-                'type'        => 'object',
-                'required'    => false,
-                'properties'  => array(
-                    'enabled' => array(
-                        'description'       => __( 'Enable or disable Montonio Bank Payments V1', 'montonio-for-woocommerce' ),
-                        'type'              => 'string',
-                        'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
-                    )
-                )
-            ),
-            'woocommerce_montonio_card_payments_settings' => array(
-                'description' => __( 'Payment settings for Montonio Card Payments V1', 'montonio-for-woocommerce' ),
-                'type'        => 'object',
-                'required'    => false,
-                'properties'  => array(
-                    'enabled' => array(
-                        'description'       => __( 'Enable or disable Montonio Card Payments V1', 'montonio-for-woocommerce' ),
-                        'type'              => 'string',
-                        'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
-                    )
-                )
-            ),
-            'montonio_shipping_enable_v2'                 => array(
-                'description'       => __( 'Enable or disable Montonio Shipping', 'montonio-for-woocommerce' ),
-                'type'              => 'string',
-                'enum'              => array( 'yes', 'no' ),
-                'sanitize_callback' => 'sanitize_text_field',
-                'required'          => false
-            ),
-            'montonio_shipping_dropdown_type'             => array(
+            'montonio_shipping_dropdown_type'           => array(
                 'description'       => __( 'Dropdown type for Montonio Shipping', 'montonio-for-woocommerce' ),
                 'type'              => 'string',
                 'enum'              => array( 'select2', 'choices' ),
                 'sanitize_callback' => 'sanitize_text_field',
                 'required'          => false
             ),
-            'woocommerce_wc_montonio_payments_settings'   => array(
+            'woocommerce_wc_montonio_payments_settings' => array(
                 'description' => __( 'Payment settings for Montonio Bank Payments', 'montonio-for-woocommerce' ),
                 'type'        => 'object',
                 'required'    => false,
                 'properties'  => array(
-                    'enabled'      => array(
+                    'enabled' => array(
                         'description'       => __( 'Enable or disable Montonio Bank Payments', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
                         'enum'              => array( 'yes', 'no' ),
                         'sanitize_callback' => 'sanitize_text_field',
                         'required'          => true
                     ),
-                    'sandbox_mode' => array(
-                        'description'       => __( 'Enable or disable sandbox mode', 'montonio-for-woocommerce' ),
-                        'type'              => 'string',
-                        'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
-                    ),
-                    'title'  => array(
+                    'title'   => array(
                         'description'       => __( 'Title of the payment method', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
                         'sanitize_callback' => 'sanitize_text_field',
@@ -167,20 +124,13 @@ class Montonio_OTA_Updates {
                     )
                 )
             ),
-            'woocommerce_wc_montonio_card_settings'       => array(
+            'woocommerce_wc_montonio_card_settings'     => array(
                 'description' => __( 'Payment settings for Montonio Card Payments', 'montonio-for-woocommerce' ),
                 'type'        => 'object',
                 'required'    => false,
                 'properties'  => array(
-                    'enabled'      => array(
+                    'enabled' => array(
                         'description'       => __( 'Enable or disable Montonio Card Payments', 'montonio-for-woocommerce' ),
-                        'type'              => 'string',
-                        'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
-                    ),
-                    'sandbox_mode' => array(
-                        'description'       => __( 'Enable or disable sandbox mode', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
                         'enum'              => array( 'yes', 'no' ),
                         'sanitize_callback' => 'sanitize_text_field',
@@ -199,7 +149,7 @@ class Montonio_OTA_Updates {
      * @return WP_REST_Response The response object.
      */
     public function update_config( $request ) {
-        $allowed_params = $this->sanitize_request_params( $this->get_config_update_args(), $request );
+        $allowed_params     = $this->sanitize_request_params( $this->get_config_update_args(), $request );
         $payment_method_ids = $this->get_payment_method_ids();
 
         // option_name is the key of the allowed_params array, which corresponds to the option name in the database.
@@ -207,7 +157,7 @@ class Montonio_OTA_Updates {
         foreach ( $allowed_params as $option_name => $new_values ) {
             $existing_settings = get_option( $option_name, false );
 
-            // Check if the option name corresponds to a Montonio payment gateway. 
+            // Check if the option name corresponds to a Montonio payment gateway.
             // like 'woocommerce_montonio_payments_settings' will be 'montonio_payments'.
             $method_id = str_replace( 'woocommerce_', '', str_replace( '_settings', '', $option_name ) );
 
@@ -225,7 +175,7 @@ class Montonio_OTA_Updates {
                     }, $form_fields );
 
                     // Merge the default settings with the new values.
-                    $updated_settings = array_merge( $default_settings, is_array( $existing_settings ) ? $existing_settings : [], $new_values );
+                    $updated_settings = array_merge( $default_settings, is_array( $existing_settings ) ? $existing_settings : array(), $new_values );
 
                     // Update the option with the new merged settings.
                     update_option( $option_name, $updated_settings );
@@ -244,7 +194,6 @@ class Montonio_OTA_Updates {
         return new WP_REST_Response( $allowed_params, 200 );
     }
 
-
     /**
      * Trigger an over-the-air sync
      *
@@ -257,12 +206,12 @@ class Montonio_OTA_Updates {
             WC_Montonio_Logger::log( 'OTA Sync started by Montonio at ' . gmdate( 'Y-m-d H:i:s' ) );
 
             /**
-             * @hooked WC_Montonio_Payments::sync_banks_ota - 10
+             * @hooked WC_Montonio_Data_Sync::sync_payment_methods_ota - 10
              * @hooked WC_Montonio_Shipping::sync_shipping_methods_ota - 20
              */
             $result = apply_filters( 'montonio_ota_sync', array(
                 'started_at'   => gmdate( 'Y-m-d H:i:s' ),
-                'sync_results' => array(),
+                'sync_results' => array()
             ) );
 
             do_action( 'montonio_send_telemetry_data' );
@@ -273,7 +222,7 @@ class Montonio_OTA_Updates {
 
             return new WP_REST_Response( $result, 200 );
         } catch ( Exception $e ) {
-            return new WP_Error( 'montonio_ota_sync_failed', $e->getMessage(), array( 'status' => 500 ) );
+            return new WP_Error( 'wc_montonio_ota_sync_error', $e->getMessage(), array( 'status' => 500 ) );
         }
     }
 
@@ -292,7 +241,7 @@ class Montonio_OTA_Updates {
                 return new WP_Error( 'unauthorized', 'Missing authorization header', array( 'status' => 401 ) );
             }
 
-            $auth = sanitize_text_field( $headers['Authorization'] );
+            $auth  = sanitize_text_field( $headers['Authorization'] );
             $token = str_replace( 'Bearer ', '', $auth );
 
             if ( empty( $token ) ) {
@@ -300,7 +249,7 @@ class Montonio_OTA_Updates {
             }
 
             $target_audience = sanitize_text_field( $request->get_route() );
-            $decoded = WC_Montonio_Helper::decode_jwt_token( $token );
+            $decoded         = WC_Montonio_Helper::decode_jwt_token( $token );
 
             if ( empty( $decoded->aud ) || $decoded->aud !== $target_audience ) {
                 return new WP_Error( 'unauthorized', 'Invalid token', array( 'status' => 401 ) );
@@ -366,8 +315,7 @@ class Montonio_OTA_Updates {
      */
     private function filter_sensitive_data( $method_id, $settings ) {
         $sensitive_keys = array(
-            'woocommerce_montonio_card_payments_settings' => array( 'montonioCardPaymentsAccessKey', 'montonioCardPaymentsSecretKey' ),
-            'woocommerce_montonio_payments_settings'      => array( 'montonioPaymentsAccessKey', 'montonioPaymentsSecretKey' )
+            'woocommerce_wc_montonio_api_settings' => array( 'access_key', 'secret_key' )
         );
 
         if ( isset( $sensitive_keys[$method_id] ) ) {
@@ -389,8 +337,9 @@ class Montonio_OTA_Updates {
         return array(
             'wc_montonio_payments',
             'wc_montonio_card',
-            'montonio_payments',
-            'montonio_card_payments',
+            'wc_montonio_blik',
+            'wc_montonio_bnpl',
+            'wc_montonio_hire_purchase'
         );
     }
 
@@ -399,9 +348,9 @@ class Montonio_OTA_Updates {
      *
      * @since 7.1.2
      * @param string $method_id The id property of the payment gateway
-     * 
+     *
      * @example 'montonio_payments' will be converted to 'woocommerce_montonio_payments_settings'
-     * 
+     *
      * @return string The option name
      */
     private function get_payment_method_settings_option_name( $method_id ) {

@@ -75,15 +75,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             array(
                 'methods'             => 'POST',
                 'callback'            => array( $this, 'handle_webhook' ),
-                'permission_callback' => '__return_true' // @TODO: Maybe handle webhook authentication here?
-            )
-        );
-
-        register_rest_route( $this->namespace, '/get-shipping-method-items',
-            array(
-                'methods'             => 'GET',
-                'callback'            => array( $this, 'get_shipping_method_items' ),
-                'permission_callback' => array( $this, 'check_nonce_validity' )
+                'permission_callback' => '__return_true'
             )
         );
 
@@ -106,10 +98,9 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
         $token = $request->get_param( 'token' );
 
         try {
-            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $decoded      = WC_Montonio_Helper::decode_jwt_token( $token, $sandbox_mode );
-            $url          = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
-            $hash         = md5( $url );
+            $decoded = WC_Montonio_Helper::decode_jwt_token( $token );
+            $url     = esc_url_raw( rest_url( 'montonio/shipping/v2/sync-shipping-method-items' ) );
+            $hash    = md5( $url );
 
             return hash_equals( $hash, $decoded->hash );
         } catch ( Throwable $e ) {
@@ -137,32 +128,6 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      */
     public function permissions_check() {
         return current_user_can( 'view_woocommerce_reports' );
-    }
-
-    /**
-     * Get shipping method items
-     *
-     * @since 7.0.0
-     * @param WP_REST_Request $request The request object
-     * @return WP_REST_Response The response object or WP_Error if something went wrong
-     */
-    public function get_shipping_method_items( $request ) {
-        $chosen_shipping_method = sanitize_text_field( $request->get_param( 'shipping_method' ) );
-        $country_code           = sanitize_text_field( $request->get_param( 'country' ) );
-
-        // Create an instance of the shipping method
-        $montonio_shipping_method = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $chosen_shipping_method );
-
-        if ( ! is_a( $montonio_shipping_method, 'Montonio_Shipping_Method' ) ) {
-            return new WP_Error( 'wc_montonio_shipping_invalid_shipping_method', 'Invalid or no shipping method provided.', array( 'status' => 400 ) );
-        }
-
-        $shipping_method_items = WC_Montonio_Shipping_Helper::get_items_for_montonio_shipping_method( $montonio_shipping_method, $country_code );
-        if ( empty( $shipping_method_items ) ) {
-            return new WP_Error( 'wc_montonio_shipping_no_items', 'No items found for the provided shipping method.', array( 'status' => 404 ) );
-        }
-
-        return rest_ensure_response( $shipping_method_items );
     }
 
     /**
@@ -291,29 +256,17 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * Sync shipping method items immediately
      *
      * @since 7.0.1
-     * @return WP_REST_Response The response object or WP_Error if something went wrong
+     * @return WP_REST_Response The response object
      */
     public function sync_shipping_method_items() {
-        try {
-            $lock_manager = new Montonio_Lock_Manager();
+        $shipping = WC_Montonio_Shipping::get_instance();
+        $result   = $shipping->sync_shipping_methods();
 
-            // Attempt to acquire the lock to prevent multiple processes from running the sync simultaneously
-            if ( ! $lock_manager->acquire_lock( 'montonio_shipping_method_items_sync' ) ) {
-                return rest_ensure_response( array( 'message' => 'Another process is already syncing shipping method items.' ) );
-            }
-
-            // Trigger the action to sync shipping method items
-            do_action( 'wc_montonio_shipping_sync_shipping_method_items' );
-
-            // Release the lock
-            $lock_manager->release_lock( 'montonio_shipping_method_items_sync' );
-
-            return rest_ensure_response( array( 'message' => 'Shipping method items synced successfully.' ) );
-        } catch ( Exception $e ) {
-            WC_Montonio_Logger::log( 'Error syncing shipping method items: ' . $e->getMessage() );
-            
-            return new WP_Error( 'wc_montonio_shipping_sync_error', 'Error syncing shipping method items: ' . $e->getMessage(), array( 'status' => 500 ) );
+        if ( is_wp_error( $result ) ) {
+            return $result;
         }
+
+        return rest_ensure_response( array( 'message' => 'Shipping method items synced successfully.' ) );
     }
 
     /**

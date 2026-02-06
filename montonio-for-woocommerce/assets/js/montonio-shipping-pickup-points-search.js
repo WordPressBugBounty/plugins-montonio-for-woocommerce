@@ -1,12 +1,14 @@
 class MontonioPickupPointSelector {
     constructor() {
-        this.input = document.getElementById('montonio-pickup-point__search');
+        this.input = document.getElementById('montonio-pickup-point__search-input');
         this.dropdown = document.getElementById('montonio-pickup-point__dropdown');
         this.hiddenInput = document.getElementById('montonio_pickup_point');
         this.errorDiv = document.getElementById('montonio-pickup-point__error');
+        this.logosContainer = document.querySelector('.montonio-pickup-point__search-logos');
         this.searchTimeout = null;
         this.currentRequest = null;
         this.selectedPoint = null;
+        this.carouselInterval = null;
         
         // Store bound references for cleanup
         this.boundHandleInput = null;
@@ -23,6 +25,8 @@ class MontonioPickupPointSelector {
             console.error('Montonio AJAX variables not loaded');
             return;
         }
+
+         this.initLogoCarousel();
         
         // Create bound event handlers
         this.boundHandleInput = this.handleInput.bind(this);
@@ -43,7 +47,66 @@ class MontonioPickupPointSelector {
         document.addEventListener('click', this.boundDocumentClick);
     }
 
-    // Add destroy method - this is the key addition!
+    initLogoCarousel() {
+        if (!this.logosContainer) return;
+        
+        // Clear existing content first
+        this.logosContainer.innerHTML = '';
+        
+        // Define supported operators (operators that have logo files)
+        const supportedOperators = ['dpd', 'inpost', 'latvian_post', 'omniva', 'orlen', 'smartpost', 'unisend', 'venipak', 'dhl', 'chronopost', 'gls', 'alzabox', 'expressone'];
+        
+        try {
+            const operatorsData = this.logosContainer.dataset.operators;
+            const operators = operatorsData ? JSON.parse(operatorsData) : [];
+            
+            // Filter to only supported operators
+            const filteredOperators = operators.filter(op => 
+                supportedOperators.includes(op.toLowerCase())
+            );
+            
+            if (!filteredOperators || filteredOperators.length === 0) {
+                // If no supported operators, show default
+                const defaultLogo = document.createElement('div');
+                defaultLogo.className = 'montonio-pickup-point__search-logo montonio-pickup-point__search-logo--default';
+                this.logosContainer.appendChild(defaultLogo);
+                return;
+            }
+            
+            // Create logo elements only for supported operators
+            filteredOperators.forEach((operator) => {
+                const logo = document.createElement('div');
+                logo.className = `montonio-pickup-point__search-logo montonio-pickup-point__search-logo--${operator.toLowerCase()}`;
+                this.logosContainer.appendChild(logo);
+            });
+            
+            // If multiple operators, start carousel
+            if (filteredOperators.length > 1) {
+                this.startLogoCarousel();
+            }
+            
+        } catch (error) {
+            console.error('Error initializing logo carousel:', error);
+        }
+    }
+
+    startLogoCarousel() {
+        const logos = this.logosContainer.querySelectorAll('.montonio-pickup-point__search-logo');
+        if (logos.length <= 1) return;
+        
+        let currentIndex = 0;
+        
+        // Show first logo
+        logos[currentIndex].classList.add('montonio-pickup-point__search-logo--active');
+        
+        // Cycle through logos
+        this.carouselInterval = setInterval(() => {
+            logos[currentIndex].classList.remove('montonio-pickup-point__search-logo--active');
+            currentIndex = (currentIndex + 1) % logos.length;
+            logos[currentIndex].classList.add('montonio-pickup-point__search-logo--active');
+        }, 2500); // Change logo every 2.5 seconds
+    }
+
     destroy() {
         // Cancel any pending operations
         if (this.searchTimeout) {
@@ -54,6 +117,11 @@ class MontonioPickupPointSelector {
         if (this.currentRequest) {
             this.currentRequest.abort();
             this.currentRequest = null;
+        }
+        
+        if (this.carouselInterval) {
+            clearInterval(this.carouselInterval);
+            this.carouselInterval = null;
         }
         
         // Remove event listeners
@@ -131,9 +199,9 @@ class MontonioPickupPointSelector {
         this.showLoading();
         
         try {
-            const dropdownElement = document.querySelector('.montonio-pickup-point__search');
-            const country = dropdownElement.dataset.country || '';
-            const carrier = dropdownElement.dataset.carrier || '';
+            const country = this.input.dataset.country || '';
+            const carrier = this.input.dataset.carrier || '';
+            const type = this.input.dataset.type || '';
 
             // Create FormData for WordPress AJAX
             const formData = new FormData();
@@ -142,7 +210,8 @@ class MontonioPickupPointSelector {
             formData.append('search', query);
             formData.append('country', country);
             formData.append('carrier', carrier);
-            
+            formData.append('type', type);
+
             // Create AbortController for request cancellation
             const controller = new AbortController();
             this.currentRequest = controller;
@@ -282,7 +351,7 @@ function initializePickupPointSelector() {
     }
     
     // Create new instance
-    if (document.getElementById('montonio-pickup-point__search')) {
+    if (document.getElementById('montonio-pickup-point__search-input')) {
         window.montonioPickupPointSelector = new MontonioPickupPointSelector();
     }
 }

@@ -20,23 +20,12 @@ class Montonio_Omniva_Courier extends Montonio_Shipping_Method {
             'instance-settings-modal'
         );
 
-        $this->provider_name = 'omniva';
+        $this->carrier_code = 'omniva';
         $this->type_v2       = 'courier';
-        $this->logo          = WC_MONTONIO_PLUGIN_URL . '/assets/images/omniva-rect.svg';
         $this->title         = $this->get_option( 'title', __( 'Omniva courier', 'montonio-for-woocommerce' ) );
 
         if ( 'Omniva courier' === $this->title ) {
             $this->title = __( 'Omniva courier', 'montonio-for-woocommerce' );
         }
-    }
-
-    /**
-     * Validate the dimensions of a package against maximum allowed dimensions.
-     *
-     * @param array $package The package to validate, containing items to be shipped.
-     * @return bool True if the package dimensions are valid, false otherwise.
-     */
-    protected function validate_package_dimensions( $package ) {
-        return true;
     }
 }

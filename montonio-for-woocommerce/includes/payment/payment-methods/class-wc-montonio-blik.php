@@ -24,7 +24,14 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      *
      * @var bool
      */
-    public $blik_in_checkout;
+    public $embedded_fields;
+
+    /**
+     * Blik payment configuration
+     *
+     * @var array
+     */
+    public $method_config;
 
     /**
      * Processor which handles the transaction in Montonio
@@ -51,40 +58,39 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title            = $this->get_option( 'title', 'BLIK' );
-        $this->description      = $this->get_option( 'description' );
-        $this->enabled          = $this->get_option( 'enabled' );
-        $this->test_mode        = $this->get_option( 'test_mode' );
-        $this->blik_in_checkout = $this->get_option( 'blik_in_checkout' );
-        $this->processor        = $this->get_option( 'processor', 'stripe' );
+        $this->title           = $this->get_option( 'title', 'BLIK' );
+        $this->description     = $this->get_option( 'description' );
+        $this->enabled         = $this->get_option( 'enabled' );
+        $this->test_mode       = WC_Montonio_Helper::is_test_mode();
+        $this->embedded_fields = 'yes' === $this->get_option( 'blik_in_checkout' );
+        $this->method_config   = WC_Montonio_Helper::get_payment_methods( 'blik' );
+        $this->processor       = $this->method_config['processor'] ?? 'stripe';
 
         if ( 'BLIK' === $this->title ) {
             $this->title = __( 'BLIK', 'montonio-for-woocommerce' );
         }
 
         if ( isset( $_GET['pay_for_order'] ) ) {
-            $this->blik_in_checkout = 'no';
+            $this->embedded_fields = false;
         }
 
-        if ( $this->blik_in_checkout === 'yes' ) {
+        if ( $this->embedded_fields ) {
             $this->has_fields = true;
         }
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'validate_settings' ) );
         add_action( 'woocommerce_api_' . $this->id, array( $this, 'get_order_response' ) );
         add_action( 'woocommerce_api_' . $this->id . '_notification', array( $this, 'get_order_notification' ) );
-        add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 3 );
+        add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 2 );
         add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
         add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
-        add_action( 'sync_blik_settings', array( $this, 'sync_blik_settings' ) );
     }
 
     /**
      * Edit gateway icon.
      */
-    public function add_icon_class( $icon, $id ) {
+    public function add_icon_class( $icon, $id = '' ) {
         if ( $id == $this->id ) {
             return str_replace( 'src="', 'class="montonio-payment-method-icon montonio-blik-icon" src="', $icon );
         }
@@ -103,14 +109,6 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
                 'type'        => 'checkbox',
                 'description' => '',
                 'default'     => 'no'
-            ),
-            'test_mode'        => array(
-                'title'       => 'Test mode',
-                'label'       => 'Enable Test Mode',
-                'type'        => 'checkbox',
-                'description' => __( 'Whether the provider is in test mode (sandbox) for payments processing.', 'montonio-for-woocommerce' ),
-                'default'     => 'no',
-                'desc_tip'    => true
             ),
             'blik_in_checkout' => array(
                 'title'       => 'BLIK fields in checkout',
@@ -142,7 +140,11 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * Check if Montonio BLIK should be available
      */
     public function is_available() {
-        if ( $this->enabled !== 'yes' ) {
+        if ( 'yes' !== $this->enabled ) {
+            return false;
+        }
+
+        if ( empty( $this->method_config ) ) {
             return false;
         }
 
@@ -154,84 +156,30 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
             return false;
         }
 
-        $settings = get_option( 'woocommerce_wc_montonio_blik_settings' );
-        if ( empty( $settings['processor'] ) ) {
-            do_action( 'sync_blik_settings' );
-        }
-
         return true;
     }
 
     /**
-     * Perform validation on settings after saving them
+     * Get the latest payment intent UUID from the API response
      *
-     * @since 8.0.1 - Will add processor to settings
-     * @param array $settings The new settings to validate
+     * @since 9.3.0
+     * @param object $response The API response object
+     * @return string|null The UUID of the latest payment intent, or null if not found
      */
-    public function validate_settings( $settings ) {
-        if ( is_array( $settings ) ) {
+    private function get_latest_payment_intent_uuid( $response ) {
+        if ( empty( $response->paymentIntents ) ) {
+            return;
+        }
 
-            if ( $settings['enabled'] === 'no' ) {
-                return $settings;
-            }
+        $latest = null;
 
-            $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
-
-            // Disable the payment gateway if API keys are not provided
-            if ( isset( $settings['test_mode'] ) && $settings['test_mode'] === 'yes' ) {
-                if ( empty( $api_settings['sandbox_access_key'] ) || empty( $api_settings['sandbox_secret_key'] ) ) {
-                    /* translators: API Settings page url */
-                    $message = sprintf( __( 'Sandbox API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
-                    $this->add_admin_notice( $message, 'error' );
-
-                    $settings['enabled'] = 'no';
-
-                    return $settings;
-                }
-            } else {
-                if ( empty( $api_settings['access_key'] ) || empty( $api_settings['secret_key'] ) ) {
-                    /* translators: API Settings page url */
-                    $message = sprintf( __( 'Live API keys missing. The Montonio payment method has been automatically disabled. <a href="%s">Add API keys here</a>.', 'montonio-for-woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) );
-                    $this->add_admin_notice( $message, 'error' );
-
-                    $settings['enabled'] = 'no';
-
-                    return $settings;
-                }
-            }
-
-            try {
-                $montonio_api = new WC_Montonio_API( $settings['test_mode'] ?? 'no' );
-                $response     = json_decode( $montonio_api->fetch_payment_methods() );
-
-                if ( ! isset( $response->paymentMethods->blik ) || ! isset( $response->paymentMethods->blik->processor ) ) {
-                    throw new Exception( __( 'BLIK payment method is not enabled in Montonio partner system.', 'montonio-for-woocommerce' ) );
-                }
-
-                $settings['processor'] = $response->paymentMethods->blik->processor;
-            } catch ( Exception $e ) {
-                $settings['enabled'] = 'no';
-
-                if ( ! empty( $e->getMessage() ) ) {
-                    $this->add_admin_notice( __( 'Montonio API response: ', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
-                    WC_Montonio_Logger::log( $e->getMessage() );
-                }
+        foreach ( $response->paymentIntents as $intent ) {
+            if ( is_null( $latest ) || strtotime( $intent->createdAt ) > strtotime( $latest->createdAt ) ) {
+                $latest = $intent;
             }
         }
 
-        return $settings;
-    }
-
-    /**
-     * Sync payment methods with Montonio API. This is called when PAYMENT_METHOD_PROCESSOR_MISMATCH error is received.
-     *
-     * @since 8.0.5
-     * @return void
-     */
-    public function sync_blik_settings() {
-        $settings = get_option( 'woocommerce_wc_montonio_blik_settings' );
-        $settings = $this->validate_settings( $settings );
-        update_option( 'woocommerce_wc_montonio_blik_settings', $settings );
+        return $latest ? $latest->uuid : null;
     }
 
     /**
@@ -240,117 +188,83 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * @param $order_id
      */
     public function process_payment( $order_id ) {
-
         $order = wc_get_order( $order_id );
 
-        $payment_data = array(
-            'paymentMethodId' => $this->id,
-            'payment'         => array(
-                'method'        => 'blik',
-                'methodDisplay' => $this->get_title(),
-                'methodOptions' => null
-            )
-        );
+        try {
+            $payment_data = array(
+                'paymentMethodId' => $this->id,
+                'payment'         => array(
+                    'method'        => 'blik',
+                    'methodDisplay' => $this->get_title(),
+                    'methodOptions' => null
+                )
+            );
 
-        if ( $this->blik_in_checkout === 'yes' ) {
-            if ( $this->processor === 'stripe' ) {
-                $payment_intent_uuid = isset( $_POST['montonio_blik_payment_intent_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_blik_payment_intent_uuid'] ) ) : null;
+            if ( $this->embedded_fields ) {
+                if ( 'blik' === $this->processor ) {
+                    $blik_code = isset( $_POST['montonio_blik_code'] ) ? sanitize_key( wp_unslash( $_POST['montonio_blik_code'] ) ) : null;
 
-                if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
-                    wc_add_notice( __( 'There was a problem processing this payment. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
-                    WC_Montonio_Logger::log( 'Failure - Order ID: ' . $order_id . ' Response: paymentIntentUuid is empty. ' . $this->id );
+                    if ( empty( $blik_code ) || ! preg_match( '/^\d{6}$/', $blik_code ) ) {
+                        wc_add_notice( __( 'Please enter a valid 6-digit BLIK code.', 'montonio-for-woocommerce' ), 'error' );
 
-                    return array(
-                        'result' => 'failure'
+                        return array(
+                            'result'  => 'failure',
+                            'message' => __( 'Please enter a valid 6-digit BLIK code.', 'montonio-for-woocommerce' )
+                        );
+                    }
+
+                    $payment_data['payment']['methodOptions'] = array(
+                        'blikCode' => $blik_code
                     );
+                } else {
+                    $payment_intent_uuid = isset( $_POST['montonio_blik_payment_intent_uuid'] ) ? sanitize_key( wp_unslash( $_POST['montonio_blik_payment_intent_uuid'] ) ) : null;
+
+                    if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
+                        throw new Exception( __( 'Invalid payment reference. Please refresh the page and try again.', 'montonio-for-woocommerce' ) );
+                    }
+
+                    $payment_data['paymentIntentUuid'] = $payment_intent_uuid;
+                }
+            }
+
+            // Create new Montonio API instance
+            $montonio_api = new WC_Montonio_API();
+            $response     = $montonio_api->create_order( $order, $payment_data );
+
+            $order->update_meta_data( '_montonio_uuid', $response->uuid );
+            $order->save();
+
+            if ( $this->embedded_fields ) {
+                if ( 'blik' === $this->processor ) {
+                    $payment_intent_uuid = $this->get_latest_payment_intent_uuid( $response );
+
+                    // Validate the extracted UUID format
+                    if ( empty( $payment_intent_uuid ) || ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
+                        throw new Exception( __( 'Invalid payment reference. Please refresh the page and try again.', 'montonio-for-woocommerce' ) );
+                    }
                 }
 
-                $payment_data['paymentIntentUuid'] = $payment_intent_uuid;
-            } else {
-                $blik_code = isset( $_POST['montonio_blik_code'] ) ? sanitize_key( wp_unslash( $_POST['montonio_blik_code'] ) ) : null;
-
-                if ( empty( $blik_code ) || ! preg_match( '/^\d{6}$/', $blik_code ) ) {
-                    wc_add_notice( __( 'Please enter a valid 6-digit BLIK code.', 'montonio-for-woocommerce' ), 'error' );
-
-                    return array(
-                        'result'  => 'failure',
-                        'message' => __( 'Please enter a valid 6-digit BLIK code.', 'montonio-for-woocommerce' )
-                    );
-                }
-
-                $payment_data['payment']['methodOptions'] = array(
-                    'blikCode' => $blik_code
+                return array(
+                    'result'              => 'success',
+                    'payment_intent_uuid' => $payment_intent_uuid,
+                    'redirect'            => '#confirm-pi-' . $payment_intent_uuid
                 );
             }
-        }
 
-        // Create new Montonio API instance
-        $montonio_api               = new WC_Montonio_API( $this->test_mode );
-        $montonio_api->order        = $order;
-        $montonio_api->payment_data = $payment_data;
-
-        try {
-            $response = $montonio_api->create_order();
+            return array(
+                'result'   => 'success',
+                'redirect' => $response->paymentUrl
+            );
         } catch ( Exception $e ) {
             $message = WC_Montonio_Helper::get_error_message( $e->getMessage() );
 
             wc_add_notice( $message, 'error' );
 
-            $order->add_order_note( __( 'Montonio: There was a problem processing the payment. Response: ', 'montonio-for-woocommerce' ) . $e->getMessage() );
-
-            WC_Montonio_Logger::log( 'Order creation failure - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Error (' . $this->id . ') - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
 
             return array(
                 'result'  => 'failure',
                 'message' => $message
-            );
-        }
-
-        $order->update_meta_data( '_montonio_uuid', $response->uuid );
-        $order->save();
-
-        if ( $this->processor === 'blik' && $this->blik_in_checkout === 'yes' ) {
-            // Find the latest payment intent UUID
-            $payment_intent_uuid = null;
-
-            if ( ! empty( $response->paymentIntents ) ) {
-                $latest_payment_intent = null;
-
-                foreach ( $response->paymentIntents as $intent ) {
-                    if (
-                        is_null( $latest_payment_intent ) ||
-                        strtotime( $intent->createdAt ) > strtotime( $latest_payment_intent->createdAt )
-                    ) {
-                        $latest_payment_intent = $intent;
-                    }
-                }
-
-                if ( $latest_payment_intent ) {
-                    $payment_intent_uuid = $latest_payment_intent->uuid;
-                }
-            }
-
-            // Validate the extracted UUID format
-            if ( ! WC_Montonio_Helper::is_valid_uuid( $payment_intent_uuid ) ) {
-                wc_add_notice( __( 'Invalid payment reference received. Please try again.', 'montonio-for-woocommerce' ), 'error' );
-
-                return array(
-                    'result'  => 'failure',
-                    'message' => __( 'Invalid payment reference received. Please try again.', 'montonio-for-woocommerce' )
-                );
-            }
-        }
-
-        if ( $this->blik_in_checkout === 'yes' ) {
-            return array(
-                'result'              => 'success',
-                'payment_intent_uuid' => $payment_intent_uuid,
-                'redirect'            => '#confirm-pi-' . $payment_intent_uuid
-            );
-        } else {
-            return array(
-                'result'   => 'success',
-                'redirect' => $response->paymentUrl
             );
         }
     }
@@ -365,7 +279,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
 
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
-        if ( $this->test_mode === 'yes' ) {
+        if ( $this->test_mode ) {
             /* translators: 1) notice that test mode is enabled 2) explanation of test mode */
             printf( '<strong>%1$s</strong><br>%2$s<br>', esc_html__( 'TEST MODE ENABLED!', 'montonio-for-woocommerce' ), esc_html__( 'When test mode is enabled, payment providers do not process payments.', 'montonio-for-woocommerce' ) );
         }
@@ -374,7 +288,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
             echo esc_html( apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id ) );
         }
 
-        if ( $this->blik_in_checkout === 'yes' ) {
+        if ( $this->embedded_fields ) {
             echo '<div id="montonio-blik-form"></div>';
             echo '<input type="hidden" name="montonio_blik_payment_intent_uuid" value="">';
         }
@@ -389,18 +303,18 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * @return void
      */
     public function payment_scripts() {
-        if ( ! is_cart() && ! is_checkout() || $this->blik_in_checkout !== 'yes' || WC_Montonio_Helper::is_checkout_block() ) {
+        if ( ! is_cart() && ! is_checkout() || ! $this->embedded_fields || WC_Montonio_Helper::is_checkout_block() ) {
             return;
         }
 
         $embedded_blik_params = array(
             'test_mode'  => $this->test_mode,
             'return_url' => (string) apply_filters( 'wc_montonio_return_url', add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) ), $this->id ),
-            'locale'     => WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) ),
+            'locale'     => WC_Montonio_Helper::get_locale(),
             'nonce'      => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
         );
 
-        if ( $this->processor === 'blik' ) {
+        if ( 'blik' === $this->processor ) {
             wp_enqueue_script( 'montonio-embedded-blik' );
             wp_localize_script( 'montonio-embedded-blik', 'wc_montonio_embedded_blik', $embedded_blik_params );
         } else {
@@ -420,7 +334,6 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
         return WC_Montonio_Refund::init_refund(
             $order_id,
-            $this->test_mode,
             $amount,
             $reason
         );
@@ -430,10 +343,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * Check webhook notfications from Montonio
      */
     public function get_order_notification() {
-        new WC_Montonio_Callbacks(
-            $this->test_mode,
-            true
-        );
+        new WC_Montonio_Callbacks();
     }
 
     /**
@@ -441,21 +351,17 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * and redirect user: thankyou page for success, checkout on declined/failure
      */
     public function get_order_response() {
-        new WC_Montonio_Callbacks(
-            $this->test_mode,
-            false
-        );
+        new WC_Montonio_Callbacks( true );
     }
 
     /**
      * Edit settings page layout
      */
     public function admin_options() {
-        WC_Montonio_Display_Admin_Options::display_options(
+        WC_Montonio_Admin_Settings_Page::render_options_page(
             $this->method_title,
             $this->generate_settings_html( array(), false ),
-            $this->id,
-            $this->test_mode
+            $this->id
         );
     }
 

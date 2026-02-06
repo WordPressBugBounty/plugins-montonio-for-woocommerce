@@ -1,36 +1,29 @@
 <?php
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodType {
     /**
-	 * Payment method name. Matches gateway ID.
-	 *
-	 * @var string
-	 */
-    protected $name;
-    
-    /**
-     * Script slug for the payment method.
-     * 
-     * @var string 
+     * Payment method name. Matches gateway ID.
+     *
+     * @var string
      */
-    protected $name_slug;
+    protected $name;
 
     /**
-     * Montonio API settings.
-     * 
-     * @var array
+     * Script slug for the payment method.
+     *
+     * @var string
      */
-    protected $api_settings = [];
+    protected $name_slug;
 
     /**
      * The payment method settings.
      *
      * @var array
      */
-    protected $settings = [];
+    protected $settings = array();
 
     /**
      * Constructor.
@@ -42,7 +35,7 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
         $this->name = $name;
 
         // Convert the name to kebab-case for the script slug
-        $this->name_slug = strtolower(str_replace( '_', '-', $name ) );
+        $this->name_slug = strtolower( str_replace( '_', '-', $name ) );
     }
 
     /**
@@ -53,7 +46,6 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
      */
     public function initialize() {
         $this->settings = get_option( 'woocommerce_' . $this->name . '_settings', array() );
-        $this->api_settings = get_option( 'woocommerce_wc_montonio_api_settings', array() );
     }
 
     /**
@@ -63,7 +55,7 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
      * @return boolean
      */
     public function is_active() {
-        return $this->get_setting( 'enabled' ) === 'yes';
+        return 'yes' === $this->get_setting( 'enabled' );
     }
 
     /**
@@ -75,38 +67,36 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
     public function get_payment_method_script_handles() {
         $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index.js';
         $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index.asset.php';
-        $dependency = 'montonio-js-legacy';
+        $dependency        = 'montonio-js-legacy';
 
-        if ( 'wc_montonio_card' === $this->name) {
-            $card_settings = get_option( 'woocommerce_wc_montonio_card_settings' );
+        if ( 'wc_montonio_card' === $this->name ) {
+            $card_config    = WC_Montonio_Helper::get_payment_methods( 'cardPayments' );
+            $card_processor = $card_config['processor'] ?? 'stripe';
 
-            if ( empty( $card_settings['processor'] ) || 'adyen' !== $card_settings['processor'] ) {
+            if ( 'adyen' !== $card_processor ) {
                 $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
-                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';        
+                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';
             } else {
-                $dependency = 'montonio-js';    
-            }
-        }        
-        
-        if ( 'wc_montonio_blik' === $this->name) {
-            $blik_settings = get_option( 'woocommerce_wc_montonio_blik_settings' );
-
-            if ( empty( $blik_settings['processor'] ) ) {
-                do_action( 'sync_blik_settings' );
-            }
-
-            if ( empty( $blik_settings['processor'] ) || 'stripe' === $blik_settings['processor'] ) {
-                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
-                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';        
+                $dependency = 'montonio-js';
             }
         }
 
-        $handle            = $this->name_slug . '-block';
-        $script_asset      = file_exists( $script_asset_path )
+        if ( 'wc_montonio_blik' === $this->name ) {
+            $blik_config    = WC_Montonio_Helper::get_payment_methods( 'blik' );
+            $blik_processor = $blik_config['processor'] ?? 'stripe';
+
+            if ( 'blik' !== $blik_processor ) {
+                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
+                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';
+            }
+        }
+
+        $handle       = $this->name_slug . '-block';
+        $script_asset = file_exists( $script_asset_path )
             ? require $script_asset_path
             : array(
                 'dependencies' => array(),
-                'version'      => WC_MONTONIO_PLUGIN_VERSION,
+                'version'      => WC_MONTONIO_PLUGIN_VERSION
             );
 
         $script_asset['dependencies'][] = $dependency;

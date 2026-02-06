@@ -19,17 +19,27 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
     }
 
     /**
+     * Checks if the payment method is active or not.
+     *
+     * @since 9.3.3
+     * @return boolean
+     */
+    public function is_active() {
+        return 'yes' === $this->get_setting( 'enabled' ) || WC_Montonio_Helper::is_card_payment_required();
+    }
+
+    /**
      * Gets the payment method data to load into the frontend.
      *
      * @since 7.1.0
      * @return array Payment method data.
      */
     public function get_payment_method_data() {
-        $test_mode       = $this->get_setting( 'test_mode', 'no' );
-        $processor       = $this->get_setting( 'processor' );
+        $config          = WC_Montonio_Helper::get_payment_methods( 'cardPayments' );
+        $processor       = $config['processor'] ?? 'stripe';
         $inline_checkout = $this->get_setting( 'inline_checkout', 'no' );
-        $icon            = $inline_checkout === 'yes' && $processor !== 'adyen' ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
-        $locale          = WC_Montonio_Helper::get_locale( apply_filters( 'wpml_current_language', get_locale() ) );
+        $icon            = 'yes' === $inline_checkout && 'adyen' !== $processor ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
+        $locale          = WC_Montonio_Helper::get_locale();
 
         if ( ! in_array( $locale, array( 'en', 'et', 'fi', 'lt', 'lv', 'pl', 'ru' ) ) ) {
             $locale = 'en';
@@ -45,7 +55,7 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
             'title'          => $title,
             'description'    => $this->get_setting( 'description' ),
             'iconurl'        => $icon,
-            'sandboxMode'    => $test_mode,
+            'sandboxMode'    => WC_Montonio_Helper::is_test_mode(),
             'locale'         => $locale,
             'inlineCheckout' => $inline_checkout,
             'nonce'          => wp_create_nonce( 'montonio_embedded_checkout_nonce' )
