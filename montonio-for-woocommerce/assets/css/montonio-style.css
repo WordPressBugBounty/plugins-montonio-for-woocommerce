@@ -13,10 +13,13 @@ img.montonio-payment-method-icon {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 10px;
 }
 .montonio-bank-payments-form .montonio-bank-items:not(:first-child) {
   margin-top: 16px;
+}
+.montonio-bank-payments-form .montonio-bank-items img {
+  border-radius: 0 !important;
 }
 .montonio-bank-payments-form .montonio-bank-items .montonio-bank-item {
   width: 100px;
@@ -430,4 +433,8 @@ img.montonio-payment-method-icon {
 }
 .montonio-pickup-point__error--hidden {
   display: none;
+}
+
+.action-required .woocommerce-checkout-review-order:has(.blockUI) {
+  opacity: 1 !important;
 }

@@ -39,18 +39,6 @@ class WC_Montonio_Inline_Checkout {
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Montonio Embedded Checkout: ' . $e->getMessage() );
 
-            try {
-                $response = json_decode( $e->getMessage() );
-
-                if ( $response->message === 'PAYMENT_METHOD_PROCESSOR_MISMATCH' ) {
-                    WC_Montonio_Data_Sync::sync_data();
-
-                    wp_send_json_error( array( 'message' => $e->getMessage(), 'reload' => true ) );
-                }
-            } catch ( Exception $e ) {
-                WC_Montonio_Logger::log( 'Error parsing JSON response: ' . $e->getMessage() );
-            }
-
             wp_send_json_error( $e->getMessage() );
         }
     }

@@ -19,10 +19,14 @@ img {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 15px;
+        gap: 10px;
 
         &:not(:first-child) {
             margin-top: 16px;
+        }
+        
+        img {
+            border-radius: 0 !important;
         }
 
         .montonio-bank-item {
@@ -513,5 +517,11 @@ img {
         &--hidden {
             display: none;
         }
+    }
+}
+
+.action-required {
+    .woocommerce-checkout-review-order:has(.blockUI) {
+        opacity: 1 !important;
     }
 }

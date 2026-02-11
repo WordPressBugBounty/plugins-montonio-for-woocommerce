@@ -81,16 +81,6 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
             }
         }
 
-        if ( 'wc_montonio_blik' === $this->name ) {
-            $blik_config    = WC_Montonio_Helper::get_payment_methods( 'blik' );
-            $blik_processor = $blik_config['processor'] ?? 'stripe';
-
-            if ( 'blik' !== $blik_processor ) {
-                $script_url        = WC_MONTONIO_PLUGIN_URL . '/blocks/build/' . $this->name_slug . '/index-legacy.js';
-                $script_asset_path = WC_MONTONIO_PLUGIN_PATH . '/blocks/build/' . $this->name_slug . '/index-legacy.asset.php';
-            }
-        }
-
         $handle       = $this->name_slug . '-block';
         $script_asset = file_exists( $script_asset_path )
             ? require $script_asset_path

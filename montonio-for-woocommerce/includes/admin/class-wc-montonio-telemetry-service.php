@@ -311,12 +311,14 @@ class WC_Montonio_Telemetry_Service {
             $shipping_methods = $zone['shipping_methods'];
 
             foreach ( $shipping_methods as $method ) {
-                if ( strpos( $method->id, 'montonio_' ) === false || 'yes' !== $method->enabled ) {
+                if ( 'yes' !== $method->enabled ) {
                     continue;
                 }
 
+                $is_montonio = strpos( $method->id, 'montonio_' ) !== false;
+
                 $data['shipping_methods'][$method->id] = array(
-                    'setting' => $method->instance_settings
+                    'setting' => $is_montonio ? $method->instance_settings : null
                 );
             }
         }

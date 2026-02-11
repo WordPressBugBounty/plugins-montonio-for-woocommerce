@@ -6,7 +6,7 @@
   "title": "Montonio Payments Block",
   "category": "woocommerce",
   "icon": "bank",
-  "description": "Bank Selection screen at Checkout",
+  "description": "Let customers pay directly from their bank account",
   "keywords": [
     "checkout",
     "payment",

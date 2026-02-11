@@ -12,7 +12,8 @@ jQuery(document).ready(function($) {
     let form = $('form.checkout'),
         params = wc_montonio_embedded_card,
         montonioCheckout = null,
-        sessionPromise = null; // Promise that resolves when session is ready
+        sessionPromise = null, // Promise that resolves when session is ready
+        isInitializing = false;
 
     $(document).on('updated_checkout', function(){        
         if ($('input[value="wc_montonio_card"]').is(':checked')) {
@@ -59,9 +60,11 @@ jQuery(document).ready(function($) {
 
     // Handle when card payment method is selected
     async function handleCardPaymentSelection() {
-        if ($('#montonio-card-form').hasClass('checkoutInitilized')) {
+        if (isInitializing || $('#montonio-card-form').hasClass('checkoutInitialized')) {
             return;
         }
+        
+        isInitializing = true;
 
         // Show loading state
         $('#montonio-card-form').addClass('loading').block({
@@ -75,16 +78,16 @@ jQuery(document).ready(function($) {
         try {
             // Wait for the session to be ready (either already resolved or still pending)
             const sessionData = await sessionPromise;
-            
-            if (sessionData && sessionData.uuid) {
-                // Initialize Montonio checkout with the session UUID
-                await initializeMontonioCheckout(sessionData.uuid);
-            } else {
-                console.error('Session UUID not available');
-                $('#montonio-card-form').removeClass('loading').unblock();
+    
+            if (!sessionData || !sessionData.uuid) {
+                throw new Error('Session UUID not available');
             }
+            
+            await initializeMontonioCheckout(sessionData.uuid);
         } catch (error) {
-            console.error('Error handling card payment selection:', error);
+            console.error(error);
+        } finally {
+            isInitializing = false;
             $('#montonio-card-form').removeClass('loading').unblock();
         }
     }
@@ -93,17 +96,16 @@ jQuery(document).ready(function($) {
     async function initializeMontonioCheckout(uuid) {
         const $submitBtn = form.find('button[type="submit"]');
         const $formSections = form.find('#customer_details, .shop_table');
-
-        try {
-            const checkoutOptions = {
-                sessionUuid: uuid,
-                environment: params.test_mode ? 'sandbox' : 'production',
-                locale: params.locale,
-                onSuccess: (result) => {
-                   window.location.href = result.returnUrl;
-                },
-                onError: (error) => {
-                    console.error(error);
+     
+        const checkoutOptions = {
+            sessionUuid: uuid,
+            environment: params.test_mode ? 'sandbox' : 'production',
+            locale: params.locale,
+            onSuccess: (result) => {
+                window.location.href = result.returnUrl;
+            },
+            onError: (error) => {
+                console.error(error);
 
                     if (error.displayedInPaymentComponent) {
                         $.scroll_to_notices($('#payment_method_wc_montonio_card'));
@@ -115,7 +117,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 onActionRequired: () => {
-                    form.removeClass('processing').unblock();
+                    form.removeClass('processing').addClass('action-required').unblock();
                     $formSections.block({
                         message: null,
                         overlayCSS: {
@@ -128,18 +130,14 @@ jQuery(document).ready(function($) {
                 }
             };
 
-            // Assign to the global variable instead of const
-            montonioCheckout = new MontonioCheckout(checkoutOptions);
-            
-            // Initialize the checkout component
-            await montonioCheckout.initialize('#montonio-card-form');
+        // Assign to the global variable instead of const
+        montonioCheckout = new MontonioCheckout(checkoutOptions);
+        
+        // Initialize the checkout component
+        await montonioCheckout.initialize('#montonio-card-form');
 
-            $('input[name="montonio_card_payment_session_uuid"]').val(uuid);
-            $('#montonio-card-form').addClass('checkoutInitilized').removeClass('loading').unblock();            
-        } catch (error) {
-            console.error('Error initializing Montonio checkout:', error);
-            $('#montonio-card-form').removeClass('loading').unblock();
-        }
+        $('input[name="montonio_card_payment_session_uuid"]').val(uuid);
+        $('#montonio-card-form').addClass('checkoutInitialized');
     }
 
     form.on('checkout_place_order_wc_montonio_card', function() {

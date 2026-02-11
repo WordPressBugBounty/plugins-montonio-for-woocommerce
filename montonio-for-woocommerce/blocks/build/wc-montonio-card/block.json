@@ -6,7 +6,7 @@
   "title": "Montonio Card Payments Block",
   "category": "woocommerce",
   "icon": "bank",
-  "description": "Bank Selection screen at Checkout",
+  "description": "Accept secure card payments at checkout",
   "keywords": [
     "checkout",
     "payment",
