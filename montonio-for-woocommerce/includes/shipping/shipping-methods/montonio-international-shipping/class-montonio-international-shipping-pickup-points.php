@@ -115,8 +115,6 @@ class Montonio_International_Shipping_Pickup_Points extends Montonio_Shipping_Me
                     $rate['label'] = $labels[$subtype['code']];
 
                     // Set cost
-                    $rate['cost'] = $subtype['rate'];
-
                     if ( 'flat_rate' === $this->get_option( 'pricing_type' ) && '' !== $flat_rate_cost ) {
                         $rate['cost'] = $this->evaluate_cost(
                             $flat_rate_cost,
@@ -125,6 +123,18 @@ class Montonio_International_Shipping_Pickup_Points extends Montonio_Shipping_Me
                                 'cost' => $package['contents_cost']
                             )
                         );
+                    } else {
+                        $rate['cost'] = $subtype['rate'];
+
+                        $margin = $this->get_option( 'dynamic_rate_markup' );
+
+                        if ( ! empty( $margin ) && '0%' !== $margin ) {
+                            if ( '%' === substr( $margin, -1 ) ) {
+                                $rate['cost'] += ( $rate['cost'] * floatval( $margin ) / 100 );
+                            } else {
+                                $rate['cost'] += floatval( $margin );
+                            }
+                        }
                     }
 
                     $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );

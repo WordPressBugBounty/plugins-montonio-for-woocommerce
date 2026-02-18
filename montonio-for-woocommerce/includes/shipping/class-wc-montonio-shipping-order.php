@@ -165,7 +165,12 @@ class WC_Montonio_Shipping_Order {
      * @return void
      */
     public function modify_order_columns( $column, $order_id ) {
+        if ( 'shipping_address' !== $column ) {
+            return;
+        }
+
         $order = wc_get_order( $order_id );
+
         if ( empty( $order ) ) {
             return;
         }
@@ -176,23 +181,27 @@ class WC_Montonio_Shipping_Order {
             return;
         }
 
-        if ( $column === 'shipping_address' ) {
-            if ( $shipping_method->get_meta( 'tracking_codes' ) ) {
-                echo esc_html__( 'Tracking code(s)', 'montonio-for-woocommerce' ) . ':<br />' . wp_kses_post( $shipping_method->get_meta( 'tracking_codes' ) );
-                return;
-            }
+        if ( $shipping_method->get_meta( 'tracking_codes' ) ) {
+            echo esc_html__( 'Tracking code(s)', 'montonio-for-woocommerce' ) . ':<br />' . wp_kses_post( $shipping_method->get_meta( 'tracking_codes' ) );
+            return;
+        }
 
-            $date_paid = $order->get_date_paid();
+        $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 
-            if ( empty( $date_paid ) ) {
-                return;
-            }
+        if ( empty( $shipment_id ) ) {
+            return;
+        }
 
-            if ( time() - $date_paid->getTimestamp() > 5 * 60 ) {
-                echo '<span style="color:sandybrown">' . esc_html__( 'Unexpected error - Check status in Montonio Partner System', 'montonio-for-woocommerce' ) . '</span><br />';
-            } else {
-                echo '<span style="color:orange">' . esc_html__( 'Waiting for tracking codes from Montonio', 'montonio-for-woocommerce' ) . '</span><br />';
-            }
+        $date_paid = $order->get_date_paid();
+
+        if ( empty( $date_paid ) ) {
+            return;
+        }
+
+        if ( time() - $date_paid->getTimestamp() > 5 * 60 ) {
+            echo '<span style="color:sandybrown">' . esc_html__( 'Unexpected error - Check status in Montonio Partner System', 'montonio-for-woocommerce' ) . '</span><br />';
+        } else {
+            echo '<span style="color:orange">' . esc_html__( 'Waiting for tracking codes from Montonio', 'montonio-for-woocommerce' ) . '</span><br />';
         }
     }
 

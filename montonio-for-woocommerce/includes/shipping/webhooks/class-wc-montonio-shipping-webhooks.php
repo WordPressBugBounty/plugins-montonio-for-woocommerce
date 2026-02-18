@@ -217,7 +217,7 @@ class WC_Montonio_Shipping_Webhooks {
 
         $new_order_status = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', 'wc-mon-label-printed' );
 
-        if ( $order->get_status() === 'processing' && 'no-change' !== $new_order_status ) {
+        if ( 'processing' === $order->get_status() && 'no-change' !== $new_order_status ) {
             $order->update_status( $new_order_status );
             $order->add_order_note( 'Montonio shipping label printed' );
 

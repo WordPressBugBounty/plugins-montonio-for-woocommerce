@@ -673,6 +673,39 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
+     * Sanitize markup value - allows numeric values and percentages
+     *
+     * @param string $value The value to sanitize
+     * @return string Sanitized value
+     */
+    public function sanitize_markup( $value ) {
+        $value = trim( $value );
+        
+        // If empty, return default
+        if ( empty( $value ) ) {
+            return '0%';
+        }
+        
+        // Check if it's a percentage
+        if ( substr( $value, -1 ) === '%' ) {
+            // Remove % and validate the number
+            $number = trim( substr( $value, 0, -1 ) );
+            
+            if ( is_numeric( $number ) && $number >= 0 ) {
+                return $number . '%';
+            }
+        } else {
+            // Validate as regular number
+            if ( is_numeric( $value ) && $value >= 0 ) {
+                return wc_format_decimal( $value );
+            }
+        }
+        
+        // If validation fails, return default
+        return '0%';
+    }
+
+    /**
      * Extract and normalize product dimensions from package items.
      *
      * Retrieves dimensions (length, width, height) and weight for all items in the package.

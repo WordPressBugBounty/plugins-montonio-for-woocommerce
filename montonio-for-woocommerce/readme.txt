@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.3.6
+Version: 9.3.7
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.3.6
+Stable tag: 9.3.7
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.3.7 =
+* Added – Setting to choose which order status triggers automatic shipment creation, or disable it entirely
+* Added – Percentage or flat rate markup option for dynamic shipping pricing
+* Dev – Renamed filter 'wc_montonio_create_shipment_on_processing' to 'wc_montonio_create_shipment_on_status_change'
+
+
 = 9.3.6 =
 * Fix – Cards embedded checkout field no longer initializes twice in some cases
 * Tweak – Improved cards embedded checkout field UI for better compatibility

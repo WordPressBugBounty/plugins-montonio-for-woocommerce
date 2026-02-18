@@ -63,6 +63,20 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             ),
             array(
                 'type'    => 'select',
+                'title'   => __( 'Create shipment on order status', 'montonio-for-woocommerce' ),
+                'class'   => 'wc-enhanced-select',
+                'default' => 'wc-processing',
+                'desc'    => __( 'Select the order status that triggers automatic shipment creation in Montonio. Choose "Disabled" to create shipments manually.', 'montonio-for-woocommerce' ),
+                'options' => array_merge(
+                    array(
+                        'disabled' => __( '-- Disabled (manual creation only) --', 'montonio-for-woocommerce' )
+                    ),
+                    $order_statuses
+                ),
+                'id'      => 'montonio_shipping_create_shipment_on_status'
+            ),
+            array(
+                'type'    => 'select',
                 'title'   => __( 'Order status when label printed', 'montonio-for-woocommerce' ),
                 'class'   => 'wc-enhanced-select',
                 'default' => isset( $order_statuses['wc-mon-label-printed'] ) ? 'wc-mon-label-printed' : 'no-change',

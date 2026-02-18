@@ -12,25 +12,37 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @since 7.0.0
      */
     public function __construct() {
-        // Create a shipment when order moves to processing status
-        add_action( 'woocommerce_order_status_processing', array( $this, 'create_shipment_when_payment_complete' ), 10, 2 );
+        // Create a shipment on order status change
+        add_action( 'woocommerce_order_status_changed', array( $this, 'maybe_create_shipment_on_status_change' ), 10, 4 );
     }
 
     /**
-     * Create new a shipment whenever the payment is complete.
+     * Maybe create a shipment when order status changes to the configured status.
      *
-     * @since 7.0.0
-     * @param int $order_id The ID of the order.
-     * @param WC_Order $order The WooCommerce order object.
+     * @since 9.3.7
+     * @param int      $order_id   The ID of the order.
+     * @param string   $old_status The old order status.
+     * @param string   $new_status The new order status.
+     * @param WC_Order $order      The WooCommerce order object.
      * @return void
      */
-    public function create_shipment_when_payment_complete( $order_id, $order ) {
-        if ( empty( $order ) ) {
-            WC_Montonio_Logger::log( 'Shipment creation failed. Order object is empty.' );
+    public function maybe_create_shipment_on_status_change( $order_id, $old_status, $new_status, $order ) {
+        if ( ! apply_filters( 'wc_montonio_create_shipment_on_status_change', true, $order_id, $order ) ) {
             return;
         }
 
-        if ( ! apply_filters( 'wc_montonio_create_shipment_on_processing', true, $order_id, $order ) ) {
+        $trigger_status = get_option( 'montonio_shipping_create_shipment_on_status', 'wc-processing' );
+
+        // If disabled, do not auto-create shipments
+        if ( 'disabled' === $trigger_status ) {
+            return;
+        }
+
+        // Remove 'wc-' prefix from trigger status to match $new_status format
+        $trigger_status_clean = str_replace( 'wc-', '', $trigger_status );
+
+        // Check if the new status matches the configured trigger status
+        if ( $new_status !== $trigger_status_clean ) {
             return;
         }
 
@@ -52,6 +64,11 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @return string|null The API response on successful shipment creation, or null on failure.
      */
     public function create_shipment( $order ) {
+        if ( empty( $order ) ) {
+            WC_Montonio_Logger::log( 'Shipment creation failed. Order object is empty.' );
+            return;
+        }
+
         try {
             $data                      = $this->get_shipment_data( $order );
             $data['merchantReference'] = (string) apply_filters( 'wc_montonio_merchant_reference_display', $order->get_order_number(), $order );

@@ -122,79 +122,79 @@ msgid "Cost"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:194
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:120
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:130
 #: includes/shipping/shipping-methods/shipping-method-settings.php:108
 msgid "Free shipping options"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:202
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:127
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:137
 #: includes/shipping/shipping-methods/shipping-method-settings.php:116
 msgid "Enable free shipping based on cart total"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:204
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:129
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:139
 #: includes/shipping/shipping-methods/shipping-method-settings.php:118
 msgid "Allow free shipping if the cart total exceeds the specified amount"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:228
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:150
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:160
 #: includes/shipping/shipping-methods/shipping-method-settings.php:142
 msgid "Free shipping threshold"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:231
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:153
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:163
 #: includes/shipping/shipping-methods/shipping-method-settings.php:145
 msgid "Minimum cart total for free shipping"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:238
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:159
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:169
 #: includes/shipping/shipping-methods/shipping-method-settings.php:152
 msgid "Enable quantity based free shipping"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:240
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:161
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:171
 #: includes/shipping/shipping-methods/shipping-method-settings.php:154
 msgid "Allow free shipping if the product quantity in the cart equals or exceeds the specified amount"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:246
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:166
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:176
 #: includes/shipping/shipping-methods/shipping-method-settings.php:160
 msgid "Free shipping product quantity"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:248
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:168
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:178
 #: includes/shipping/shipping-methods/shipping-method-settings.php:162
 msgid "Minimum amount of items in the cart for free shipping (excludes virtual products)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:254
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:173
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:183
 #: includes/shipping/shipping-methods/shipping-method-settings.php:168
 msgid "Enable free shipping rate text"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:256
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:175
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:185
 #: includes/shipping/shipping-methods/shipping-method-settings.php:170
 msgid "Display 0.00 amount or custom text for free shipping rate"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:262
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:180
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:190
 #: includes/shipping/shipping-methods/shipping-method-settings.php:176
 msgid "Free shipping rate text"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:264
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:182
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:192
 #: includes/shipping/shipping-methods/shipping-method-settings.php:178
 msgid "Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate."
 msgstr ""
@@ -234,7 +234,7 @@ msgstr ""
 msgid "Hide this shipping method when an item in cart has no set weight or dimensions"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:240
+#: includes/shipping/class-wc-montonio-shipping-order.php:249
 #: includes/shipping/class-wc-montonio-shipping-settings.php:53
 #: templates/admin-order-shipping-panel.php:77
 msgid "Label printed"
@@ -254,62 +254,62 @@ msgstr ""
 msgid "Enable Montonio Shipping"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:66
+#: includes/shipping/class-wc-montonio-shipping-settings.php:80
 msgid "Order status when label printed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:76
 #: includes/shipping/class-wc-montonio-shipping-settings.php:90
+#: includes/shipping/class-wc-montonio-shipping-settings.php:104
 msgid "-- Do not change status --"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:97
+#: includes/shipping/class-wc-montonio-shipping-settings.php:111
 msgid "Tracking code text for e-mail"
 msgstr ""
 
 #. translators: help article url
-#: includes/shipping/class-wc-montonio-shipping-settings.php:100
+#: includes/shipping/class-wc-montonio-shipping-settings.php:114
 msgid "Reset to default value"
 msgstr ""
 
 #. translators: help article url
-#: includes/shipping/class-wc-montonio-shipping-settings.php:100
+#: includes/shipping/class-wc-montonio-shipping-settings.php:114
 #, php-format
 msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_info}.<br> Appears only if order has Montonio shipping and existing tracking code(s).<br> <a href=\"%s\" target=\"_blank\">Click here</a> to learn more about how to add the code to customer emails."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:101
-#: includes/shipping/class-wc-montonio-shipping.php:361
+#: includes/shipping/class-wc-montonio-shipping-settings.php:115
+#: includes/shipping/class-wc-montonio-shipping.php:357
 msgid "Track your shipment:"
 msgstr "Jälgi oma saadetist:"
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:105
+#: includes/shipping/class-wc-montonio-shipping-settings.php:119
 msgid "Show parcel machine address in dropdown in checkout"
 msgstr ""
 
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:165
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:183
-#: includes/shipping/class-wc-montonio-shipping-settings.php:106
+#: includes/shipping/class-wc-montonio-shipping-settings.php:120
 msgid "Enable"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:112
+#: includes/shipping/class-wc-montonio-shipping-settings.php:126
 msgid "Show shipping provider logos in checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:124
+#: includes/shipping/class-wc-montonio-shipping-settings.php:138
 msgid "Advanced"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:129
+#: includes/shipping/class-wc-montonio-shipping-settings.php:143
 msgid "Pickup point dropdown"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:464
+#: includes/shipping/class-wc-montonio-shipping-order.php:473
 msgid "Select a destination country"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:508
+#: includes/shipping/class-wc-montonio-shipping-order.php:517
 msgid "Select pickup point"
 msgstr "Palun tee valik"
 
@@ -337,11 +337,11 @@ msgstr ""
 msgid "Please select a pickup point."
 msgstr "Palun vali pakipunkt."
 
-#: includes/shipping/class-wc-montonio-shipping.php:327
+#: includes/shipping/class-wc-montonio-shipping.php:323
 msgid "Montonio Shipping: Pickup point sync successful!"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:333
+#: includes/shipping/class-wc-montonio-shipping.php:329
 msgid "Montonio API response: "
 msgstr ""
 
@@ -349,11 +349,11 @@ msgstr ""
 msgid "Print shipping labels"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:181
+#: includes/shipping/class-wc-montonio-shipping-order.php:185
 msgid "Tracking code(s)"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:194
+#: includes/shipping/class-wc-montonio-shipping-order.php:204
 msgid "Waiting for tracking codes from Montonio"
 msgstr ""
 
@@ -844,7 +844,7 @@ msgstr ""
 msgid "Select a pickup point"
 msgstr "Palun vali pakipunkt"
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:192
+#: includes/shipping/class-wc-montonio-shipping-order.php:202
 msgid "Unexpected error - Check status in Montonio Partner System"
 msgstr ""
 
@@ -856,11 +856,11 @@ msgstr ""
 msgid "Shipment registration failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:79
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:96
 msgid "Shipment creation failed."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:127
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:144
 msgid "Shipment update failed."
 msgstr ""
 
@@ -890,20 +890,20 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:69
+#: includes/shipping/class-wc-montonio-shipping-settings.php:83
 msgid ""
 "What status should order be changed to in Woocommerce when label is printed in Montonio?<br>\r\n"
 "                    Status will only be changed when order's current status is \"Processing\"."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:293
-#: includes/shipping/class-wc-montonio-shipping-order.php:311
+#: includes/shipping/class-wc-montonio-shipping-order.php:302
+#: includes/shipping/class-wc-montonio-shipping-order.php:320
 msgctxt "Order status"
 msgid "Label printed"
 msgstr ""
 
 #. translators: %s: number of orders
-#: includes/shipping/class-wc-montonio-shipping-order.php:299
+#: includes/shipping/class-wc-montonio-shipping-order.php:308
 msgid "Label printed (%s)"
 msgid_plural "Label printed (%s)"
 msgstr[0] ""
@@ -1050,15 +1050,15 @@ msgstr ""
 msgid "Latvijas Pasts parcel machines"
 msgstr "Latvijas Pasts pakiautomaat"
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:113
+#: includes/shipping/class-wc-montonio-shipping-settings.php:127
 msgid "Enables"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:114
+#: includes/shipping/class-wc-montonio-shipping-settings.php:128
 msgid "Applicable only in legacy checkout"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:133
+#: includes/shipping/class-wc-montonio-shipping-settings.php:147
 msgid "Select the type of dropdown to use for pickup points. We recommend using the \"Choices\" dropdown as it offers a better user experience and interface. The \"SelectWoo\" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout)."
 msgstr ""
 
@@ -1153,7 +1153,7 @@ msgid_plural "Partially refunded (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:214
+#: includes/shipping/class-wc-montonio-shipping-order.php:223
 msgid "Shipment status"
 msgstr ""
 
@@ -1169,37 +1169,37 @@ msgstr ""
 msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:236
+#: includes/shipping/class-wc-montonio-shipping-order.php:245
 #: templates/admin-order-shipping-panel.php:73
 msgid "Pending"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:237
+#: includes/shipping/class-wc-montonio-shipping-order.php:246
 #: templates/admin-order-shipping-panel.php:74
 msgid "Creation failed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:238
+#: includes/shipping/class-wc-montonio-shipping-order.php:247
 #: templates/admin-order-shipping-panel.php:75
 msgid "Registered"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:239
+#: includes/shipping/class-wc-montonio-shipping-order.php:248
 #: templates/admin-order-shipping-panel.php:76
 msgid "Registration failed"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:241
+#: includes/shipping/class-wc-montonio-shipping-order.php:250
 #: templates/admin-order-shipping-panel.php:78
 msgid "In transit"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:242
+#: includes/shipping/class-wc-montonio-shipping-order.php:251
 #: templates/admin-order-shipping-panel.php:79
 msgid "Awaiting collection"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:243
+#: includes/shipping/class-wc-montonio-shipping-order.php:252
 #: templates/admin-order-shipping-panel.php:80
 msgid "Delivered"
 msgstr ""
@@ -1258,22 +1258,22 @@ msgstr ""
 msgid "Montonio: Payment session abandoned, order ID: %s"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:84
+#: includes/shipping/class-wc-montonio-shipping-settings.php:98
 msgid "Order status when shipment is delivered"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-settings.php:87
+#: includes/shipping/class-wc-montonio-shipping-settings.php:101
 msgid "What status should the order be changed to in WooCommerce when the shipment is delivered?"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:211
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:135
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:145
 #: includes/shipping/shipping-methods/shipping-method-settings.php:125
 msgid "Exclude virtual products from free shipping threshold"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:213
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:137
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:147
 #: includes/shipping/shipping-methods/shipping-method-settings.php:127
 msgid "When calculating the cart total for free shipping, exclude the price of virtual products"
 msgstr ""
@@ -1301,7 +1301,7 @@ msgstr ""
 msgid "<strong>Payment via Montonio.</strong><br>Order ID: %1$s<br>Payment method: %2$s<br>Paid amount: %3$s%4$s"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:327
+#: includes/shipping/class-wc-montonio-shipping-order.php:336
 msgid "Complete"
 msgstr ""
 
@@ -1380,7 +1380,7 @@ msgstr ""
 msgid "Per order: Charge shipping for the most expensive shipping class"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-order.php:277
+#: includes/shipping/class-wc-montonio-shipping-order.php:286
 msgid "Print shipping label"
 msgstr ""
 
@@ -1406,13 +1406,13 @@ msgid "Need help?"
 msgstr "Vajad abi?"
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:220
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:143
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:153
 #: includes/shipping/shipping-methods/shipping-method-settings.php:134
 msgid "Use full cart price (before coupons) for free shipping threshold"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:222
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:145
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:155
 #: includes/shipping/shipping-methods/shipping-method-settings.php:136
 msgid "When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout"
 msgstr ""
@@ -1605,37 +1605,37 @@ msgstr ""
 msgid "Choose whether to use dynamic pricing from the API or set a flat rate."
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:49
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:59
 msgid "Flat Rate Cost"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:63
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:59
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:69
 msgid "Default Package Dimensions"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:66
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:61
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:71
 msgid "These dimensions are used when products in the cart do not have shipping dimensions defined. This ensures shipping rates can still be calculated via the API."
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:69
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:64
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:74
 msgid "Length (%s)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:82
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:78
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:88
 msgid "Width (%s)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:95
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:92
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:102
 msgid "Height (%s)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:108
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:106
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:116
 msgid "Weight (%s)"
 msgstr ""
 
@@ -1747,7 +1747,7 @@ msgstr ""
 msgid "Invalid payment reference. Please refresh the page and try again."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:231
+#: includes/shipping/class-wc-montonio-shipping.php:227
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
 
@@ -1766,19 +1766,19 @@ msgid ""
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:179
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:200
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:210
 #: includes/shipping/shipping-methods/shipping-method-settings.php:93
 msgid "Shipping class restrictions"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:184
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:205
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:215
 #: includes/shipping/shipping-methods/shipping-method-settings.php:98
 msgid "Disable for shipping classes"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:189
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:210
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:220
 #: includes/shipping/shipping-methods/shipping-method-settings.php:103
 msgid "This method will be hidden if the cart contains products from any of the selected shipping classes."
 msgstr ""
@@ -1811,9 +1811,23 @@ msgid "Calculate shipping costs"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:43
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:49
 msgid "Dynamic Price Markup"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:47
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:53
 msgid "Add extra markup to shipping cost. Enter a fixed amount (e.g., <code>2.50</code>) or percentage (e.g., <code>10%</code>)."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:66
+msgid "Create shipment on order status"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:69
+msgid "Select the order status that triggers automatic shipment creation in Montonio. Choose \"Disabled\" to create shipments manually."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-settings.php:72
+msgid "-- Disabled (manual creation only) --"
 msgstr ""

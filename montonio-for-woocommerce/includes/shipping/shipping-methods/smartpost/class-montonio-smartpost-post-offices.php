@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) or exit;
 
 class Montonio_Smartpost_Post_Offices extends Montonio_Shipping_Method {
-    protected $max_dimensions = array( 36, 60, 60 ); // lowest to highest (cm)
+    protected $max_dimensions = array( 60, 80, 100 ); // lowest to highest (cm)
 
     public $default_title      = 'SmartPosti post offices';
     public $default_max_weight = 35; // kg

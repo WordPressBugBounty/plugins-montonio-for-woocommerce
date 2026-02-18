@@ -39,6 +39,16 @@ $settings = array(
             'none'    => _x( 'None', 'Tax status', 'montonio-for-woocommerce' )
         )
     ),
+    'dynamic_rate_markup' => array(
+        'title'             => __( 'Dynamic Price Markup', 'montonio-for-woocommerce' ),
+        'type'              => 'text',
+        'class'             => 'wc-montonio-dynamic-rate-markup wc-montonio-dynamic-rate-only',
+        'placeholder'       => '2.50 or 10%',
+        'description'       => __( 'Add extra markup to shipping cost. Enter a fixed amount (e.g., <code>2.50</code>) or percentage (e.g., <code>10%</code>).', 'montonio-for-woocommerce' ),
+        'default'           => '0%',
+        'desc_tip'          => false,
+        'sanitize_callback' => array( $this, 'sanitize_markup' )
+    ),
     'price'                    => array(
         'title'             => __( 'Cost', 'montonio-for-woocommerce' ),
         'type'              => 'text',
