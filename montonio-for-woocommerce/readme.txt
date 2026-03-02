@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.3.7
+Version: 9.4.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.3.7
+Stable tag: 9.4.0
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,11 +136,18 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.4.0 =
+* Added – Automated shipping zone creation tool
+* Added – Payment method availability check on activation against Partner system
+* Added – New pickup point selector type option for legacy checkout
+* Fix – Order lookup now correctly handles refund objects by climbing up to the parent order
+* Fix – BNPL now correctly disables unavailable payment period options based on cart total amount in block based checkout
+* Tweak – Minor UI/UX improvements
+
 = 9.3.7 =
 * Added – Setting to choose which order status triggers automatic shipment creation, or disable it entirely
 * Added – Percentage or flat rate markup option for dynamic shipping pricing
 * Dev – Renamed filter 'wc_montonio_create_shipment_on_processing' to 'wc_montonio_create_shipment_on_status_change'
-
 
 = 9.3.6 =
 * Fix – Cards embedded checkout field no longer initializes twice in some cases

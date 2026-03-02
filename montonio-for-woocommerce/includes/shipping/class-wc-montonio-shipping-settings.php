@@ -10,7 +10,39 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
         $this->id    = 'montonio_shipping';
         $this->label = __( 'Montonio Shipping', 'montonio-for-woocommerce' );
 
+        add_action( 'woocommerce_admin_field_montonio_carriers_table', array( $this, 'output_montonio_carriers_table' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_route_setup_scripts' ) );
+
         parent::__construct();
+    }
+
+    /**
+     * Enqueue the route setup JS on the Montonio Shipping settings page.
+     *
+     * @since 9.4.0
+     */
+    public function enqueue_route_setup_scripts() {
+        $screen = get_current_screen();
+
+        if ( empty( $screen ) ) {
+            return;
+        }
+
+        if ( ! isset( $_GET['tab'] ) || 'montonio_shipping' !== sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) {
+            return;
+        }
+
+        wp_localize_script( 'montonio-admin-shipping-setup', 'montonioAdminShippingSetup', array(
+            'ajax_url'              => admin_url( 'admin-ajax.php' ),
+            'nonce'                 => wp_create_nonce( 'montonio_setup_routes' ),
+            'shipping_settings_url' => admin_url( 'admin.php?page=wc-settings&tab=shipping' ),
+            'modal_title'           => __( 'Setup Shipping Routes', 'montonio-for-woocommerce' ),
+            'network_error_html'    => WC_Montonio_Shipping_Route_Setup_View::render_error(
+                __( 'A network error occurred. Please try again.', 'montonio-for-woocommerce' )
+            ),
+        ) );
+
+        wp_enqueue_script( 'montonio-admin-shipping-setup' );
     }
 
     /**
@@ -140,13 +172,14 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'id'    => 'montonio_shipping_advanced'
             ),
             array(
-                'title'   => __( 'Pickup point dropdown', 'montonio-for-woocommerce' ),
+                'title'   => __( 'Pickup point selector', 'montonio-for-woocommerce' ),
                 'type'    => 'select',
                 'class'   => 'wc-enhanced-select',
-                'default' => 'choices',
-                'desc'    => __( 'Select the type of dropdown to use for pickup points. We recommend using the "Choices" dropdown as it offers a better user experience and interface. The "SelectWoo" dropdown is available for legacy support in case of styling or compatibility issues with custom checkout themes (applicable only in legacy checkout).', 'montonio-for-woocommerce' ),
+                'default' => 'default',
+                'desc' => __( 'Choose the pickup point selection type used in the legacy checkout.', 'montonio-for-woocommerce' ),
                 'options' => array(
-                    'choices' => 'Choices dropdown (recommended)',
+                    'default' => 'Default selector (recommended)',
+                    'choices' => 'Choices dropdown',
                     'select2' => 'SelectWoo dropdown (legacy)'
                 ),
                 'id'      => 'montonio_shipping_dropdown_type'
@@ -154,7 +187,146 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             array(
                 'type' => 'sectionend',
                 'id'   => 'montonio_shipping_advanced'
+            ),
+            array(
+                'type' => 'montonio_carriers_table',
+                'id'   => 'montonio_carriers_table'
             )
         );
+    }
+
+    /**
+     * Output the carriers table on the shipping settings page.
+     *
+     * @since 9.4.0
+     * @param array $value Field definition array from WooCommerce settings.
+     * @return void
+     */
+    public function output_montonio_carriers_table( $value ) {
+        if ( 'yes' !== get_option( 'montonio_shipping_enabled' ) ) {
+            return;
+        }
+
+        // Close the parent form-table so we can render full-width HTML
+        echo '</table>';
+
+        if ( ! WC_Montonio_Helper::has_api_keys() ) {
+            $mode = WC_Montonio_Helper::is_test_mode() ? __( 'Sandbox', 'montonio-for-woocommerce' ) : __( 'Live', 'montonio-for-woocommerce' );
+            echo '<div class="notice notice-warning inline"><p>';
+            echo wp_kses_post(
+                sprintf(
+                    /* translators: %1$s: mode (Sandbox/Live), %2$s: opening link tag to API settings, %3$s: closing link tag */
+                    __( '%1$s API keys are not configured. %2$sConfigure API keys%3$s to view carriers.', 'montonio-for-woocommerce' ),
+                    esc_html( $mode ),
+                    '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
+                    '</a>'
+                )
+            );
+            echo '</p></div>';
+            echo '<table class="form-table">';
+            return;
+        }
+
+        try {
+            $api      = new WC_Montonio_Shipping_API();
+            $response = $api->get_carriers();
+            $data     = json_decode( $response );
+            $all_carriers = isset( $data->carriers ) ? $data->carriers : array();
+            $carriers     = array_filter( $all_carriers, function( $carrier ) {
+                return ! empty( $carrier->contracts );
+            } );
+        } catch ( Exception $e ) {
+            WC_Montonio_Logger::log( 'Carriers table: failed to load carriers: ' . $e->getMessage() );
+            echo '<div class="notice notice-error inline"><p>';
+            esc_html_e( 'Could not load carriers. Please try again later.', 'montonio-for-woocommerce' );
+            echo '</p></div>';
+            echo '<table class="form-table">';
+            return;
+        }
+
+        $name_overrides = array(
+            'novaPost' => __( 'Montonio International Shipping', 'montonio-for-woocommerce' ),
+        );
+
+        $logo_overrides = array(
+            'novaPost' => 'montonio_international_shipping-rect.svg',
+        );
+
+        ?>
+        <div id="montonio-carriers-wrapper">
+        <h2><?php esc_html_e( 'Activated carriers in Montonio', 'montonio-for-woocommerce' ); ?></h2>
+
+        <?php if ( empty( $carriers ) ) : ?>
+            <div class="notice notice-info inline"><p>
+                <?php esc_html_e( 'No carriers available for this store.', 'montonio-for-woocommerce' ); ?>
+            </p></div>
+        <?php else : ?>
+            <table class="widefat montonio-carriers-table">
+                <thead>
+                    <tr>
+                        <th class="montonio-carriers-table__logo"></th>
+                        <th><?php esc_html_e( 'Carrier', 'montonio-for-woocommerce' ); ?></th>
+                        <th><?php esc_html_e( 'Contract Type', 'montonio-for-woocommerce' ); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $carriers as $carrier ) :
+                        $carrier_code = $carrier->code;
+                        $display_name = isset( $name_overrides[ $carrier_code ] ) ? $name_overrides[ $carrier_code ] : $carrier->name;
+                        $logo_filename = isset( $logo_overrides[ $carrier_code ] ) ? $logo_overrides[ $carrier_code ] : $carrier_code . '-rect.svg';
+                        $logo_path     = '/assets/images/' . $logo_filename;
+                        $logo_url      = file_exists( WC_MONTONIO_PLUGIN_PATH . $logo_path )
+                            ? WC_MONTONIO_PLUGIN_URL . $logo_path
+                            : WC_MONTONIO_PLUGIN_URL . '/assets/images/default-carrier-logo.svg';
+                    ?>
+                        <tr>
+                            <td class="montonio-carriers-table__logo">
+                                <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $display_name ); ?>" />
+                            </td>
+                            <td class="montonio-carriers-table__name"><?php echo esc_html( $display_name ); ?></td>
+                            <?php
+                            $has_montonio = false;
+                            $has_direct   = false;
+
+                            foreach ( $carrier->contracts as $contract ) {
+                                if ( ! empty( $contract->isDirectContract ) ) {
+                                    $has_direct = true;
+                                } else {
+                                    $has_montonio = true;
+                                }
+                            }
+
+                            $contract_types = array();
+
+                            if ( $has_montonio ) {
+                                $contract_types[] = __( 'Montonio', 'montonio-for-woocommerce' );
+                            }
+
+                            if ( $has_direct ) {
+                                $contract_types[] = __( 'Direct', 'montonio-for-woocommerce' );
+                            }
+                            ?>
+                            <td>
+                                <ul class="montonio-carriers-table__contracts">
+                                    <?php foreach ( $contract_types as $type ) : ?>
+                                        <li><?php echo esc_html( $type ); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+        <br>
+        <p class="montonio-setup-routes-trigger">
+            <button type="button" class="button button-primary" id="montonio-setup-routes-btn"><?php esc_html_e( 'Setup routes', 'montonio-for-woocommerce' ); ?></button>
+            <span class="description"><?php esc_html_e( 'Automatically create shipping zones and methods based on your active carriers with Montonio contracts.', 'montonio-for-woocommerce' ); ?></span>
+        </p>
+        </div>
+
+        <?php
+        // Re-open the parent form-table
+        echo '<table class="form-table">';
     }
 }

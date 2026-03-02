@@ -88,7 +88,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
             return;
         }
 
-        if ( in_array( $carrier_code, array( 'inpost', 'orlen', 'novaPost' ) ) ) {
+        if ( 'default' === get_option( 'montonio_shipping_dropdown_type' ) || in_array( $carrier_code, array( 'inpost', 'orlen', 'novaPost' ) ) ) {
             wc_get_template(
                 'shipping-pickup-points-search.php',
                 array(

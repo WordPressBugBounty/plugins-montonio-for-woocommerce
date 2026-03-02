@@ -128,7 +128,7 @@ class WC_Montonio_Card extends WC_Payment_Gateway {
                 'label'       => 'Enable card fields in checkout',
                 'type'        => 'checkbox',
                 'description' => __( 'Add card fields to the checkout instead of redirecting to the gateway.', 'montonio-for-woocommerce' ),
-                'default'     => 'no',
+                'default'     => 'yes',
                 'desc_tip'    => false
             ),
             'title'           => array(

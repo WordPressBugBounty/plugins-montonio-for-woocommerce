@@ -98,6 +98,7 @@ class WC_Montonio_API {
             'grandTotal'               => (float) wc_format_decimal( $order->get_total(), 2 ),
             'currency'                 => (string) $order->get_currency(),
             'locale'                   => (string) WC_Montonio_Helper::get_locale(),
+            'ipAddress'                => (string) $order->get_customer_ip_address(),
             'billingAddress'           => array(
                 'firstName'    => (string) $order->get_billing_first_name(),
                 'lastName'     => (string) $order->get_billing_last_name(),

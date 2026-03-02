@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.3.7
+ * Version:           9.4.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.3.7' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.4.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -296,6 +296,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'montonio-shipping-pickup-points-admin', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-admin.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'wc-montonio-shipping-shipment-manager', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-shipment-manager.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'wc-montonio-shipping-label-printing', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-label-printing.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-admin-shipping-setup', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-admin-shipping-setup.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-admin-style' );
             wp_enqueue_script( 'montonio-admin-script' );
@@ -343,22 +344,27 @@ if ( ! class_exists( 'Montonio' ) ) {
             }
         }
 
+        /**
+         * Displays an admin notice prompting the user to add Live API keys.
+         *
+         * @return void
+         */
         public function live_api_keys_notice() {
             if ( WC_Montonio_Helper::has_api_keys() ) {
                 return;
             }
             ?>
-            <div class="montonio-api-key-notice notice notice-warning is-dismissible">
+            <div class="montonio-api-key-notice notice notice-info is-dismissible">
                 <div class="montonio-api-key-notice__content">
-                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo.svg' ); ?>" alt="Montonio">
-                    <h3><?php esc_html_e( 'Start using Montonio', 'montonio-for-woocommerce' ); ?></h3>
+                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-icon.svg' ); ?>" alt="Montonio">
+                    <h3><?php esc_html_e( 'Get Started with Montonio', 'montonio-for-woocommerce' ); ?></h3>
                     <p>
-                        <?php esc_html_e( 'You haven\'t entered the Live API keys for the Montonio Payments module.', 'montonio-for-woocommerce' ); ?>
+                        <?php esc_html_e( 'Your Live API keys haven\'t been added yet.', 'montonio-for-woocommerce' ); ?>
                         <br>
                         <?php
                         printf(
                             /* translators: 1) HTML anchor open tag 2) HTML anchor closing tag */
-                            esc_html__( '%1$sClick here%2$s to enter your Live API keys and start using Montonio.', 'montonio-for-woocommerce' ),
+                            esc_html__( '%1$sClick here%2$s to enter your Live API keys to activate Montonio and start accepting payments.', 'montonio-for-woocommerce' ),
                             '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
                             '</a>'
                         );

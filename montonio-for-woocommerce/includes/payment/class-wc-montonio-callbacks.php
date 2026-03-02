@@ -313,10 +313,15 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
 
         $order = wc_get_order( $order_id );
 
-        if ( ! $order ) {
+        if ( empty( $order ) ) {
             // We have an invalid $order_id, let's try to find order by UUID
             $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $uuid, '_montonio_uuid' );
             $order    = wc_get_order( $order_id );
+        }
+
+        // If we got a refund object instead of a real order, climb up to the parent order
+        if ( ! empty( $order ) && $order instanceof WC_Order_Refund ) {
+            $order = wc_get_order( $order->get_parent_id() );
         }
 
         if ( empty( $order ) ) {

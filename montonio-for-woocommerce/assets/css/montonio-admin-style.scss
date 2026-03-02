@@ -294,7 +294,7 @@
         }
     }
 
-    .montonio-header {
+    .montonio-sidebar {
         min-width: 210px;
     }
 
@@ -310,6 +310,7 @@
 
         h4 {
             margin-top: 0;
+            margin-bottom: 10px;
         }
 
         &__body {
@@ -435,7 +436,7 @@
     .montonio-api-status {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 10px 15px;
+        gap: 10px 12px;
 
         p {
             margin: 0;
@@ -462,6 +463,34 @@
                 background-color: #edfbec;
                 color: #20b01b;
             }
+        }
+    }
+
+    .montonio-store-details {
+        &:last-child {
+            margin-bottom: 6px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .store-name {
+            font-size: 14px;
+            color: #260071;
+            font-weight: 500;
+
+            &:hover {
+                color: #5c14eb;
+            }
+        }
+
+        .store-uuid {
+            margin-top: 5px;
+            font-size: 11px;
+            line-height: 1;
+            font-weight: normal;
+            color: #7c7c7b;
         }
     }
 
@@ -993,7 +1022,6 @@ label[for*=montonio_shipping_sender] {
     border-radius: 6px;
 }
 
-/* Montonio Unified Shipping - Default Dimensi13px 16pxons Inline Layout */
 // For modal-based settings (shipping zone method modal)
 // Target only the container that comes after the default dimensions title
 [id*="default_dimensions_title"] + p + .wc-shipping-zone-method-fields {
@@ -1036,4 +1064,225 @@ label[for*=montonio_shipping_sender] {
         font-size: 12px;
         color: #666;
     }
+}
+
+// Montonio Shipping - Carriers Table
+.montonio-carriers-table {
+  td {
+    vertical-align: middle;
+  }
+
+  &__logo {
+    width: 100px;
+    text-align: center;
+
+    img {
+      max-height: 24px;
+      max-width: 80px;
+      width: auto;
+    }
+  }
+
+  &__name {
+    font-weight: 500;
+  }
+
+  &__contracts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+
+    li {
+      display: inline-block;
+      font-size: 12px;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 90px;
+      background-color: #f0ebff;
+      color: #260071;
+    }
+  }
+}
+
+// Montonio Shipping - Setup Routes Trigger
+.montonio-setup-routes-trigger {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .description {
+    color: #646970;
+  }
+}
+
+// Montonio Shipping - Setup Wizard
+.montonio-setup-loading {
+  padding: 20px;
+  text-align: center;
+
+  .spinner {
+    float: none;
+    margin: 0 10px 0 0;
+    vertical-align: middle;
+  }
+}
+
+.montonio-setup-preview-table {
+  thead th {
+    font-weight: 600;
+  }
+
+  .montonio-zone-first-row {
+    td {
+      border-top: 1px solid #c3c4c7;
+    }
+
+    &:first-child td {
+      border-top: none;
+    }
+  }
+
+  tr.montonio-setup-skipped {
+    opacity: 0.5;
+  }
+}
+
+.montonio-setup-dimensions {
+  margin: 20px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid #e1dddb;
+
+  h3 {
+    margin-top: 0;
+    font-size: 1.1em;
+  }
+
+  .form-table {
+    margin: 0;
+  }
+}
+
+.montonio-setup-actions {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .spinner {
+    float: none;
+    margin: 0;
+    vertical-align: middle;
+  }
+}
+
+.montonio-setup-summary {
+  .notice {
+    margin: 0 0 16px;
+  }
+
+  ul {
+    list-style: disc;
+    margin-left: 20px;
+  }
+
+  .montonio-setup-actions {
+    margin-top: 16px;
+  }
+}
+
+// Montonio Shipping - Setup Routes Modal
+body.montonio-modal-open {
+  overflow: hidden;
+}
+
+.montonio-shipping-setup-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100050;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.montonio-shipping-setup-modal {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e1dddb;
+    flex-shrink: 0;
+
+    h2 {
+      margin: 0;
+      font-size: 1.2em;
+      line-height: 1.4;
+      color: #1b1b1b;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    color: #3c3c3c;
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 4px;
+
+    &:hover {
+      background: #f0ebff;
+      color: #260071;
+    }
+
+    &:disabled {
+      color: #94a3b8;
+      cursor: default;
+      background: none;
+    }
+  }
+
+  &__body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid #e1dddb;
+    flex-shrink: 0;
+
+    .spinner {
+      float: none;
+      margin: 0;
+      vertical-align: middle;
+    }
+  }
 }

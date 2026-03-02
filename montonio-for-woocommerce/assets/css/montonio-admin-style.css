@@ -249,7 +249,7 @@
     flex-direction: column;
   }
 }
-.montonio-options .montonio-header {
+.montonio-options .montonio-sidebar {
   min-width: 210px;
 }
 .montonio-options .montonio-card {
@@ -263,6 +263,7 @@
 }
 .montonio-options .montonio-card h4 {
   margin-top: 0;
+  margin-bottom: 10px;
 }
 .montonio-options .montonio-card__body {
   padding: 16px 24px;
@@ -364,7 +365,7 @@
 .montonio-options .montonio-api-status {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 10px 15px;
+  gap: 10px 12px;
 }
 .montonio-options .montonio-api-status p {
   margin: 0;
@@ -387,6 +388,27 @@
 .montonio-options .montonio-api-status .api-status--green {
   background-color: #edfbec;
   color: #20b01b;
+}
+.montonio-options .montonio-store-details:last-child {
+  margin-bottom: 6px;
+}
+.montonio-options .montonio-store-details p {
+  margin: 0;
+}
+.montonio-options .montonio-store-details .store-name {
+  font-size: 14px;
+  color: #260071;
+  font-weight: 500;
+}
+.montonio-options .montonio-store-details .store-name:hover {
+  color: #5c14eb;
+}
+.montonio-options .montonio-store-details .store-uuid {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: normal;
+  color: #7c7c7b;
 }
 .montonio-options .submit {
   margin-bottom: 0;
@@ -512,8 +534,7 @@
   justify-content: center;
   align-items: center;
   background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(1px);
-          backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
   border-radius: 6px;
   opacity: 0;
   visibility: hidden;
@@ -856,7 +877,6 @@ label[for*=montonio_shipping_sender]::after {
   border-radius: 6px;
 }
 
-/* Montonio Unified Shipping - Default Dimensi13px 16pxons Inline Layout */
 [id*=default_dimensions_title] + p + .wc-shipping-zone-method-fields {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -890,4 +910,190 @@ label[for*=montonio_shipping_sender]::after {
   margin-top: 10px;
   font-size: 12px;
   color: #666;
+}
+
+.montonio-carriers-table td {
+  vertical-align: middle;
+}
+.montonio-carriers-table__logo {
+  width: 100px;
+  text-align: center;
+}
+.montonio-carriers-table__logo img {
+  max-height: 24px;
+  max-width: 80px;
+  width: auto;
+}
+.montonio-carriers-table__name {
+  font-weight: 500;
+}
+.montonio-carriers-table__contracts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 6px;
+}
+.montonio-carriers-table__contracts li {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 90px;
+  background-color: #f0ebff;
+  color: #260071;
+}
+
+.montonio-setup-routes-trigger {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.montonio-setup-routes-trigger .description {
+  color: #646970;
+}
+
+.montonio-setup-loading {
+  padding: 20px;
+  text-align: center;
+}
+.montonio-setup-loading .spinner {
+  float: none;
+  margin: 0 10px 0 0;
+  vertical-align: middle;
+}
+
+.montonio-setup-preview-table thead th {
+  font-weight: 600;
+}
+.montonio-setup-preview-table .montonio-zone-first-row td {
+  border-top: 1px solid #c3c4c7;
+}
+.montonio-setup-preview-table .montonio-zone-first-row:first-child td {
+  border-top: none;
+}
+.montonio-setup-preview-table tr.montonio-setup-skipped {
+  opacity: 0.5;
+}
+
+.montonio-setup-dimensions {
+  margin: 20px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid #e1dddb;
+}
+.montonio-setup-dimensions h3 {
+  margin-top: 0;
+  font-size: 1.1em;
+}
+.montonio-setup-dimensions .form-table {
+  margin: 0;
+}
+
+.montonio-setup-actions {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.montonio-setup-actions .spinner {
+  float: none;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.montonio-setup-summary .notice {
+  margin: 0 0 16px;
+}
+.montonio-setup-summary ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+.montonio-setup-summary .montonio-setup-actions {
+  margin-top: 16px;
+}
+
+body.montonio-modal-open {
+  overflow: hidden;
+}
+
+.montonio-shipping-setup-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100050;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.montonio-shipping-setup-modal {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.montonio-shipping-setup-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e1dddb;
+  flex-shrink: 0;
+}
+.montonio-shipping-setup-modal__header h2 {
+  margin: 0;
+  font-size: 1.2em;
+  line-height: 1.4;
+  color: #1b1b1b;
+}
+.montonio-shipping-setup-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: #3c3c3c;
+  font-size: 24px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 4px;
+}
+.montonio-shipping-setup-modal__close:hover {
+  background: #f0ebff;
+  color: #260071;
+}
+.montonio-shipping-setup-modal__close:disabled {
+  color: #94a3b8;
+  cursor: default;
+  background: none;
+}
+.montonio-shipping-setup-modal__body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.montonio-shipping-setup-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid #e1dddb;
+  flex-shrink: 0;
+}
+.montonio-shipping-setup-modal__footer .spinner {
+  float: none;
+  margin: 0;
+  vertical-align: middle;
 }

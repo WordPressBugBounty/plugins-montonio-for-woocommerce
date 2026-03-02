@@ -282,34 +282,49 @@ class WC_Montonio_Admin_Settings_Page {
      * @since 7.0.0
      * @return void
      */
-    public static function render_api_status_banner() {
+    public static function render_api_status_banner( $id = null ) {
         $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
         ?>
         <div class="montonio-card">
             <div class="montonio-card__body">
-                <h4><?php esc_html_e( 'Account status', 'montonio-for-woocommerce' ); ?></h4>
-                <div class="montonio-api-status">
-                    <p><?php esc_html_e( 'Live keys:', 'montonio-for-woocommerce' ); ?></p>
-                    <?php if ( ! empty( $api_settings['access_key'] ) && ! empty( $api_settings['secret_key'] ) ): ?>
-                        <div><span class="api-status api-status--green"><?php esc_html_e( 'Added', 'montonio-for-woocommerce' ); ?></span></div>
-                    <?php else: ?>
-                        <div><span class="api-status api-status--red"><?php esc_html_e( 'Not Added', 'montonio-for-woocommerce' ); ?></span></div>
-                    <?php endif; ?>
+                <?php if ( WC_Montonio_Helper::has_api_keys() ) : ?>
+                    <h4><?php esc_html_e( 'Connected store', 'montonio-for-woocommerce' ); ?></h4>
+                    <?php $store_details = WC_Montonio_Helper::get_store_details(); ?>
+                    <?php if ( ! empty( $store_details ) ): ?>
+                        <div class="montonio-store-details">
+                            <div>
+                                <a href="https://partner.montonio.com/stores/<?php esc_attr_e( $store_details['uuid'] ); ?>" class="store-name" target="_blank" title="<?php esc_html__( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"><?php esc_html_e( $store_details['name'] ); ?></a>
+                                <div class="store-uuid">UUID: <?php esc_attr_e( $store_details['uuid'] ); ?></div>
+                            </div>
+                        </div>
+                     <?php endif; ?>
+                <?php else : ?>
+                    <h4><?php esc_html_e( 'Account status', 'montonio-for-woocommerce' ); ?></h4>
+                    <div class="montonio-api-status">
+                        <p><?php esc_html_e( 'Live keys:', 'montonio-for-woocommerce' ); ?></p>
+                        <?php if ( ! empty( $api_settings['access_key'] ) && ! empty( $api_settings['secret_key'] ) ): ?>
+                            <div><span class="api-status api-status--green"><?php esc_html_e( 'Added', 'montonio-for-woocommerce' ); ?></span></div>
+                        <?php else: ?>
+                            <div><span class="api-status api-status--red"><?php esc_html_e( 'Not Added', 'montonio-for-woocommerce' ); ?></span></div>
+                        <?php endif; ?>
 
-                    <p><?php esc_html_e( 'Sandbox keys:', 'montonio-for-woocommerce' ); ?></p>
-                    <?php if ( ! empty( $api_settings['sandbox_access_key'] ) && ! empty( $api_settings['sandbox_secret_key'] ) ): ?>
-                        <div><span class="api-status api-status--green"><?php esc_html_e( 'Added', 'montonio-for-woocommerce' ); ?></span></div>
-                    <?php else: ?>
-                        <div><span class="api-status"><?php esc_html_e( 'Not Added', 'montonio-for-woocommerce' ); ?></span></div>
-                    <?php endif; ?>
+                        <p><?php esc_html_e( 'Sandbox keys:', 'montonio-for-woocommerce' ); ?></p>
+                        <?php if ( ! empty( $api_settings['sandbox_access_key'] ) && ! empty( $api_settings['sandbox_secret_key'] ) ): ?>
+                            <div><span class="api-status api-status--green"><?php esc_html_e( 'Added', 'montonio-for-woocommerce' ); ?></span></div>
+                        <?php else: ?>
+                            <div><span class="api-status"><?php esc_html_e( 'Not Added', 'montonio-for-woocommerce' ); ?></span></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if ( 'wc_montonio_api' !== $id ) : ?>
+                <div class="montonio-card__footer">
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ); ?>" class="montonio-button montonio-button--secondary">
+                        <?php esc_html_e( 'Edit account keys', 'montonio-for-woocommerce' ); ?>
+                    </a>
                 </div>
-            </div>
-
-            <div class="montonio-card__footer">
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ); ?>" class="montonio-button montonio-button--secondary">
-                    <?php esc_html_e( 'Edit account keys', 'montonio-for-woocommerce' ); ?>
-                </a>
-            </div>
+            <?php endif; ?>
         </div>
         <?php
 }
@@ -369,7 +384,7 @@ class WC_Montonio_Admin_Settings_Page {
 
         <div class="montonio-options <?php echo esc_attr( $id ); ?>">
             <div class="montonio-options__container">
-                <div class="montonio-header">
+                <div class="montonio-sidebar">
                     <img class="montonio-logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo.svg' ); ?>" alt="<?php esc_attr_e( 'Montonio logo', 'montonio-for-woocommerce' ); ?>" />
 
                     <?php self::render_admin_menu( $id ); ?>
@@ -381,9 +396,7 @@ class WC_Montonio_Admin_Settings_Page {
                         self::render_banner( $banner['content'], $banner['class'], $banner['icon'] );
                     }
 
-                    if ( 'wc_montonio_api' !== $id ) {
-                        self::render_api_status_banner();
-                    }
+                    self::render_api_status_banner( $id );
                     ?>
 
                     <div class="montonio-card">

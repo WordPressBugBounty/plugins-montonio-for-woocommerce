@@ -65,7 +65,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
      */
     public function __construct() {
         $this->id                 = 'wc_montonio_payments';
-        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-mark.svg';
         $this->has_fields         = true;
         $this->method_title       = __( 'Montonio Bank Payments', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Allows bank payments via the Montonio Payment Initiation Service.', 'montonio-for-woocommerce' );

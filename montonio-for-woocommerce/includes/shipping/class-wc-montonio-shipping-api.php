@@ -41,6 +41,26 @@ class WC_Montonio_Shipping_API {
     }
 
     /**
+     * Get all carriers and their contracts for the store
+     *
+     * @since 9.4.0
+     * @return string The body of the response as a JSON string
+     */
+    public function get_carriers() {
+        $path = '/v2/carriers';
+
+        $args = array(
+            'headers' => array(
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+            ),
+            'method'  => 'GET'
+        );
+
+        return $this->api_request( $path, $args );
+    }
+
+    /**
      * Get all store pickup points
      *
      * @since 7.0.0

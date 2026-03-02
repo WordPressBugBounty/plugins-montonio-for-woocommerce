@@ -25,7 +25,7 @@ class WC_Montonio_Helper {
      */
     public static function is_test_mode() {
         $settings = self::get_api_settings();
-        
+
         return ( $settings['test_mode'] ?? 'no' ) === 'yes';
     }
 
@@ -281,6 +281,7 @@ class WC_Montonio_Helper {
         return \MontonioFirebaseV2\JWT\JWT::decode( $token, $api_keys['secret_key'], array( 'HS256' ) );
     }
 
+
     /**
      * Get payment methods, syncing if necessary.
      *
@@ -292,26 +293,51 @@ class WC_Montonio_Helper {
         if ( ! self::has_api_keys() ) {
             return null;
         }
-        
-        $payment_methods = get_option( 'montonio_payment_methods' );
 
-        if ( empty( $payment_methods ) ) {
+        $store_data = get_option( 'montonio_payment_methods' );
+
+        if ( empty( $store_data ) ) {
             WC_Montonio_Data_Sync::sync_data();
-            $payment_methods = get_option( 'montonio_payment_methods' );
+            $store_data = get_option( 'montonio_payment_methods' );
         }
 
-        if ( empty( $payment_methods ) ) {
+        if ( empty( $store_data ) ) {
             return null;
         }
 
-        $decoded = json_decode( $payment_methods, true );
-        $methods = $decoded['paymentMethods'] ?? null;
+        $store_data = json_decode( $store_data, true );
+        $methods    = $store_data['paymentMethods'] ?? null;
 
         if ( $method !== null ) {
             return $methods[$method] ?? null;
         }
 
         return $methods;
+    }
+
+    /**
+     * Get store details.
+     *
+     * @since 9.4.0
+     * @return array|null Array containing store 'uuid' and 'name', or null if unavailable
+     */
+    public static function get_store_details() {
+        $store_data = get_option( 'montonio_payment_methods' );
+
+        if ( empty( $store_data ) ) {
+            return null;
+        }
+
+        $store_data = json_decode( $store_data, true );
+
+        if ( empty( $store_data['uuid'] ) || empty( $store_data['name'] ) ) {
+            return null;
+        }
+
+        return array(
+            'uuid' => $store_data['uuid'],
+            'name' => $store_data['name']
+        );
     }
 
     /**
@@ -327,16 +353,16 @@ class WC_Montonio_Helper {
             'wc_montonio_card',
             'wc_montonio_blik',
             'wc_montonio_bnpl',
-            'wc_montonio_hire_purchase',
+            'wc_montonio_hire_purchase'
         );
- 
+
         foreach ( $montonio_gateways as $gateway_id ) {
             if ( $gateway_id === $exclude ) {
                 continue;
             }
- 
+
             $settings = get_option( 'woocommerce_' . $gateway_id . '_settings' );
- 
+
             if ( is_array( $settings ) && isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] ) {
                 return true;
             }

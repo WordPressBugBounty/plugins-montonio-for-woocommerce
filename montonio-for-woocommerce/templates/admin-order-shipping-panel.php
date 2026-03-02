@@ -21,7 +21,7 @@ if ( empty( $shipping_method ) ) {
 
 $tracking_codes          = $shipping_method->get_meta( 'tracking_codes' );
 $shipping_method_item_id = $order->get_meta( '_montonio_pickup_point_uuid' );
-$carrier_name            = $shipping_method->get_meta( 'carrier_codes' );
+$carrier_name            = $shipping_method->get_meta( 'carrier_code' );
 $type                    = $shipping_method->get_meta( 'type_v2' );
 
 if ( ! empty( $shipping_method_item_id ) ) {
@@ -67,25 +67,25 @@ if ( ! empty( $shipment_status_reason ) ) {
             </div>
 
             <?php
-$status = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
+            $status = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
 
-$status_labels = array(
-    'pending'            => __( 'Pending', 'montonio-for-woocommerce' ),
-    'creationFailed'     => __( 'Creation failed', 'montonio-for-woocommerce' ),
-    'registered'         => __( 'Registered', 'montonio-for-woocommerce' ),
-    'registrationFailed' => __( 'Registration failed', 'montonio-for-woocommerce' ),
-    'labelsCreated'      => __( 'Label printed', 'montonio-for-woocommerce' ),
-    'inTransit'          => __( 'In transit', 'montonio-for-woocommerce' ),
-    'awaitingCollection' => __( 'Awaiting collection', 'montonio-for-woocommerce' ),
-    'delivered'          => __( 'Delivered', 'montonio-for-woocommerce' )
-);
+            $status_labels = array(
+                'pending'            => __( 'Pending', 'montonio-for-woocommerce' ),
+                'creationFailed'     => __( 'Creation failed', 'montonio-for-woocommerce' ),
+                'registered'         => __( 'Registered', 'montonio-for-woocommerce' ),
+                'registrationFailed' => __( 'Registration failed', 'montonio-for-woocommerce' ),
+                'labelsCreated'      => __( 'Label printed', 'montonio-for-woocommerce' ),
+                'inTransit'          => __( 'In transit', 'montonio-for-woocommerce' ),
+                'awaitingCollection' => __( 'Awaiting collection', 'montonio-for-woocommerce' ),
+                'delivered'          => __( 'Delivered', 'montonio-for-woocommerce' )
+            );
 
-if ( ! empty( $status ) ) {
-    $status_label = isset( $status_labels[$status] ) ? $status_labels[$status] : ucfirst( strtolower( preg_replace( '/(?<!^)([A-Z])/', ' $1', $status ) ) );
+            if ( ! empty( $status ) ) {
+                $status_label = isset( $status_labels[$status] ) ? $status_labels[$status] : ucfirst( strtolower( preg_replace( '/(?<!^)([A-Z])/', ' $1', $status ) ) );
 
-    echo '<mark class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
-}
-?>
+                echo '<mark class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
+            }
+            ?>
         </div>
 
         <?php if ( empty( $shipment_id ) ): ?>
@@ -121,11 +121,11 @@ if ( ! empty( $status ) ) {
         <?php endif; ?>
 
         <?php
-$show_update_button = ! empty( $shipment_id ) && in_array( $shipment_status, array( 'registered', 'registrationFailed', 'labelsCreated', 'updateFailed' ) );
-$show_create_button = empty( $shipment_id );
-$show_print_button  = ! empty( $tracking_codes ) && ! in_array( $shipment_status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) );
+        $show_update_button = ! empty( $shipment_id ) && in_array( $shipment_status, array( 'registered', 'registrationFailed', 'labelsCreated', 'updateFailed' ) );
+        $show_create_button = empty( $shipment_id );
+        $show_print_button  = ! empty( $tracking_codes ) && ! in_array( $shipment_status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) );
 
-if ( $show_update_button || $show_create_button || $show_print_button ): ?>
+        if ( $show_update_button || $show_create_button || $show_print_button ): ?>
             <div class="montonio-shipping-panel__actions">
                 <?php if ( $show_update_button ): ?>
                     <a id="montonio-shipping-send-shipment" data-type="update" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Update shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>

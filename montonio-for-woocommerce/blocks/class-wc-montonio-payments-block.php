@@ -79,7 +79,7 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
         return array(
             'title'              => $title,
             'description'        => $this->get_setting( 'description' ),
-            'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logomark.png' ),
+            'iconurl'            => apply_filters( 'wc_montonio_payments_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-mark.svg' ),
             'sandboxMode'        => WC_Montonio_Helper::is_test_mode(),
             'accessKey'          => WC_Montonio_Helper::get_api_keys()['access_key'],
             'storeSetupData'     => json_encode( $setup_data ),

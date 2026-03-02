@@ -26,6 +26,9 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-item-manager.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/webhooks/class-wc-montonio-shipping-webhooks.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-helper.php';
+        require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup.php';
+        require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup-view.php';
+        WC_Montonio_Shipping_Route_Setup::init();
 
         if ( 'yes' === get_option( 'montonio_shipping_enabled' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-address-helper.php';
@@ -78,7 +81,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         }
 
         if ( ! WC_Montonio_Helper::is_checkout_block() ) {
-            if ( get_option( 'montonio_shipping_dropdown_type' ) === 'select2' ) {
+            if ( 'select2' === get_option( 'montonio_shipping_dropdown_type' ) ) {
                 wp_enqueue_style( 'montonio-pickup-points' );
 
                 if ( ! wp_script_is( 'selectWoo', 'registered' ) ) {
@@ -86,7 +89,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
                 }
 
                 wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
-            } else {
+            } elseif ( 'choices' === get_option( 'montonio_shipping_dropdown_type' ) ) {
                 wp_enqueue_script( 'montonio-shipping-pickup-points' );
             }
         }
