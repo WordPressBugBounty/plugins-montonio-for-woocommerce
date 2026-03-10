@@ -3,6 +3,14 @@
   src: url("../fonts/Satoshi-Variable.woff2") format("woff2") tech("variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2 supports variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2-variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2");
   font-weight: 300 900;
 }
+@keyframes montonio-spinner {
+  0% {
+    transform: rotate(-43deg);
+  }
+  100% {
+    transform: rotate(317deg);
+  }
+}
 .montonio-button {
   font-size: 13px;
   letter-spacing: 0;
@@ -85,6 +93,32 @@
   padding: 14px 23px;
 }
 
+.montonio-notice {
+  background: #F0EEFB;
+  padding: 8px 12px 8px 12px !important;
+}
+.montonio-notice strong {
+  color: #442DD2;
+}
+.montonio-notice--success {
+  background: #EDFBEC;
+}
+.montonio-notice--success strong {
+  color: #098F04;
+}
+.montonio-notice--warning {
+  background: #fff6da;
+}
+.montonio-notice--warning strong {
+  color: #e3a500;
+}
+.montonio-notice--error {
+  background: #ffebeb;
+}
+.montonio-notice--error strong {
+  color: #ce0920;
+}
+
 .montonio-icon--circle {
   display: inline-flex;
   align-items: center;
@@ -103,14 +137,6 @@
   transform: rotate(-43deg);
 }
 
-@keyframes montonio-spinner {
-  0% {
-    transform: rotate(-43deg);
-  }
-  100% {
-    transform: rotate(317deg);
-  }
-}
 .montonio-logo {
   max-width: 130px;
   margin-bottom: 30px;
@@ -192,7 +218,7 @@
   background: #fff;
   color: #1b1b1b;
   padding: 40px;
-  border-radius: 24px;
+  border-radius: 14px;
 }
 @media only screen and (max-width: 1240px) {
   .montonio-options {
@@ -562,17 +588,24 @@ label[for*=montonio_shipping_sender]::after {
   color: #E9283F;
 }
 
+.montonio-api-key-notice {
+  text-align: center;
+  border: none;
+  box-shadow: none;
+  border-radius: 16px;
+}
 .montonio-api-key-notice__content {
-  padding: 20px 10px;
+  padding: 25px 10px;
   font-size: 14px;
 }
 .montonio-api-key-notice__content img {
-  width: 140px;
-  margin-bottom: 20px;
+  width: 45px;
+  margin-bottom: 15px;
 }
 .montonio-api-key-notice__content h3 {
   font-size: 15px;
   margin: 0 0 5px 0;
+  color: #260071;
 }
 .montonio-api-key-notice__content p {
   font-size: inherit;
@@ -628,11 +661,13 @@ label[for*=montonio_shipping_sender]::after {
 .montonio-options-loader::before {
   content: "";
   display: block;
-  width: 25px;
-  height: 25px;
-  background-image: url("data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20id%3D%22loader-1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%2240px%22%20%20height%3D%2240px%22%20viewBox%3D%220%200%2050%2050%22%20style%3D%22enable-background%3Anew%200%200%2050%2050%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpath%20fill%3D%22%23442DD2%22%20d%3D%22M43.935%2C25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318%2C0-18.683%2C8.365-18.683%2C18.683h4.068c0-8.071%2C6.543-14.615%2C14.615-14.615c8.072%2C0%2C14.615%2C6.543%2C14.615%2C14.615H43.935z%22%3E%3CanimateTransform%20attributeType%3D%22xml%22%0A%20%20%20%20%20%20%20%20%20attributeName%3D%22transform%22%0A%20%20%20%20%20%20%20%20%20type%3D%22rotate%22%0A%20%20%20%20%20%20%20%20%20from%3D%220%2025%2025%22%0A%20%20%20%20%20%20%20%20%20to%3D%22360%2025%2025%22%0A%20%20%20%20%20%20%20%20%20dur%3D%220.6s%22%0A%20%20%20%20%20%20%20%20%20repeatCount%3D%22indefinite%22%2F%3E%3C%2Fpath%3E%3C%2Fsvg%3E");
+  width: 20px;
+  height: 20px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path opacity="0.16" d="M15 8C15 8.91925 14.8189 9.82951 14.4672 10.6788C14.1154 11.5281 13.5998 12.2997 12.9497 12.9497C12.2997 13.5998 11.5281 14.1154 10.6788 14.4672C9.82951 14.8189 8.91925 15 8 15C7.08075 15 6.17049 14.8189 5.32122 14.4672C4.47194 14.1154 3.70026 13.5998 3.05025 12.9497C2.40024 12.2997 1.88463 11.5281 1.53284 10.6788C1.18106 9.8295 1 8.91925 1 8C1 7.08074 1.18106 6.17049 1.53284 5.32121C1.88463 4.47193 2.40024 3.70026 3.05025 3.05025C3.70027 2.40024 4.47194 1.88462 5.32122 1.53284C6.1705 1.18106 7.08075 1 8 1C8.91926 1 9.82951 1.18106 10.6788 1.53284C11.5281 1.88463 12.2997 2.40024 12.9498 3.05026C13.5998 3.70027 14.1154 4.47194 14.4672 5.32122C14.8189 6.1705 15 7.08075 15 8L15 8Z" stroke="%23260071" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 1C8.91925 1 9.82951 1.18106 10.6788 1.53284C11.5281 1.88463 12.2997 2.40024 12.9497 3.05025C13.5998 3.70026 14.1154 4.47194 14.4672 5.32122C14.8189 6.1705 15 7.08075 15 8" stroke="%23260071" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
   background-size: contain;
   background-repeat: no-repeat;
+  animation: montonio-spinner 1s infinite cubic-bezier(0.65, 0.05, 0.36, 0.95);
+  transform: rotate(-43deg);
 }
 
 .montonio-shipping-panel__status {

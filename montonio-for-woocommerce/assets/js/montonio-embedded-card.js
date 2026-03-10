@@ -12,8 +12,7 @@ jQuery(document).ready(function($) {
     let form = $('form.checkout'),
         params = wc_montonio_embedded_card,
         montonioCheckout = null,
-        sessionPromise = null, // Promise that resolves when session is ready
-        isInitializing = false;
+        sessionPromise = null; // Promise that resolves when session is ready
 
     $(document).on('updated_checkout', function(){        
         if ($('input[value="wc_montonio_card"]').is(':checked')) {
@@ -60,14 +59,12 @@ jQuery(document).ready(function($) {
 
     // Handle when card payment method is selected
     async function handleCardPaymentSelection() {
-        if (isInitializing || $('#montonio-card-form').hasClass('checkoutInitialized')) {
+        if ($('#montonio-card-form').hasClass('isInitializing') || $('#montonio-card-form').hasClass('checkoutInitialized')) {
             return;
         }
-        
-        isInitializing = true;
 
         // Show loading state
-        $('#montonio-card-form').addClass('loading').block({
+        $('#montonio-card-form').addClass('isInitializing loading').block({
             message: null,
             overlayCSS: {
                 background: 'transparent',
@@ -87,8 +84,7 @@ jQuery(document).ready(function($) {
         } catch (error) {
             console.error(error);
         } finally {
-            isInitializing = false;
-            $('#montonio-card-form').removeClass('loading').unblock();
+            $('#montonio-card-form').removeClass('isInitializing loading').unblock();
         }
     }
 

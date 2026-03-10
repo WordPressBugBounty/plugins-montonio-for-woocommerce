@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 9.4.0\n"
+"Project-Id-Version: Montonio for WooCommerce 9.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-02T11:28:42+00:00\n"
+"POT-Creation-Date: 2026-03-09T12:17:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -39,7 +39,7 @@ msgstr ""
 #: blocks/class-wc-montonio-blik-block.php:31
 #: includes/admin/class-wc-montonio-admin-settings-page.php:175
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:62
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:116
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:117
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/src/wc-montonio-blik/index-v1.js:15
 #: blocks/src/wc-montonio-blik/index.js:15
@@ -53,7 +53,7 @@ msgstr ""
 #: blocks/class-wc-montonio-bnpl-block.php:31
 #: includes/admin/class-wc-montonio-admin-settings-page.php:181
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:70
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:99
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:100
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:15
 msgid "Pay Later"
@@ -61,7 +61,7 @@ msgstr ""
 
 #: blocks/class-wc-montonio-card-block.php:51
 #: includes/payment/payment-methods/class-wc-montonio-card.php:87
-#: includes/payment/payment-methods/class-wc-montonio-card.php:137
+#: includes/payment/payment-methods/class-wc-montonio-card.php:138
 #: blocks/build/wc-montonio-card/index-legacy.js:1
 #: blocks/build/wc-montonio-card/index.js:1
 #: blocks/src/wc-montonio-card/index.js:16
@@ -71,40 +71,40 @@ msgstr ""
 #: blocks/class-wc-montonio-hire-purchase-block.php:31
 #: includes/admin/class-wc-montonio-admin-settings-page.php:187
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:64
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:96
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:97
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
 #: blocks/src/wc-montonio-hire-purchase/index.js:14
 msgid "Financing"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:55
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:256
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:297
 msgid "Estonia"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:56
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:257
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:298
 msgid "Finland"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:57
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:258
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:299
 msgid "Latvia"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:58
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:259
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:300
 msgid "Lithuania"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:59
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:260
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:301
 msgid "Poland"
 msgstr ""
 
 #: blocks/class-wc-montonio-payments-block.php:76
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:95
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:124
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:125
 #: blocks/build/wc-montonio-payments/index.js:1
 #: blocks/src/wc-montonio-payments/index.js:15
 msgid "Pay with your bank"
@@ -207,11 +207,11 @@ msgstr ""
 
 #. translators: 1) notice that test mode is enabled 2) explanation of test mode
 #: includes/admin/class-wc-montonio-admin-settings-page.php:348
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:264
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:192
-#: includes/payment/payment-methods/class-wc-montonio-card.php:238
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:305
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:233
+#: includes/payment/payment-methods/class-wc-montonio-card.php:279
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:68
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:289
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:330
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/build/wc-montonio-card/index-legacy.js:1
@@ -530,80 +530,98 @@ msgstr ""
 msgid "Separate BLIK Payment option for checkout"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:99
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:90
-#: includes/payment/payment-methods/class-wc-montonio-card.php:120
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:87
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:125
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:115
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:100
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:91
+#: includes/payment/payment-methods/class-wc-montonio-card.php:121
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:88
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:126
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:116
 #: includes/shipping/class-wc-montonio-shipping-settings.php:90
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:100
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:101
 msgid "Enable Montonio BLIK"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:109
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:110
 msgid "Add BLIK fields to the checkout instead of redirecting to the gateway."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:114
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:97
-#: includes/payment/payment-methods/class-wc-montonio-card.php:135
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:94
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:122
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:115
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:98
+#: includes/payment/payment-methods/class-wc-montonio-card.php:136
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:95
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:123
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:12
 #: includes/shipping/shipping-methods/shipping-method-settings.php:10
 msgid "Title"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:117
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:100
-#: includes/payment/payment-methods/class-wc-montonio-card.php:138
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:97
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:125
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:118
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:101
+#: includes/payment/payment-methods/class-wc-montonio-card.php:139
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:98
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:126
 msgid "Payment method title which the user sees during checkout."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:121
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:104
-#: includes/payment/payment-methods/class-wc-montonio-card.php:142
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:101
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:129
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:122
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:105
+#: includes/payment/payment-methods/class-wc-montonio-card.php:143
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:102
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:130
 msgid "Description"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:124
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:125
 msgid "Pay with BLIK via Montonio."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:125
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:108
-#: includes/payment/payment-methods/class-wc-montonio-card.php:146
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:105
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:133
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:126
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:109
+#: includes/payment/payment-methods/class-wc-montonio-card.php:147
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:106
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:134
 msgid "Payment method description which the user sees during checkout."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:199
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:203
+#. translators: %s: payment method title
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:150
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:140
+#: includes/payment/payment-methods/class-wc-montonio-card.php:171
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:198
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:216
+msgid "%s is not active on your Montonio account. Please check your Montonio Partner System settings."
+msgstr ""
+
+#. translators: 1) payment method title 2) error returned by Montonio API
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:158
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:148
+#: includes/payment/payment-methods/class-wc-montonio-card.php:179
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:206
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:224
+msgid "<strong>%1$s could not be enabled.</strong><br>Error: %2$s"
+msgstr ""
+
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:240
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:244
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/src/wc-montonio-blik/index.js:126
 msgid "Please enter a valid 6-digit BLIK code."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:224
-#: includes/payment/payment-methods/class-wc-montonio-card.php:282
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:265
+#: includes/payment/payment-methods/class-wc-montonio-card.php:323
 msgid "Invalid payment reference. Please refresh the page and try again."
 msgstr ""
 
 #. translators: 1) notice that test mode is enabled 2) explanation of test mode
-#: includes/payment/payment-methods/class-wc-montonio-blik.php:264
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:192
-#: includes/payment/payment-methods/class-wc-montonio-card.php:238
+#: includes/payment/payment-methods/class-wc-montonio-blik.php:305
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:233
+#: includes/payment/payment-methods/class-wc-montonio-card.php:279
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:68
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:289
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:330
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/build/wc-montonio-card/index-legacy.js:1
@@ -627,48 +645,48 @@ msgstr ""
 msgid "Pay in multiple parts provided in co-operation with Inbank"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:91
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:92
 msgid "Enable Montonio Pay Later"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:107
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:108
 msgid "Pay in multiple parts provided in co-operation with Inbank."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:112
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:113
 msgid "Minimum cart amount"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:115
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:116
 msgid "Display \"Pay Later\" payment method when the cart total is more than the specified amount."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:201
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:242
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:46
 msgid "Pay next month"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:206
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:247
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:47
 msgid "Pay in two parts"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:211
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:252
 #: blocks/build/wc-montonio-bnpl/index.js:1
 #: blocks/src/wc-montonio-bnpl/index.js:48
 msgid "Pay in three parts"
 msgstr ""
 
 #. translators: additional amount needed
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:229
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:270
 msgid "Add %s to the cart to use this payment method"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:289
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:257
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:393
+#: includes/payment/payment-methods/class-wc-montonio-bnpl.php:330
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:298
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:434
 msgid "Montonio: There was a problem processing the payment. Response: "
 msgstr ""
 
@@ -680,15 +698,15 @@ msgstr ""
 msgid "Allows card payments via Montonio"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-card.php:121
+#: includes/payment/payment-methods/class-wc-montonio-card.php:122
 msgid "Enable Montonio Card Payments"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-card.php:130
+#: includes/payment/payment-methods/class-wc-montonio-card.php:131
 msgid "Add card fields to the checkout instead of redirecting to the gateway."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-card.php:145
+#: includes/payment/payment-methods/class-wc-montonio-card.php:146
 msgid "Pay with your credit or debit card via Montonio."
 msgstr ""
 
@@ -700,59 +718,59 @@ msgstr ""
 msgid "Hire purchase provided in co-operation with Inbank"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:88
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:89
 msgid "Enable Montonio Financing"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:104
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:105
 msgid "Pay in 3-72 months."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:109
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:110
 msgid "Min cart amount"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:112
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:113
 msgid "The payment method will only be displayed if the cart total exceeds this amount. Minimum allowed value is 100."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:122
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:123
 msgid "Display an interactive financing calculator that allows customers to see monthly payment breakdowns for their purchases."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:126
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:127
 msgid "Enable Financing Calculator"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:132
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:133
 msgid "Region"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:136
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:137
 msgid "Select the region for the calculator."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:144
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:145
 msgid "Mode"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:148
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:149
 msgid "The background color of the calculator."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:156
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:157
 msgid "Template"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:160
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:161
 msgid "Whether the customer will be able to edit the loan amount in the calculator modal."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:167
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:168
 msgid "Hooks"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:170
+#: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:171
 msgid "Set where the loan calculator appears by entering WooCommerce hooks.<br />Separate multiple hooks with commas (e.g., my_hook_1, my_hook_2).<br />See <a href=\"https://docs.woocommerce.com/wc-apidocs/hook-docs.html\" target=\"_blank\">WooCommerce hook docs</a> for reference.<br /><br />Or use the shortcode <code>[montonio_calculator]</code> with the optional attribute product_id=\"123\" to display the calculator for a specific product."
 msgstr ""
 
@@ -764,73 +782,73 @@ msgstr ""
 msgid "Allows bank payments via the Montonio Payment Initiation Service."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:116
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:117
 msgid "Enable Montonio Bank Payments"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:137
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:138
 msgid "Payment Handle Style"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:141
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:142
 msgid "This controls how to display bank logos at checkout"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:150
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:151
 msgid "Default Eurozone Country"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:154
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:155
 msgid "The country whose banks to show first at checkout when using Euro (€) as currency.<br/>When using a different currency, e.g Polish Zloty (PLN), this option will be disregarded and the correct currency will be shown."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:164
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:165
 msgid "Hide Country Select"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:165
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:183
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:166
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:184
 #: includes/shipping/class-wc-montonio-shipping-settings.php:152
 msgid "Enable"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:170
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:171
 msgid "Preselect country by user data"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:174
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:175
 msgid "Automatically change the selected bank country based on customer's data? If unsuccessful, fallback to \"Default Eurozone Country\"."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:176
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:177
 msgid "Don't select automatically"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:177
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:178
 msgid "Select based on user billing country"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:178
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:179
 msgid "Select based on site language"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:182
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:183
 msgid "Use custom payment description"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:186
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:187
 msgid "This allows you to customize the payment description that will be relayed to the bank's payment order. If not enabled, defaults to order ID."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:189
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:190
 msgid "Custom payment description"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:191
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:192
 msgid "Payment for order {order_number}"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-payments.php:192
+#: includes/payment/payment-methods/class-wc-montonio-payments.php:193
 msgid "Available placeholders: {order_number}"
 msgstr ""
 
@@ -1270,11 +1288,11 @@ msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add the
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping.php:326
-msgid "Montonio Shipping: Pickup point sync successful!"
+msgid "Shipping method data synced successfully."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping.php:332
-msgid "Montonio API response: "
+msgid "<strong>Shipping data sync failed.</strong><br>"
 msgstr ""
 
 #: includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php:40

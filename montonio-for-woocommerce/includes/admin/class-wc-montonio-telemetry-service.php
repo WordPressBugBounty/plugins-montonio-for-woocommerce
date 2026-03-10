@@ -5,40 +5,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * @since 7.0.0 - Polyfill for wp_timezone_string that was introduced in WordPress 5.3
- *
- * Uses the `timezone_string` option to get a proper timezone name if available,
- * otherwise falls back to a manual UTC ± offset.
- *
- * Example return values:
- *
- *  - 'Europe/Rome'
- *  - 'America/North_Dakota/New_Salem'
- *  - 'UTC'
- *  - '-06:30'
- *  - '+00:00'
- *  - '+08:45'
- *
- * @return string PHP timezone name or a ±HH:MM offset.
  */
 if ( ! function_exists( 'wp_timezone_string' ) ) {
     function wp_timezone_string() {
-        // This is a simplified alternative to wp_timezone_string
         $timezone = get_option( 'timezone_string' );
         if ( ! empty( $timezone ) ) {
             return $timezone;
         }
 
-        $offset = get_option( 'gmt_offset' );
+        $offset  = get_option( 'gmt_offset' );
         if ( 0 == $offset ) {
             return 'UTC';
         }
 
-        $hours   = (int) $offset;
-        $minutes = ( $offset - $hours );
-
+        $hours    = (int) $offset;
+        $minutes  = ( $offset - $hours );
         $sign     = ( $offset < 0 ) ? '-' : '+';
         $abs_hour = abs( $hours );
         $abs_mins = abs( $minutes * 60 );
+
         return sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
     }
 }
@@ -51,21 +36,15 @@ if ( ! function_exists( 'wp_timezone_string' ) ) {
 class WC_Montonio_Telemetry_Service {
     /**
      * @since 7.0.0
-     * @var string The API access key
-     */
-    public $access_key;
-
-    /**
-     * @since 7.0.0
-     * @var string The API secret key
-     */
-    public $secret_key;
-
-    /**
-     * @since 7.0.0
      * @var string Root URL for the Montonio telemetry application
      */
     const MONTONIO_TELEMETRY_API_URL = 'https://plugin-telemetry.montonio.com/api';
+
+    /**
+     * @since 9.4.1
+     * @var string WP-Cron hook name for telemetry sync
+     */
+    const CRON_HOOK = 'montonio_telemetry_sync_event';
 
     /**
      * @since 7.0.0
@@ -112,49 +91,80 @@ class WC_Montonio_Telemetry_Service {
      * @since 7.0.0
      */
     public function __construct() {
-        $api_keys = WC_Montonio_Helper::get_api_keys();
+        add_action( 'init', array( $this, 'setup_sync' ) );
+        add_action( 'woocommerce_settings_saved', array( $this, 'send_telemetry_data' ) );
+        add_action( 'montonio_send_telemetry_data', array( $this, 'send_telemetry_data' ) );
 
-        $this->access_key = $api_keys['access_key'];
-        $this->secret_key = $api_keys['secret_key'];
-
-        add_action( 'wp_loaded', array($this, 'trigger_telemetry_sync') );
-        add_action( 'woocommerce_settings_saved', array($this, 'send_telemetry_data') );
-        add_action( 'montonio_send_telemetry_data', array($this, 'send_telemetry_data') );
-
-        register_deactivation_hook( WC_MONTONIO_PLUGIN_FILE, array($this, 'wc_montonio_deactivated') );
+        register_deactivation_hook( WC_MONTONIO_PLUGIN_FILE, array( $this, 'wc_montonio_deactivated' ) );
     }
 
     /**
-     * Send telemetry data upon plugin deactivation.
+     * Set up the telemetry sync mechanism.
+     *
+     * Uses WP-Cron by default. Falls back to a throttled wp_loaded-based
+     * sync when WP-Cron is disabled via the DISABLE_WP_CRON constant.
+     *
+     * @since 9.4.1
+     */
+    public function setup_sync() {
+        // Schedule the daily WP-Cron job and register its handler.
+        add_action( self::CRON_HOOK, array( $this, 'send_telemetry_data' ) );
+
+        if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
+            wp_schedule_event( time(), 'daily', self::CRON_HOOK );
+        }
+
+        // Fall back to wp_loaded-based throttled sync when WP-Cron is disabled.
+        if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
+            add_action( 'wp_loaded', array( $this, 'run_fallback_sync' ) );
+        }
+    }
+
+    /**
+     * Fallback sync for environments where WP-Cron is disabled.
+     *
+     * Performs a throttled sync on page load, at most once every 24 hours.
+     *
+     * @since 7.0.0
+     */
+    public function run_fallback_sync() {
+        $last_sync = (int) get_option( 'montonio_telemetry_sync_timestamp', 0 );
+
+        if ( time() - $last_sync > 24 * HOUR_IN_SECONDS ) {
+            $this->send_telemetry_data();
+        }
+    }
+    
+    /**
+     * Send telemetry data upon plugin deactivation and clear the cron job.
      *
      * @since 7.0.0
      */
     public function wc_montonio_deactivated() {
-        $deactivated_at = gmdate( 'Y-m-d H:i:s' );
-
-        do_action( 'montonio_send_telemetry_data', $deactivated_at );
-        update_option( 'montonio_telemetry_sync_timestamp', null );
-    }
-
-    /**
-     * Send telemetry data if needed.
-     *
-     * @since 7.0.0
-     */
-    public function trigger_telemetry_sync() {
-        $last_sync = get_option( 'montonio_telemetry_sync_timestamp' );
-
-        if ( empty( $last_sync ) || $last_sync < time() - 86400 ) {
-            do_action( 'montonio_send_telemetry_data' );
+        $timestamp = wp_next_scheduled( self::CRON_HOOK );
+        if ( $timestamp ) {
+            wp_unschedule_event( $timestamp, self::CRON_HOOK );
         }
+
+        $deactivated_at = gmdate( 'Y-m-d H:i:s' );
+        $this->send_telemetry_data( $deactivated_at );
+
+        update_option( 'montonio_telemetry_sync_timestamp', 0 );
     }
 
     /**
      * Send telemetry data to the Montonio API.
      *
      * @since 7.0.0
+     * @param string|null $deactivated_at Optional deactivation timestamp.
      */
     public function send_telemetry_data( $deactivated_at = null ) {
+        if ( ! WC_Montonio_Helper::has_api_keys() ) {
+            return;
+        }
+
+        update_option( 'montonio_telemetry_sync_timestamp', time() );
+
         try {
             $path = '/store-telemetry-data';
             $data = $this->collect_telemetry_data( $deactivated_at );
@@ -174,14 +184,13 @@ class WC_Montonio_Telemetry_Service {
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Telemetry sync failed. Response: ' . $e->getMessage() );
         }
-
-        update_option( 'montonio_telemetry_sync_timestamp', time() );
     }
 
     /**
      * Collect telemetry data from the store.
      *
      * @since 7.0.0
+     * @param string|null $deactivated_at
      * @return array The collected telemetry data
      */
     public function collect_telemetry_data( $deactivated_at ) {
@@ -224,12 +233,14 @@ class WC_Montonio_Telemetry_Service {
      * Get API Settings.
      *
      * @since 7.0.2
+     * @param string $key
+     * @return string|null
      */
     public function get_api_setting( $key ) {
         $settings = $this->get_settings( 'wc_montonio_api' );
 
         if ( empty( $settings ) || ! is_array( $settings ) ) {
-            return;
+            return null;
         }
 
         return isset( $settings[$key] ) ? sanitize_text_field( $settings[$key] ) : null;
@@ -308,9 +319,7 @@ class WC_Montonio_Telemetry_Service {
         );
 
         foreach ( $shipping_zones as $zone ) {
-            $shipping_methods = $zone['shipping_methods'];
-
-            foreach ( $shipping_methods as $method ) {
+            foreach ( $zone['shipping_methods'] as $method ) {
                 if ( 'yes' !== $method->enabled ) {
                     continue;
                 }
@@ -338,17 +347,17 @@ class WC_Montonio_Telemetry_Service {
     }
 
     /**
-     * Function for making API calls to the Montonio Shipping API.
+     * Make an API request to the Montonio Telemetry API.
      *
      * @since 7.0.0
-     * @param string $path The path to the API endpoint
-     * @param array $options The options for the request
-     * @return string The body of the response. Empty string if no body or incorrect parameter given.
+     * @param string $path    The path to the API endpoint
+     * @param array  $options The options for the request
+     * @return string The body of the response
      * @throws Exception If the request fails
      */
     protected function api_request( $path, $options ) {
-        $url     = self::MONTONIO_TELEMETRY_API_URL . $path;
-        $options = wp_parse_args( $options, array('timeout' => 30) );
+        $url      = self::MONTONIO_TELEMETRY_API_URL . $path;
+        $options  = wp_parse_args( $options, array( 'timeout' => 30 ) );
 
         $response      = wp_remote_request( $url, $options );
         $response_code = wp_remote_retrieve_response_code( $response );

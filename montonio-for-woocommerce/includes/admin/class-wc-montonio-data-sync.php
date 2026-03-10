@@ -106,6 +106,8 @@ class WC_Montonio_Data_Sync {
         }
 
         update_option( 'montonio_payment_methods', $response, false );
+
+        return $response;
     }
 
     public static function deactivate() {

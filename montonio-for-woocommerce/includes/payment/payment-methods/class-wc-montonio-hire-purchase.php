@@ -70,6 +70,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+        add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'validate_settings' ) );
         add_action( 'woocommerce_api_' . $this->id, array( $this, 'get_order_response' ) );
         add_action( 'woocommerce_api_' . $this->id . '_notification', array( $this, 'get_order_notification' ) );
         add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 2 );
@@ -174,6 +175,46 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
                 'default'     => 'woocommerce_after_add_to_cart_button'
             )
         );
+    }
+
+    /**
+     * Validate gateway settings before saving.
+     *
+     * @param  array $settings The settings array being saved.
+     * @return array           Unmodified settings on success, or settings with 'enabled' set to 'no' on failure.
+     */
+    public function validate_settings( $settings ) {
+        if ( ! is_array( $settings ) || 'no' === $settings['enabled'] ) {
+            return $settings;
+        }
+
+        try {
+            $payment_methods = WC_Montonio_Data_Sync::sync_payment_methods();
+            $payment_methods = json_decode( $payment_methods, true );
+
+            if ( empty( $payment_methods['paymentMethods']['hirePurchase'] ) ) {
+                throw new Exception( sprintf( 
+                    /* translators: %s: payment method title */
+                    __( '%s is not active on your Montonio account. Please check your Montonio Partner System settings.', 'montonio-for-woocommerce' ),
+                    $this->method_title
+                    )
+                );
+            }
+        } catch ( Exception $e ) {
+            $message = sprintf(
+                /* translators: 1) payment method title 2) error returned by Montonio API */
+                __( '<strong>%1$s could not be enabled.</strong><br>Error: %2$s', 'montonio-for-woocommerce' ),
+                $this->method_title,
+                esc_html( $e->getMessage() )
+            );
+
+            $this->add_admin_notice( $message, 'error' );
+            $settings['enabled'] = 'no';
+
+            return $settings;
+        }
+       
+        return $settings;
     }
 
     /**
@@ -327,7 +368,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
      */
     public function display_admin_notices() {
         foreach ( $this->admin_notices as $notice ) {
-            echo '<div id="message" class="' . esc_attr( $notice['class'] ) . '">';
+            echo '<div class="montonio-notice montonio-notice--' . esc_attr( $notice['class'] ) . ' notice notice-' . esc_attr( $notice['class'] ) . '">';
             echo '	<p>' . wp_kses_post( $notice['message'] ) . '</p>';
             echo '</div>';
         }

@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.4.0
+Version: 9.4.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.4.0
+Stable tag: 9.4.1
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,10 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.4.1 =
+* Tweak – Embedded card field rendering compatibility improvements
+* Tweak – Improved telemetry service sync scheduling functionality
+
 = 9.4.0 =
 * Added – Automated shipping zone creation tool
 * Added – Payment method availability check on activation against Partner system

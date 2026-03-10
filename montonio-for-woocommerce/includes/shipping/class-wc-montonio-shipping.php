@@ -323,13 +323,13 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
             WC_Montonio_Shipping_Item_Manager::replace_main_table_with_temp();
 
-            $this->add_admin_notice( __( 'Montonio Shipping: Pickup point sync successful!', 'montonio-for-woocommerce' ), 'success' );
+            $this->add_admin_notice( '<strong>Montonio Shipping.</strong> ' . __( 'Shipping method data synced successfully.', 'montonio-for-woocommerce' ), 'success' );
 
             return true;
         } catch ( Exception $e ) {
             WC_Montonio_Shipping_Item_Manager::remove_temp_table();
             WC_Montonio_Logger::log( 'Shipping method sync failed. Response: ' . $e->getMessage() );
-            $this->add_admin_notice( __( 'Montonio API response: ', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
+            $this->add_admin_notice( __( '<strong>Shipping data sync failed.</strong><br>', 'montonio-for-woocommerce' ) . $e->getMessage(), 'error' );
 
             return new WP_Error( 'wc_montonio_shipping_sync_error', $e->getMessage(), array( 'status' => 500 ) );
         } finally {
@@ -381,7 +381,7 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
 
     public function display_admin_notices() {
         foreach ( $this->admin_notices as $notice ) {
-            echo '<div class="notice notice-' . esc_attr( $notice['class'] ) . '">';
+            echo '<div class="montonio-notice montonio-notice--' . esc_attr( $notice['class'] ) . ' notice notice-' . esc_attr( $notice['class'] ) . '">';
             echo '	<p>' . wp_kses_post( $notice['message'] ) . '</p>';
             echo '</div>';
         }
