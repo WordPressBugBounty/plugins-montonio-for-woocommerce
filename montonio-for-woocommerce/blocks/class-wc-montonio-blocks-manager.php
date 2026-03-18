@@ -44,7 +44,7 @@ class WC_Montonio_Blocks_Manager {
         $this->include_block_files();
         $this->register_payment_methods();
 
-        if ( get_option( 'montonio_shipping_enabled' ) === 'yes' ) {
+        if ( 'yes' === get_option( 'montonio_shipping_enabled' ) ) {
             $this->register_shipping_dropdown();
         }
     }

@@ -176,17 +176,22 @@ class WC_Montonio_Helper {
 
     /**
      * Convert weight to kg
+     *
+     * @since 7.0.0
+     * @param float $weight The weight to convert
      */
     public static function convert_to_kg( $weight ) {
+        $weight = (float) $weight;
+
         switch ( get_option( 'woocommerce_weight_unit' ) ) {
             case 'g':
-                return (float) $weight * 0.001;
+                return round( $weight * 0.001, 2 );
             case 'lbs':
-                return (float) $weight * 0.45;
+                return round( $weight * 0.453592, 2 );
             case 'oz':
-                return (float) $weight * 0.028;
+                return round( $weight * 0.0283495, 2 );
             default:
-                return (float) $weight;
+                return round( $weight, 2 );
         }
     }
 
@@ -197,17 +202,19 @@ class WC_Montonio_Helper {
      * @param float $dimension The dimension to convert
      */
     public static function convert_to_cm( $dimension ) {
+        $dimension = (float) $dimension;
+
         switch ( get_option( 'woocommerce_dimension_unit' ) ) {
             case 'm':
-                return (float) $dimension * 100;
+                return round( $dimension * 100, 2 );
             case 'mm':
-                return (float) $dimension * 0.1;
+                return round( $dimension * 0.1, 2 );
             case 'in':
-                return (float) $dimension * 2.54;
+                return round( $dimension * 2.54, 2 );
             case 'yd':
-                return (float) $dimension * 91.44;
+                return round( $dimension * 91.44, 2 );
             default:
-                return (float) $dimension;
+                return round( $dimension, 2 );
         }
     }
 
@@ -218,19 +225,21 @@ class WC_Montonio_Helper {
      * @param float $dimension The dimension to convert
      */
     public static function convert_to_meters( $dimension ) {
+        $dimension = (float) $dimension;
+
         switch ( get_option( 'woocommerce_dimension_unit' ) ) {
             case 'cm':
-                return (float) $dimension * 0.01;
+                return round( $dimension * 0.01, 2 );
             case 'mm':
-                return (float) $dimension * 0.001;
+                return round( $dimension * 0.001, 2 );
             case 'in':
-                return (float) $dimension * 0.0254;
+                return round( $dimension * 0.0254, 2 );
             case 'yd':
-                return (float) $dimension * 0.9144;
+                return round( $dimension * 0.9144, 2 );
             case 'ft':
-                return (float) $dimension * 0.3048;
+                return round( $dimension * 0.3048, 2 );
             default:
-                return (float) $dimension;
+                return round( $dimension, 2 );
         }
     }
 
@@ -295,11 +304,6 @@ class WC_Montonio_Helper {
         }
 
         $store_data = get_option( 'montonio_payment_methods' );
-
-        if ( empty( $store_data ) ) {
-            WC_Montonio_Data_Sync::sync_data();
-            $store_data = get_option( 'montonio_payment_methods' );
-        }
 
         if ( empty( $store_data ) ) {
             return null;

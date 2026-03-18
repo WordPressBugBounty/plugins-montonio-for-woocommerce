@@ -91,6 +91,7 @@ class WC_Montonio_Telemetry_Service {
      * @since 7.0.0
      */
     public function __construct() {
+        add_action( self::CRON_HOOK, array( $this, 'send_telemetry_data' ) );
         add_action( 'init', array( $this, 'setup_sync' ) );
         add_action( 'woocommerce_settings_saved', array( $this, 'send_telemetry_data' ) );
         add_action( 'montonio_send_telemetry_data', array( $this, 'send_telemetry_data' ) );
@@ -107,9 +108,6 @@ class WC_Montonio_Telemetry_Service {
      * @since 9.4.1
      */
     public function setup_sync() {
-        // Schedule the daily WP-Cron job and register its handler.
-        add_action( self::CRON_HOOK, array( $this, 'send_telemetry_data' ) );
-
         if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
             wp_schedule_event( time(), 'daily', self::CRON_HOOK );
         }

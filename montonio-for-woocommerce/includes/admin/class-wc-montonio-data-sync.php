@@ -12,16 +12,28 @@ class WC_Montonio_Data_Sync {
     const CRON_HOOK = 'montonio_payment_methods_sync_event';
 
     public static function init() {
-        add_filter( 'montonio_ota_sync', array( __CLASS__, 'sync_payment_methods_ota' ), 10, 1 );
         add_action( self::CRON_HOOK, array( __CLASS__, 'sync_data' ) );
+        add_action( 'init', array( __CLASS__, 'setup_sync' ) );
 
+        add_filter( 'montonio_ota_sync', array( __CLASS__, 'sync_payment_methods_ota' ), 10, 1 );
+    }
+
+    /**
+     * Set up the sync mechanism.
+     *
+     * Uses WP-Cron by default. Falls back to a throttled wp_loaded-based
+     * sync when WP-Cron is disabled via the DISABLE_WP_CRON constant.
+     *
+     * @since 9.4.2
+     */
+    public static function setup_sync() {
         if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
             wp_schedule_event( time(), 'daily', self::CRON_HOOK );
         }
 
-        // Fallback for disabled WP-Cron environments
+        // Fall back to wp_loaded-based throttled sync when WP-Cron is disabled.
         if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
-            add_action( 'init', array( __CLASS__, 'run_fallback_sync' ) );
+            add_action( 'wp_loaded', array( __CLASS__, 'run_fallback_sync' ) );
         }
     }
 
@@ -60,7 +72,6 @@ class WC_Montonio_Data_Sync {
         // Throttle: sync only if older than 24 hours
         if ( time() - $last_sync > 24 * HOUR_IN_SECONDS ) {
             self::sync_data();
-            update_option( 'montonio_last_sync', time(), false );
         }
     }
 
@@ -97,6 +108,8 @@ class WC_Montonio_Data_Sync {
         if ( ! WC_Montonio_Helper::has_api_keys() ) {
             throw new Exception( __( 'API keys not configured.', 'montonio-for-woocommerce' ) );
         }
+
+        update_option( 'montonio_last_sync', time(), false );
 
         $montonio_api = new WC_Montonio_API();
         $response     = $montonio_api->get_payment_methods();

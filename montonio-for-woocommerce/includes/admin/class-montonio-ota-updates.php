@@ -207,7 +207,7 @@ class Montonio_OTA_Updates {
 
             /**
              * @hooked WC_Montonio_Data_Sync::sync_payment_methods_ota - 10
-             * @hooked WC_Montonio_Shipping::sync_shipping_methods_ota - 20
+             * @hooked WC_Montonio_Shipping_Sync::handle_ota_sync - 20
              */
             $result = apply_filters( 'montonio_ota_sync', array(
                 'started_at'   => gmdate( 'Y-m-d H:i:s' ),

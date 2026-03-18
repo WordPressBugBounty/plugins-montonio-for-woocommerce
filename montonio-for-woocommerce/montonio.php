@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.4.1
+ * Version:           9.4.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,14 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 10.4.3
+ * WC tested up to: 10.6.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.4.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '9.4.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -120,33 +120,6 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/blocks/class-wc-montonio-blocks-manager.php';
 
-            if ( get_option( 'montonio_shipping_enabled' ) === 'yes' ) {
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/class-montonio-shipping-method.php';
-
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-shops.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-post-offices.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-post-offices.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/omniva/class-montonio-omniva-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-parcel-shops.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/venipak/class-montonio-venipak-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/unisend/class-montonio-unisend-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/unisend/class-montonio-unisend-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/latvian-post/class-montonio-latvian-post-courier.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php';
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php';
-
-                add_filter( 'woocommerce_shipping_methods', array( $this, 'add_shipping_methods' ), 5 );
-            }
-
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
             add_action( 'admin_notices', array( $this, 'live_api_keys_notice' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
@@ -194,37 +167,6 @@ if ( ! class_exists( 'Montonio' ) ) {
             }
 
             return $order_id_or_number;
-        }
-
-        /**
-         * Add custom shipping methods to WooCommerce.
-         *
-         * @param array $methods The existing shipping methods.
-         * @return array The updated array of shipping methods.
-         */
-        public function add_shipping_methods( $methods ) {
-            $methods['montonio_international_shipping_pickup_points'] = 'Montonio_International_Shipping_Pickup_Points';
-            $methods['montonio_international_shipping_courier']       = 'Montonio_International_Shipping_Courier';
-            $methods['montonio_omniva_parcel_machines']               = 'Montonio_Omniva_Parcel_Machines';
-            $methods['montonio_omniva_post_offices']                  = 'Montonio_Omniva_Post_Offices';
-            $methods['montonio_omniva_courier']                       = 'Montonio_Omniva_Courier';
-            $methods['montonio_dpd_parcel_machines']                  = 'Montonio_DPD_Parcel_Machines';
-            $methods['montonio_dpd_parcel_shops']                     = 'Montonio_DPD_Parcel_Shops';
-            $methods['montonio_dpd_courier']                          = 'Montonio_DPD_Courier';
-            $methods['montonio_venipak_parcel_machines']              = 'Montonio_Venipak_Parcel_Machines';
-            $methods['montonio_venipak_post_offices']                 = 'Montonio_Venipak_Parcel_Shops';
-            $methods['montonio_venipak_courier']                      = 'Montonio_Venipak_Courier';
-            $methods['montonio_itella_parcel_machines']               = 'Montonio_Smartpost_Parcel_Machines';
-            $methods['montonio_itella_post_offices']                  = 'Montonio_Smartpost_Post_Offices';
-            $methods['montonio_itella_courier']                       = 'Montonio_Smartpost_Courier';
-            $methods['montonio_unisend_parcel_machines']              = 'Montonio_Unisend_Parcel_Machines';
-            $methods['montonio_unisend_courier']                      = 'Montonio_Unisend_Courier';
-            $methods['montonio_latvian_post_parcel_machines']         = 'Montonio_Latvian_Post_Parcel_Machines';
-            $methods['montonio_latvian_post_courier']                 = 'Montonio_Latvian_Post_Courier';
-            $methods['montonio_inpost_parcel_machines']               = 'Montonio_Inpost_Parcel_Machines';
-            $methods['montonio_orlen_parcel_machines']                = 'Montonio_Orlen_Parcel_Machines';
-
-            return $methods;
         }
 
         /**

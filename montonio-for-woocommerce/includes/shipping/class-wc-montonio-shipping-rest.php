@@ -259,8 +259,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @return WP_REST_Response The response object
      */
     public function sync_shipping_method_items() {
-        $shipping = WC_Montonio_Shipping::get_instance();
-        $result   = $shipping->sync_shipping_methods();
+        $result = WC_Montonio_Shipping_Sync::sync();
 
         if ( is_wp_error( $result ) ) {
             return $result;

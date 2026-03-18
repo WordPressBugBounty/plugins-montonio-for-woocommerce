@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.4.1
+Version: 9.4.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.4.1
+Stable tag: 9.4.2
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -16,10 +16,10 @@ License URL: http://www.gnu.org/licenses/gpl-3.0.html
 == Description ==
 
 Montonio is a complete checkout solution for online stores that includes all popular payment methods (local banks, card payments, Apple Pay, Google Pay) plus financing and shipping. Montonio offers you everything you need in your online store checkout.
- 
+
 = Payments =
 The easiest way to collect payments in your online store. Montonio payment initiation service offers integrations with all major banks in Estonia, Finland, Latvia, Lithuania and Poland, additionally Apple Pay, Google Pay, Revolut (available everywhere) and Blik in Poland.
- 
+
 All funds are immediately deposited to your bank account and an overview of the transactions can be found in our [partner system](https://partner.montonio.com).
 
 = Card Payments =
@@ -30,23 +30,23 @@ Want to offer an even easier way of paying? We also have Apple Pay and Google Pa
 
 = Refunds =
 You can do a partial or full refund with a couple of clicks in the Montonio Partner System. Just open the order, check what items your customer returned and refund the amount needed.
- 
+
 = Financing (Hire purchase) =
 Montonio Financing is just the right solution for financing larger purchases. You customers can choose a payment schedule that exactly suits their needs. Shoppers pay in equal instalments but you will get the full payment amount upfront. Plus, there's no service fee for the merchant.
- 
+
 = Pay Later =
 Give your visitors the most convenient ways to pay – with Montonio 'Pay later' your customers can pay later or split purchase into two or three payments. All this without any additional interest or contract fees for them. Shoppers pay in equal instalments but you will get the full payment amount upfront.
- 
+
 = Shipping =
 Handle everything from one system: automatically generate, edit and print shipping labels without having to ever leave the Montonio dashboard. Labels are automatically retrieved from providers after order creation. You can start printing with just 2 clicks. With Montonio you can add order tracking codes with a link to the providers’ tracking page.
- 
+
 = How to get started =
 Adding Montonio to your store is only a matter of minutes.
 1. Sign up at [montonio.com](https://montonio.com)
 2. Verify your identity and confirm your account with Montonio
 3. Set up the plugin, insert API keys and start using Montonio. More details on how to install and set up the plugin can be found in the Installation tab.
 
-= Availability = 
+= Availability =
 Montonio currently offers services in these countries:
 * Payments: Estonia, Finland, Latvia, Lithuania, Poland
 * Card payments: Estonia, Finland, Latvia, Lithuania, Poland
@@ -136,6 +136,11 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.4.2 =
+* Tweak – Streamline dependency loading and enhance shipping method registration
+* Tweak – Improve shipping method sync functionality and scheduling
+* Tweak – Improve Automated shipping zone creation
+
 = 9.4.1 =
 * Tweak – Embedded card field rendering compatibility improvements
 * Tweak – Improved telemetry service sync scheduling functionality
@@ -461,7 +466,7 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 = 6.1.8 =
 * Added - Option to enable the Card fields in checkout
-* Code improvements 
+* Code improvements
 * Bugfix
 
 = 6.1.7 =
@@ -486,7 +491,7 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 * Added - Update order status if payment sesion ABANDONED
 * Added - Tag support for shipping cost field, use [qty] for the number of items, [cost] for the total cost of items, and [fee percent="10" min_fee="20" max_fee=""] for percentage based fees. e.g. 3.00 * [qty]
 * Changed - Shipping now uses API keys from "API Settings" page
-* Code improvements 
+* Code improvements
 
 = 6.1.3 =
 * Added - Make refunds for orders via Woocommerce (only for orders after this update)
@@ -713,7 +718,7 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 * Minor update: Added translations for [et, lv, lt, fi, ru]. Better WPML support. Removed iframe as a display option for Montonio Financing
 
 = 2.1.1 =
-* Bumped supported WooCommerce version to 5.0.0 
+* Bumped supported WooCommerce version to 5.0.0
 
 = 2.1.0 =
 * Scalability updates
@@ -734,7 +739,7 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 * Ability to configure Montonio Payments title and description
 
 = 2.0.2 =
-* Montonio Payment Initiation Service introduced 
+* Montonio Payment Initiation Service introduced
 * Overall code improvements
 
 = 1.2.1 =

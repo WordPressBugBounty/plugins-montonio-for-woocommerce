@@ -67,7 +67,7 @@ msgstr "Zapłać swoją kartą kredytową lub debetową"
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:240
+#: montonio.php:182
 msgid "Settings"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:147
-#: includes/shipping/class-wc-montonio-shipping.php:360
+#: includes/shipping/class-wc-montonio-shipping.php:323
 msgid "Track your shipment:"
 msgstr ""
 
@@ -1049,46 +1049,46 @@ msgstr ""
 msgid "Applicable only in legacy checkout"
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:399
+#: includes/class-wc-montonio-helper.php:403
 msgid "A general error has occurred. Please try again later."
 msgstr "Płatność nieudana. Spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:400
-#: includes/class-wc-montonio-helper.php:401
-#: includes/class-wc-montonio-helper.php:402
-#: includes/class-wc-montonio-helper.php:403
-#: includes/class-wc-montonio-helper.php:409
-#: includes/class-wc-montonio-helper.php:410
-#: includes/class-wc-montonio-helper.php:411
-#: includes/class-wc-montonio-helper.php:412
+#: includes/class-wc-montonio-helper.php:404
+#: includes/class-wc-montonio-helper.php:405
+#: includes/class-wc-montonio-helper.php:406
+#: includes/class-wc-montonio-helper.php:407
+#: includes/class-wc-montonio-helper.php:413
+#: includes/class-wc-montonio-helper.php:414
+#: includes/class-wc-montonio-helper.php:415
+#: includes/class-wc-montonio-helper.php:416
 msgid "Incorrect BLIK code was entered. Try again."
 msgstr "Podano błędny kod BLIK. Spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:404
-#: includes/class-wc-montonio-helper.php:406
-#: includes/class-wc-montonio-helper.php:413
-#: includes/class-wc-montonio-helper.php:415
-#: includes/class-wc-montonio-helper.php:418
+#: includes/class-wc-montonio-helper.php:408
+#: includes/class-wc-montonio-helper.php:410
+#: includes/class-wc-montonio-helper.php:417
+#: includes/class-wc-montonio-helper.php:419
+#: includes/class-wc-montonio-helper.php:422
 msgid "Check the reason in the banking application and try again."
 msgstr "Płatność nieudana. Sprawdź powód w aplikacji bankowej i spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:405
-#: includes/class-wc-montonio-helper.php:414
-#: includes/class-wc-montonio-helper.php:420
-#: includes/class-wc-montonio-helper.php:421
+#: includes/class-wc-montonio-helper.php:409
+#: includes/class-wc-montonio-helper.php:418
+#: includes/class-wc-montonio-helper.php:424
+#: includes/class-wc-montonio-helper.php:425
 msgid "Payment failed - not confirmed on time in the banking application. Try again."
 msgstr "Płatność nieudana - nie została potwierdzona na czas w aplikacji bankowej. Spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:407
-#: includes/class-wc-montonio-helper.php:408
-#: includes/class-wc-montonio-helper.php:416
-#: includes/class-wc-montonio-helper.php:417
-#: includes/class-wc-montonio-helper.php:425
-#: includes/class-wc-montonio-helper.php:426
+#: includes/class-wc-montonio-helper.php:411
+#: includes/class-wc-montonio-helper.php:412
+#: includes/class-wc-montonio-helper.php:420
+#: includes/class-wc-montonio-helper.php:421
+#: includes/class-wc-montonio-helper.php:429
+#: includes/class-wc-montonio-helper.php:430
 msgid "Payment failed. Try again."
 msgstr "Płatność nieudana. Spróbuj ponownie."
 
-#: includes/class-wc-montonio-helper.php:427
+#: includes/class-wc-montonio-helper.php:431
 msgid "This order has already been paid for."
 msgstr "To zamówienie zostało już opłacone."
 
@@ -1218,16 +1218,16 @@ msgstr ""
 msgid "Montonio: Shipment status updated."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:419
+#: includes/class-wc-montonio-helper.php:423
 msgid "Payment rejected in a banking application. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:422
+#: includes/class-wc-montonio-helper.php:426
 msgid "Payment amount too high."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:423
-#: includes/class-wc-montonio-helper.php:424
+#: includes/class-wc-montonio-helper.php:427
+#: includes/class-wc-montonio-helper.php:428
 msgid "Payment requires BLIK code."
 msgstr ""
 
@@ -1376,7 +1376,7 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:374
+#: montonio.php:316
 msgid "Need help?"
 msgstr "Potrzebujesz pomocy?"
 
@@ -1395,9 +1395,9 @@ msgstr ""
 #: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:104
 #: templates/admin-order-shipping-panel.php:43
 msgid "Courier"
-msgstr ""
+msgstr "Kurier"
 
-#: montonio.php:376
+#: montonio.php:318
 msgid "How to activate Montonio payment methods"
 msgstr ""
 "Jak aktywować metody płatności Montoni\n"
@@ -1479,15 +1479,15 @@ msgstr "Paczkomaty Inpost"
 msgid "Type at least 3 characters to search..."
 msgstr "Wpisz co najmniej 3 znaki żeby wyszukać..."
 
-#: includes/shipping/class-wc-montonio-shipping.php:103
+#: includes/shipping/class-wc-montonio-shipping.php:165
 msgid "Searching pickup points..."
 msgstr "Wyszukiwanie punktów odbioru..."
 
-#: includes/shipping/class-wc-montonio-shipping.php:104
+#: includes/shipping/class-wc-montonio-shipping.php:166
 msgid "Failed to load pickup points. Please try again."
 msgstr "Nie udało się wyświetlić punktów odbioru. Spróbuj jeszcze raz."
 
-#: includes/shipping/class-wc-montonio-shipping.php:105
+#: includes/shipping/class-wc-montonio-shipping.php:167
 msgid "No pickup points found"
 msgstr "Nie znaleziono punktów odbioru"
 
@@ -1597,28 +1597,28 @@ msgid "These dimensions are used when products in the cart do not have shipping 
 msgstr ""
 
 #. translators: %s: dimension unit (e.g. cm)
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:144
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:154
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:69
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:74
 msgid "Length (%s)"
 msgstr ""
 
 #. translators: %s: dimension unit (e.g. cm)
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:159
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:169
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:82
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:88
 msgid "Width (%s)"
 msgstr ""
 
 #. translators: %s: dimension unit (e.g. cm)
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:174
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:184
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:95
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:102
 msgid "Height (%s)"
 msgstr ""
 
 #. translators: %s: weight unit (e.g. kg)
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:189
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:199
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:108
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:116
 msgid "Weight (%s)"
@@ -1637,11 +1637,11 @@ msgstr ""
 
 #: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:111
 msgid "Parcel lockers"
-msgstr ""
+msgstr "Paczkomaty"
 
 #: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:112
 msgid "Parcel shops"
-msgstr ""
+msgstr "Punkty kurierskie"
 
 #: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:13
 msgid "International courier delivery. Shipping costs calculated automatically based on real-time carrier rates."
@@ -1725,7 +1725,7 @@ msgstr ""
 msgid "API response: "
 msgstr ""
 
-#: includes/admin/class-wc-montonio-data-sync.php:105
+#: includes/admin/class-wc-montonio-data-sync.php:118
 msgid "Empty response from API."
 msgstr ""
 
@@ -1734,7 +1734,7 @@ msgstr ""
 msgid "Invalid payment reference. Please refresh the page and try again."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:230
+#: includes/shipping/class-wc-montonio-shipping.php:279
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
 
@@ -1742,7 +1742,7 @@ msgstr ""
 msgid "Payment method sync failed: "
 msgstr ""
 
-#: includes/admin/class-wc-montonio-data-sync.php:98
+#: includes/admin/class-wc-montonio-data-sync.php:109
 msgid "API keys not configured."
 msgstr ""
 
@@ -1824,8 +1824,8 @@ msgid "No shipping methods available to set up."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:39
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:330
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:353
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:351
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:374
 msgid "Back"
 msgstr ""
 
@@ -1850,97 +1850,80 @@ msgstr ""
 msgid "Rate (%s, excl. VAT)"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:105
-msgid "already exists"
-msgstr ""
-
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:107
-msgid "Modifications will be skipped"
-msgstr ""
-
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:129
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:139
 msgid "Default Package Dimensions for International Shipping"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:130
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:140
 msgid "These dimensions are used when products do not have shipping dimensions defined. Required for dynamic rate calculation."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:133
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:242
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:252
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:143
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:265
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:280
 msgid "Please fill in all package dimension fields with values greater than 0."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:205
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:215
 msgid "Cancel"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:208
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:218
 msgid "Confirm and create"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:245
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:255
 msgid "Routes created successfully"
 msgstr ""
 
 #. translators: 1: number of zones created, 2: number of methods created
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:252
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:262
 msgid "Created %1$d shipping zones with %2$d shipping methods:"
 msgstr ""
 
 #. translators: 1: zone name, 2: country codes, 3: number of methods
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:267
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:277
 msgid "%1$s (%2$s) — %3$d methods"
 msgstr ""
 
-#. translators: %d: number of skipped zones
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:282
-msgid "%d zones skipped (already exist)"
-msgstr ""
-
 #. translators: %s: URL to WooCommerce shipping settings
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:298
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:319
 msgid "Edit zones in <a href=\"%s\">WooCommerce &gt; Settings &gt; Shipping</a>."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:306
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:327
 msgid "Done"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:370
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:391
 msgid "Dynamic"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:191
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:225
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:207
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:241
 msgid "Session expired. Please reload the page."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:195
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:229
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:211
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:245
 msgid "Permission denied."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:235
-msgid "Invalid plan data."
-msgstr ""
-
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:302
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:370
 msgid "No shipping methods available from the API."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:309
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:377
 msgid "No supported shipping methods found."
 msgstr ""
 
 #. translators: %s: comma-separated list of country codes
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:320
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:388
 msgid "Could not fetch shipping rates for: %s. Some methods may be missing from the preview."
 msgstr ""
 
 #. translators: 1: zone name, 2: error message
-#: includes/shipping/class-wc-montonio-shipping-route-setup.php:695
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:840
 msgid "Failed to create zone \"%1$s\": %2$s. All changes have been rolled back."
 msgstr ""
 
@@ -2001,16 +1984,16 @@ msgstr ""
 msgid "Automatically create shipping zones and methods based on your active carriers with Montonio contracts."
 msgstr ""
 
-#: montonio.php:360
+#: montonio.php:302
 msgid "Get Started with Montonio"
 msgstr ""
 
-#: montonio.php:362
+#: montonio.php:304
 msgid "Your Live API keys haven't been added yet."
 msgstr ""
 
 #. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:367
+#: montonio.php:309
 msgid "%1$sClick here%2$s to enter your Live API keys to activate Montonio and start accepting payments."
 msgstr ""
 
@@ -2040,10 +2023,41 @@ msgstr ""
 msgid "<strong>%1$s could not be enabled.</strong><br>Error: %2$s"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:326
+#: includes/shipping/class-wc-montonio-shipping.php:297
 msgid "Shipping method data synced successfully."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:332
-msgid "<strong>Shipping data sync failed.</strong><br>"
+#. translators: %s: name of the existing zone
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:109
+msgid "already covered by zone \"%s\""
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:113
+msgid "already covered by an existing zone"
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:117
+msgid "New methods must be added manually"
+msgstr ""
+
+#. translators: %d: number of skipped zones
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:292
+msgid "%d zones skipped (already covered by existing zones)"
+msgstr ""
+
+#. translators: 1: zone name, 2: name of the existing zone
+#: includes/shipping/class-wc-montonio-shipping-route-setup-view.php:303
+msgid "%1$s — already covered by zone \"%2$s\""
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:252
+msgid "Something went wrong. Please close this window and try again."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping-route-setup.php:296
+msgid "Could not verify existing zones. Please try again."
+msgstr ""
+
+#: includes/shipping/class-wc-montonio-shipping.php:292
+msgid "Shipping data sync failed."
 msgstr ""
