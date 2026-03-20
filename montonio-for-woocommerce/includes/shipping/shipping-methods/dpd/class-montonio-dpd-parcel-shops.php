@@ -64,32 +64,15 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
         $parcels          = $this->get_parcels_with_item_dimensions( $package );
 
         if ( 'dynamic' === $this->get_option( 'pricing_type' ) ) {
-            $parcels = $this->get_parcels_with_item_dimensions( $package );
+            $carrier_rates = WC_Montonio_Shipping_Rate::get_rates_for( 'dpd', 'pickupPoint', $parcels, $this->country );
 
-            try {
-                $shipping_api = new WC_Montonio_Shipping_API();
-
-                $response = $shipping_api->get_shipping_rates( $this->country, 'pickupPoint', $parcels, 'dpd' );
-            } catch ( Exception $e ) {
-                WC_Montonio_Logger::log( 'Shipping rate API request failed: ' . $e->getMessage() );
-                return;
-            }
-
-            $rates = json_decode( $response, true );
-
-            // Check if carriers exist and are valid
-            if ( ! isset( $rates['carriers'] ) || ! is_array( $rates['carriers'] ) ) {
-                WC_Montonio_Logger::log( 'No carriers found in API response' );
+            if ( null === $carrier_rates ) {
                 return;
             }
 
             // Loop through each carrier and add rates
-            foreach ( $rates['carriers'] as $carrier ) {
-                if ( ! isset( $carrier['shippingMethods'] ) || ! is_array( $carrier['shippingMethods'] ) ) {
-                    continue;
-                }
-
-                foreach ( $carrier['shippingMethods'] as $method ) {
+            foreach ( $carrier_rates as $carrier_rate ) {
+                foreach ( $carrier_rate['shippingMethods'] as $method ) {
                     if ( ! isset( $method['subtypes'] ) || ! is_array( $method['subtypes'] ) ) {
                         continue;
                     }

@@ -518,7 +518,7 @@ class WC_Montonio_Shipping_Route_Setup {
 
         foreach ( $country_codes as $country_code ) {
             try {
-                $response = $api->get_shipping_rates( $country_code, null, array( self::$default_parcel ), null );
+                $response = $api->get_shipping_rates( $country_code, array( self::$default_parcel ) );
                 $data     = json_decode( $response, true );
 
                 if ( empty( $data['carriers'] ) || ! is_array( $data['carriers'] ) ) {

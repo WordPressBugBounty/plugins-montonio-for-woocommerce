@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.4.2
+Version: 9.4.3
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.4.2
+Stable tag: 9.4.3
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,9 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.4.3 =
+* Tweak – Cache dynamic shipping rates in WooCommerce session to reduce API calls on checkout
+
 = 9.4.2 =
 * Tweak – Streamline dependency loading and enhance shipping method registration
 * Tweak – Improve shipping method sync functionality and scheduling

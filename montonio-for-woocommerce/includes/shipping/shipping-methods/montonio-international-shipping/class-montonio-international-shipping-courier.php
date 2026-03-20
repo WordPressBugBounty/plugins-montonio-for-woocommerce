@@ -65,31 +65,17 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
         $package_item_qty = $this->get_package_item_qty( $package );
         $parcels          = $this->get_parcels_with_item_dimensions( $package );
 
-        try {
-            $shipping_api = new WC_Montonio_Shipping_API();
-            $response     = $shipping_api->get_shipping_rates( $this->country, $this->type_v2, $parcels, 'novaPost' );
-        } catch ( Exception $e ) {
-            WC_Montonio_Logger::log( 'Shipping rate API request failed: ' . $e->getMessage() );
-            return;
-        }
+        $carrier_rates = WC_Montonio_Shipping_Rate::get_rates_for( 'novaPost', 'courier', $parcels, $this->country );
 
-        $rates = json_decode( $response, true );
-
-        // Check if carriers exist and are valid
-        if ( ! isset( $rates['carriers'] ) || ! is_array( $rates['carriers'] ) ) {
-            WC_Montonio_Logger::log( 'No carriers found in API response' );
+        if ( null === $carrier_rates ) {
             return;
         }
 
         // Loop through each carrier and add rates
-        foreach ( $rates['carriers'] as $carrier ) {
-            $carrier_code = $carrier['carrierCode'];
+        foreach ( $carrier_rates as $carrier_rate ) {
+            $carrier_code = $carrier_rate['carrierCode'];
 
-            if ( ! isset( $carrier['shippingMethods'] ) || ! is_array( $carrier['shippingMethods'] ) ) {
-                continue;
-            }
-
-            foreach ( $carrier['shippingMethods'] as $method ) {
+            foreach ( $carrier_rate['shippingMethods'] as $method ) {
                 if ( ! isset( $method['subtypes'] ) || ! is_array( $method['subtypes'] ) ) {
                     continue;
                 }

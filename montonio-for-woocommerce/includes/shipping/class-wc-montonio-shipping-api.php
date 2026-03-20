@@ -145,12 +145,12 @@ class WC_Montonio_Shipping_API {
      *
      * @since 9.2.0
      * @param string $country Country code (ISO 3166-1 alpha-2)
-     * @param string $type shipping method type ('courier' or 'pickupPoint')
      * @param array $parcels Array of parcels with nested item dimensions (length, width, height)
+     * @param string|null $type shipping method type ('courier' or 'pickupPoint'), or null for all types
      * @param string $carrier_code carrier code (e.g., 'novaPost')
      * @return string The body of the response as a JSON string
      */
-    public function get_shipping_rates( $country, $type, $parcels, $carrier = null ) {
+    public function get_shipping_rates( $country, $parcels, $type = null, $carrier = null ) {
         $path = '/v2/shipping-methods/rates';
         $query_params = array();
 

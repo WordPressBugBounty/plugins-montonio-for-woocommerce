@@ -279,7 +279,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:147
-#: includes/shipping/class-wc-montonio-shipping.php:323
+#: includes/shipping/class-wc-montonio-shipping.php:324
 msgid "Track your shipment:"
 msgstr "Отслеживай доставку:"
 
@@ -1389,7 +1389,7 @@ msgstr ""
 msgid "When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:104
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:90
 #: templates/admin-order-shipping-panel.php:43
 msgid "Courier"
 msgstr ""
@@ -1474,15 +1474,15 @@ msgstr ""
 msgid "Type at least 3 characters to search..."
 msgstr "Введите минимум 3 символа для поиска..."
 
-#: includes/shipping/class-wc-montonio-shipping.php:165
+#: includes/shipping/class-wc-montonio-shipping.php:166
 msgid "Searching pickup points..."
 msgstr "Поиск пунктов доставки..."
 
-#: includes/shipping/class-wc-montonio-shipping.php:166
+#: includes/shipping/class-wc-montonio-shipping.php:167
 msgid "Failed to load pickup points. Please try again."
 msgstr "Не удалось загрузить пункты доставки. Пожалуйста, попробуйте ещё раз."
 
-#: includes/shipping/class-wc-montonio-shipping.php:167
+#: includes/shipping/class-wc-montonio-shipping.php:168
 msgid "No pickup points found"
 msgstr "Пункты доставки не найдены"
 
@@ -1630,11 +1630,11 @@ msgid ""
 "            </ul>"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:111
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:96
 msgid "Parcel lockers"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:112
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:97
 msgid "Parcel shops"
 msgstr ""
 
@@ -1729,7 +1729,7 @@ msgstr ""
 msgid "Invalid payment reference. Please refresh the page and try again."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:279
+#: includes/shipping/class-wc-montonio-shipping.php:280
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
 
@@ -2018,7 +2018,7 @@ msgstr ""
 msgid "<strong>%1$s could not be enabled.</strong><br>Error: %2$s"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:297
+#: includes/shipping/class-wc-montonio-shipping.php:298
 msgid "Shipping method data synced successfully."
 msgstr ""
 
@@ -2053,6 +2053,6 @@ msgstr ""
 msgid "Could not verify existing zones. Please try again."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:292
+#: includes/shipping/class-wc-montonio-shipping.php:293
 msgid "Shipping data sync failed."
 msgstr ""
