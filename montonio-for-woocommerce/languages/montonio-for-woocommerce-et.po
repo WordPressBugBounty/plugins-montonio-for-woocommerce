@@ -62,7 +62,7 @@ msgstr ""
 msgid "Pay with your credit or debit card via Montonio."
 msgstr "Maksa krediit- või deebetkaardiga Montonio vahendusel."
 
-#: includes/payment/class-wc-montonio-callbacks.php:409
+#: includes/payment/class-wc-montonio-callbacks.php:416
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
@@ -236,7 +236,7 @@ msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:249
 #: includes/shipping/class-wc-montonio-shipping-settings.php:85
-#: templates/admin-order-shipping-panel.php:77
+#: templates/admin-order-shipping-panel.php:84
 msgid "Label printed"
 msgstr ""
 
@@ -465,35 +465,35 @@ msgstr ""
 msgid "Venipak parcel shops"
 msgstr "Venipak pakipunkt"
 
-#: templates/admin-order-shipping-panel.php:94
+#: templates/admin-order-shipping-panel.php:102
 msgid "We've noticed that this order includes Montonio's shipping method, but it seems that it's not registred in our Partner System yet, please click on \"Create shipment in Montonio\" to generate the shipment and obtain the tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:99
+#: templates/admin-order-shipping-panel.php:107
 msgid "Montonio shipment ID:"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:112
+#: templates/admin-order-shipping-panel.php:120
 msgid "Shipment successfully created in Montonio. Waiting for tracking codes."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:105
+#: templates/admin-order-shipping-panel.php:113
 msgid "Shipment tracking code(s):"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:131
+#: templates/admin-order-shipping-panel.php:139
 msgid "Update shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:133
+#: templates/admin-order-shipping-panel.php:141
 msgid "Create shipment in Montonio"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:137
+#: templates/admin-order-shipping-panel.php:145
 msgid "Print label"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:40
+#: templates/admin-order-shipping-panel.php:47
 #: templates/shipping-pickup-points-dropdown.php:11
 #: templates/shipping-pickup-points-search.php:9
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
@@ -836,6 +836,7 @@ msgstr "Palun vali pakipunkt"
 msgid "Unexpected error - Check status in Montonio Partner System"
 msgstr ""
 
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:203
 #: includes/shipping/webhooks/class-wc-montonio-shipping-webhooks.php:88
 msgid "<strong>Shipment created.</strong><br>Tracking codes: "
 msgstr ""
@@ -849,6 +850,7 @@ msgid "Shipment creation failed."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:144
+#: includes/shipping/class-wc-montonio-shipping-shipment-manager.php:220
 msgid "Shipment update failed."
 msgstr ""
 
@@ -1142,50 +1144,50 @@ msgstr[1] ""
 msgid "Shipment status"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:52
+#: templates/admin-order-shipping-panel.php:59
 msgid "Shipment creation failed. Please check order notes for error reason."
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:54
+#: templates/admin-order-shipping-panel.php:61
 msgid "Shipment update failed. Please check order notes for error reason"
 msgstr ""
 
-#: templates/admin-order-shipping-panel.php:56
+#: templates/admin-order-shipping-panel.php:63
 msgid "Shipment registration in the carrier system failed. Please check order notes for error reason."
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:245
-#: templates/admin-order-shipping-panel.php:73
+#: templates/admin-order-shipping-panel.php:80
 msgid "Pending"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:246
-#: templates/admin-order-shipping-panel.php:74
+#: templates/admin-order-shipping-panel.php:81
 msgid "Creation failed"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:247
-#: templates/admin-order-shipping-panel.php:75
+#: templates/admin-order-shipping-panel.php:82
 msgid "Registered"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:248
-#: templates/admin-order-shipping-panel.php:76
+#: templates/admin-order-shipping-panel.php:83
 msgid "Registration failed"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:250
-#: templates/admin-order-shipping-panel.php:78
+#: templates/admin-order-shipping-panel.php:85
 msgid "In transit"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:251
-#: templates/admin-order-shipping-panel.php:79
+#: templates/admin-order-shipping-panel.php:86
 msgid "Awaiting collection"
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-order.php:252
-#: templates/admin-order-shipping-panel.php:80
+#: templates/admin-order-shipping-panel.php:87
 msgid "Delivered"
 msgstr ""
 
@@ -1203,16 +1205,12 @@ msgstr ""
 msgid "Montonio: Failed to print labels"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-shipment-manager.js:46
+#: assets/js/wc-montonio-shipping-shipment-manager.js:76
 msgid "Montonio: Shipment created/updated successfully."
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-shipment-manager.js:54
+#: assets/js/wc-montonio-shipping-shipment-manager.js:79
 msgid "Montonio: Shipment creation/update failed."
-msgstr ""
-
-#: assets/js/wc-montonio-shipping-shipment-manager.js:82
-msgid "Montonio: Shipment status updated."
 msgstr ""
 
 #: includes/class-wc-montonio-helper.php:423
@@ -1229,17 +1227,17 @@ msgid "Payment requires BLIK code."
 msgstr ""
 
 #. translators: order UUID
-#: includes/payment/class-wc-montonio-callbacks.php:380
+#: includes/payment/class-wc-montonio-callbacks.php:387
 msgid "Montonio: Payment is authorized but not yet processed by the bank, order ID: %s"
 msgstr ""
 
 #. translators: order UUID
-#: includes/payment/class-wc-montonio-callbacks.php:390
+#: includes/payment/class-wc-montonio-callbacks.php:397
 msgid "Montonio: Payment was rejected by the bank, order ID: %s"
 msgstr ""
 
 #. translators: order UUID
-#: includes/payment/class-wc-montonio-callbacks.php:397
+#: includes/payment/class-wc-montonio-callbacks.php:404
 msgid "Montonio: Payment session abandoned, order ID: %s"
 msgstr ""
 
@@ -1282,7 +1280,7 @@ msgid "<strong>Refund of %1$s pending.</strong><br>Refund ID: %2$s"
 msgstr ""
 
 #. translators: 1) order UUID 2) payment method 3) amount 4) currency
-#: includes/payment/class-wc-montonio-callbacks.php:372
+#: includes/payment/class-wc-montonio-callbacks.php:379
 msgid "<strong>Payment via Montonio.</strong><br>Order ID: %1$s<br>Payment method: %2$s<br>Paid amount: %3$s%4$s"
 msgstr ""
 
@@ -1389,8 +1387,8 @@ msgstr ""
 msgid "When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:90
-#: templates/admin-order-shipping-panel.php:43
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:68
+#: templates/admin-order-shipping-panel.php:50
 msgid "Courier"
 msgstr "Kuller"
 
@@ -1415,7 +1413,7 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/payment/class-wc-montonio-callbacks.php:406
+#: includes/payment/class-wc-montonio-callbacks.php:413
 msgid "Payment status \"PENDING\". Please wait for the payment to be processed."
 msgstr ""
 
@@ -1581,11 +1579,6 @@ msgstr ""
 msgid "Flat Rate Cost"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:63
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:69
-msgid "Default Package Dimensions"
-msgstr ""
-
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:66
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:71
 msgid "These dimensions are used when products in the cart do not have shipping dimensions defined. This ensures shipping rates can still be calculated via the API."
@@ -1630,11 +1623,11 @@ msgid ""
 "            </ul>"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:96
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:74
 msgid "Parcel lockers"
 msgstr "Pakiautomaadid"
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:97
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:75
 msgid "Parcel shops"
 msgstr "Pakipunktid"
 
@@ -1778,10 +1771,6 @@ msgstr ""
 #: includes/admin/class-wc-montonio-banners.php:131
 #: includes/admin/class-wc-montonio-banners.php:156
 msgid "International Shipping"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-banners.php:133
-msgid "Send parcels to over 20+ EU countries, including Sweden, Germany, Spain, Italy, France, and more. <br><strong>Q1 2026 special: pricing is based only on weight, no matter the parcel size.</strong>"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-banners.php:139
@@ -2055,4 +2044,33 @@ msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping.php:293
 msgid "Shipping data sync failed."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:133
+msgid "Send parcels to over 20+ EU countries, including Germany, Spain, Italy, France, and more. <br><strong>Starting from just €5.95 until end of May.</strong>"
+msgstr ""
+
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:63
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:69
+msgid "Default Product Dimensions"
+msgstr ""
+
+#: templates/admin-order-shipping-panel.php:94
+msgid "Resync"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:12
+msgid "Montonio: Missing wcMontonioShippingShipmentData"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:110
+msgid "Montonio: Shipment info updated."
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:133
+msgid "Montonio: Shipment details synced successfully."
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-shipment-manager.js:136
+msgid "Montonio: Failed to sync shipment details."
 msgstr ""

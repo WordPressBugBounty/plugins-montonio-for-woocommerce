@@ -311,14 +311,21 @@ class WC_Montonio_Callbacks extends WC_Payment_Gateway {
                 break;
         }
 
+        $merchant_reference_type = WC_Montonio_Helper::get_api_settings()['merchant_reference_type'];
+        $is_custom_ref = in_array( $merchant_reference_type, array( 'order_number', 'add_prefix' ), true );
+
+        // Resolve via UUID immediately for custom reference types
+        if ( $is_custom_ref ) {
+            $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $uuid, '_montonio_uuid' );
+        }
+
         $order = wc_get_order( $order_id );
 
-        if ( empty( $order ) ) {
-            // We have an invalid $order_id, let's try to find order by UUID
+        if ( empty( $order ) && ! $is_custom_ref ) {
             $order_id = WC_Montonio_Helper::get_order_id_by_meta_data( $uuid, '_montonio_uuid' );
             $order    = wc_get_order( $order_id );
         }
-
+ 
         // If we got a refund object instead of a real order, climb up to the parent order
         if ( ! empty( $order ) && $order instanceof WC_Order_Refund ) {
             $order = wc_get_order( $order->get_parent_id() );

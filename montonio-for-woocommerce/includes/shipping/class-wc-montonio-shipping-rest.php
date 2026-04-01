@@ -71,6 +71,14 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             )
         );
 
+        register_rest_route( $this->namespace, '/shipment/sync',
+            array(
+                'methods'             => 'GET',
+                'callback'            => array( $this, 'sync_shipment_details' ),
+                'permission_callback' => array( $this, 'permissions_check' )
+            )
+        );
+
         register_rest_route( $this->namespace, '/webhook',
             array(
                 'methods'             => 'POST',
@@ -295,6 +303,31 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             'status' => $current_status,
             'panel'  => $panel_content
         ) );
+    }
+
+    /**
+     * Sync shipment details for the provided order ID
+     *
+     * @since 9.4.4
+     * @param WP_REST_Request $request The request object
+     * @return WP_REST_Response The response object or WP_Error if something went wrong
+     */
+    public function sync_shipment_details( $request ) {
+        $order_id = sanitize_text_field( $request->get_param( 'order_id' ) );
+        $order    = wc_get_order( $order_id );
+
+        if ( empty( $order ) ) {
+            return new WP_Error( 'wc_montonio_shipping_invalid_order_id', 'Invalid or no order ID provided.', array( 'status' => 400 ) );
+        }
+        
+        $handler  = WC_Montonio_Shipping_Shipment_Manager::get_instance();
+        $shipment = $handler->sync_shipment_details( $order );
+
+        if ( empty( $shipment ) ) {
+            return new WP_Error( 'wc_montonio_shipping_sync_shipment_error', 'Shipment retrieval failed.', array( 'status' => 500 ) );
+        }
+
+        return rest_ensure_response( array( 'message' => 'Shipment successfully retrieved.', 'shipment' => $shipment ) );
     }
 }
 

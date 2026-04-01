@@ -21,8 +21,6 @@ if ( empty( $shipping_method ) ) {
 
 $tracking_codes          = $shipping_method->get_meta( 'tracking_codes' );
 $shipping_method_item_id = $order->get_meta( '_montonio_pickup_point_uuid' );
-$carrier_name            = $shipping_method->get_meta( 'carrier_code' );
-$type                    = $shipping_method->get_meta( 'type_v2' );
 
 if ( ! empty( $shipping_method_item_id ) ) {
     $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
@@ -30,6 +28,15 @@ if ( ! empty( $shipping_method_item_id ) ) {
     if ( $shipping_method_item ) {
         $carrier_name = $shipping_method_item->carrier_code ?? '';
         $type         = $shipping_method_item->method_type ?? '';
+    }
+}
+
+if ( empty( $carrier_name ) || empty( $type ) ) {
+    $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method->get_method_id(), $shipping_method->get_instance_id() );
+    
+    if ( $shipping_method_instance ) {
+        $carrier_name = $shipping_method_instance->carrier_code ?? '';
+        $type         = $shipping_method_instance->type_v2 ?? '';
     }
 }
 
@@ -82,8 +89,9 @@ if ( ! empty( $shipment_status_reason ) ) {
 
             if ( ! empty( $status ) ) {
                 $status_label = isset( $status_labels[$status] ) ? $status_labels[$status] : ucfirst( strtolower( preg_replace( '/(?<!^)([A-Z])/', ' $1', $status ) ) );
+                $id_attr      = $status !== 'creationFailed' ? ' id="montonio-shipping-sync-shipment"' : '';
 
-                echo '<mark class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
+                echo '<mark' . $id_attr . ' class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '" data-hover="' . esc_html__( 'Resync', 'montonio-for-woocommerce' ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
             }
             ?>
         </div>
@@ -125,15 +133,15 @@ if ( ! empty( $shipment_status_reason ) ) {
         $show_create_button = empty( $shipment_id );
         $show_print_button  = ! empty( $tracking_codes ) && ! in_array( $shipment_status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) );
 
-        if ( $show_update_button || $show_create_button || $show_print_button ): ?>
+        if ( $show_update_button || $show_create_button || $show_print_button ) : ?>
             <div class="montonio-shipping-panel__actions">
-                <?php if ( $show_update_button ): ?>
-                    <a id="montonio-shipping-send-shipment" data-type="update" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Update shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
-                <?php elseif ( $show_create_button ): ?>
-                    <a id="montonio-shipping-send-shipment" data-type="create" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Create shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
+                <?php if ( $show_update_button ) : ?>
+                    <a id="montonio-shipping-update-shipment" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Update shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
+                <?php elseif ( $show_create_button ) : ?>
+                    <a id="montonio-shipping-create-shipment" class="montonio-button montonio-button--secondary"><?php echo esc_html__( 'Create shipment in Montonio', 'montonio-for-woocommerce' ); ?></a>
                 <?php endif; ?>
 
-                <?php if ( $show_print_button ): ?>
+                <?php if ( $show_print_button ) : ?>
                     <a id="montonio-shipping-print-label" class="montonio-button"><?php echo esc_html__( 'Print label', 'montonio-for-woocommerce' ); ?></a>
                 <?php endif; ?>
             </div>

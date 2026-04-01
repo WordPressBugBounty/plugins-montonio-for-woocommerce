@@ -64,6 +64,9 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
         $cart_total       = $this->get_cart_total( $package );
         $package_item_qty = $this->get_package_item_qty( $package );
         $parcels          = $this->get_parcels_with_item_dimensions( $package );
+        $labels           = array(
+            'standard' => __( 'Courier', 'montonio-for-woocommerce' )
+        );
 
         $carrier_rates = WC_Montonio_Shipping_Rate::get_rates_for( 'novaPost', 'courier', $parcels, $this->country );
 
@@ -71,67 +74,42 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
             return;
         }
 
-        // Loop through each carrier and add rates
         foreach ( $carrier_rates as $carrier_rate ) {
-            $carrier_code = $carrier_rate['carrierCode'];
+            $rate = $rate_template;
 
-            foreach ( $carrier_rate['shippingMethods'] as $method ) {
-                if ( ! isset( $method['subtypes'] ) || ! is_array( $method['subtypes'] ) ) {
-                    continue;
-                }
+            // Create unique ID
+            $rate['id'] .= ':' . $this->carrier_code . '_' . $carrier_rate['code'];
 
-                foreach ( $method['subtypes'] as $subtype ) {
-                    $rate = $rate_template;
+            $rate['label'] = isset( $labels[$carrier_rate['code']] ) ? $labels[$carrier_rate['code']] : $carrier_rate['code'];
 
-                    // Create unique ID
-                    $rate['id'] .= ':' . $carrier_code . '_' . $subtype['code'];
-
-                    $labels = array(
-                        'standard' => __( 'Courier', 'montonio-for-woocommerce' )
-                    );
-
-                    $rate['label'] = $labels[$subtype['code']];
-
-                    // Set cost
-                    if ( 'flat_rate' === $this->get_option( 'pricing_type' ) && '' !== $flat_rate_cost ) {
-                        $rate['cost'] = $this->evaluate_cost(
-                            $flat_rate_cost,
-                            array(
-                                'qty'  => $package_item_qty,
-                                'cost' => $package['contents_cost']
-                            )
-                        );
-                    } else {
-                        $rate['cost'] = $subtype['rate'];
-
-                        $margin = $this->get_option( 'dynamic_rate_markup' );
-
-                        if ( ! empty( $margin ) && '0%' !== $margin ) {
-                            if ( '%' === substr( $margin, -1 ) ) {
-                                $rate['cost'] += ( $rate['cost'] * floatval( $margin ) / 100 );
-                            } else {
-                                $rate['cost'] += floatval( $margin );
-                            }
-                        }
-                    }
-
-                    $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
-
-                    // Update meta data
-                    $rate['meta_data'] = array(
-                        'carrier_code' => $carrier_code,
-                        'type_v2'      => $this->type_v2
-                    );
-
-                    // Add operators if available
-                    if ( isset( $subtype['operators'] ) && is_array( $subtype['operators'] ) ) {
-                        $rate['meta_data']['operators'] = $subtype['operators'];
-                    }
-
-                    // Add the shipping rate
-                    $this->add_rate( $rate );
-                }
+            // Set cost
+            if ( 'flat_rate' === $this->get_option( 'pricing_type' ) && '' !== $flat_rate_cost ) {
+                $rate['cost'] = $this->evaluate_cost(
+                    $flat_rate_cost,
+                    array(
+                        'qty'  => $package_item_qty,
+                        'cost' => $package['contents_cost']
+                    )
+                );
+            } else {
+                $rate['cost'] = $this->apply_dynamic_rate_markup( $carrier_rate['rate'] );
             }
+
+            $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+
+            // Update meta data
+            $rate['meta_data'] = array(
+                'carrier_code' => $this->carrier_code,
+                'type_v2'      => $this->type_v2
+            );
+
+            // Add operators if available
+            if ( isset( $carrier_rate['operators'] ) && is_array( $carrier_rate['operators'] ) ) {
+                $rate['meta_data']['operators'] = $carrier_rate['operators'];
+            }
+
+            // Add the shipping rate
+            $this->add_rate( $rate );
         }
     }
 }

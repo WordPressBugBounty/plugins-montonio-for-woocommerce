@@ -775,4 +775,29 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
         return $parcels;
     }
+
+    /**
+     * Apply dynamic rate markup to a shipping cost.
+     *
+     * Applies either a percentage-based or fixed markup to the given cost,
+     * based on the 'dynamic_rate_markup' option. Percentage values should be
+     * suffixed with '%' (e.g. '10%'); all other values are treated as a fixed amount.
+     *
+     * @since 9.5.0
+     * @param float $cost The original shipping cost to apply the markup to.
+     * @return float The shipping cost after markup has been applied.
+     */
+    protected function apply_dynamic_rate_markup( $cost ) {
+        $margin = $this->get_option( 'dynamic_rate_markup' );
+
+        if ( ! empty( $margin ) && '0%' !== $margin ) {
+            if ( '%' === substr( $margin, -1 ) ) {
+                $cost += ( $cost * floatval( $margin ) / 100 );
+            } else {
+                $cost += floatval( $margin );
+            }
+        }
+
+        return $cost;
+    }
 }

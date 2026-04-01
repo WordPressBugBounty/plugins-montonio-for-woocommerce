@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 9.4.3
+Version: 9.5.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 9.4.3
+Stable tag: 9.5.0
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 9.5.0 =
+* Added – Sync shipment details button on the order shipping panel to refresh shipment status and tracking codes from Montonio
+* Tweak – Shipping rates API now fetches per carrier and type instead of all-at-once, optimizing API calls
+* Tweak – Carrier name and type now resolved from shipping method instance as fallback in admin order panel
+* Fix – Payment webhook order lookup now resolves directly by UUID for custom reference types (order_number, add_prefix) instead of falling back after a failed lookup
+
 = 9.4.3 =
 * Tweak – Cache dynamic shipping rates in WooCommerce session to reduce API calls on checkout
 

@@ -70,37 +70,17 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
                 return;
             }
 
-            // Loop through each carrier and add rates
             foreach ( $carrier_rates as $carrier_rate ) {
-                foreach ( $carrier_rate['shippingMethods'] as $method ) {
-                    if ( ! isset( $method['subtypes'] ) || ! is_array( $method['subtypes'] ) ) {
-                        continue;
-                    }
-
-                    foreach ( $method['subtypes'] as $subtype ) {
-                        if ( 'parcelShop' !== $subtype['code'] ) {
-                            continue;
-                        }
-
-                        // Set cost
-                        $rate['cost'] = $subtype['rate'];
-
-                        $margin = $this->get_option( 'dynamic_rate_markup' );
-
-                        if ( ! empty( $margin ) && '0%' !== $margin ) {
-                            if ( '%' === substr( $margin, -1 ) ) {
-                                $rate['cost'] += ( $rate['cost'] * floatval( $margin ) / 100 );
-                            } else {
-                                $rate['cost'] += floatval( $margin );
-                            }
-                        }
-
-                        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
-
-                        // Add the shipping rate
-                        $this->add_rate( $rate );
-                    }
+                if ( 'parcelShop' !== $carrier_rate['code'] ) {
+                    continue;
                 }
+
+                // Set cost
+                $rate['cost'] = $this->apply_dynamic_rate_markup( $carrier_rate['rate'] );
+                $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+
+                // Add the shipping rate
+                $this->add_rate( $rate );
             }
 
             return;

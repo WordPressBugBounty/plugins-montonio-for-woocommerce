@@ -159,6 +159,82 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
     }
 
     /**
+     * Syncs shipment details for a given order.
+     *
+     * @since 9.4.4
+     * @param WC_Order $order The WooCommerce order object.
+     * @return string|null The API response on successful shipment update, or null on failure.
+     */
+    public function sync_shipment_details( $order ) {
+        $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
+
+        if ( empty( $shipment_id ) ) {
+            WC_Montonio_Logger::log( 'Shipment update failed. Missing shipment ID.' );
+            return null;
+        }
+
+        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+
+        if ( empty( $shipping_method ) ) {
+            return null;
+        }
+
+        try {
+            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
+            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $response     = $shipping_api->get_shipment( $shipment_id );
+            $decoded_response = json_decode( $response );
+
+            $tracking_links = '';
+
+            foreach ( $decoded_response->parcels as $parcel ) {
+                $parcel_id    = sanitize_text_field( $parcel->carrierParcelId );
+                $tracking_url = sanitize_text_field( $parcel->trackingLink );
+
+                if ( ! empty( $tracking_url ) ) {
+                    $tracking_links .= '<a href="' . esc_url( $tracking_url ) . '" target="_blank">' . esc_html( $parcel_id ) . '</a><br>';
+                }
+            }
+
+            if ( ! empty( $tracking_links ) ) {
+                $existing_tracking_links = $order->get_meta( '_montonio_tracking_info' );
+
+                if ( $existing_tracking_links !== $tracking_links ) {
+                    $order->add_order_note( __( '<strong>Shipment created.</strong><br>Tracking codes: ', 'montonio-for-woocommerce' ) . $tracking_links );
+                    $shipping_method->update_meta_data( 'tracking_codes', $tracking_links );
+                    $shipping_method->save_meta_data();
+
+                    $order->update_meta_data( '_montonio_tracking_info', $tracking_links );
+                }
+            }
+
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status', $decoded_response->status );
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', '' );
+
+
+            $order->save_meta_data();
+
+            return $response;
+        } catch ( Exception $e ) {
+            $decoded_response = json_decode( $e->getMessage(), true );
+            $note             = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
+
+            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+
+            $note .= '<br>' . $error_reason;
+
+            $order->add_order_note( $note );
+
+            $order->update_meta_data( '_wc_montonio_shipping_shipment_status_reason', $note );
+            $order->save_meta_data();
+
+            WC_Montonio_Logger::log( 'Shipment update failed. Response: ' . $e->getMessage() );
+
+            return null;
+        }
+    }
+
+    /**
      * Prepares shipment data.
      *
      * @since 7.0.1 Utilizes WC_Montonio_Shipping_Address_Helper for consolidated shipping address fields.

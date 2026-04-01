@@ -130,7 +130,7 @@ class WC_Montonio_Banners {
                     <div class="montonio-banner__col" style="flex: 1;">
                         <h2><?php esc_html_e( 'International Shipping', 'montonio-for-woocommerce' ); ?> <span>Available now</span></h2>
                         <p><?php echo wp_kses_post( 
-                            __( 'Send parcels to over 20+ EU countries, including Sweden, Germany, Spain, Italy, France, and more. <br><strong>Q1 2026 special: pricing is based only on weight, no matter the parcel size.</strong>', 'montonio-for-woocommerce' )
+                            __( 'Send parcels to over 20+ EU countries, including Germany, Spain, Italy, France, and more. <br><strong>Starting from just €5.95 until end of May.</strong>', 'montonio-for-woocommerce' )
                         ); ?></p>
             
                         <div class="montonio-banner__actions">

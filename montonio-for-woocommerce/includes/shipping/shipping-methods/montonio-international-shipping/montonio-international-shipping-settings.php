@@ -66,7 +66,7 @@ $settings = array(
         'sanitize_callback' => array( $this, 'sanitize_cost' )
     ),
     'default_dimensions_title'                   => array(
-        'title'       => __( 'Default Package Dimensions', 'montonio-for-woocommerce' ),
+        'title'       => __( 'Default Product Dimensions', 'montonio-for-woocommerce' ),
         'type'        => 'title',
         'description' => __( 'These dimensions are used when products in the cart do not have shipping dimensions defined. This ensures shipping rates can still be calculated via the API.', 'montonio-for-woocommerce' )
     ),

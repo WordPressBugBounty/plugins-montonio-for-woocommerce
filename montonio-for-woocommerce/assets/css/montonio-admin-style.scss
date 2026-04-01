@@ -801,6 +801,7 @@ label[for*=montonio_shipping_sender] {
 }
 
 .montonio-shipping-panel__status {
+    position: relative;
     font-size: 13px;
     line-height: 1;
     font-weight: normal;
@@ -809,6 +810,33 @@ label[for*=montonio_shipping_sender] {
     display: inline-block;    
     background-color: #f8f6f4;
     color: #3c3c3c;
+
+    & span {
+        transition: opacity 0.2s ease;
+    }
+}
+
+#montonio-shipping-sync-shipment {
+    cursor: pointer;
+
+    &::after {
+        content: attr(data-hover);
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
+
+    &:hover span {
+        opacity: 0;
+    }
 }
 
 .order-status.montonio-shippment-status,
