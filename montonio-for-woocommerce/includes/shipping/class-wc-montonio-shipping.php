@@ -7,7 +7,27 @@ defined( 'ABSPATH' ) || exit;
  * @since 7.0.0
  */
 
-class WC_Montonio_Shipping extends Montonio_Singleton {
+class WC_Montonio_Shipping {
+    /**
+     * Singleton instance of the class.
+     *
+     * @var mixed
+     */
+    private static $instance;
+
+    /**
+     * Get the singleton instance of the class.
+     *
+     * @return self The singleton instance of the class.
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
     /**
      * Notices to be displayed in the admin
      *
@@ -32,21 +52,36 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-item-manager.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/webhooks/class-wc-montonio-shipping-webhooks.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-helper.php';
+
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-sync.php';
         WC_Montonio_Shipping_Sync::init();
         
-        require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup-view.php';
+        require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup.php';
+        WC_Montonio_Shipping_Route_Setup::init();
 
         if ( 'yes' === get_option( 'montonio_shipping_enabled' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-address-helper.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-product.php';
+            WC_Montonio_Shipping_Product::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-order.php';
+            WC_Montonio_Shipping_Order::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-shipment-manager.php';
+            WC_Montonio_Shipping_Shipment_Manager::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-pickup-points-search.php';
+            WC_Montonio_Shipping_Pickup_Points_Search::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/label-printing/class-wc-montonio-shipping-label-printing.php';
+            WC_Montonio_Shipping_Label_Printing::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-rest.php';
+            WC_Montonio_Shipping_REST::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php';
+            WC_Montonio_Shipping_Classic_Checkout::init();
             
             // Shipping methods
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/class-montonio-shipping-method.php';
@@ -392,5 +427,3 @@ class WC_Montonio_Shipping extends Montonio_Singleton {
         return $available_gateways;
     }
 }
-
-WC_Montonio_Shipping::get_instance();

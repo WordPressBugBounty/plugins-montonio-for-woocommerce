@@ -5,15 +5,14 @@ defined( 'ABSPATH' ) || exit;
  * Class WC_Montonio_Shipping_Shipment_Manager for handling Montonio Shipping V2 shipment creation
  * @since 7.0.0
  */
-class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
+class WC_Montonio_Shipping_Shipment_Manager {
     /**
-     * The constructor for the Montonio Shipping Create Shipment class.
+     * Register hooks.
      *
      * @since 7.0.0
      */
-    public function __construct() {
-        // Create a shipment on order status change
-        add_action( 'woocommerce_order_status_changed', array( $this, 'maybe_create_shipment_on_status_change' ), 10, 4 );
+    public static function init() {
+        add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'maybe_create_shipment_on_status_change' ), 10, 4 );
     }
 
     /**
@@ -26,7 +25,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param WC_Order $order      The WooCommerce order object.
      * @return void
      */
-    public function maybe_create_shipment_on_status_change( $order_id, $old_status, $new_status, $order ) {
+    public static function maybe_create_shipment_on_status_change( $order_id, $old_status, $new_status, $order ) {
         if ( ! apply_filters( 'wc_montonio_create_shipment_on_status_change', true, $order_id, $order ) ) {
             return;
         }
@@ -53,7 +52,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             return;
         }
 
-        $this->create_shipment( $order );
+        self::create_shipment( $order );
     }
 
     /**
@@ -63,14 +62,14 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param WC_Order $order The WooCommerce order object.
      * @return string|null The API response on successful shipment creation, or null on failure.
      */
-    public function create_shipment( $order ) {
+    public static function create_shipment( $order ) {
         if ( empty( $order ) ) {
             WC_Montonio_Logger::log( 'Shipment creation failed. Order object is empty.' );
             return;
         }
 
         try {
-            $data                      = $this->get_shipment_data( $order );
+            $data                      = self::get_shipment_data( $order );
             $data['merchantReference'] = (string) apply_filters( 'wc_montonio_merchant_reference_display', $order->get_order_number(), $order );
 
             $montonio_order_uuid = $order->get_meta( '_montonio_uuid' );
@@ -95,7 +94,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $e->getMessage(), true );
             $note             = '<strong>' . __( 'Shipment creation failed.', 'montonio-for-woocommerce' ) . '</strong>';
 
-            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+            $error_reason = self::extract_shipment_api_error_reason( $decoded_response, $e );
 
             $note .= '<br>' . $error_reason;
 
@@ -118,7 +117,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param WC_Order $order The WooCommerce order object.
      * @return string|null The API response on successful shipment update, or null on failure.
      */
-    public function update_shipment( $order ) {
+    public static function update_shipment( $order ) {
         $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 
         if ( empty( $shipment_id ) ) {
@@ -127,7 +126,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         try {
-            $data         = $this->get_shipment_data( $order, 'update' );
+            $data         = self::get_shipment_data( $order, 'update' );
             $shipping_api = new WC_Montonio_Shipping_API();
             $response     = $shipping_api->update_shipment( $shipment_id, $data );
 
@@ -143,7 +142,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $e->getMessage(), true );
             $note             = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
 
-            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+            $error_reason = self::extract_shipment_api_error_reason( $decoded_response, $e );
 
             $note .= '<br>' . $error_reason;
 
@@ -165,7 +164,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param WC_Order $order The WooCommerce order object.
      * @return string|null The API response on successful shipment update, or null on failure.
      */
-    public function sync_shipment_details( $order ) {
+    public static function sync_shipment_details( $order ) {
         $shipment_id = $order->get_meta( '_wc_montonio_shipping_shipment_id' );
 
         if ( empty( $shipment_id ) ) {
@@ -180,8 +179,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         }
 
         try {
-            $sandbox_mode = get_option( 'montonio_shipping_sandbox_mode', 'no' );
-            $shipping_api = new WC_Montonio_Shipping_API( $sandbox_mode );
+            $shipping_api = new WC_Montonio_Shipping_API();
             $response     = $shipping_api->get_shipment( $shipment_id );
             $decoded_response = json_decode( $response );
 
@@ -219,7 +217,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             $decoded_response = json_decode( $e->getMessage(), true );
             $note             = '<strong>' . __( 'Shipment update failed.', 'montonio-for-woocommerce' ) . '</strong>';
 
-            $error_reason = $this->extract_shipment_api_error_reason( $decoded_response, $e );
+            $error_reason = self::extract_shipment_api_error_reason( $decoded_response, $e );
 
             $note .= '<br>' . $error_reason;
 
@@ -242,7 +240,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param string $type Request type - 'create' for new shipment and 'update' for updating.
      * @return array The formatted shipment data ready for API submission.
      */
-    public function get_shipment_data( $order, $type = 'create' ) {
+    public static function get_shipment_data( $order, $type = 'create' ) {
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
         if ( empty( $shipping_method ) ) {
@@ -256,8 +254,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             throw new Exception( 'Missing method type or method item ID' );
         }
 
-        $address_helper = WC_Montonio_Shipping_Address_Helper::get_instance();
-        $address_data   = $address_helper->standardize_address_data( array(
+        $address_data = WC_Montonio_Shipping_Address_Helper::standardize_address_data( array(
             'billing_first_name'        => (string) $order->get_billing_first_name(),
             'billing_last_name'         => (string) $order->get_billing_last_name(),
             'billing_company'           => (string) $order->get_billing_company(),
@@ -361,7 +358,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
             );
 
             // Apply fallbacks if applicable
-            $dimensions = $this->maybe_apply_dimension_fallbacks( $dimensions, $shipping_method );
+            $dimensions = self::maybe_apply_dimension_fallbacks( $dimensions, $shipping_method );
 
             // Convert to metric
             $weight = WC_Montonio_Helper::convert_to_kg( $dimensions['weight'] );
@@ -446,7 +443,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param object $shipping_method The shipping method object.
      * @return array The dimensions with fallbacks applied if applicable.
      */
-    private function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
+    private static function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
         $shipping_method_id = $shipping_method->get_method_id();
         $apply_fallback     = false;
 
@@ -464,7 +461,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
 
         if ( in_array( $shipping_method_id, $dpd_methods, true ) ) {
             $instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
-            
+
             if ( 'dynamic' === $instance->get_option( 'pricing_type' ) ) {
                 $apply_fallback = true;
             }
@@ -494,7 +491,7 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
      * @param Exception $e
      * @return mixed
      */
-    private function extract_shipment_api_error_reason( $decoded_response, Exception $e ) {
+    private static function extract_shipment_api_error_reason( $decoded_response, Exception $e ) {
         $error_reason = '';
 
         if ( json_last_error() === JSON_ERROR_NONE && ! empty( $decoded_response['message'] ) && ! empty( $decoded_response['error'] ) ) {
@@ -512,4 +509,3 @@ class WC_Montonio_Shipping_Shipment_Manager extends Montonio_Singleton {
         return $error_reason;
     }
 }
-WC_Montonio_Shipping_Shipment_Manager::get_instance();

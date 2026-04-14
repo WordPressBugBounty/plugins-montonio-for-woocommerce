@@ -17,7 +17,7 @@ class WC_Montonio_Shipping_Webhooks {
     public static function handle_webhook( $request ) {
         $body = sanitize_text_field( $request->get_body() );
 
-        WC_Montonio_Logger::log( 'Montonio Shipping webhook received: ' . $body );
+        WC_Montonio_Logger::log( 'Shipment: ' . $body );
 
         // Let's decode the JSON body
         $decoded_body = json_decode( $body );

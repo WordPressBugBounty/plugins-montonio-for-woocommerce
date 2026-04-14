@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Montonio_Venipak_Parcel_Shops extends Montonio_Shipping_Method {
     public $default_title      = 'Venipak parcel shops';

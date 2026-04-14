@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
     /**

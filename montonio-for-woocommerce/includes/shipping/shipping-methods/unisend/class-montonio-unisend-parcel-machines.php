@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Montonio_Unisend_Parcel_Machines extends Montonio_Shipping_Method {
     protected $max_dimensions = array( 35, 61, 74.5 ); // lowest to highest (cm)

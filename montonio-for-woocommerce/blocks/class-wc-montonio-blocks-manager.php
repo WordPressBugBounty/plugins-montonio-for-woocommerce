@@ -16,14 +16,15 @@ class WC_Montonio_Blocks_Manager {
     const IDENTIFIER = 'montonio-for-woocommerce';
 
     /**
-     * Constructor.
+     * Initialize hooks.
      *
      * @since 7.1.0
+     * @return void
      */
-    public function __construct() {
-        add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks' ) );
-        add_action( 'woocommerce_blocks_loaded', array( $this, 'register_store_api_endpoint_data' ) );
-        add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'update_order_meta_data' ), 10, 2 );
+    public static function init() {
+        add_action( 'woocommerce_blocks_loaded', array( __CLASS__, 'register_blocks' ) );
+        add_action( 'woocommerce_blocks_loaded', array( __CLASS__, 'register_store_api_endpoint_data' ) );
+        add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'update_order_meta_data' ), 10, 2 );
     }
 
     /**
@@ -32,7 +33,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return void
      */
-    public function register_blocks() {
+    public static function register_blocks() {
         if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
             return;
         }
@@ -41,11 +42,11 @@ class WC_Montonio_Blocks_Manager {
             return;
         }
 
-        $this->include_block_files();
-        $this->register_payment_methods();
+        self::include_block_files();
+        self::register_payment_methods();
 
         if ( 'yes' === get_option( 'montonio_shipping_enabled' ) ) {
-            $this->register_shipping_dropdown();
+            self::register_shipping_dropdown();
         }
     }
 
@@ -55,7 +56,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return void
      */
-    private function include_block_files() {
+    private static function include_block_files() {
         $files = array(
             'abstract-montonio-payment-method-block.php',
             'class-wc-montonio-payments-block.php',
@@ -77,7 +78,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return void
      */
-    private function register_payment_methods() {
+    private static function register_payment_methods() {
         add_action( 'woocommerce_blocks_payment_method_type_registration', function ( $registry ) {
             $methods = array(
                 'WC_Montonio_Payments_Block',
@@ -99,7 +100,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return void
      */
-    private function register_shipping_dropdown() {
+    private static function register_shipping_dropdown() {
         add_action( 'woocommerce_blocks_checkout_block_registration', function ( $registry ) {
             $registry->register( new WC_Montonio_Shipping_Checkout_Dropdown_Block() );
         } );
@@ -111,14 +112,14 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return void
      */
-    public function register_store_api_endpoint_data() {
+    public static function register_store_api_endpoint_data() {
         if ( function_exists( 'woocommerce_store_api_register_endpoint_data' ) ) {
             woocommerce_store_api_register_endpoint_data(
                 array(
                     'endpoint'        => CheckoutSchema::IDENTIFIER,
                     'namespace'       => self::IDENTIFIER,
-                    'data_callback'   => array( $this, 'data_callback' ),
-                    'schema_callback' => array( $this, 'schema_callback' ),
+                    'data_callback'   => array( __CLASS__, 'data_callback' ),
+                    'schema_callback' => array( __CLASS__, 'schema_callback' ),
                     'schema_type'     => ARRAY_A
                 )
             );
@@ -131,7 +132,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return array
      */
-    public function data_callback() {
+    public static function data_callback() {
         return array(
             'selected_pickup_point' => ''
         );
@@ -143,7 +144,7 @@ class WC_Montonio_Blocks_Manager {
      * @since 7.1.0
      * @return array
      */
-    public function schema_callback() {
+    public static function schema_callback() {
         return array(
             'selected_pickup_point' => array(
                 'description' => __( 'Selected Pickup Point', 'montonio-for-woocommerce' ),
@@ -161,11 +162,10 @@ class WC_Montonio_Blocks_Manager {
      * @param array $request The request data.
      * @return void
      */
-    public function update_order_meta_data( $order, $request ) {
+    public static function update_order_meta_data( $order, $request ) {
         $data = isset( $request['extensions'][self::IDENTIFIER] ) ? $request['extensions'][self::IDENTIFIER] : array();
 
         $handler = WC_Montonio_Shipping::get_instance();
         $handler->update_order_meta( $order, isset( $data['selected_pickup_point'] ) ? $data['selected_pickup_point'] : null );
     }
 }
-new WC_Montonio_Blocks_Manager();

@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_Montonio_Banners
@@ -17,9 +15,9 @@ class WC_Montonio_Banners {
      *
      * @since 9.0.5
      */
-    public function __construct() {
-        add_action( 'wp_ajax_update_montonio_banner_visibility', array( $this, 'update_montonio_banner_visibility' ) );
-        add_action( 'admin_notices', array( $this, 'render_all_banners' ) );
+    public static function init() {
+        add_action( 'wp_ajax_update_montonio_banner_visibility', array( __CLASS__, 'update_montonio_banner_visibility' ) );
+        add_action( 'admin_notices', array( __CLASS__, 'render_all_banners' ) );
     }
 
     /**
@@ -28,8 +26,8 @@ class WC_Montonio_Banners {
      * @since 9.0.5
      * @return void
      */
-    public function render_all_banners() {
-        $this->banner_jan_2026();
+    public static function render_all_banners() {
+        self::banner_jan_2026();
     }
 
     /**
@@ -40,7 +38,7 @@ class WC_Montonio_Banners {
      * @since 9.0.5
      * @return void Dies with 1 on success, -1 on failure
      */
-    public function update_montonio_banner_visibility() {
+    public static function update_montonio_banner_visibility() {
         $id = isset( $_POST['id'] ) ? sanitize_key( $_POST['id'] ) : '';
     
         if ( empty( $id ) ) {
@@ -72,10 +70,10 @@ class WC_Montonio_Banners {
      * @param string $id The banner ID to check
      * @return bool True if banner is dismissed, false otherwise
      */
-    public function is_dismissed( $id ) {
+    public static function is_dismissed( $id ) {
         $montonio_banners = get_user_meta( get_current_user_id(), 'montonio_banners', true );
 
-        return is_array( $montonio_banners ) && isset( $montonio_banners[$id] ) && $montonio_banners[$id] == 0;
+        return is_array( $montonio_banners ) && isset( $montonio_banners[$id] ) && 0 === $montonio_banners[$id];
     }
 
     /**
@@ -83,7 +81,7 @@ class WC_Montonio_Banners {
      *
      * @return void Early return if conditions not met
      */
-    private function banner_jan_2026() {
+    private static function banner_jan_2026() {
         $id = 'montonio_banner_jan_2026';
         $api_keys = WC_Montonio_Helper::get_api_keys();
 
@@ -91,11 +89,11 @@ class WC_Montonio_Banners {
             return;
         }
 
-        if ( $this->is_dismissed( $id ) ) {
+        if ( self::is_dismissed( $id ) ) {
             return;
         }
 
-        if ( WC_Montonio_Helper::get_locale() === 'pl' ) {
+        if ( 'pl' === WC_Montonio_Helper::get_locale() ) {
             return;
         }
         ?>
@@ -161,4 +159,3 @@ class WC_Montonio_Banners {
     <?php
     }
 }
-new WC_Montonio_Banners();

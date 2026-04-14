@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Montonio_Latvian_Post_Courier extends Montonio_Shipping_Method {
     public $default_title      = 'Latvijas Pasts courier';

@@ -6,22 +6,22 @@ defined( 'ABSPATH' ) || exit;
  * Class WC_Montonio_Shipping_Label_Printing for handling actions related to label printing
  * @since 7.0.0
  */
-class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
+class WC_Montonio_Shipping_Label_Printing {
 
     /**
      * The constructor for the WC_Montonio_Shipping_Label_Printing class
      *
      * @since 7.0.0
      */
-    protected function __construct() {
+    public static function init() {
         if ( WC_Montonio_Helper::is_hpos_enabled() ) {
-            add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( $this, 'add_label_printing_bulk_actions' ) );
-            add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( $this, 'add_mark_as_label_printed_bulk_action' ) );
-            add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( $this, 'handle_label_printed_bulk_action' ), 10, 3 );
+            add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( __CLASS__, 'add_label_printing_bulk_actions' ) );
+            add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( __CLASS__, 'add_mark_as_label_printed_bulk_action' ) );
+            add_action( 'handle_bulk_actions-woocommerce_page_wc-orders', array( __CLASS__, 'handle_label_printed_bulk_action' ), 10, 3 );
         } else {
-            add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_label_printing_bulk_actions' ) );
-            add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_mark_as_label_printed_bulk_action' ) );
-            add_action( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_label_printed_bulk_action' ), 10, 3 );
+            add_filter( 'bulk_actions-edit-shop_order', array( __CLASS__, 'add_label_printing_bulk_actions' ) );
+            add_filter( 'bulk_actions-edit-shop_order', array( __CLASS__, 'add_mark_as_label_printed_bulk_action' ) );
+            add_action( 'handle_bulk_actions-edit-shop_order', array( __CLASS__, 'handle_label_printed_bulk_action' ), 10, 3 );
         }
     }
 
@@ -33,8 +33,8 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $order_ids The order IDs to create labels for.
      * @return object The response object from the API.
      */
-    public function create_label( $order_ids ) {
-        $shipment_ids = $this->get_shipment_ids_from_order_ids( $order_ids );
+    public static function create_label( $order_ids ) {
+        $shipment_ids = self::get_shipment_ids_from_order_ids( $order_ids );
 
         if ( empty( $shipment_ids ) ) {
             throw new Exception( __( 'No shipments available for label creation. Only shipments with status "registered" or "labels printed" can be printed.', 'montonio-for-woocommerce' ) );
@@ -63,7 +63,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param string $label_file_id The label file ID
      * @return object The response object from the API.
      */
-    public function get_label_file_by_id( $label_file_id ) {
+    public static function get_label_file_by_id( $label_file_id ) {
         $shipping_api = new WC_Montonio_Shipping_API();
         $response     = $shipping_api->get_label_file_by_id( $label_file_id );
         $response     = json_decode( $response );
@@ -78,7 +78,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $order_ids The order IDs to get shipment IDs from.
      * @return array The shipment IDs. If there are orders without shipment IDs, no error is thrown.
      */
-    public function get_shipment_ids_from_order_ids( $order_ids ) {
+    public static function get_shipment_ids_from_order_ids( $order_ids ) {
         $shipment_ids = array();
 
         foreach ( $order_ids as $order_id ) {
@@ -105,7 +105,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $shipment_ids The shipment IDs to get order IDs from.
      * @return array The order IDs. If there are shipments without order IDs, no error is thrown.
      */
-    public function get_order_ids_from_shipment_ids( $shipment_ids ) {
+    public static function get_order_ids_from_shipment_ids( $shipment_ids ) {
         // Map shipment IDs to order IDs using the helper function, filtering out any null or false values
         $order_ids = array_filter( array_map( function ( $shipment_id ) {
             return WC_Montonio_Helper::get_order_id_by_meta_data( $shipment_id, '_wc_montonio_shipping_shipment_id' );
@@ -122,7 +122,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $actions The current bulk actions
      * @return array The modified bulk actions
      */
-    public function add_label_printing_bulk_actions( $actions ) {
+    public static function add_label_printing_bulk_actions( $actions ) {
         $actions['wc_montonio_print_labels'] = __( 'Print shipping labels', 'montonio-for-woocommerce' );
 
         wp_enqueue_script( 'wc-montonio-shipping-label-printing' );
@@ -152,7 +152,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $actions The current bulk actions
      * @return array The modified bulk actions
      */
-    public function add_mark_as_label_printed_bulk_action( $actions ) {
+    public static function add_mark_as_label_printed_bulk_action( $actions ) {
         $actions['mark_label-printed'] = __( 'Change status to label printed', 'montonio-for-woocommerce' );
 
         return $actions;
@@ -168,7 +168,7 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
      * @param array $post_ids The array of order IDs selected for the bulk action.
      * @return string The URL to redirect to after handling the bulk action.
      */
-    public function handle_label_printed_bulk_action( $redirect_to, $action, $post_ids ) {
+    public static function handle_label_printed_bulk_action( $redirect_to, $action, $post_ids ) {
         if ( $action !== 'mark_label-printed' ) {
             return $redirect_to; // If it's not the action we are handling, exit.
         }
@@ -188,5 +188,3 @@ class WC_Montonio_Shipping_Label_Printing extends Montonio_Singleton {
         return $redirect_to;
     }
 }
-
-WC_Montonio_Shipping_Label_Printing::get_instance();

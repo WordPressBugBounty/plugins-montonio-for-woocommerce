@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Montonio API Settings
@@ -240,4 +238,3 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
         return true;
     }
 }
-new WC_Montonio_API_Settings();

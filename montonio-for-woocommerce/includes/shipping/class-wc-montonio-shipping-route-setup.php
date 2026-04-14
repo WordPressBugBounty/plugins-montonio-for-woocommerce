@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_Montonio_Shipping_Route_Setup
@@ -891,4 +889,3 @@ class WC_Montonio_Shipping_Route_Setup {
         update_option( $option_key, $settings );
     }
 }
-WC_Montonio_Shipping_Route_Setup::init();

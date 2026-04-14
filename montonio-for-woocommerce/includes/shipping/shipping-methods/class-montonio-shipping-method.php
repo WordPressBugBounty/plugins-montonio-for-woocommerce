@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 

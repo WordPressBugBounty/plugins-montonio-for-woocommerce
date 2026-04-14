@@ -16,17 +16,17 @@ class Montonio_OTA_Updates {
      * Route namespace
      *
      * @since 7.1.2
-     * @var string
      */
-    protected $namespace = 'montonio/ota';
+    const NAMESPACE_PREFIX = 'montonio/ota';
 
     /**
-     * Montonio_OTA_Updates constructor.
+     * Initialize the class by registering hooks.
      *
      * @since 7.1.2
+     * @return void
      */
-    public function __construct() {
-        add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+    public static function init() {
+        add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
     }
 
     /**
@@ -35,24 +35,24 @@ class Montonio_OTA_Updates {
      * @since 7.1.2
      * @return void
      */
-    public function register_routes() {
-        register_rest_route( $this->namespace, '/sync', array(
+    public static function register_routes() {
+        register_rest_route( self::NAMESPACE_PREFIX, '/sync', array(
             'methods'             => 'POST',
-            'permission_callback' => array( $this, 'merchant_apikey_auth_permissions_check' ),
-            'callback'            => array( $this, 'trigger_ota_sync' )
+            'permission_callback' => array( __CLASS__, 'merchant_apikey_auth_permissions_check' ),
+            'callback'            => array( __CLASS__, 'trigger_ota_sync' )
         ) );
 
-        register_rest_route( $this->namespace, '/config', array(
+        register_rest_route( self::NAMESPACE_PREFIX, '/config', array(
             'methods'             => 'GET',
-            'permission_callback' => array( $this, 'merchant_apikey_auth_permissions_check' ),
-            'callback'            => array( $this, 'get_config' )
+            'permission_callback' => array( __CLASS__, 'merchant_apikey_auth_permissions_check' ),
+            'callback'            => array( __CLASS__, 'get_config' )
         ) );
 
-        register_rest_route( $this->namespace, '/config', array(
+        register_rest_route( self::NAMESPACE_PREFIX, '/config', array(
             'methods'             => 'PATCH',
-            'permission_callback' => array( $this, 'merchant_apikey_auth_permissions_check' ),
-            'callback'            => array( $this, 'update_config' ),
-            'args'                => $this->get_config_update_args()
+            'permission_callback' => array( __CLASS__, 'merchant_apikey_auth_permissions_check' ),
+            'callback'            => array( __CLASS__, 'update_config' ),
+            'args'                => self::get_config_update_args()
         ) );
     }
 
@@ -63,23 +63,34 @@ class Montonio_OTA_Updates {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The sanitized Montonio plugin config
      */
-    public function get_config( $request ) {
-        $payment_method_ids = $this->get_payment_method_ids();
-        $options_names      = array_map( array( $this, 'get_payment_method_settings_option_name' ), $payment_method_ids );
+    public static function get_config( $request ) {
+        $payment_method_ids = self::get_payment_method_ids();
+        $options_names      = array_map( array( __CLASS__, 'get_payment_method_settings_option_name' ), $payment_method_ids );
         $data               = array();
 
         foreach ( $options_names as $option_name ) {
             $settings = get_option( $option_name, false );
 
             if ( is_array( $settings ) ) {
-                $settings = $this->filter_sensitive_data( $option_name, $settings );
+                $settings = self::filter_sensitive_data( $option_name, $settings );
             }
 
             $data[$option_name] = $settings;
         }
 
-        $data['montonio_shipping_enabled']       = get_option( 'montonio_shipping_enabled', false );
-        $data['montonio_shipping_dropdown_type'] = get_option( 'montonio_shipping_dropdown_type', false );
+        $api_settings = get_option( 'woocommerce_wc_montonio_api_settings', false );
+
+        if ( is_array( $api_settings ) ) {
+            $api_settings = self::filter_sensitive_data( 'woocommerce_wc_montonio_api_settings', $api_settings );
+        }
+
+        $data['woocommerce_wc_montonio_api_settings'] = $api_settings;
+
+        $data['montonio_shipping_enabled']                      = get_option( 'montonio_shipping_enabled', false );
+        $data['montonio_shipping_dropdown_type']                = get_option( 'montonio_shipping_dropdown_type', false );
+        $data['montonio_shipping_create_shipment_on_status']    = get_option( 'montonio_shipping_create_shipment_on_status', false );
+        $data['montonio_shipping_orderStatusWhenLabelPrinted']  = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', false );
+        $data['montonio_shipping_order_status_when_delivered']  = get_option( 'montonio_shipping_order_status_when_delivered', false );
 
         return new WP_REST_Response( $data, 200 );
     }
@@ -95,46 +106,132 @@ class Montonio_OTA_Updates {
      * @since 7.1.2
      * @return array The schema for the config update endpoint.
      */
-    public function get_config_update_args() {
+    public static function get_config_update_args() {
         return array(
+            'montonio_shipping_create_shipment_on_status'    => array(
+                'description'       => __( 'Order status that triggers automatic shipment creation', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'montonio_shipping_orderStatusWhenLabelPrinted'  => array(
+                'description'       => __( 'Order status when shipping label is printed', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'montonio_shipping_order_status_when_delivered'  => array(
+                'description'       => __( 'Order status when shipment is delivered', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'montonio_shipping_enabled'                 => array(
+                'description'       => __( 'Enable or disable Montonio Shipping', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'enum'              => array( 'yes', 'no' ),
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
             'montonio_shipping_dropdown_type'           => array(
                 'description'       => __( 'Dropdown type for Montonio Shipping', 'montonio-for-woocommerce' ),
                 'type'              => 'string',
-                'enum'              => array( 'select2', 'choices' ),
-                'sanitize_callback' => 'sanitize_text_field',
-                'required'          => false
+                'enum'              => array( 'default', 'select2', 'choices' ),
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'woocommerce_wc_montonio_api_settings'      => array(
+                'description' => __( 'API settings for Montonio', 'montonio-for-woocommerce' ),
+                'type'        => 'object',
+                'properties'  => array(
+                    'test_mode'               => array(
+                        'description'       => __( 'Enable or disable test mode', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'merchant_reference_type' => array(
+                        'description'       => __( 'Merchant reference type for orders', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'order_id', 'order_number', 'add_prefix' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'order_prefix'            => array(
+                        'description'       => __( 'Custom prefix for order IDs', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field'
+                    )
+                )
             ),
             'woocommerce_wc_montonio_payments_settings' => array(
                 'description' => __( 'Payment settings for Montonio Bank Payments', 'montonio-for-woocommerce' ),
                 'type'        => 'object',
-                'required'    => false,
                 'properties'  => array(
                     'enabled' => array(
                         'description'       => __( 'Enable or disable Montonio Bank Payments', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
                         'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
+                        'sanitize_callback' => 'sanitize_text_field'
                     ),
                     'title'   => array(
                         'description'       => __( 'Title of the payment method', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => false
+                        'sanitize_callback' => 'sanitize_text_field'
                     )
                 )
             ),
             'woocommerce_wc_montonio_card_settings'     => array(
                 'description' => __( 'Payment settings for Montonio Card Payments', 'montonio-for-woocommerce' ),
                 'type'        => 'object',
-                'required'    => false,
                 'properties'  => array(
-                    'enabled' => array(
+                    'enabled'         => array(
                         'description'       => __( 'Enable or disable Montonio Card Payments', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
                         'enum'              => array( 'yes', 'no' ),
-                        'sanitize_callback' => 'sanitize_text_field',
-                        'required'          => true
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'inline_checkout' => array(
+                        'description'       => __( 'Enable or disable embedded card fields in checkout', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    )
+                )
+            ),
+            'woocommerce_wc_montonio_blik_settings'    => array(
+                'description' => __( 'Payment settings for Montonio BLIK', 'montonio-for-woocommerce' ),
+                'type'        => 'object',
+                'properties'  => array(
+                    'enabled'          => array(
+                        'description'       => __( 'Enable or disable Montonio BLIK', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'blik_in_checkout' => array(
+                        'description'       => __( 'Enable or disable embedded BLIK fields in checkout', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    )
+                )
+            ),
+            'woocommerce_wc_montonio_bnpl_settings'    => array(
+                'description' => __( 'Payment settings for Montonio Buy Now Pay Later', 'montonio-for-woocommerce' ),
+                'type'        => 'object',
+                'properties'  => array(
+                    'enabled' => array(
+                        'description'       => __( 'Enable or disable Montonio Buy Now Pay Later', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
+                    )
+                )
+            ),
+            'woocommerce_wc_montonio_hire_purchase_settings' => array(
+                'description' => __( 'Payment settings for Montonio Hire Purchase', 'montonio-for-woocommerce' ),
+                'type'        => 'object',
+                'properties'  => array(
+                    'enabled' => array(
+                        'description'       => __( 'Enable or disable Montonio Hire Purchase', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
+                        'sanitize_callback' => 'sanitize_text_field'
                     )
                 )
             )
@@ -148,9 +245,9 @@ class Montonio_OTA_Updates {
      * @param WP_REST_Request $request The request object.
      * @return WP_REST_Response The response object.
      */
-    public function update_config( $request ) {
-        $allowed_params     = $this->sanitize_request_params( $this->get_config_update_args(), $request );
-        $payment_method_ids = $this->get_payment_method_ids();
+    public static function update_config( $request ) {
+        $allowed_params     = self::sanitize_request_params( self::get_config_update_args(), $request );
+        $payment_method_ids = self::get_payment_method_ids();
 
         // option_name is the key of the allowed_params array, which corresponds to the option name in the database.
         // $new_values is whatever was passed in the request. It will either be an array of new values or a single value.
@@ -201,7 +298,7 @@ class Montonio_OTA_Updates {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response
      */
-    public function trigger_ota_sync( $request ) {
+    public static function trigger_ota_sync( $request ) {
         try {
             WC_Montonio_Logger::log( 'OTA Sync started by Montonio at ' . gmdate( 'Y-m-d H:i:s' ) );
 
@@ -233,7 +330,7 @@ class Montonio_OTA_Updates {
      * @param WP_REST_Request $request The request object
      * @return bool
      */
-    public function merchant_apikey_auth_permissions_check( $request ) {
+    public static function merchant_apikey_auth_permissions_check( $request ) {
         try {
             $headers = getallheaders();
             // Check for the Authorization header
@@ -271,12 +368,12 @@ class Montonio_OTA_Updates {
      *
      * @return array The sanitized parameters.
      */
-    public function sanitize_request_params( $prepared_args, $request ) {
+    public static function sanitize_request_params( $prepared_args, $request ) {
         // Get the raw request params (body, query, etc.)
         $body_params = $request->get_params();
 
         // Recursively sanitize the parameters
-        return $this->sanitize_recursive( $prepared_args, $body_params );
+        return self::sanitize_recursive( $prepared_args, $body_params );
     }
 
     /**
@@ -286,7 +383,7 @@ class Montonio_OTA_Updates {
      * @param array $actual_params The actual parameters from the request to sanitize.
      * @return array The sanitized parameters.
      */
-    private function sanitize_recursive( $allowed_params, $actual_params ) {
+    private static function sanitize_recursive( $allowed_params, $actual_params ) {
         $sanitized_params = array();
 
         foreach ( $allowed_params as $key => $value ) {
@@ -294,7 +391,7 @@ class Montonio_OTA_Updates {
                 // If the value is an array and there are nested properties, recurse into it.
                 if ( is_array( $value ) && isset( $value['properties'] ) && is_array( $actual_params[$key] ) ) {
                     // Recursively sanitize the nested properties
-                    $sanitized_params[$key] = $this->sanitize_recursive( $value['properties'], $actual_params[$key] );
+                    $sanitized_params[$key] = self::sanitize_recursive( $value['properties'], $actual_params[$key] );
                 } else {
                     // Otherwise, it's a simple key, add it directly
                     $sanitized_params[$key] = $actual_params[$key];
@@ -313,9 +410,9 @@ class Montonio_OTA_Updates {
      * @param array  $settings The settings array to filter.
      * @return array The filtered settings.
      */
-    private function filter_sensitive_data( $method_id, $settings ) {
+    private static function filter_sensitive_data( $method_id, $settings ) {
         $sensitive_keys = array(
-            'woocommerce_wc_montonio_api_settings' => array( 'access_key', 'secret_key' )
+            'woocommerce_wc_montonio_api_settings' => array( 'access_key', 'secret_key', 'sandbox_access_key', 'sandbox_secret_key' )
         );
 
         if ( isset( $sensitive_keys[$method_id] ) ) {
@@ -333,7 +430,7 @@ class Montonio_OTA_Updates {
      * @since 7.1.2
      * @return array
      */
-    private function get_payment_method_ids() {
+    private static function get_payment_method_ids() {
         return array(
             'wc_montonio_payments',
             'wc_montonio_card',
@@ -353,8 +450,7 @@ class Montonio_OTA_Updates {
      *
      * @return string The option name
      */
-    private function get_payment_method_settings_option_name( $method_id ) {
+    private static function get_payment_method_settings_option_name( $method_id ) {
         return 'woocommerce_' . $method_id . '_settings';
     }
 }
-new Montonio_OTA_Updates();

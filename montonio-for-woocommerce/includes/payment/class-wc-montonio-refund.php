@@ -1,13 +1,10 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Montonio_Refund {
-    public function __construct() {
-        // Add custom order status
-        add_filter( 'woocommerce_register_shop_order_post_statuses', array( $this, 'add_custom_order_status' ) );
-        add_filter( 'wc_order_statuses', array( $this, 'add_custom_order_status_to_order_statuses' ) );
+    public static function init() {
+        add_filter( 'woocommerce_register_shop_order_post_statuses', array( __CLASS__, 'add_custom_order_status' ) );
+        add_filter( 'wc_order_statuses', array( __CLASS__, 'add_custom_order_status_to_order_statuses' ) );
     }
 
     /**
@@ -103,7 +100,7 @@ class WC_Montonio_Refund {
      * @since 8.1.0
      * @return void
      */
-    public function add_custom_order_status( $order_statuses ) {
+    public static function add_custom_order_status( $order_statuses ) {
         $order_statuses['wc-mon-part-refund'] = array(
             'label'                     => _x( 'Partially refunded', 'Order status', 'montonio-for-woocommerce' ),
             'public'                    => true,
@@ -124,7 +121,7 @@ class WC_Montonio_Refund {
      * @param array $order_statuses The existing order statuses
      * @return array The modified order statuses
      */
-    public function add_custom_order_status_to_order_statuses( $order_statuses ) {
+    public static function add_custom_order_status_to_order_statuses( $order_statuses ) {
         $order_statuses['wc-mon-part-refund'] = _x( 'Partially refunded', 'Order status', 'montonio-for-woocommerce' );
         return $order_statuses;
     }
@@ -145,4 +142,3 @@ class WC_Montonio_Refund {
         return is_array( $refunds ) ? $refunds : array();
     }
 }
-new WC_Montonio_Refund();

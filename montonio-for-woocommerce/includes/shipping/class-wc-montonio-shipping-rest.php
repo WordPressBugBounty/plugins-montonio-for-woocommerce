@@ -7,22 +7,21 @@ defined( 'ABSPATH' ) || exit;
  * @since 7.0.0
  * @since 7.0.1 Removed mark_labels_as_downloaded method, refactored poll_labels to get_label
  */
-class WC_Montonio_Shipping_REST extends Montonio_Singleton {
+class WC_Montonio_Shipping_REST {
     /**
      * Route namespace
      *
      * @since 7.0.0
-     * @var string
      */
-    protected $namespace = 'montonio/shipping/v2';
+    const NAMESPACE_PREFIX = 'montonio/shipping/v2';
 
     /**
-     * Constructor
+     * Initialize the class
      *
      * @since 7.0.0
      */
-    protected function __construct() {
-        add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+    public static function init() {
+        add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
     }
 
     /**
@@ -30,68 +29,68 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      *
      * @since 7.0.0
      */
-    public function register_routes() {
-        register_rest_route( $this->namespace, '/labels/create',
+    public static function register_routes() {
+        register_rest_route( self::NAMESPACE_PREFIX, '/labels/create',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'create_label' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'create_label' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/labels',
+        register_rest_route( self::NAMESPACE_PREFIX, '/labels',
             array(
                 'methods'             => 'GET',
-                'callback'            => array( $this, 'get_label_file' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'get_label_file' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/shipment/create',
+        register_rest_route( self::NAMESPACE_PREFIX, '/shipment/create',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'create_shipment' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'create_shipment' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/shipment/update',
+        register_rest_route( self::NAMESPACE_PREFIX, '/shipment/update',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'update_shipment' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'update_shipment' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/shipment/update-panel',
+        register_rest_route( self::NAMESPACE_PREFIX, '/shipment/update-panel',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'update_shipping_panel' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'update_shipping_panel' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/shipment/sync',
+        register_rest_route( self::NAMESPACE_PREFIX, '/shipment/sync',
             array(
                 'methods'             => 'GET',
-                'callback'            => array( $this, 'sync_shipment_details' ),
-                'permission_callback' => array( $this, 'permissions_check' )
+                'callback'            => array( __CLASS__, 'sync_shipment_details' ),
+                'permission_callback' => array( __CLASS__, 'permissions_check' )
             )
         );
 
-        register_rest_route( $this->namespace, '/webhook',
+        register_rest_route( self::NAMESPACE_PREFIX, '/webhook',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'handle_webhook' ),
+                'callback'            => array( __CLASS__, 'handle_webhook' ),
                 'permission_callback' => '__return_true'
             )
         );
 
-        register_rest_route( $this->namespace, '/sync-shipping-method-items',
+        register_rest_route( self::NAMESPACE_PREFIX, '/sync-shipping-method-items',
             array(
                 'methods'             => 'POST',
-                'callback'            => array( $this, 'sync_shipping_method_items' ),
-                'permission_callback' => array( $this, 'check_sync_shipping_method_items_permissions' )
+                'callback'            => array( __CLASS__, 'sync_shipping_method_items' ),
+                'permission_callback' => array( __CLASS__, 'check_sync_shipping_method_items_permissions' )
             )
         );
     }
@@ -102,7 +101,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param $request
      * @return mixed
      */
-    public function check_sync_shipping_method_items_permissions( $request ) {
+    public static function check_sync_shipping_method_items_permissions( $request ) {
         $token = $request->get_param( 'token' );
 
         try {
@@ -123,7 +122,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return bool True if the nonce is valid, false otherwise
      */
-    public function check_nonce_validity( $request ) {
+    public static function check_nonce_validity( $request ) {
         $nonce = $request->get_header( 'X-WP-Nonce' );
         return wp_verify_nonce( $nonce, 'wp_rest' );
     }
@@ -134,7 +133,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @since 7.0.0
      * @return bool True if the user has the required permissions, false otherwise
      */
-    public function permissions_check() {
+    public static function permissions_check() {
         return current_user_can( 'view_woocommerce_reports' );
     }
 
@@ -145,7 +144,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function handle_webhook( $request ) {
+    public static function handle_webhook( $request ) {
         return rest_ensure_response( WC_Montonio_Shipping_Webhooks::handle_webhook( $request ) );
     }
 
@@ -156,7 +155,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function create_label( $request ) {
+    public static function create_label( $request ) {
         $order_ids = $request->get_param( 'order_ids' );
 
         // Make all order IDs integers
@@ -168,8 +167,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
         }
 
         try {
-            $handler = WC_Montonio_Shipping_Label_Printing::get_instance();
-            $labels  = $handler->create_label( $order_ids );
+            $labels = WC_Montonio_Shipping_Label_Printing::create_label( $order_ids );
 
             return rest_ensure_response( array( 'message' => 'Labels created successfully.', 'data' => $labels ) );
         } catch ( Exception $e ) {
@@ -186,14 +184,13 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function get_label_file( $request ) {
+    public static function get_label_file( $request ) {
         $label_file_id = $request->get_param( 'label_file_id' );
         if ( ! WC_Montonio_Helper::is_valid_uuid( $label_file_id ) ) {
             return new WP_Error( 'wc_montonio_shipping_invalid_label_file_id', 'Invalid or no label file ID provided.', array( 'status' => 400 ) );
         }
 
-        $handler = WC_Montonio_Shipping_Label_Printing::get_instance();
-        $label   = $handler->get_label_file_by_id( $label_file_id );
+        $label = WC_Montonio_Shipping_Label_Printing::get_label_file_by_id( $label_file_id );
 
         return rest_ensure_response( array( 'message' => 'Label fetched successfully.', 'data' => $label ) );
     }
@@ -205,7 +202,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function create_shipment( $request ) {
+    public static function create_shipment( $request ) {
         $order_id = sanitize_text_field( $request->get_param( 'order_id' ) );
         $order    = wc_get_order( $order_id );
 
@@ -219,8 +216,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             return new WP_Error( 'wc_montonio_shipping_unupported_method', 'Order doesn\'t have Montonio shipping method.', array( 'status' => 400 ) );
         }
 
-        $handler  = WC_Montonio_Shipping_Shipment_Manager::get_instance();
-        $shipment = $handler->create_shipment( $order );
+        $shipment = WC_Montonio_Shipping_Shipment_Manager::create_shipment( $order );
 
         if ( empty( $shipment ) ) {
             return new WP_Error( 'wc_montonio_shipping_shipment_creation_error', 'Shipment creation failed.', array( 'status' => 500 ) );
@@ -236,7 +232,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function update_shipment( $request ) {
+    public static function update_shipment( $request ) {
         $order_id = sanitize_text_field( $request->get_param( 'order_id' ) );
         $order    = wc_get_order( $order_id );
 
@@ -250,8 +246,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
             return new WP_Error( 'wc_montonio_shipping_unupported_method', 'Order doesn\'t have Montonio shipping method.', array( 'status' => 400 ) );
         }
 
-        $handler  = WC_Montonio_Shipping_Shipment_Manager::get_instance();
-        $shipment = $handler->update_shipment( $order );
+        $shipment = WC_Montonio_Shipping_Shipment_Manager::update_shipment( $order );
 
         if ( empty( $shipment ) ) {
             return new WP_Error( 'wc_montonio_shipping_shipment_update_error', 'Shipment update failed.', array( 'status' => 500 ) );
@@ -266,7 +261,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @since 7.0.1
      * @return WP_REST_Response The response object
      */
-    public function sync_shipping_method_items() {
+    public static function sync_shipping_method_items() {
         $result = WC_Montonio_Shipping_Sync::sync();
 
         if ( is_wp_error( $result ) ) {
@@ -283,7 +278,7 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function update_shipping_panel( $request ) {
+    public static function update_shipping_panel( $request ) {
         $order_id    = $request->get_param( 'order_id' );
         $last_status = $request->get_param( 'status' );
         $order       = wc_get_order( $order_id );
@@ -312,16 +307,15 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
      * @param WP_REST_Request $request The request object
      * @return WP_REST_Response The response object or WP_Error if something went wrong
      */
-    public function sync_shipment_details( $request ) {
+    public static function sync_shipment_details( $request ) {
         $order_id = sanitize_text_field( $request->get_param( 'order_id' ) );
         $order    = wc_get_order( $order_id );
 
         if ( empty( $order ) ) {
             return new WP_Error( 'wc_montonio_shipping_invalid_order_id', 'Invalid or no order ID provided.', array( 'status' => 400 ) );
         }
-        
-        $handler  = WC_Montonio_Shipping_Shipment_Manager::get_instance();
-        $shipment = $handler->sync_shipment_details( $order );
+
+        $shipment = WC_Montonio_Shipping_Shipment_Manager::sync_shipment_details( $order );
 
         if ( empty( $shipment ) ) {
             return new WP_Error( 'wc_montonio_shipping_sync_shipment_error', 'Shipment retrieval failed.', array( 'status' => 500 ) );
@@ -330,5 +324,3 @@ class WC_Montonio_Shipping_REST extends Montonio_Singleton {
         return rest_ensure_response( array( 'message' => 'Shipment successfully retrieved.', 'shipment' => $shipment ) );
     }
 }
-
-WC_Montonio_Shipping_REST::get_instance();

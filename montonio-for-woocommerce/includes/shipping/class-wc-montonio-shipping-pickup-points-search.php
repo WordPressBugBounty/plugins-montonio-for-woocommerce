@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles AJAX search functionality for Montonio shipping pickup points.
@@ -9,9 +7,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 9.1.1
  */
 class WC_Montonio_Shipping_Pickup_Points_Search {
-    public function __construct() {
-        add_action( 'wp_ajax_montonio_pickup_points_search', array( $this, 'search_pickup_points' ) );
-        add_action( 'wp_ajax_nopriv_montonio_pickup_points_search', array( $this, 'search_pickup_points' ) );
+
+    /**
+     * Initialize hooks for pickup points search AJAX handlers.
+     *
+     * @since 9.5.0
+     * @return void
+     */
+    public static function init() {
+        add_action( 'wp_ajax_montonio_pickup_points_search', array( __CLASS__, 'search_pickup_points' ) );
+        add_action( 'wp_ajax_nopriv_montonio_pickup_points_search', array( __CLASS__, 'search_pickup_points' ) );
     }
 
     /**
@@ -21,7 +26,7 @@ class WC_Montonio_Shipping_Pickup_Points_Search {
      * @return void Sends JSON response via wp_send_json_success() or wp_send_json_error()
      * @throws Exception When API request fails or returns invalid JSON
      */
-    public function search_pickup_points() {
+    public static function search_pickup_points() {
         // Verify nonce
         if ( ! wp_verify_nonce( $_POST['nonce'], 'montonio_pickup_nonce' ) ) {
             wp_send_json_error( array( 'message' => 'Invalid security token' ) );
@@ -58,4 +63,3 @@ class WC_Montonio_Shipping_Pickup_Points_Search {
         }
     }
 }
-new WC_Montonio_Shipping_Pickup_Points_Search();

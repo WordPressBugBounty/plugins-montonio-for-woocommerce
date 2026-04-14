@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Montonio_Latvian_Post_Parcel_Machines extends Montonio_Shipping_Method {
     protected $max_dimensions = array( 38, 38, 58 );

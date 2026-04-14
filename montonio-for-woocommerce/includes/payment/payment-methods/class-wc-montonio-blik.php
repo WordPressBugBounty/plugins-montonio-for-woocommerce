@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Montonio_Blik extends WC_Payment_Gateway {
 
@@ -358,7 +356,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * Check webhook notfications from Montonio
      */
     public function get_order_notification() {
-        new WC_Montonio_Callbacks();
+        WC_Montonio_Callbacks::handle_notification();
     }
 
     /**
@@ -366,7 +364,7 @@ class WC_Montonio_Blik extends WC_Payment_Gateway {
      * and redirect user: thankyou page for success, checkout on declined/failure
      */
     public function get_order_response() {
-        new WC_Montonio_Callbacks( true );
+        WC_Montonio_Callbacks::handle_return();
     }
 
     /**

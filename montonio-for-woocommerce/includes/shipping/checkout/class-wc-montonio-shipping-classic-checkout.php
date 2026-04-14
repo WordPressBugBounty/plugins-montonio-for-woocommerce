@@ -5,18 +5,18 @@ defined( 'ABSPATH' ) || exit;
  * Class WC_Montonio_Shipping_Classic_Checkout contains the logic for the Montonio shipping method items dropdown when using the classic checkout.
  * @since 7.0.0
  */
-class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
+class WC_Montonio_Shipping_Classic_Checkout {
 
     /**
-     * The constructor for the WC_Montonio_Shipping_Classic_Checkout class.
+     * Initialize the class by registering WordPress hooks.
      *
      * @since 7.0.0
      */
-    protected function __construct() {
-        add_filter( 'woocommerce_cart_shipping_method_full_label', array( $this, 'update_shipping_method_label' ), 10, 2 );
-        add_action( 'woocommerce_review_order_after_shipping', array( $this, 'render_shipping_method_items_dropdown' ) );
-        add_filter( 'woocommerce_order_shipping_to_display', array( $this, 'add_details_to_shipping_label_ordered' ), 10, 2 );
-        add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_pickup_point' ) );
+    public static function init() {
+        add_filter( 'woocommerce_cart_shipping_method_full_label', array( __CLASS__, 'update_shipping_method_label' ), 10, 2 );
+        add_action( 'woocommerce_review_order_after_shipping', array( __CLASS__, 'render_shipping_method_items_dropdown' ) );
+        add_filter( 'woocommerce_order_shipping_to_display', array( __CLASS__, 'add_details_to_shipping_label_ordered' ), 10, 2 );
+        add_action( 'woocommerce_after_checkout_validation', array( __CLASS__, 'validate_pickup_point' ) );
     }
 
     /**
@@ -27,7 +27,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @param WC_Shipping_Rate $method Shipping method rate data.
      * @return string
      */
-    public function update_shipping_method_label( $label, $method ) {
+    public static function update_shipping_method_label( $label, $method ) {
         if ( strpos( $method->get_method_id(), 'montonio_' ) === false ) {
             return $label;
         }
@@ -73,7 +73,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @since 9.1.1 Added support for pickup point search element
      * @return void
      */
-    public function render_shipping_method_items_dropdown() {
+    public static function render_shipping_method_items_dropdown() {
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
 
         if ( empty( $shipping_method ) ) {
@@ -127,7 +127,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @since 7.0.0
      * @return void
      */
-    public function validate_pickup_point() {
+    public static function validate_pickup_point() {
         if ( ! WC()->cart->needs_shipping() ) {
             return;
         }
@@ -151,7 +151,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
 
         $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-        if ( $shipping_method->carrier_code != $shipping_method_item->carrier_code ) {
+        if ( $shipping_method->carrier_code !== $shipping_method_item->carrier_code ) {
             wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
             return;
         }
@@ -179,7 +179,7 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
      * @param WC_Order $order The order object
      * @return string
      */
-    public function add_details_to_shipping_label_ordered( $shipping_label, $order ) {
+    public static function add_details_to_shipping_label_ordered( $shipping_label, $order ) {
         $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
         if ( empty( $shipping_method ) ) {
@@ -213,5 +213,3 @@ class WC_Montonio_Shipping_Classic_Checkout extends Montonio_Singleton {
         return $shipping_label;
     }
 }
-
-WC_Montonio_Shipping_Classic_Checkout::get_instance();

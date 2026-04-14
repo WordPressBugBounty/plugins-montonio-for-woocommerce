@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles the display of Montonio admin options pages.
@@ -424,5 +422,3 @@ class WC_Montonio_Admin_Settings_Page {
         return in_array( $section, $montonio_sections, true );
     }
 }
-
-WC_Montonio_Admin_Settings_Page::init();

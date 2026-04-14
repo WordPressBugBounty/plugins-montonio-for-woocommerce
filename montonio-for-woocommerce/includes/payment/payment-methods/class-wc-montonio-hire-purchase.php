@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Montonio Financing (Hire Purchase) Gateway
@@ -325,7 +323,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
      * @return void
      */
     public function get_order_response() {
-        new WC_Montonio_Callbacks( true );
+        WC_Montonio_Callbacks::handle_return();
     }
 
     /**
@@ -334,7 +332,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
      * @return void
      */
     public function get_order_notification() {
-        new WC_Montonio_Callbacks();
+        WC_Montonio_Callbacks::handle_notification();
     }
 
     /**

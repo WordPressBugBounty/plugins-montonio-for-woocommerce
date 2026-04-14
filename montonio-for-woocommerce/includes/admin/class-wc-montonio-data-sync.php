@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_Montonio_Sync
@@ -16,6 +14,8 @@ class WC_Montonio_Data_Sync {
         add_action( 'init', array( __CLASS__, 'setup_sync' ) );
 
         add_filter( 'montonio_ota_sync', array( __CLASS__, 'sync_payment_methods_ota' ), 10, 1 );
+
+        register_deactivation_hook( WC_MONTONIO_PLUGIN_FILE, array( __CLASS__, 'deactivate' ) );
     }
 
     /**
@@ -127,6 +127,3 @@ class WC_Montonio_Data_Sync {
         wp_clear_scheduled_hook( self::CRON_HOOK );
     }
 }
-WC_Montonio_Data_Sync::init();
-
-register_deactivation_hook( __FILE__, array( 'WC_Montonio_Data_Sync', 'deactivate' ) );

@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
 
@@ -156,7 +156,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             ),
             array(
                 'title'    => __( 'Show shipping provider logos in checkout', 'montonio-for-woocommerce' ),
-                'desc'     => __( 'Enables', 'montonio-for-woocommerce' ),
+                'desc'     => __( 'Enable', 'montonio-for-woocommerce' ),
                 'desc_tip' => __( 'Applicable only in legacy checkout', 'montonio-for-woocommerce' ),
                 'type'     => 'checkbox',
                 'default'  => 'no',

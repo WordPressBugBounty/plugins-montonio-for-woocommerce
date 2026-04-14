@@ -1,7 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WooCommerce Montonio Inbank Calculator Class
@@ -339,4 +337,3 @@ class WC_Montonio_Inbank_Calculator {
         return ob_get_clean();
     }
 }
-new WC_Montonio_Inbank_Calculator();

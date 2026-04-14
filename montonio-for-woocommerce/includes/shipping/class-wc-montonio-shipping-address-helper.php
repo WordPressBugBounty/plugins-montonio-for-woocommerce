@@ -7,28 +7,19 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 7.0.1
  */
-class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
+class WC_Montonio_Shipping_Address_Helper {
     /**
      * Attributes grouped by their type.
      *
      * @since 7.0.1
      * @var array
      */
-    private $attributes;
-
-    /**
-     * Constructor to initialize attributes.
-     *
-     * @since 7.0.1
-     */
-    protected function __construct() {
-        $this->attributes = [
-            'address' => ['street_address_1', 'street_address_2', 'locality', 'region', 'postal_code', 'country'],
-            'name'    => ['first_name', 'last_name'],
-            'phone'   => ['phone_country', 'phone_number'],
-            'other'   => ['company', 'email']
-        ];
-    }
+    private static $attributes = [
+        'address' => ['street_address_1', 'street_address_2', 'locality', 'region', 'postal_code', 'country'],
+        'name'    => ['first_name', 'last_name'],
+        'phone'   => ['phone_country', 'phone_number'],
+        'other'   => ['company', 'email']
+    ];
 
     /**
      * Replace shipping fields with billing if invalid and return consolidated shipping address fields.
@@ -36,7 +27,7 @@ class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
      * @since 7.0.1
      * @param array $data Partial order data.
      * @return array Updated order data with consolidated shipping address fields.
-     * 
+     *
      * @example <code>
      * $data = [
      *     'billing_first_name' => 'John',
@@ -61,8 +52,7 @@ class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
      *     'shipping_email' => 'myshippingemail@example.com',
      * ];
      *
-     * $helper = WC_Montonio_Shipping_Address_Helper::get_instance();
-     * $updated_data = $helper->standardize_address_data($data);
+     * $updated_data = WC_Montonio_Shipping_Address_Helper::standardize_address_data($data);
      * print_r($updated_data);
      *
      * // Output:
@@ -82,16 +72,16 @@ class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
      * // )
      * </code>
      */
-    public function standardize_address_data( $data ) {
+    public static function standardize_address_data( $data ) {
         $consolidated_data = [];
 
-        foreach ( $this->attributes as $group => $attributes ) {
-            $use_shipping = $this->is_any_shipping_field_valid( $attributes, $data, $group );
+        foreach ( self::$attributes as $group => $attributes ) {
+            $use_shipping = self::is_any_shipping_field_valid( $attributes, $data, $group );
 
             foreach ( $attributes as $attribute ) {
                 $prefix = $use_shipping ? 'shipping_' : 'billing_';
                 if ( $group === 'other' ) {
-                    $consolidated_data[$attribute] = $this->is_valid( $data['shipping_' . $attribute] ?? null ) ? $data['shipping_' . $attribute] : ( $data['billing_' . $attribute] ?? null );
+                    $consolidated_data[$attribute] = self::is_valid( $data['shipping_' . $attribute] ?? null ) ? $data['shipping_' . $attribute] : ( $data['billing_' . $attribute] ?? null );
                 } else {
                     $consolidated_data[$attribute] = $data[$prefix . $attribute] ?? null;
                 }
@@ -110,14 +100,14 @@ class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
      * @param string $group Attribute group type.
      * @return bool True if any shipping field is valid, false otherwise.
      */
-    private function is_any_shipping_field_valid( $attributes, $data, $group ) {
+    private static function is_any_shipping_field_valid( $attributes, $data, $group ) {
         foreach ( $attributes as $attribute ) {
             // Skip 'country' check if the group is 'address'
             if ( $group === 'address' && $attribute === 'country' ) {
                 continue;
             }
 
-            if ( $this->is_valid( $data['shipping_' . $attribute] ?? null ) ) {
+            if ( self::is_valid( $data['shipping_' . $attribute] ?? null ) ) {
                 return true;
             }
         }
@@ -131,7 +121,7 @@ class WC_Montonio_Shipping_Address_Helper extends Montonio_Singleton {
      * @param mixed $item Item to check.
      * @return bool True if valid, false otherwise.
      */
-    private function is_valid( $item ) {
+    private static function is_valid( $item ) {
         return isset( $item ) && ! empty( $item );
     }
 }

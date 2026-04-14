@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           9.5.0
+ * Version:           10.0.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,14 +13,12 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 10.6.1
+ * WC tested up to: 10.6.2
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '9.5.0' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.0.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -61,7 +59,7 @@ if ( ! class_exists( 'Montonio' ) ) {
          *
          * @return void
          */
-        public function __construct() {
+        protected function __construct() {
             add_action( 'plugins_loaded', array( $this, 'init' ) );
             add_action( 'before_woocommerce_init', array( $this, 'load_textdomain' ) );
             add_action( 'woocommerce_init', array( $this, 'init_api_settings' ) );
@@ -98,27 +96,46 @@ if ( ! class_exists( 'Montonio' ) ) {
                 require_once WC_MONTONIO_PLUGIN_PATH . '/lib/jwt/JWT.php';
             }
 
-            require_once WC_MONTONIO_PLUGIN_PATH . '/lib/class-montonio-singleton.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/lib/class-montonio-lock-manager.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/class-wc-montonio-logger.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/class-wc-montonio-helper.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-api.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-callbacks.php';
-            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-refund.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-payments.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-card.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-blik.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-bnpl.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-hire-purchase.php';
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-refund.php';
+            WC_Montonio_Refund::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-inbank-calculator.php';
+            new WC_Montonio_Inbank_Calculator();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-inline-checkout.php';
+            WC_Montonio_Inline_Checkout::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-admin-settings-page.php';
+            WC_Montonio_Admin_Settings_Page::init();
+            
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-data-sync.php';
+            WC_Montonio_Data_Sync::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-banners.php';
+            WC_Montonio_Banners::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-telemetry-service.php';
+            WC_Montonio_Telemetry_Service::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-updates.php';
+            Montonio_OTA_Updates::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping.php';
+            WC_Montonio_Shipping::get_instance();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/blocks/class-wc-montonio-blocks-manager.php';
+            WC_Montonio_Blocks_Manager::init();
 
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
             add_action( 'admin_notices', array( $this, 'live_api_keys_notice' ) );
@@ -158,11 +175,11 @@ if ( ! class_exists( 'Montonio' ) ) {
             $api_settings = get_option( 'woocommerce_wc_montonio_api_settings' );
             $type         = $api_settings['merchant_reference_type'] ?? '';
 
-            if ( $type === 'order_number' ) {
+            if ( 'order_number' === $type ) {
                 return $order->get_order_number();
             }
 
-            if ( $type === 'add_prefix' && ! empty( $api_settings['order_prefix'] ) ) {
+            if ( 'add_prefix' === $type && ! empty( $api_settings['order_prefix'] ) ) {
                 return $api_settings['order_prefix'] . '-' . $order_id_or_number;
             }
 
@@ -260,6 +277,7 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function init_api_settings() {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-api-settings.php';
+            new WC_Montonio_API_Settings();
         }
 
         /**
