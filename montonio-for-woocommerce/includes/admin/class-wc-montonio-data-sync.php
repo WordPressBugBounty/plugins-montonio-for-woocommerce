@@ -106,7 +106,7 @@ class WC_Montonio_Data_Sync {
      */
     public static function sync_payment_methods() {
         if ( ! WC_Montonio_Helper::has_api_keys() ) {
-            throw new Exception( __( 'API keys not configured.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'API keys not configured.', 'montonio-for-woocommerce' ) );
         }
 
         update_option( 'montonio_last_sync', time(), false );
@@ -115,7 +115,7 @@ class WC_Montonio_Data_Sync {
         $response     = $montonio_api->get_payment_methods();
 
         if ( empty( $response ) ) {
-            throw new Exception( __( 'Empty response from API.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'Empty response from API.', 'montonio-for-woocommerce' ) );
         }
 
         update_option( 'montonio_payment_methods', $response, false );

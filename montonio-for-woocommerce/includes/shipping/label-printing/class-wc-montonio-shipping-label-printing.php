@@ -37,7 +37,7 @@ class WC_Montonio_Shipping_Label_Printing {
         $shipment_ids = self::get_shipment_ids_from_order_ids( $order_ids );
 
         if ( empty( $shipment_ids ) ) {
-            throw new Exception( __( 'No shipments available for label creation. Only shipments with status "registered" or "labels printed" can be printed.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'No shipments available for label creation. Only shipments with status "registered" or "labels printed" can be printed.', 'montonio-for-woocommerce' ) );
         }
 
         $shipping_api = new WC_Montonio_Shipping_API();

@@ -27,6 +27,9 @@ class WC_Montonio_Shipping_Pickup_Points_Search {
      * @throws Exception When API request fails or returns invalid JSON
      */
     public static function search_pickup_points() {
+        // Stop script execution if client disconnects before the API call
+        ignore_user_abort( false );
+
         // Verify nonce
         if ( ! wp_verify_nonce( $_POST['nonce'], 'montonio_pickup_nonce' ) ) {
             wp_send_json_error( array( 'message' => 'Invalid security token' ) );
@@ -42,6 +45,19 @@ class WC_Montonio_Shipping_Pickup_Points_Search {
             wp_send_json_error( array( 'message' => 'Search query must be at least 3 characters' ) );
         }
 
+        // Check transient cache before making API call
+        $cache_key = 'montonio_pp_' . md5( $carrier . $country . $type . strtolower( $search ) );
+        $cached    = get_transient( $cache_key );
+
+        if ( false !== $cached ) {
+            wp_send_json_success( $cached );
+        }
+
+        // Best-effort check: skip API call if client already disconnected
+        if ( connection_aborted() ) {
+            exit;
+        }
+
         try {
             $api = new WC_Montonio_Shipping_API();
 
@@ -54,6 +70,9 @@ class WC_Montonio_Shipping_Pickup_Points_Search {
             if ( json_last_error() !== JSON_ERROR_NONE ) {
                 throw new Exception( 'Invalid JSON response from API' );
             }
+
+            // Cache results for 5 minutes to avoid redundant API calls
+            set_transient( $cache_key, $data, 5 * MINUTE_IN_SECONDS );
 
             wp_send_json_success( $data );
 

@@ -17,13 +17,12 @@ class WC_Montonio_Shipping_Webhooks {
     public static function handle_webhook( $request ) {
         $body = sanitize_text_field( $request->get_body() );
 
-        WC_Montonio_Logger::log( 'Shipment: ' . $body );
-
         // Let's decode the JSON body
         $decoded_body = json_decode( $body );
 
         // If the body is not JSON, return an error
         if ( ! $decoded_body || ! isset( $decoded_body->payload ) ) {
+            WC_Montonio_Logger::log( 'Invalid JSON body: ' . $body );
             return new WP_Error( 'montonio_shipping_webhook_invalid_json', 'Invalid JSON body', array( 'status' => 400 ) );
         }
 
@@ -32,8 +31,11 @@ class WC_Montonio_Shipping_Webhooks {
         try {
             $payload = WC_Montonio_Helper::decode_jwt_token( $decoded_body->payload );
         } catch ( Exception $e ) {
+            WC_Montonio_Logger::log( 'Invalid JWT token: ' . $e->getMessage() );
             return new WP_Error( 'montonio_shipping_webhook_invalid_token', $e->getMessage(), array( 'status' => 400 ) );
         }
+
+        WC_Montonio_Logger::log( 'Shipment webhook: ' . json_encode( $payload ) );
 
         switch ( $payload->eventType ) {
             case 'shipment.registered':

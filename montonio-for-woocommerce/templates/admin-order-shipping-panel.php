@@ -89,9 +89,9 @@ if ( ! empty( $shipment_status_reason ) ) {
 
             if ( ! empty( $status ) ) {
                 $status_label = isset( $status_labels[$status] ) ? $status_labels[$status] : ucfirst( strtolower( preg_replace( '/(?<!^)([A-Z])/', ' $1', $status ) ) );
-                $id_attr      = $status !== 'creationFailed' ? ' id="montonio-shipping-sync-shipment"' : '';
+                $id_attr      = $status !== 'creationFailed' ? 'montonio-shipping-sync-shipment' : '';
 
-                echo '<mark' . $id_attr . ' class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '" data-hover="' . esc_html__( 'Resync', 'montonio-for-woocommerce' ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
+                echo '<mark id="' . esc_attr( $id_attr ) . '" class="montonio-shipping-panel__status montonio-shipping-panel__status--' . esc_html( $status ) . '" data-hover="' . esc_html__( 'Resync', 'montonio-for-woocommerce' ) . '"><span>' . esc_html( $status_label ) . '</span></mark>';
             }
             ?>
         </div>

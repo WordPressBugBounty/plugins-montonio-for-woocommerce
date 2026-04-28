@@ -80,7 +80,7 @@ class WC_Montonio_Callbacks {
             return;
         }
 
-        WC_Montonio_Logger::log( 'Refund: ' . json_encode( $decoded_token ) );
+        WC_Montonio_Logger::log( 'Refund webhook: ' . json_encode( $decoded_token ) );
 
         $order_uuid  = sanitize_text_field( $decoded_token->orderUuid );
         $refund_uuid = sanitize_text_field( $decoded_token->refundUuid );
@@ -259,10 +259,10 @@ class WC_Montonio_Callbacks {
         }
 
         if ( $is_customer_return ) {
-            WC_Montonio_Logger::log( '(RETURN URL) Payment: ' . json_encode( $decoded_token ) );
+            WC_Montonio_Logger::log( 'Payment (Return URL): ' . json_encode( $decoded_token ) );
         } else {
             sleep( 5 );
-            WC_Montonio_Logger::log( 'Payment: ' . json_encode( $decoded_token ) );
+            WC_Montonio_Logger::log( 'Payment webhook: ' . json_encode( $decoded_token ) );
         }
 
         $payment_status        = sanitize_text_field( $decoded_token->paymentStatus );
@@ -297,7 +297,7 @@ class WC_Montonio_Callbacks {
             WC_Montonio_Logger::log( 'Unable to locate an order with the specified UUID: ' . $uuid );
 
             if ( $is_customer_return ) {
-                die( 'Unable to locate an order with the specified UUID. Please contact merchant support. Order ID: ' . $uuid );
+                die( 'Unable to locate an order with the specified UUID. Please contact merchant support. Order ID: ' . esc_attr( $uuid ) );
             }
 
             self::send_json_error( 'Not Found', 'Unable to locate an order with the specified UUID' );

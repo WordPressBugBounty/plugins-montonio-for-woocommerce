@@ -615,7 +615,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         $value = is_null( $value ) ? '' : trim( wp_unslash( $value ) );
 
         if ( empty( $value ) || $value <= 0 ) {
-            throw new Exception( __( 'Length must be a positive number.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'Length must be a positive number.', 'montonio-for-woocommerce' ) );
         }
 
         return $value;
@@ -632,7 +632,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         $value = is_null( $value ) ? '' : trim( wp_unslash( $value ) );
 
         if ( empty( $value ) || $value <= 0 ) {
-            throw new Exception( __( 'Width must be a positive number.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'Width must be a positive number.', 'montonio-for-woocommerce' ) );
         }
 
         return $value;
@@ -649,7 +649,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         $value = is_null( $value ) ? '' : trim( wp_unslash( $value ) );
 
         if ( empty( $value ) || $value <= 0 ) {
-            throw new Exception( __( 'Height must be a positive number.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'Height must be a positive number.', 'montonio-for-woocommerce' ) );
         }
 
         return $value;
@@ -666,7 +666,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
         $value = is_null( $value ) ? '' : trim( wp_unslash( $value ) );
 
         if ( empty( $value ) || $value <= 0 ) {
-            throw new Exception( __( 'Weight must be a positive number.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'Weight must be a positive number.', 'montonio-for-woocommerce' ) );
         }
 
         return $value;

@@ -312,6 +312,7 @@ class WC_Montonio_Shipping {
 
             $this->add_admin_notice(
                 sprintf(
+                    /* translators: %s: URL to the API settings page */
                     __( 'Montonio Shipping requires API credentials. Please <a href="%s">add them here</a>.', 'montonio-for-woocommerce' ),
                     admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' )
                 ),

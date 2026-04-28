@@ -219,6 +219,7 @@ class WC_Montonio_Shipping_Route_Setup {
             ) );
         } catch ( Exception $e ) {
             $html = WC_Montonio_Shipping_Route_Setup_View::render_error( $e->getMessage() );
+
             wp_send_json_error( array(
                 'html'    => $html,
                 'message' => $e->getMessage()
@@ -243,12 +244,30 @@ class WC_Montonio_Shipping_Route_Setup {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'montonio-for-woocommerce' ) ), 403 );
         }
 
+        // Acquire lock to prevent concurrent zone creation (race condition prevention)
+        $lock_manager = new Montonio_Lock_Manager();
+
+        if ( ! $lock_manager->acquire_lock( 'route_setup' ) ) {
+            $error_message = __( 'Route setup is already in progress. Please wait and try again.', 'montonio-for-woocommerce' );
+            $html          = WC_Montonio_Shipping_Route_Setup_View::render_error( $error_message );
+
+            wp_send_json_error( array(
+                'html'    => $html,
+                'message' => $error_message
+            ) );
+            return;
+        }
+
         $plan = isset( $_POST['plan'] ) ? json_decode( wp_unslash( $_POST['plan'] ), true ) : null;
 
         if ( empty( $plan ) || ! is_array( $plan ) || empty( $plan['zones'] ) ) {
             WC_Montonio_Logger::log( 'Route setup: invalid or empty plan data in execute request' );
+
+            $lock_manager->release_lock( 'route_setup' );
+
             $error_message = __( 'Something went wrong. Please close this window and try again.', 'montonio-for-woocommerce' );
             $html          = WC_Montonio_Shipping_Route_Setup_View::render_error( $error_message );
+
             wp_send_json_error( array(
                 'html'    => $html,
                 'message' => $error_message
@@ -260,8 +279,12 @@ class WC_Montonio_Shipping_Route_Setup {
         if ( ! empty( $plan['has_dynamic_methods'] ) ) {
             if ( empty( $plan['default_dimensions'] ) || ! is_array( $plan['default_dimensions'] ) ) {
                 WC_Montonio_Logger::log( 'Route setup: missing default dimensions for dynamic methods' );
+
+                $lock_manager->release_lock( 'route_setup' );
+
                 $error_message = __( 'Please fill in all package dimension fields with values greater than 0.', 'montonio-for-woocommerce' );
                 $html          = WC_Montonio_Shipping_Route_Setup_View::render_error( $error_message );
+
                 wp_send_json_error( array(
                     'html'    => $html,
                     'message' => $error_message
@@ -275,8 +298,12 @@ class WC_Montonio_Shipping_Route_Setup {
                     || ! is_numeric( $plan['default_dimensions'][$key] )
                     || (float) $plan['default_dimensions'][$key] <= 0 ) {
                     WC_Montonio_Logger::log( 'Route setup: invalid dimension value for ' . $key );
+
+                    $lock_manager->release_lock( 'route_setup' );
+
                     $error_message = __( 'Please fill in all package dimension fields with values greater than 0.', 'montonio-for-woocommerce' );
                     $html          = WC_Montonio_Shipping_Route_Setup_View::render_error( $error_message );
+
                     wp_send_json_error( array(
                         'html'    => $html,
                         'message' => $error_message
@@ -291,8 +318,12 @@ class WC_Montonio_Shipping_Route_Setup {
             $existing_zones_data = self::get_existing_zones_data();
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Route setup: failed to load existing zones: ' . $e->getMessage() );
+
+            $lock_manager->release_lock( 'route_setup' );
+
             $error_message = __( 'Could not verify existing zones. Please try again.', 'montonio-for-woocommerce' );
             $html          = WC_Montonio_Shipping_Route_Setup_View::render_error( $error_message );
+
             wp_send_json_error( array(
                 'html'    => $html,
                 'message' => $error_message
@@ -339,12 +370,17 @@ class WC_Montonio_Shipping_Route_Setup {
         }
 
         try {
+            $lock_manager->release_lock( 'route_setup' );
+
             $result = self::execute_plan( $plan );
             $html   = WC_Montonio_Shipping_Route_Setup_View::render_summary( $result );
 
             wp_send_json_success( array( 'html' => $html ) );
         } catch ( Exception $e ) {
+            $lock_manager->release_lock( 'route_setup' );
+            
             $html = WC_Montonio_Shipping_Route_Setup_View::render_error( $e->getMessage() );
+
             wp_send_json_error( array(
                 'html'    => $html,
                 'message' => $e->getMessage()
@@ -365,14 +401,14 @@ class WC_Montonio_Shipping_Route_Setup {
         $data     = json_decode( $response, true );
 
         if ( empty( $data['countries'] ) || ! is_array( $data['countries'] ) ) {
-            throw new Exception( __( 'No shipping methods available from the API.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'No shipping methods available from the API.', 'montonio-for-woocommerce' ) );
         }
 
         // Step 1: Build country → methods matrix from API
         $country_methods = self::build_country_methods( $data['countries'] );
 
         if ( empty( $country_methods ) ) {
-            throw new Exception( __( 'No supported shipping methods found.', 'montonio-for-woocommerce' ) );
+            throw new Exception( esc_html__( 'No supported shipping methods found.', 'montonio-for-woocommerce' ) );
         }
 
         // Step 2: Fetch rates per country
@@ -835,9 +871,9 @@ class WC_Montonio_Shipping_Route_Setup {
                 throw new Exception(
                     sprintf(
                         /* translators: 1: zone name, 2: error message */
-                        __( 'Failed to create zone "%1$s": %2$s. All changes have been rolled back.', 'montonio-for-woocommerce' ),
-                        $zone_data['name'],
-                        $e->getMessage()
+                        esc_html__( 'Failed to create zone "%1$s": %2$s. All changes have been rolled back.', 'montonio-for-woocommerce' ),
+                        esc_html( $zone_data['name'] ),
+                        wp_kses_post( $e->getMessage() )
                     )
                 );
             }

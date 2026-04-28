@@ -68,8 +68,12 @@ $settings = array(
         'type'        => 'title',
         'description' => __( 'These dimensions are used when products in the cart do not have shipping dimensions defined. This ensures shipping rates can still be calculated via the API.', 'montonio-for-woocommerce' )
     ),
-    'default_length'                             => array(
-        'title'             => sprintf( __( 'Length (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_length' => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Length (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field',
         'default'           => '',
@@ -82,8 +86,12 @@ $settings = array(
         ),
         'sanitize_callback' => array( $this, 'sanitize_default_length' )
     ),
-    'default_width'                              => array(
-        'title'             => sprintf( __( 'Width (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_width'  => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Width (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field',
         'default'           => '',
@@ -96,8 +104,12 @@ $settings = array(
         ),
         'sanitize_callback' => array( $this, 'sanitize_default_width' )
     ),
-    'default_height'                             => array(
-        'title'             => sprintf( __( 'Height (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_height' => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Height (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field',
         'default'           => '',
@@ -110,8 +122,12 @@ $settings = array(
         ),
         'sanitize_callback' => array( $this, 'sanitize_default_height' )
     ),
-    'default_weight'                             => array(
-        'title'             => sprintf( __( 'Weight (%s)', 'montonio-for-woocommerce' ), $weight_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_weight' => array(
+        'title'             => sprintf(
+            /* translators: %s: Weight unit (e.g. kg, lbs) */
+            __( 'Weight (%s)', 'montonio-for-woocommerce' ),
+            $weight_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field',
         'default'           => '',

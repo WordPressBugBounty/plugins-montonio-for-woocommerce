@@ -112,7 +112,7 @@ class WC_Montonio_Shipping_Rate {
 
             return $subtypes;
         } catch ( Exception $e ) {
-            WC_Montonio_Logger::log( 'WC_Montonio_Shipping_Rate::fetch_from_api failed [' . $carrier_code . '/' . $type . ']: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Shipping rate fetch failed [' . $carrier_code . '/' . $type . ']: ' . $e->getMessage() );
 
             return null;
         }

@@ -38,7 +38,7 @@ class WC_Montonio_Shipping_Route_Setup_View {
                 </button>
             </p>
             <?php
-return ob_get_clean();
+            return ob_get_clean();
         }
 
         ob_start();
@@ -50,13 +50,13 @@ return ob_get_clean();
                 <div class="notice notice-warning inline">
                     <p>
                         <?php
-foreach ( $warnings as $index => $warning ) {
-            if ( $index > 0 ) {
-                echo '<br>';
-            }
-            echo esc_html( $warning );
-        }
-        ?>
+                        foreach ( $warnings as $index => $warning ) {
+                            if ( $index > 0 ) {
+                                echo '<br>';
+                            }
+                            echo esc_html( $warning );
+                        }
+                        ?>
                     </p>
                 </div>
             <?php endif; ?>
@@ -69,48 +69,48 @@ foreach ( $warnings as $index => $warning ) {
                         <th><?php esc_html_e( 'Method', 'montonio-for-woocommerce' ); ?></th>
                         <th>
                             <?php
-printf(
-            /* translators: %s: currency code */
-            esc_html__( 'Rate (%s, excl. VAT)', 'montonio-for-woocommerce' ),
-            esc_html( $currency )
-        );
-        ?>
+                            printf(
+                                /* translators: %s: currency code */
+                                esc_html__( 'Rate (%s, excl. VAT)', 'montonio-for-woocommerce' ),
+                                esc_html( $currency )
+                            );
+                            ?>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-foreach ( $zones as $zone ):
-            $methods       = ! empty( $zone['methods'] ) ? $zone['methods'] : array();
-            $row_count     = max( count( $methods ), 1 );
-            $countries_str = ! empty( $zone['countries'] ) ? implode( ', ', $zone['countries'] ) : '';
-            $is_existing   = ! empty( $zone['skipped'] );
+                    foreach ( $zones as $zone ):
+                        $methods       = ! empty( $zone['methods'] ) ? $zone['methods'] : array();
+                        $row_count     = max( count( $methods ), 1 );
+                        $countries_str = ! empty( $zone['countries'] ) ? implode( ', ', $zone['countries'] ) : '';
+                        $is_existing   = ! empty( $zone['skipped'] );
 
-            for ( $j = 0; $j < $row_count; $j++ ):
-                $classes = array();
-                if ( 0 === $j ) {
-                    $classes[] = 'montonio-zone-first-row';
-                }
-                if ( $is_existing ) {
-                    $classes[] = 'montonio-setup-skipped';
-                }
-        ?>
+                        for ( $j = 0; $j < $row_count; $j++ ):
+                            $classes = array();
+                            if ( 0 === $j ) {
+                                $classes[] = 'montonio-zone-first-row';
+                            }
+                            if ( $is_existing ) {
+                                $classes[] = 'montonio-setup-skipped';
+                            }
+                            ?>
                             <tr<?php echo ! empty( $classes ) ? ' class="' . esc_attr( implode( ' ', $classes ) ) . '"' : ''; ?>>
                                 <?php if ( 0 === $j ): ?>
                                     <td rowspan="<?php echo esc_attr( $row_count ); ?>">
                                         <?php echo esc_html( $zone['name'] ); ?>
                                         <?php if ( $is_existing ): ?>
                                             <em>(<?php
-if ( ! empty( $zone['covered_by'] ) ) {
-                    printf(
-                        /* translators: %s: name of the existing zone */
-                        esc_html__( 'already covered by zone "%s"', 'montonio-for-woocommerce' ),
-                        esc_html( $zone['covered_by'] )
-                    );
-                } else {
-                    esc_html_e( 'already covered by an existing zone', 'montonio-for-woocommerce' );
-                }
-                ?>)</em>
+                                                if ( ! empty( $zone['covered_by'] ) ) {
+                                                    printf(
+                                                        /* translators: %s: name of the existing zone */
+                                                        esc_html__( 'already covered by zone "%s"', 'montonio-for-woocommerce' ),
+                                                        esc_html( $zone['covered_by'] )
+                                                    );
+                                                } else {
+                                                    esc_html_e( 'already covered by an existing zone', 'montonio-for-woocommerce' );
+                                                }
+                                                ?>)</em>
                                             <br>
                                             <em><?php esc_html_e( 'New methods must be added manually', 'montonio-for-woocommerce' ); ?></em>
                                         <?php endif; ?>
@@ -147,12 +147,12 @@ if ( ! empty( $zone['covered_by'] ) ) {
                                 <th>
                                     <label for="montonio-php-dim-length">
                                         <?php
-printf(
-            /* translators: %s: dimension unit (e.g. cm) */
-            esc_html__( 'Length (%s)', 'montonio-for-woocommerce' ),
-            esc_html( $dimension_unit )
-        );
-        ?>
+                                        printf(
+                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            esc_html__( 'Length (%s)', 'montonio-for-woocommerce' ),
+                                            esc_html( $dimension_unit )
+                                        );
+                                        ?>
                                         <span class="required">*</span>
                                     </label>
                                 </th>
@@ -162,12 +162,12 @@ printf(
                                 <th>
                                     <label for="montonio-php-dim-width">
                                         <?php
-printf(
-            /* translators: %s: dimension unit (e.g. cm) */
-            esc_html__( 'Width (%s)', 'montonio-for-woocommerce' ),
-            esc_html( $dimension_unit )
-        );
-        ?>
+                                        printf(
+                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            esc_html__( 'Width (%s)', 'montonio-for-woocommerce' ),
+                                            esc_html( $dimension_unit )
+                                        );
+                                        ?>
                                         <span class="required">*</span>
                                     </label>
                                 </th>
@@ -177,12 +177,12 @@ printf(
                                 <th>
                                     <label for="montonio-php-dim-height">
                                         <?php
-printf(
-            /* translators: %s: dimension unit (e.g. cm) */
-            esc_html__( 'Height (%s)', 'montonio-for-woocommerce' ),
-            esc_html( $dimension_unit )
-        );
-        ?>
+                                        printf(
+                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            esc_html__( 'Height (%s)', 'montonio-for-woocommerce' ),
+                                            esc_html( $dimension_unit )
+                                        );
+                                        ?>
                                         <span class="required">*</span>
                                     </label>
                                 </th>
@@ -192,12 +192,12 @@ printf(
                                 <th>
                                     <label for="montonio-php-dim-weight">
                                         <?php
-printf(
-            /* translators: %s: weight unit (e.g. kg) */
-            esc_html__( 'Weight (%s)', 'montonio-for-woocommerce' ),
-            esc_html( $weight_unit )
-        );
-        ?>
+                                        printf(
+                                            /* translators: %s: weight unit (e.g. kg) */
+                                            esc_html__( 'Weight (%s)', 'montonio-for-woocommerce' ),
+                                            esc_html( $weight_unit )
+                                        );
+                                        ?>
                                         <span class="required">*</span>
                                     </label>
                                 </th>
@@ -255,29 +255,29 @@ printf(
 
             <p>
                 <?php
-printf(
-            /* translators: 1: number of zones created, 2: number of methods created */
-            esc_html__( 'Created %1$d shipping zones with %2$d shipping methods:', 'montonio-for-woocommerce' ),
-            count( $created ),
-            $total_methods
-        );
-        ?>
+                printf(
+                    /* translators: 1: number of zones created, 2: number of methods created */
+                    esc_html__( 'Created %1$d shipping zones with %2$d shipping methods:', 'montonio-for-woocommerce' ),
+                    count( $created ),
+                    $total_methods
+                );
+                ?>
             </p>
 
             <ul>
                 <?php foreach ( $created as $zone ): ?>
                     <li>
                         <?php
-$countries_str = ! empty( $zone['countries'] ) ? implode( ', ', $zone['countries'] ) : '';
-        $method_count  = isset( $zone['method_count'] ) ? (int) $zone['method_count'] : 0;
-        printf(
-            /* translators: 1: zone name, 2: country codes, 3: number of methods */
-            esc_html__( '%1$s (%2$s) — %3$d methods', 'montonio-for-woocommerce' ),
-            esc_html( $zone['name'] ),
-            esc_html( $countries_str ),
-            $method_count
-        );
-        ?>
+                        $countries_str = ! empty( $zone['countries'] ) ? implode( ', ', $zone['countries'] ) : '';
+                        $method_count  = isset( $zone['method_count'] ) ? (int) $zone['method_count'] : 0;
+                        printf(
+                            /* translators: 1: zone name, 2: country codes, 3: number of methods */
+                            esc_html__( '%1$s (%2$s) — %3$d methods', 'montonio-for-woocommerce' ),
+                            esc_html( $zone['name'] ),
+                            esc_html( $countries_str ),
+                            $method_count
+                        );
+                        ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -285,39 +285,39 @@ $countries_str = ! empty( $zone['countries'] ) ? implode( ', ', $zone['countries
             <?php if ( ! empty( $all_skipped ) ): ?>
                 <p>
                     <?php
-printf(
-            /* translators: %d: number of skipped zones */
-            esc_html__( '%d zones skipped (already covered by existing zones)', 'montonio-for-woocommerce' ),
-            count( $all_skipped )
-        );
-        ?>
+                    printf(
+                        /* translators: %d: number of skipped zones */
+                        esc_html__( '%d zones skipped (already covered by existing zones)', 'montonio-for-woocommerce' ),
+                        count( $all_skipped )
+                    );
+                    ?>
                 </p>
                 <ul>
                     <?php foreach ( $all_skipped as $zone ): ?>
                         <li><?php
-if ( ! empty( $zone['covered_by'] ) ) {
-            printf(
-                /* translators: 1: zone name, 2: name of the existing zone */
-                esc_html__( '%1$s — already covered by zone "%2$s"', 'montonio-for-woocommerce' ),
-                esc_html( $zone['name'] ),
-                esc_html( $zone['covered_by'] )
-            );
-        } else {
-            echo esc_html( $zone['name'] );
-        }
-        ?></li>
+                        if ( ! empty( $zone['covered_by'] ) ) {
+                            printf(
+                                /* translators: 1: zone name, 2: name of the existing zone */
+                                esc_html__( '%1$s — already covered by zone "%2$s"', 'montonio-for-woocommerce' ),
+                                esc_html( $zone['name'] ),
+                                esc_html( $zone['covered_by'] )
+                            );
+                        } else {
+                            echo esc_html( $zone['name'] );
+                        }
+                        ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
 
             <p>
                 <?php
-printf(
-            /* translators: %s: URL to WooCommerce shipping settings */
-            wp_kses_post( __( 'Edit zones in <a href="%s">WooCommerce &gt; Settings &gt; Shipping</a>.', 'montonio-for-woocommerce' ) ),
-            esc_url( $shipping_settings_url )
-        );
-        ?>
+                printf(
+                    /* translators: %s: URL to WooCommerce shipping settings */
+                    wp_kses_post( __( 'Edit zones in <a href="%s">WooCommerce &gt; Settings &gt; Shipping</a>.', 'montonio-for-woocommerce' ) ),
+                    esc_url( $shipping_settings_url )
+                );
+                ?>
             </p>
 
             <p class="montonio-setup-actions">

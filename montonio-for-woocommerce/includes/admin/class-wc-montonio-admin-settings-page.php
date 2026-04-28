@@ -116,8 +116,8 @@ class WC_Montonio_Admin_Settings_Page {
         }
 
         $message = sprintf(
-            /* translators: %s: link to Montonio pricing page */
-            __( 'You can\'t disable this payment method because your %spricing plan%s requires card payments when any other Montonio payment method is enabled.', 'montonio-for-woocommerce' ),
+            /* translators: 1: Opening anchor tag 2: Closing anchor tag */
+            __( 'You can\'t disable this payment method because your %1$spricing plan%2$s requires card payments when any other Montonio payment method is enabled.', 'montonio-for-woocommerce' ),
             '<a href="https://www.montonio.com/pricing" target="_blank">',
             '</a>'
         );
@@ -291,8 +291,8 @@ class WC_Montonio_Admin_Settings_Page {
                     <?php if ( ! empty( $store_details ) ): ?>
                         <div class="montonio-store-details">
                             <div>
-                                <a href="https://partner.montonio.com/stores/<?php esc_attr_e( $store_details['uuid'] ); ?>" class="store-name" target="_blank" title="<?php esc_html__( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"><?php esc_html_e( $store_details['name'] ); ?></a>
-                                <div class="store-uuid">UUID: <?php esc_attr_e( $store_details['uuid'] ); ?></div>
+                                <a href="https://partner.montonio.com/stores/<?php echo esc_attr( $store_details['uuid'] ); ?>" class="store-name" target="_blank" title="<?php esc_html_e( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"><?php echo esc_html( $store_details['name'] ); ?></a>
+                                <div class="store-uuid">UUID: <?php echo esc_attr( $store_details['uuid'] ); ?></div>
                             </div>
                         </div>
                      <?php endif; ?>

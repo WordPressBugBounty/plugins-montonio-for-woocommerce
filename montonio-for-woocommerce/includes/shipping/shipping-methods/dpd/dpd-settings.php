@@ -63,8 +63,12 @@ $settings = array(
         'class'       => 'wc-montonio-default-dimensions-title wc-montonio-dynamic-rate-only',
         'description' => __( 'These dimensions are used when products in the cart do not have shipping dimensions defined. This ensures shipping rates can still be calculated via the API.', 'montonio-for-woocommerce' )
     ),
-    'default_length'           => array(
-        'title'             => sprintf( __( 'Length (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_length' => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Length (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field wc-montonio-dynamic-rate-only',
         'default'           => '',
@@ -76,8 +80,12 @@ $settings = array(
             'required' => null
         )
     ),
-    'default_width'            => array(
-        'title'             => sprintf( __( 'Width (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_width'  => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Width (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field wc-montonio-dynamic-rate-only',
         'default'           => '',
@@ -89,8 +97,12 @@ $settings = array(
             'required' => null
         )
     ),
-    'default_height'           => array(
-        'title'             => sprintf( __( 'Height (%s)', 'montonio-for-woocommerce' ), $dimension_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_height' => array(
+        'title'             => sprintf(
+            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
+            __( 'Height (%s)', 'montonio-for-woocommerce' ),
+            $dimension_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field wc-montonio-dynamic-rate-only',
         'default'           => '',
@@ -102,8 +114,12 @@ $settings = array(
             'required' => null
         )
     ),
-    'default_weight'           => array(
-        'title'             => sprintf( __( 'Weight (%s)', 'montonio-for-woocommerce' ), $weight_unit ) . '&nbsp;<span class="required">*</span>',
+    'default_weight' => array(
+        'title'             => sprintf(
+            /* translators: %s: Weight unit (e.g. kg, lbs) */
+            __( 'Weight (%s)', 'montonio-for-woocommerce' ),
+            $weight_unit
+        ) . '&nbsp;<span class="required">*</span>',
         'type'              => 'number',
         'class'             => 'wc-montonio-dimension-field wc-montonio-dynamic-rate-only',
         'default'           => '',
@@ -115,7 +131,6 @@ $settings = array(
             'required' => null
         )
     )
-
 );
 
 $shipping_classes = WC()->shipping()->get_shipping_classes();

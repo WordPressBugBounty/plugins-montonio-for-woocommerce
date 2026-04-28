@@ -27,7 +27,7 @@ class WC_Montonio_Banners {
      * @return void
      */
     public static function render_all_banners() {
-        self::banner_jan_2026();
+        //self::banner_jan_2026();
     }
 
     /**
@@ -101,7 +101,7 @@ class WC_Montonio_Banners {
         <div id="<?php echo esc_attr( $id ); ?>" class="montonio-banner notice">
             <?php wp_nonce_field( esc_attr( $id ) . '_nonce', esc_attr( $id ) . '_nonce_field' ); ?>
 
-            <a class="montonio-banner__close" href="<?php echo esc_url( add_query_arg( $id, 0 ) ); ?>" aria-label="<?php esc_attr_e( 'Dismiss this notice' ); ?>">
+            <a class="montonio-banner__close" href="<?php echo esc_url( add_query_arg( $id, 0 ) ); ?>" aria-label="<?php esc_attr_e( 'Dismiss this notice', 'montonio-for-woocommerce' ); ?>">
                 <span><?php esc_attr_e( 'Dismiss this notice', 'montonio-for-woocommerce' ); ?></span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M12 4L4 12M4 4L12 12" stroke="#FCFBFB" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
