@@ -221,6 +221,11 @@ class WC_Montonio_Telemetry_Service {
             )
         );
 
+        $connection_uuid = self::get_api_setting( 'connection' );
+        if ( ! empty( $connection_uuid ) ) {
+            $data['connectionUuid'] = $connection_uuid;
+        }
+
         return $data;
     }
 

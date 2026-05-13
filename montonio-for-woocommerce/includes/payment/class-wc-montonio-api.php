@@ -237,17 +237,19 @@ class WC_Montonio_API {
 
         $args          = apply_filters( 'wc_montonio_remote_request_args', $args );
         $response      = wp_remote_request( $url, $args );
-        $response_code = wp_remote_retrieve_response_code( $response );
 
         if ( is_wp_error( $response ) ) {
-            throw new Exception( json_encode( $response->errors ) );
+            throw new Exception( $response->get_error_message() );
         }
+
+        $response_code = wp_remote_retrieve_response_code( $response );
+        $body = wp_remote_retrieve_body( $response );
 
         if ( ! in_array( $response_code, array( 200, 201 ) ) ) {
-            throw new Exception( wp_remote_retrieve_body( $response ) );
+            throw new Exception( $body );
         }
 
-        return wp_remote_retrieve_body( $response );
+        return $body;
     }
 
     /**

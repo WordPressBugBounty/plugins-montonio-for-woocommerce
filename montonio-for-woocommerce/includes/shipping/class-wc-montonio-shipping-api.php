@@ -305,17 +305,19 @@ class WC_Montonio_Shipping_API {
 
         $args          = wp_parse_args( $args, array( 'timeout' => 30 ) );
         $response      = wp_remote_request( $url, $args );
-        $response_code = wp_remote_retrieve_response_code( $response );
 
         if ( is_wp_error( $response ) ) {
-            throw new Exception( json_encode( $response->errors ) );
+            throw new Exception( $response->get_error_message() );
         }
 
-        if ( 200 !== $response_code && 201 !== $response_code ) {
-            throw new Exception( wp_remote_retrieve_body( $response ) );
+        $response_code = wp_remote_retrieve_response_code( $response );
+        $body = wp_remote_retrieve_body( $response );
+
+        if ( ! in_array( $response_code, array( 200, 201 ) ) ) {
+            throw new Exception( $body );
         }
 
-        return wp_remote_retrieve_body( $response );
+        return $body;
     }
 
     /**

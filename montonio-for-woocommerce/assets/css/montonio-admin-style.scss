@@ -7,6 +7,8 @@
   font-weight: 300 900;
 }
 
+$montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
 @keyframes montonio-spinner {
   0% {
     transform: rotate(-43deg);
@@ -18,7 +20,9 @@
 }
 
 .montonio-button {
-    font-size: 13px;
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 500;
     letter-spacing: 0;
     display: inline-block;
     background: #260071;
@@ -43,6 +47,12 @@
     &:focus {
         background: #260071;
         outline: none;
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid #5c14eb;
+        outline-offset: 2px;
     }
 
     &:disabled,
@@ -70,6 +80,10 @@
             color: #260071 !important;
             box-shadow: none;
         }
+
+            &:focus {
+                background: #fff;
+            }
     }
 
     &--beige {
@@ -108,9 +122,14 @@
         }
     }
 
+    &--sm {
+        padding: 4px 12px;
+    }
+
     &--lg {
-        font-size: 15px;
-        padding: 15px 24px; 
+        font-size: 16px;
+        padding: 12px 24px;
+        letter-spacing: -0.16px; 
 
         .montonio-button--secondary {
             padding: 14px 23px;
@@ -162,6 +181,68 @@
     }
 }
 
+.montonio-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #F0EBFF;
+    color: #260071;
+    font-weight: 500;
+    margin-left: 5px;
+    font-size: 13px;
+    line-height: 1;
+    border-radius: 90px;
+    letter-spacing: 0;
+
+    &--neutral {
+        background-color: #F8F6F4;
+        color: #3C3C3C;
+    }    
+
+    &--neutral-inverted {
+        background-color: #3C3C3C;
+        color: #F8F6F4;
+    }    
+    
+    &--success {
+        background-color: #edfbec;
+        color: #20b01b;
+    }
+
+    &--warning {
+        background-color: #fff6da;
+        color: #bf8b00;
+    }
+
+    &--error {
+        background: #ffebeb;
+        color: #E9283F;
+    }    
+    
+    &--error-inverted {
+        background: #E9283F;
+        color: #ffebeb;
+    }
+
+    @media only screen and (max-width: 1240px) {
+        padding: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+
+        &__text {
+            display: none;
+        }
+
+        &--live {
+            background-color: #6DD06A;
+        }
+
+        &--sandbox {
+            background-color: #FFD460;
+        }
+    }
+}
+
 .montonio-spinner {
     width: 32px;
     height: 32px;
@@ -174,6 +255,88 @@
 .montonio-logo {
     max-width: 130px;
     margin-bottom: 30px;
+}
+
+.montonio-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-family: $montonio-font-family;
+    cursor: pointer;
+
+    &__input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    &__switch {
+        position: relative;
+        display: inline-block;
+        flex-shrink: 0;
+        width: 24px;
+        height: 16px;
+        background: #ffffff;
+        border: 1px solid #ADADB0;
+        border-radius: 999px;
+        transition: background-color 0.1s ease-out;
+        box-sizing: border-box;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 8px;
+            height: 8px;
+            background: #A3A3A2;
+            border-radius: 50%;
+            transition: transform 0.1s ease-out, background-color 0.1s ease-out;
+        }
+    }
+
+    &__label {
+        font-size: 15px;
+        line-height: 24px;
+        font-weight: 500;
+        color: #27364B;
+    }
+
+    &__input:checked + &__switch {
+        background: #260071;
+        border-color: #260071;
+
+        &::before {
+            transform: translateX(8px);
+            background: #ffffff;
+        }
+    }
+
+    &__input:not(:checked):hover + &__switch {
+        border-color: #7c7c7b;
+
+        &::before {
+            background: #7c7c7b;
+        }
+    }
+
+    &__input:focus-visible + &__switch {
+        outline: 2px solid #5c14eb;
+        outline-offset: 2px;
+    }
+
+    &__input:disabled + &__switch {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 .montonio-menu {
@@ -210,46 +373,7 @@
                 a {
                     color: #1b1b1b;
                 }
-            }
-
-            .montonio-status {
-                display: inline-block;
-                padding: 4px 8px;
-                font-weight: 400;
-                margin-left: 5px;
-                font-size: 12px;
-                line-height: 1;
-                border-radius: 90px;
-
-                &--live {
-                    background-color: #edfbec;
-                    color: #20b01b;
-                }
-
-                &--sandbox {
-                    background-color: #fff6da;
-                    color: #bf8b00;
-                }
-
-                @media only screen and (max-width: 1240px) {
-                    padding: 0;
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-
-                    &__text {
-                        display: none;
-                    }
-
-                    &--live {
-                        background-color: #6DD06A;
-                    }
-
-                    &--sandbox {
-                        background-color: #FFD460;
-                    }
-                }
-            }
+            }            
         }
     }
 }
@@ -259,6 +383,7 @@
 }
 
 .montonio-options {
+    font-family: $montonio-font-family;
     background: #fff;
     color: #1b1b1b;
     padding: 40px;
@@ -333,12 +458,24 @@
 
     .montonio-card {
         background: #fff;
-        border: 1px solid #E1DDDB;
-        margin-bottom: 30px;
-        border-radius: 6px;
+        padding: 16px 24px;
+        margin-bottom: 32px;
+        border-radius: 8px;
 
         &:last-child {
             margin-bottom: 10px;
+        }
+        
+        &--border {
+            border: 1px solid #E1DDDB;
+        }
+
+        &--notice {
+            font-size: 15px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 24px;
+            color: #27364B; 
         }
 
         h4 {
@@ -347,26 +484,58 @@
         }
 
         &__body {
-            padding: 16px 24px;
-
             p {
                 margin: 0;
             }
         }
 
-        &__footer {
-            padding: 16px 24px;
-            border-top: 1px solid #E1DDDB;
-        }
-
-        &--notice {
-            border: none;
+        &--api-status {
+            background: #FCFBFB;
         }
 
         &--icon {
+            padding: 12px 24px;
+
             .montonio-card__body {
                 display: flex;
+                align-items: center;
                 gap: 10px;    
+            }
+        }
+
+        &__icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+
+            &::before {
+                content: '';
+                display: block;
+                width: 20px;
+                height: 20px;
+                mask-image: var(--icon-url);
+                -webkit-mask-image: var(--icon-url);
+                mask-repeat: no-repeat;
+                -webkit-mask-repeat: no-repeat;
+                mask-position: center;
+                -webkit-mask-position: center;
+                mask-size: contain;
+                -webkit-mask-size: contain;
+                background-color: currentColor;
+            }
+        }
+
+        &--purple {
+            background: #F0EEFB;
+
+            strong {
+                color: #260071;
+            }
+
+            .montonio-card__icon {
+                &:before {
+                    background-color: #260071;
+                }
             }
         }
 
@@ -399,66 +568,6 @@
             margin-top: 5px;
         }
 
-        #woocommerce_wc_montonio_api_live_title {
-            margin-top: 20px;
-            margin-bottom: 0;
-            font-size: 19px;
-            line-height: 1.6;
-            background: #f0ebff;
-            border: 1px solid #E4DBFA;
-            border-bottom: none;
-            color: #0F1A2A;
-            border-bottom: 0;
-            margin-bottom: 0;
-            padding: 15px 10px 0 20px;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            
-            + p {
-                background: #f0ebff;
-                color: #0F1A2A;
-                border: 1px solid #E4DBFA;
-                border-bottom: 0;
-                border-top: 0;
-                padding: 2px 10px 20px 20px;
-                font-size: 14px;
-                
-                + .form-table {
-                    display: block;
-                    background: #f0ebff;
-                    color: #0F1A2A;
-                    border: 1px solid #E4DBFA;
-                    padding: 5px 20px 10px 20px;
-                    margin: 0 0 30px;
-                    border-bottom-left-radius: 6px;
-                    border-bottom-right-radius: 6px;
-
-                    label {
-                        font-size: 13px;
-                        color: #0F1A2A;
-                    }
-
-                    input {
-                        border-color: #ADADB0;
-                    }
-
-                    @media only screen and (max-width: 782px) {
-                        tbody {
-                            display: flex;
-                            flex-direction: column;
-                        }
-                    }
-                }
-            }
-        }
-
-        #woocommerce_wc_montonio_api_sanbox_title {
-            margin-top: 35px;
-            margin-bottom: 7px;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
         #woocommerce_wc_montonio_api_general_title {
             border-top: 1px solid #E1DDDB;
             padding-top: 30px;
@@ -466,52 +575,369 @@
         }
     }
 
-    .montonio-api-status {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 10px 12px;
+    .api-keys {
+        font-family: $montonio-font-family;
+        margin: 10px 0 20px;
 
-        p {
-            margin: 0;
+        &__title {
+            line-height: 28px;
+            font-weight: 700;
+            letter-spacing: -2%;
+            margin: 0 0 5px;
         }
 
-        .dashicons {
-            margin-right: 5px;
+        &__description {
+            font-size: 14px;
+            color: #7C7C7B;
+            margin: 0 0 20px;
         }
 
-        .api-status {
-            font-size: 12px;
-            line-height: 1;
-            background-color: #f8f6f4;
-            color: #3c3c3c;
-            padding: 3px 8px;
-            border-radius: 50px;
+        &__button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
 
-            &--red {
-                background-color: #ffebeb;
-                color: #e9283f;
-            }            
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 25px;
+                height: 15px;
+                background-color: #ffffff;
+                -webkit-mask-image: url('../images/montonio-logo-mark.svg');
+                mask-image: url('../images/montonio-logo-mark.svg');
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                flex-shrink: 0;
+            }
+        }
+
+        &__forms {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        &__fields {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            align-items: center;
+            gap: 16px 25px;
+
+            input {
+                background: #F8F6F4 !important;
+                color: #000000 !important;
+                padding: 7px 16px !important;
+                font-size: 15px !important;
+                border: none !important;
+                border-radius: 4px !important;
+                box-shadow: none !important;
+
+                &[readonly] {
+                    color: #ADADB0 !important;
+                }
+
+                &:disabled,
+                &:read-only {
+                    color: #ADADB0 !important;
+                }
+            }
+        }
+
+        &__field {
+            display: contents;
+
+            label {
+                font-size: 15px;
+                line-height: 24px;
+                font-weight: 500;
+                letter-spacing: -1%;
+                color: #000000;
+                white-space: nowrap;
+            }
+
+            input[type="text"],
+            input[type="password"] {
+                width: 100%;
+            }
+        }
+
+        &__group {
+            padding: 24px;
+            background: #FCFBFB;
+            border-radius: 8px;
+
+            &--live {
+                background: #F7F5FF;
+
+                input {
+                    background: #ffffff !important;
+                }
+            }
+
+            &--pending {
+                background: #FFEBEB;
+            }
+        }
+
+        &__group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        &__group-title {
+            color: #000000;
+            font-size: 21px;
+            line-height: 37px;
+            font-weight: 700;
+            letter-spacing: -2%;
+            margin: 0 0 5px;
+        }
+
+        &__group-description {
+            color: #7C7C7B;
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: 500;
+            letter-spacing: -1%;
+            margin: 0 0 24px;
+        }
+
+        &__connect {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            gap: 28px;
+            padding: 24px;
+            background: #F7F5FF;
+            border-radius: 8px;
+
+            &-title {
+                font-size: 24px;
+                line-height: 40px;
+                font-weight: 700;
+                margin: 0 0 15px;
+                letter-spacing: -1%;;
+            }
+
+            &-icon {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background-color: #F0EBFF;
+                padding: 29px;
+                border-radius: 12px;
+
+                span {
+                    width: 38px;
+                    height: 12px;
+                    border-top: 1px dashed #8779FF;
+                    border-bottom: 1px dashed #8779FF;
+                    stroke-dasharray: 2, 2;
+                }
+
+                img {
+                    width: 48px;
+                }
+            }                
             
-            &--green {
-                background-color: #edfbec;
-                color: #20b01b;
+            &-body {
+                flex: 1 1 0%;
+            }
+
+            &-text {
+                font-size: 14px;
+                line-height: 22px;
+                font-weight: 500;
+                color: #7C7C7B;
+                letter-spacing: -1%;;
+            }
+
+            &-list {
+                font-size: 14px;
+                line-height: 22px;
+                font-weight: 500;
+                list-style: none;
+                padding: 0;
+                margin: 20px 0 25px;
+            }
+
+            &-item {
+                position: relative;
+                padding-left: 25px;
+                margin-bottom: 10px;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 18px;
+                    height: 18px;
+                    background-color: #EDFBEC;
+                    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 6L9 17L4 12' stroke='%2320B01B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-size: 12px;
+                    background-position: center;
+                    border-radius: 50%;
+                }
+            }
+        }
+
+        &__separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding: 20px 0;
+            color: #7c7c7b;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+
+            &::before,
+            &::after {
+                content: '';
+                flex: 1;
+                width: 100%;
+                height: 1px;
+                background: rgb(225 221 219);
+            }
+        
+            &:not(:empty)::before {
+            margin-right: 15px;
+            }
+
+            &:not(:empty)::after {
+            margin-left: 15px;
+            }
+        }
+
+        &__manual {
+            &-toggle {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: #FCFBFB;
+                padding: 14px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    width: 16px;
+                    height: 16px;
+                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M0.664978 0.665039L4.66498 4.66504L8.66498 0.665039" stroke="%233C3C3C" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center;
+                    background-size: 10px 6px;
+                    margin-left: auto;
+                }
+
+                &:hover {
+                    background: #f9f9f9;
+                }
+
+                &--open {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+
+                    &::after {
+                        transform: rotate(180deg);
+                    }
+                }
+
+                &-icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 36px;
+                    height: 36px;
+                    background: #f7f7f7;
+                    border: 1px solid #E1DDDB;
+                    border-radius: 6px;
+
+                    img {
+                        width: 18px;
+                        height: 18px;
+                        display: block;
+                    }
+                }
+            }
+
+            &-title {
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0 0 2px;
+            }
+
+            &-description {
+                font-size: 12px;
+                font-weight: normal;
+                color: #7c7c7b;
+                margin: 0;
+            }
+
+            &-content {
+                display: none;
+                padding: 20px 20px 10px;
+                background: #fcfbfb;
+                border-top: none;
+                border-bottom-right-radius: 6px;
+                border-bottom-left-radius: 6px;
+
+                &--open {
+                    display: block;
+                }
+
+                .api-keys__group-title {
+                    font-size: 17px;
+                    line-height: 23px;
+                }
+            }
+
+            &-form {
+                display: flex;
+                gap: 20px;
+            }
+
+            &-field {
+                flex: 1;
+                margin-bottom: 20px;
+
+                label {
+                    display: block;
+                    margin-bottom: 5px;
+                }
+
+                input {
+                    width: 100%;
+                }
             }
         }
     }
 
     .montonio-store-details {
-        &:last-child {
-            margin-bottom: 6px;
-        }
+        font-family: $montonio-font-family;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-        p {
-            margin: 0;
+        .store-name-container {
+            display: flex;
+            align-items: center;
         }
 
         .store-name {
-            font-size: 14px;
-            color: #260071;
-            font-weight: 500;
+            font-size: 17px;
+            line-height: 23px;
+            color: #1B1B1B !important;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: -2%;
 
             &:hover {
                 color: #5c14eb;
@@ -519,11 +945,11 @@
         }
 
         .store-uuid {
-            margin-top: 5px;
-            font-size: 11px;
+            margin-top: 8px;
+            font-size: 13px;
             line-height: 1;
-            font-weight: normal;
-            color: #7c7c7b;
+            font-weight: 500;
+            color: #7C7C7B;
         }
     }
 
@@ -532,7 +958,6 @@
         padding: 0;
 
         .montonio-button {
-            font-size: 14px;
             padding: 13px 19px;
         }
     }
@@ -711,38 +1136,109 @@ label[for*=montonio_shipping_sender] {
     }
 }
 
-.montonio-api-key-notice {
-    text-align: center;
+.montonio-connect-notice {
+    max-width: 680px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 20px !important;
+    font-family: $montonio-font-family;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: #3C3C3C;
+    margin-bottom: 15px;
     border: none;
     box-shadow: none;
-    border-radius: 16px;
+    border-radius: 8px;
 
-    &__content {
-        padding: 25px 10px;
+    &__body {
+        display: flex;
+        gap: 20px;
         font-size: 14px;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        background: #F7F5FF;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 0;
+
+        span {
+            width: 48px;
+            height: 12px;
+            border-top: 1px dashed #8779FF;
+            border-bottom: 1px dashed #8779FF;
+            stroke-dasharray: 2, 2;
+        }
 
         img {
+            display: block;
             width: 45px;
-            margin-bottom: 15px;
+            margin: 0;
+        }
+    }
+
+    &__title {
+        font-family: $montonio-font-family;
+        font-size: 24px;
+        line-height: 40px;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+        color: #1B1B1B;
+    }
+
+    &__description {
+        font-size: inherit;
+        margin: 0 0 15px 0 !important;
+    }
+
+    &__button {
+        padding: 12px 24px;
+    }
+
+    &__help {
+        margin-top: 20px;
+    }
+
+    &__help-title {
+        font-family: $montonio-font-family;
+        font-size: 15px;
+        line-height: 23px;
+        font-weight: 700;
+        margin: 0;
+        color: #1B1B1B;
+    }
+
+    &__help-link {
+        font-size: inherit;
+    }
+
+    @media only screen and (max-width: 640px) {
+        padding: 15px !important;
+
+        &__body {
+            flex-direction: column;
         }
 
-        h3 {
-            font-size: 15px;
-            margin: 0 0 5px 0;
-            color: #260071;
-        }
+        &__icon {
+            padding: 20px;
 
-        p {
-            font-size: inherit;
-            margin: 0 0 15px 0;
-
-            &:last-child {
-                margin-bottom: 0;
+            img {
+                width: 38px;
             }
         }
 
-        .action-required + .action-required {
-            margin-top: 5px;
+        &__title {
+            font-size: 20px;
+            line-height: 28px;
+        }
+
+        &__button {
+            display: block;
         }
     }
 }
@@ -886,7 +1382,7 @@ label[for*=montonio_shipping_sender] {
 }
 
 .montonio-banner {
-    font-family: Satoshi, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-family: $montonio-font-family;
     max-width: 765px;
     position: relative;
     background: #260071 url('../images/banner_pattern.svg') no-repeat right bottom;

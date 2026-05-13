@@ -21,13 +21,13 @@ msgstr ""
 msgid "Enable Montonio Card Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:49
-#: includes/admin/class-wc-montonio-api-settings.php:73
+#: includes/admin/class-wc-montonio-api-settings.php:283
+#: includes/admin/class-wc-montonio-api-settings.php:309
 msgid "Access Key"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:55
-#: includes/admin/class-wc-montonio-api-settings.php:79
+#: includes/admin/class-wc-montonio-api-settings.php:288
+#: includes/admin/class-wc-montonio-api-settings.php:314
 msgid "Secret Key"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr "Maksājiet ar savu kredītkarti, debetkarti, Apple Pay vai Google Pay"
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:203
+#: montonio.php:206
 msgid "Settings"
 msgstr ""
 
@@ -502,73 +502,50 @@ msgstr ""
 msgid "Pickup point"
 msgstr "Pakomāts"
 
-#: includes/admin/class-wc-montonio-api-settings.php:35
-msgid "Add API Keys"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:45
+#: includes/admin/class-wc-montonio-api-settings.php:255
+#: includes/admin/class-wc-montonio-api-settings.php:272
 msgid "Live keys"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:46
-msgid "Use live keys to receive real payments from your customers."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:62
+#: includes/admin/class-wc-montonio-api-settings.php:297
 msgid "Sandbox keys for testing"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:63
-msgid "Use sandbox keys to test our services."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:86
+#: includes/admin/class-wc-montonio-api-settings.php:56
 msgid "General settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:89
+#: includes/admin/class-wc-montonio-api-settings.php:59
 msgid "Merchant reference type"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:91
+#: includes/admin/class-wc-montonio-api-settings.php:61
 msgid "<strong>Use order ID:</strong> Uses the default WooCommere order ID.<br><br><strong>Use order number:</strong> Allows you to use a custom order number. This option is useful if you have a custom order numbering system in place.<br><br><strong>Add prefix:</strong> Allows you to add a custom prefix to the default order ID."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:93
+#: includes/admin/class-wc-montonio-api-settings.php:63
 msgid "Use order ID"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:94
+#: includes/admin/class-wc-montonio-api-settings.php:64
 msgid "Use order number"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:95
+#: includes/admin/class-wc-montonio-api-settings.php:65
 msgid "Add custom prefix"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:99
+#: includes/admin/class-wc-montonio-api-settings.php:69
 msgid "Order ID prefix"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:155
-#: includes/admin/class-wc-montonio-api-settings.php:122
-msgid "API Settings"
-msgstr ""
-
 #. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:368
-#, php-format
-msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating Payment Methods in WooCommerce</a>"
-msgstr ""
-
-#. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:358
+#: includes/admin/class-wc-montonio-admin-settings-page.php:325
 #, php-format
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
 
 #. translators: 1) notice that test mode is enabled 2) explanation of test mode
-#: includes/admin/class-wc-montonio-admin-settings-page.php:346
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:303
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:231
 #: includes/payment/payment-methods/class-wc-montonio-card.php:277
@@ -589,18 +566,6 @@ msgstr ""
 msgid "TEST MODE ENABLED!"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:302
-msgid "Live keys:"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:309
-msgid "Sandbox keys:"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:322
-msgid "Edit account keys"
-msgstr ""
-
 #: includes/payment/class-wc-montonio-api.php:85
 msgid "Checkout via Montonio started."
 msgstr ""
@@ -614,7 +579,7 @@ msgid "Separate BLIK Payment option for checkout"
 msgstr ""
 
 #: blocks/class-wc-montonio-blik-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:173
+#: includes/admin/class-wc-montonio-admin-settings-page.php:170
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:60
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:115
 #: blocks/build/wc-montonio-blik/index.js:1
@@ -687,7 +652,7 @@ msgid "Pay in multiple parts provided in co-operation with Inbank"
 msgstr ""
 
 #: blocks/class-wc-montonio-bnpl-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:179
+#: includes/admin/class-wc-montonio-admin-settings-page.php:175
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:68
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:98
 #: blocks/build/wc-montonio-bnpl/index.js:1
@@ -748,7 +713,7 @@ msgid "Hire purchase provided in co-operation with Inbank"
 msgstr ""
 
 #: blocks/class-wc-montonio-hire-purchase-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:185
+#: includes/admin/class-wc-montonio-admin-settings-page.php:180
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:62
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:95
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
@@ -968,23 +933,23 @@ msgstr ""
 msgid "Dropdown type for Montonio Shipping"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:162
+#: includes/admin/class-montonio-ota-updates.php:173
 msgid "Payment settings for Montonio Bank Payments"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:166
+#: includes/admin/class-montonio-ota-updates.php:177
 msgid "Enable or disable Montonio Bank Payments"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:172
+#: includes/admin/class-montonio-ota-updates.php:183
 msgid "Title of the payment method"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:179
+#: includes/admin/class-montonio-ota-updates.php:190
 msgid "Payment settings for Montonio Card Payments"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:183
+#: includes/admin/class-montonio-ota-updates.php:194
 msgid "Enable or disable Montonio Card Payments"
 msgstr ""
 
@@ -998,7 +963,7 @@ msgstr ""
 msgid "DPD parcel machines"
 msgstr "DPD pakomāts"
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:347
+#: includes/admin/class-wc-montonio-admin-settings-page.php:314
 msgid "Test mode is for integration testing only. Payments are not processed."
 msgstr ""
 
@@ -1367,7 +1332,7 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:338
+#: montonio.php:356
 msgid "Need help?"
 msgstr "Nepieciešama palīdzība?"
 
@@ -1388,24 +1353,19 @@ msgstr ""
 msgid "Courier"
 msgstr "Kurjers"
 
-#: montonio.php:340
+#: montonio.php:362
 msgid "How to activate Montonio payment methods"
 msgstr "Kā aktivizēt Montonio maksājumu metodes"
 
-#. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: includes/admin/class-wc-montonio-api-settings.php:38
-msgid "Live and Sandbox API keys can be obtained at %1$sMontonio Partner System%2$s"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:161
+#: includes/admin/class-wc-montonio-admin-settings-page.php:160
 msgid "Bank Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:167
+#: includes/admin/class-wc-montonio-admin-settings-page.php:165
 msgid "Card Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:191
+#: includes/admin/class-wc-montonio-admin-settings-page.php:185
 msgid "Shipping"
 msgstr ""
 
@@ -1655,57 +1615,27 @@ msgstr ""
 msgid "%1$s API keys missing. Please <a href=\"%2$s\">add API keys here</a> to enable this payment method."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:300
-msgid "Account status"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:304
-#: includes/admin/class-wc-montonio-admin-settings-page.php:311
-msgid "Added"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:306
-#: includes/admin/class-wc-montonio-admin-settings-page.php:313
-msgid "Not Added"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:379
+#: includes/admin/class-wc-montonio-admin-settings-page.php:346
 msgid "Return to payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:386
+#: includes/admin/class-wc-montonio-admin-settings-page.php:353
 msgid "Montonio logo"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:66
-msgid "Test Mode"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:69
-msgid "Enable test mode for sandbox environment."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:150
+#: includes/admin/class-wc-montonio-api-settings.php:364
 msgid "Sandbox Access Key is not valid."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:151
-msgid "Access Key is not valid."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:161
+#: includes/admin/class-wc-montonio-api-settings.php:365
 msgid "Sandbox Secret Key is not valid."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:162
-msgid "Secret Key is not valid."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-api-settings.php:196
+#: includes/admin/class-wc-montonio-api-settings.php:415
 msgid "API credentials are invalid. Please check your Access Key and Secret Key."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:200
+#: includes/admin/class-wc-montonio-api-settings.php:419
 msgid "API response: "
 msgstr ""
 
@@ -1723,7 +1653,7 @@ msgstr ""
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:207
+#: includes/admin/class-wc-montonio-api-settings.php:426
 msgid "Payment method sync failed: "
 msgstr ""
 
@@ -1965,24 +1895,7 @@ msgstr ""
 msgid "Automatically create shipping zones and methods based on your active carriers with Montonio contracts."
 msgstr ""
 
-#: montonio.php:324
-msgid "Get Started with Montonio"
-msgstr ""
-
-#: montonio.php:326
-msgid "Your Live API keys haven't been added yet."
-msgstr ""
-
-#. translators: 1) HTML anchor open tag 2) HTML anchor closing tag
-#: montonio.php:331
-msgid "%1$sClick here%2$s to enter your Live API keys to activate Montonio and start accepting payments."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:289
-msgid "Connected store"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-admin-settings-page.php:294
+#: includes/admin/class-wc-montonio-admin-settings-page.php:280
 msgid "Open Store in Montonio Partner System"
 msgstr ""
 
@@ -2084,10 +1997,6 @@ msgstr ""
 msgid "Enable or disable Montonio Shipping"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:139
-msgid "API settings for Montonio"
-msgstr ""
-
 #: includes/admin/class-montonio-ota-updates.php:143
 msgid "Enable or disable test mode"
 msgstr ""
@@ -2100,35 +2009,35 @@ msgstr ""
 msgid "Custom prefix for order IDs"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:189
+#: includes/admin/class-montonio-ota-updates.php:200
 msgid "Enable or disable embedded card fields in checkout"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:197
+#: includes/admin/class-montonio-ota-updates.php:208
 msgid "Payment settings for Montonio BLIK"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:201
+#: includes/admin/class-montonio-ota-updates.php:212
 msgid "Enable or disable Montonio BLIK"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:207
+#: includes/admin/class-montonio-ota-updates.php:218
 msgid "Enable or disable embedded BLIK fields in checkout"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:215
+#: includes/admin/class-montonio-ota-updates.php:226
 msgid "Payment settings for Montonio Buy Now Pay Later"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:219
+#: includes/admin/class-montonio-ota-updates.php:230
 msgid "Enable or disable Montonio Buy Now Pay Later"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:227
+#: includes/admin/class-montonio-ota-updates.php:238
 msgid "Payment settings for Montonio Hire Purchase"
 msgstr ""
 
-#: includes/admin/class-montonio-ota-updates.php:231
+#: includes/admin/class-montonio-ota-updates.php:242
 msgid "Enable or disable Montonio Hire Purchase"
 msgstr ""
 
@@ -2145,4 +2054,164 @@ msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-route-setup.php:251
 msgid "Route setup is already in progress. Please wait and try again."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:65
+msgid "Your store has been connected to Montonio successfully."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:69
+msgid "Your store has been connected to Montonio in sandbox mode. Live API keys will be issued once Montonio approves your store."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:73
+msgid "Your Montonio account has been disconnected."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:77
+msgid "Montonio connection was cancelled."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:81
+msgid "The Montonio connection link has expired. Please try connecting again."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:85
+msgid "Failed to activate the Montonio connection. Please try again or contact Montonio support."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:89
+msgid "The Montonio connection request was invalid. Please try again."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:93
+msgid "Montonio returned no usable API keys for this store. Please try connecting again or contact Montonio support."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:97
+msgid "Your store has been connected to Montonio, but we could not refresh the available payment methods."
+msgstr ""
+
+#: includes/admin/class-montonio-connection.php:163
+msgid "You do not have permission to disconnect this Montonio account."
+msgstr ""
+
+#: includes/admin/class-montonio-ota-updates.php:139
+msgid "Main settings for Montonio"
+msgstr ""
+
+#: includes/admin/class-montonio-ota-updates.php:160
+msgid "Montonio Partner System connection UUID"
+msgstr ""
+
+#: includes/admin/class-montonio-ota-updates.php:165
+msgid "Whether live API keys are available for this connection"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:155
+#: includes/admin/class-wc-montonio-api-settings.php:340
+msgid "Main Settings"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:281
+msgid "Connected"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:286
+msgid "Disconnect"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:313
+msgid "Test mode enabled!"
+msgstr ""
+
+#. translators: %s: help article URL
+#: includes/admin/class-wc-montonio-admin-settings-page.php:335
+msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating payment methods</a>"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:189
+#: montonio.php:345
+msgid "Connect your store"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:190
+#: montonio.php:349
+msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:199
+msgid "Connect via Montonio account"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:200
+msgid "Sign in to your Montonio Partner System and authorise this store. API keys are issued and configured automatically."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:202
+msgid "Faster setup — get connected in minutes"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:203
+msgid "Automatic API key management — no manual entry required"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:204
+msgid "Secure authentication via Montonio Partner System"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:206
+msgid "Connect Montonio account"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:210
+msgid "Or"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:218
+msgid "Enter API keys manually"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:219
+msgid "For advanced setups — copy keys from the Montonio Partner System and paste them below."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:257
+msgid "Pending approval"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:261
+msgid "Your store is not yet approved by Montonio. Once the approval is complete, click the \"Reconnect\" button to receive your live API keys and start accepting real transactions."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:265
+msgid "Reconnect"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:275
+msgid "Issued by Montonio"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:279
+msgid "These are your live API keys for processing real transactions."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:301
+msgid "Test mode"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:305
+msgid "These are your sandbox API keys for testing purposes."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:360
+msgid "Live Access Key is not valid."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-api-settings.php:361
+msgid "Live Secret Key is not valid."
+msgstr ""
+
+#: montonio.php:352
+msgid "Go to account settings"
 msgstr ""

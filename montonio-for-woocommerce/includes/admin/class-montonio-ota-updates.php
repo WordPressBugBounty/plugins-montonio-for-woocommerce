@@ -136,7 +136,7 @@ class Montonio_OTA_Updates {
                 'sanitize_callback' => 'sanitize_text_field'
             ),
             'woocommerce_wc_montonio_api_settings'      => array(
-                'description' => __( 'API settings for Montonio', 'montonio-for-woocommerce' ),
+                'description' => __( 'Main settings for Montonio', 'montonio-for-woocommerce' ),
                 'type'        => 'object',
                 'properties'  => array(
                     'test_mode'               => array(
@@ -154,6 +154,17 @@ class Montonio_OTA_Updates {
                     'order_prefix'            => array(
                         'description'       => __( 'Custom prefix for order IDs', 'montonio-for-woocommerce' ),
                         'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'connection'              => array(
+                        'description'       => __( 'Montonio Partner System connection UUID', 'montonio-for-woocommerce' ),
+                        'type'               => 'string',
+                        'sanitize_callback' => 'sanitize_text_field'
+                    ),
+                    'live_keys_available'     => array(
+                        'description'       => __( 'Whether live API keys are available for this connection', 'montonio-for-woocommerce' ),
+                        'type'              => 'string',
+                        'enum'              => array( 'yes', 'no' ),
                         'sanitize_callback' => 'sanitize_text_field'
                     )
                 )

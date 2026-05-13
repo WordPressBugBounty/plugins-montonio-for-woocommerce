@@ -12,7 +12,9 @@
   }
 }
 .montonio-button {
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
   letter-spacing: 0;
   display: inline-block;
   background: #260071;
@@ -35,6 +37,11 @@
 .montonio-button:focus {
   background: #260071;
   outline: none;
+  box-shadow: none;
+}
+.montonio-button:focus-visible {
+  outline: 2px solid #5c14eb;
+  outline-offset: 2px;
 }
 .montonio-button:disabled, .montonio-button[disabled] {
   background: #F8F6F4;
@@ -56,6 +63,9 @@
   border-color: #260071;
   color: #260071 !important;
   box-shadow: none;
+}
+.montonio-button--secondary:focus {
+  background: #fff;
 }
 .montonio-button--beige {
   background: #F9E0C0;
@@ -85,9 +95,13 @@
 .montonio-button--transparent:focus {
   background: rgba(27, 5, 71, 0.8);
 }
+.montonio-button--sm {
+  padding: 4px 12px;
+}
 .montonio-button--lg {
-  font-size: 15px;
-  padding: 15px 24px;
+  font-size: 16px;
+  padding: 12px 24px;
+  letter-spacing: -0.16px;
 }
 .montonio-button--lg .montonio-button--secondary {
   padding: 14px 23px;
@@ -128,6 +142,60 @@
   border-radius: 40px;
 }
 
+.montonio-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #F0EBFF;
+  color: #260071;
+  font-weight: 500;
+  margin-left: 5px;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 90px;
+  letter-spacing: 0;
+}
+.montonio-badge--neutral {
+  background-color: #F8F6F4;
+  color: #3C3C3C;
+}
+.montonio-badge--neutral-inverted {
+  background-color: #3C3C3C;
+  color: #F8F6F4;
+}
+.montonio-badge--success {
+  background-color: #edfbec;
+  color: #20b01b;
+}
+.montonio-badge--warning {
+  background-color: #fff6da;
+  color: #bf8b00;
+}
+.montonio-badge--error {
+  background: #ffebeb;
+  color: #E9283F;
+}
+.montonio-badge--error-inverted {
+  background: #E9283F;
+  color: #ffebeb;
+}
+@media only screen and (max-width: 1240px) {
+  .montonio-badge {
+    padding: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .montonio-badge__text {
+    display: none;
+  }
+  .montonio-badge--live {
+    background-color: #6DD06A;
+  }
+  .montonio-badge--sandbox {
+    background-color: #FFD460;
+  }
+}
+
 .montonio-spinner {
   width: 32px;
   height: 32px;
@@ -140,6 +208,80 @@
 .montonio-logo {
   max-width: 130px;
   margin-bottom: 30px;
+}
+
+.montonio-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  cursor: pointer;
+}
+.montonio-toggle__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.montonio-toggle__switch {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 24px;
+  height: 16px;
+  background: #ffffff;
+  border: 1px solid #ADADB0;
+  border-radius: 999px;
+  transition: background-color 0.1s ease-out;
+  box-sizing: border-box;
+}
+.montonio-toggle__switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  background: #A3A3A2;
+  border-radius: 50%;
+  transition: transform 0.1s ease-out, background-color 0.1s ease-out;
+}
+.montonio-toggle__label {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #27364B;
+}
+.montonio-toggle__input:checked + .montonio-toggle__switch {
+  background: #260071;
+  border-color: #260071;
+}
+.montonio-toggle__input:checked + .montonio-toggle__switch::before {
+  transform: translateX(8px);
+  background: #ffffff;
+}
+.montonio-toggle__input:not(:checked):hover + .montonio-toggle__switch {
+  border-color: #7c7c7b;
+}
+.montonio-toggle__input:not(:checked):hover + .montonio-toggle__switch::before {
+  background: #7c7c7b;
+}
+.montonio-toggle__input:focus-visible + .montonio-toggle__switch {
+  outline: 2px solid #5c14eb;
+  outline-offset: 2px;
+}
+.montonio-toggle__input:disabled + .montonio-toggle__switch {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .montonio-menu ul {
@@ -175,46 +317,13 @@
 .montonio-menu ul li.active a {
   color: #1b1b1b;
 }
-.montonio-menu ul li .montonio-status {
-  display: inline-block;
-  padding: 4px 8px;
-  font-weight: 400;
-  margin-left: 5px;
-  font-size: 12px;
-  line-height: 1;
-  border-radius: 90px;
-}
-.montonio-menu ul li .montonio-status--live {
-  background-color: #edfbec;
-  color: #20b01b;
-}
-.montonio-menu ul li .montonio-status--sandbox {
-  background-color: #fff6da;
-  color: #bf8b00;
-}
-@media only screen and (max-width: 1240px) {
-  .montonio-menu ul li .montonio-status {
-    padding: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .montonio-menu ul li .montonio-status__text {
-    display: none;
-  }
-  .montonio-menu ul li .montonio-status--live {
-    background-color: #6DD06A;
-  }
-  .montonio-menu ul li .montonio-status--sandbox {
-    background-color: #FFD460;
-  }
-}
 
 .montonio-options-title {
   margin-bottom: 10px !important;
 }
 
 .montonio-options {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   background: #fff;
   color: #1b1b1b;
   padding: 40px;
@@ -280,33 +389,69 @@
 }
 .montonio-options .montonio-card {
   background: #fff;
-  border: 1px solid #E1DDDB;
-  margin-bottom: 30px;
-  border-radius: 6px;
+  padding: 16px 24px;
+  margin-bottom: 32px;
+  border-radius: 8px;
 }
 .montonio-options .montonio-card:last-child {
   margin-bottom: 10px;
+}
+.montonio-options .montonio-card--border {
+  border: 1px solid #E1DDDB;
+}
+.montonio-options .montonio-card--notice {
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  color: #27364B;
 }
 .montonio-options .montonio-card h4 {
   margin-top: 0;
   margin-bottom: 10px;
 }
-.montonio-options .montonio-card__body {
-  padding: 16px 24px;
-}
 .montonio-options .montonio-card__body p {
   margin: 0;
 }
-.montonio-options .montonio-card__footer {
-  padding: 16px 24px;
-  border-top: 1px solid #E1DDDB;
+.montonio-options .montonio-card--api-status {
+  background: #FCFBFB;
 }
-.montonio-options .montonio-card--notice {
-  border: none;
+.montonio-options .montonio-card--icon {
+  padding: 12px 24px;
 }
 .montonio-options .montonio-card--icon .montonio-card__body {
   display: flex;
+  align-items: center;
   gap: 10px;
+}
+.montonio-options .montonio-card__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.montonio-options .montonio-card__icon::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  mask-image: var(--icon-url);
+  -webkit-mask-image: var(--icon-url);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: currentColor;
+}
+.montonio-options .montonio-card--purple {
+  background: #F0EEFB;
+}
+.montonio-options .montonio-card--purple strong {
+  color: #260071;
+}
+.montonio-options .montonio-card--purple .montonio-card__icon:before {
+  background-color: #260071;
 }
 .montonio-options .montonio-card--blue {
   background: #E7EFFF;
@@ -330,118 +475,338 @@
   font-size: 12px;
   margin-top: 5px;
 }
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title {
-  margin-top: 20px;
-  margin-bottom: 0;
-  font-size: 19px;
-  line-height: 1.6;
-  background: #f0ebff;
-  border: 1px solid #E4DBFA;
-  border-bottom: none;
-  color: #0F1A2A;
-  border-bottom: 0;
-  margin-bottom: 0;
-  padding: 15px 10px 0 20px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-}
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p {
-  background: #f0ebff;
-  color: #0F1A2A;
-  border: 1px solid #E4DBFA;
-  border-bottom: 0;
-  border-top: 0;
-  padding: 2px 10px 20px 20px;
-  font-size: 14px;
-}
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table {
-  display: block;
-  background: #f0ebff;
-  color: #0F1A2A;
-  border: 1px solid #E4DBFA;
-  padding: 5px 20px 10px 20px;
-  margin: 0 0 30px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table label {
-  font-size: 13px;
-  color: #0F1A2A;
-}
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table input {
-  border-color: #ADADB0;
-}
-@media only screen and (max-width: 782px) {
-  .montonio-options .montonio-card #woocommerce_wc_montonio_api_live_title + p + .form-table tbody {
-    display: flex;
-    flex-direction: column;
-  }
-}
-.montonio-options .montonio-card #woocommerce_wc_montonio_api_sanbox_title {
-  margin-top: 35px;
-  margin-bottom: 7px;
-  font-size: 14px;
-  text-transform: uppercase;
-}
 .montonio-options .montonio-card #woocommerce_wc_montonio_api_general_title {
   border-top: 1px solid #E1DDDB;
   padding-top: 30px;
   margin-top: 1.7em;
 }
-.montonio-options .montonio-api-status {
+.montonio-options .api-keys {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  margin: 10px 0 20px;
+}
+.montonio-options .api-keys__title {
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -2%;
+  margin: 0 0 5px;
+}
+.montonio-options .api-keys__description {
+  font-size: 14px;
+  color: #7C7C7B;
+  margin: 0 0 20px;
+}
+.montonio-options .api-keys__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.montonio-options .api-keys__button::before {
+  content: "";
+  display: inline-block;
+  width: 25px;
+  height: 15px;
+  background-color: #ffffff;
+  -webkit-mask-image: url("../images/montonio-logo-mark.svg");
+  mask-image: url("../images/montonio-logo-mark.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  flex-shrink: 0;
+}
+.montonio-options .api-keys__forms {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.montonio-options .api-keys__fields {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px 12px;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: 16px 25px;
 }
-.montonio-options .montonio-api-status p {
-  margin: 0;
+.montonio-options .api-keys__fields input {
+  background: #F8F6F4 !important;
+  color: #000000 !important;
+  padding: 7px 16px !important;
+  font-size: 15px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
 }
-.montonio-options .montonio-api-status .dashicons {
-  margin-right: 5px;
+.montonio-options .api-keys__fields input[readonly] {
+  color: #ADADB0 !important;
 }
-.montonio-options .montonio-api-status .api-status {
+.montonio-options .api-keys__fields input:-moz-read-only {
+  color: #ADADB0 !important;
+}
+.montonio-options .api-keys__fields input:disabled, .montonio-options .api-keys__fields input:read-only {
+  color: #ADADB0 !important;
+}
+.montonio-options .api-keys__field {
+  display: contents;
+}
+.montonio-options .api-keys__field label {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: -1%;
+  color: #000000;
+  white-space: nowrap;
+}
+.montonio-options .api-keys__field input[type=text],
+.montonio-options .api-keys__field input[type=password] {
+  width: 100%;
+}
+.montonio-options .api-keys__group {
+  padding: 24px;
+  background: #FCFBFB;
+  border-radius: 8px;
+}
+.montonio-options .api-keys__group--live {
+  background: #F7F5FF;
+}
+.montonio-options .api-keys__group--live input {
+  background: #ffffff !important;
+}
+.montonio-options .api-keys__group--pending {
+  background: #FFEBEB;
+}
+.montonio-options .api-keys__group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.montonio-options .api-keys__group-title {
+  color: #000000;
+  font-size: 21px;
+  line-height: 37px;
+  font-weight: 700;
+  letter-spacing: -2%;
+  margin: 0 0 5px;
+}
+.montonio-options .api-keys__group-description {
+  color: #7C7C7B;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: -1%;
+  margin: 0 0 24px;
+}
+.montonio-options .api-keys__connect {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+  padding: 24px;
+  background: #F7F5FF;
+  border-radius: 8px;
+}
+.montonio-options .api-keys__connect-title {
+  font-size: 24px;
+  line-height: 40px;
+  font-weight: 700;
+  margin: 0 0 15px;
+  letter-spacing: -1%;
+}
+.montonio-options .api-keys__connect-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #F0EBFF;
+  padding: 29px;
+  border-radius: 12px;
+}
+.montonio-options .api-keys__connect-icon span {
+  width: 38px;
+  height: 12px;
+  border-top: 1px dashed #8779FF;
+  border-bottom: 1px dashed #8779FF;
+  stroke-dasharray: 2, 2;
+}
+.montonio-options .api-keys__connect-icon img {
+  width: 48px;
+}
+.montonio-options .api-keys__connect-body {
+  flex: 1 1 0%;
+}
+.montonio-options .api-keys__connect-text {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  color: #7C7C7B;
+  letter-spacing: -1%;
+}
+.montonio-options .api-keys__connect-list {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 25px;
+}
+.montonio-options .api-keys__connect-item {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 10px;
+}
+.montonio-options .api-keys__connect-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-color: #EDFBEC;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 6L9 17L4 12' stroke='%2320B01B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: center;
+  border-radius: 50%;
+}
+.montonio-options .api-keys__separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+  color: #7c7c7b;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.montonio-options .api-keys__separator::before, .montonio-options .api-keys__separator::after {
+  content: "";
+  flex: 1;
+  width: 100%;
+  height: 1px;
+  background: rgb(225, 221, 219);
+}
+.montonio-options .api-keys__separator:not(:empty)::before {
+  margin-right: 15px;
+}
+.montonio-options .api-keys__separator:not(:empty)::after {
+  margin-left: 15px;
+}
+.montonio-options .api-keys__manual-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FCFBFB;
+  padding: 14px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.montonio-options .api-keys__manual-toggle::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M0.664978 0.665039L4.66498 4.66504L8.66498 0.665039" stroke="%233C3C3C" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center;
+  background-size: 10px 6px;
+  margin-left: auto;
+}
+.montonio-options .api-keys__manual-toggle:hover {
+  background: #f9f9f9;
+}
+.montonio-options .api-keys__manual-toggle--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.montonio-options .api-keys__manual-toggle--open::after {
+  transform: rotate(180deg);
+}
+.montonio-options .api-keys__manual-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f7f7f7;
+  border: 1px solid #E1DDDB;
+  border-radius: 6px;
+}
+.montonio-options .api-keys__manual-toggle-icon img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.montonio-options .api-keys__manual-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+.montonio-options .api-keys__manual-description {
   font-size: 12px;
-  line-height: 1;
-  background-color: #f8f6f4;
-  color: #3c3c3c;
-  padding: 3px 8px;
-  border-radius: 50px;
-}
-.montonio-options .montonio-api-status .api-status--red {
-  background-color: #ffebeb;
-  color: #e9283f;
-}
-.montonio-options .montonio-api-status .api-status--green {
-  background-color: #edfbec;
-  color: #20b01b;
-}
-.montonio-options .montonio-store-details:last-child {
-  margin-bottom: 6px;
-}
-.montonio-options .montonio-store-details p {
+  font-weight: normal;
+  color: #7c7c7b;
   margin: 0;
+}
+.montonio-options .api-keys__manual-content {
+  display: none;
+  padding: 20px 20px 10px;
+  background: #fcfbfb;
+  border-top: none;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.montonio-options .api-keys__manual-content--open {
+  display: block;
+}
+.montonio-options .api-keys__manual-content .api-keys__group-title {
+  font-size: 17px;
+  line-height: 23px;
+}
+.montonio-options .api-keys__manual-form {
+  display: flex;
+  gap: 20px;
+}
+.montonio-options .api-keys__manual-field {
+  flex: 1;
+  margin-bottom: 20px;
+}
+.montonio-options .api-keys__manual-field label {
+  display: block;
+  margin-bottom: 5px;
+}
+.montonio-options .api-keys__manual-field input {
+  width: 100%;
+}
+.montonio-options .montonio-store-details {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.montonio-options .montonio-store-details .store-name-container {
+  display: flex;
+  align-items: center;
 }
 .montonio-options .montonio-store-details .store-name {
-  font-size: 14px;
-  color: #260071;
-  font-weight: 500;
+  font-size: 17px;
+  line-height: 23px;
+  color: #1B1B1B !important;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: -2%;
 }
 .montonio-options .montonio-store-details .store-name:hover {
   color: #5c14eb;
 }
 .montonio-options .montonio-store-details .store-uuid {
-  margin-top: 5px;
-  font-size: 11px;
+  margin-top: 8px;
+  font-size: 13px;
   line-height: 1;
-  font-weight: normal;
-  color: #7c7c7b;
+  font-weight: 500;
+  color: #7C7C7B;
 }
 .montonio-options .submit {
   margin-bottom: 0;
   padding: 0;
 }
 .montonio-options .submit .montonio-button {
-  font-size: 14px;
   padding: 13px 19px;
 }
 .montonio-options ~ p.submit {
@@ -588,34 +953,97 @@ label[for*=montonio_shipping_sender]::after {
   color: #E9283F;
 }
 
-.montonio-api-key-notice {
-  text-align: center;
+.montonio-connect-notice {
+  max-width: 680px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 20px !important;
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #3C3C3C;
+  margin-bottom: 15px;
   border: none;
   box-shadow: none;
-  border-radius: 16px;
+  border-radius: 8px;
 }
-.montonio-api-key-notice__content {
-  padding: 25px 10px;
+.montonio-connect-notice__body {
+  display: flex;
+  gap: 20px;
   font-size: 14px;
 }
-.montonio-api-key-notice__content img {
-  width: 45px;
-  margin-bottom: 15px;
-}
-.montonio-api-key-notice__content h3 {
-  font-size: 15px;
-  margin: 0 0 5px 0;
-  color: #260071;
-}
-.montonio-api-key-notice__content p {
-  font-size: inherit;
-  margin: 0 0 15px 0;
-}
-.montonio-api-key-notice__content p:last-child {
+.montonio-connect-notice__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  background: #F7F5FF;
+  padding: 30px;
+  border-radius: 12px;
   margin-bottom: 0;
 }
-.montonio-api-key-notice__content .action-required + .action-required {
-  margin-top: 5px;
+.montonio-connect-notice__icon span {
+  width: 48px;
+  height: 12px;
+  border-top: 1px dashed #8779FF;
+  border-bottom: 1px dashed #8779FF;
+  stroke-dasharray: 2, 2;
+}
+.montonio-connect-notice__icon img {
+  display: block;
+  width: 45px;
+  margin: 0;
+}
+.montonio-connect-notice__title {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 24px;
+  line-height: 40px;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  color: #1B1B1B;
+}
+.montonio-connect-notice__description {
+  font-size: inherit;
+  margin: 0 0 15px 0 !important;
+}
+.montonio-connect-notice__button {
+  padding: 12px 24px;
+}
+.montonio-connect-notice__help {
+  margin-top: 20px;
+}
+.montonio-connect-notice__help-title {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  line-height: 23px;
+  font-weight: 700;
+  margin: 0;
+  color: #1B1B1B;
+}
+.montonio-connect-notice__help-link {
+  font-size: inherit;
+}
+@media only screen and (max-width: 640px) {
+  .montonio-connect-notice {
+    padding: 15px !important;
+  }
+  .montonio-connect-notice__body {
+    flex-direction: column;
+  }
+  .montonio-connect-notice__icon {
+    padding: 20px;
+  }
+  .montonio-connect-notice__icon img {
+    width: 38px;
+  }
+  .montonio-connect-notice__title {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .montonio-connect-notice__button {
+    display: block;
+  }
 }
 
 .order-status.status-mon-label-printed {

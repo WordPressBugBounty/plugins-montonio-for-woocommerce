@@ -7,6 +7,12 @@
         $('#montonio_email_tracking_code_text').val('Track your shipment:');
     });
 
+    // Toggle manual API keys section
+    $(document).on('click', '.api-keys__manual-toggle', function () {
+        $(this).toggleClass('api-keys__manual-toggle--open');
+        $(this).next('.api-keys__manual-content').toggleClass('api-keys__manual-content--open');
+    });
+
     // Conditionally toggle order prefix id field visibility
     function togglePrefixfield() {
         var selectedVal = $('#woocommerce_wc_montonio_api_merchant_reference_type').val();

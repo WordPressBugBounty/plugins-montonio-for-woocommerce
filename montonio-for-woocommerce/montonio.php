@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.0.1
+ * Version:           10.1.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.0.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.1.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -134,6 +134,9 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-updates.php';
             Montonio_OTA_Updates::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-connection.php';
+            Montonio_Connection::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping.php';
             WC_Montonio_Shipping::get_instance();
@@ -317,28 +320,50 @@ if ( ! class_exists( 'Montonio' ) ) {
             if ( WC_Montonio_Helper::has_api_keys() ) {
                 return;
             }
-            ?>
-            <div class="montonio-api-key-notice notice notice-info is-dismissible">
-                <div class="montonio-api-key-notice__content">
-                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-icon.svg' ); ?>" alt="Montonio">
-                    <h3><?php esc_html_e( 'Get Started with Montonio', 'montonio-for-woocommerce' ); ?></h3>
-                    <p>
-                        <?php esc_html_e( 'Your Live API keys haven\'t been added yet.', 'montonio-for-woocommerce' ); ?>
-                        <br>
-                        <?php
-                        printf(
-                            /* translators: 1) HTML anchor open tag 2) HTML anchor closing tag */
-                            esc_html__( '%1$sClick here%2$s to enter your Live API keys to activate Montonio and start accepting payments.', 'montonio-for-woocommerce' ),
-                            '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
-                            '</a>'
-                        );
-                        ?>
-                    </p>
 
-                    <h3><?php esc_html_e( 'Need help?', 'montonio-for-woocommerce' ); ?></h3>
-                    <a href="https://help.montonio.com/en/articles/68142-activating-payment-methods-in-woocommerce" target="_blank" rel="noopener">
-                        <?php esc_html_e( 'How to activate Montonio payment methods', 'montonio-for-woocommerce' ); ?>
-                    </a>
+            if ( isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) ) {
+                $page    = sanitize_text_field( wp_unslash( $_GET['page'] ) );
+                $tab     = sanitize_text_field( wp_unslash( $_GET['tab'] ) );
+                $section = sanitize_text_field( wp_unslash( $_GET['section'] ) );
+
+                if ( 'wc-settings' === $page && 'checkout' === $tab && 'wc_montonio_api' === $section ) {
+                    return;
+                }
+            }
+            ?>
+            <div class="montonio-connect-notice notice notice-info is-dismissible">
+                <div class="montonio-connect-notice__body">
+
+                    <div class="montonio-connect-notice__icon">
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/woo-logo.svg' ); ?>" alt="WooCommerce">
+                        <span></span>
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-icon-dark.svg' ); ?>" alt="Montonio">
+                    </div>
+
+                    <div class="montonio-connect-notice__content">
+                        <h3 class="montonio-connect-notice__title">
+                            <?php esc_html_e( 'Connect your store', 'montonio-for-woocommerce' ); ?>
+                        </h3>
+
+                        <p class="montonio-connect-notice__description">
+                            <?php esc_html_e( 'Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders.', 'montonio-for-woocommerce' ); ?>
+                        </p>
+
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ); ?>" class="montonio-connect-notice__button montonio-button montonio-button--lg"><?php esc_html_e( 'Go to account settings', 'montonio-for-woocommerce' ); ?></a>
+
+                        <div class="montonio-connect-notice__help">
+                            <h4 class="montonio-connect-notice__help-title">
+                                <?php esc_html_e( 'Need help?', 'montonio-for-woocommerce' ); ?>
+                            </h4>
+                            <a class="montonio-connect-notice__help-link"
+                            href="https://help.montonio.com/en/articles/68142-activating-payment-methods-in-woocommerce"
+                            target="_blank"
+                            rel="noopener">
+                                <?php esc_html_e( 'How to activate Montonio payment methods', 'montonio-for-woocommerce' ); ?>
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <?php
