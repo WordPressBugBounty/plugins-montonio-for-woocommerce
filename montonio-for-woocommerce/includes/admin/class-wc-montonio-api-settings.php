@@ -390,7 +390,7 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
             return;
         }
 
-        //$this->sync_payment_methods( $active_prefix );
+        $this->sync_payment_methods( $active_prefix );
     }
 
     /**

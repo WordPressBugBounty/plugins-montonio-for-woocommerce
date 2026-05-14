@@ -540,7 +540,7 @@ msgid "Order ID prefix"
 msgstr ""
 
 #. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:325
+#: includes/admin/class-wc-montonio-admin-settings-page.php:337
 #, php-format
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
@@ -963,7 +963,7 @@ msgstr ""
 msgid "DPD parcel machines"
 msgstr "DPD paštomatas"
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:314
+#: includes/admin/class-wc-montonio-admin-settings-page.php:326
 msgid "Test mode is for integration testing only. Payments are not processed."
 msgstr ""
 
@@ -1332,7 +1332,7 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:356
+#: montonio.php:364
 msgid "Need help?"
 msgstr "Reikia pagalbos?"
 
@@ -1353,7 +1353,7 @@ msgstr ""
 msgid "Courier"
 msgstr "Kurjeris"
 
-#: montonio.php:362
+#: montonio.php:370
 msgid "How to activate Montonio payment methods"
 msgstr "Kaip aktyvuoti Montonio mokėjimo metodus?"
 
@@ -1615,11 +1615,11 @@ msgstr ""
 msgid "%1$s API keys missing. Please <a href=\"%2$s\">add API keys here</a> to enable this payment method."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:346
+#: includes/admin/class-wc-montonio-admin-settings-page.php:358
 msgid "Return to payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:353
+#: includes/admin/class-wc-montonio-admin-settings-page.php:365
 msgid "Montonio logo"
 msgstr ""
 
@@ -1639,7 +1639,7 @@ msgstr ""
 msgid "API response: "
 msgstr ""
 
-#: includes/admin/class-wc-montonio-data-sync.php:118
+#: includes/admin/class-wc-montonio-data-sync.php:119
 msgid "Empty response from API."
 msgstr ""
 
@@ -1657,7 +1657,7 @@ msgstr ""
 msgid "Payment method sync failed: "
 msgstr ""
 
-#: includes/admin/class-wc-montonio-data-sync.php:109
+#: includes/admin/class-wc-montonio-data-sync.php:110
 msgid "API keys not configured."
 msgstr ""
 
@@ -1815,6 +1815,7 @@ msgstr ""
 msgid "Session expired. Please reload the page."
 msgstr ""
 
+#: includes/admin/class-wc-montonio-data-sync.php:146
 #: includes/shipping/class-wc-montonio-shipping-route-setup.php:209
 #: includes/shipping/class-wc-montonio-shipping-route-setup.php:244
 msgid "Permission denied."
@@ -1895,7 +1896,7 @@ msgstr ""
 msgid "Automatically create shipping zones and methods based on your active carriers with Montonio contracts."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:280
+#: includes/admin/class-wc-montonio-admin-settings-page.php:283
 msgid "Open Store in Montonio Partner System"
 msgstr ""
 
@@ -2113,30 +2114,30 @@ msgstr ""
 msgid "Main Settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:281
+#: includes/admin/class-wc-montonio-admin-settings-page.php:285
 msgid "Connected"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:286
+#: includes/admin/class-wc-montonio-admin-settings-page.php:298
 msgid "Disconnect"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:313
+#: includes/admin/class-wc-montonio-admin-settings-page.php:325
 msgid "Test mode enabled!"
 msgstr ""
 
 #. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:335
+#: includes/admin/class-wc-montonio-admin-settings-page.php:347
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating payment methods</a>"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:189
-#: montonio.php:345
+#: montonio.php:353
 msgid "Connect your store"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:190
-#: montonio.php:349
+#: montonio.php:357
 msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
 msgstr ""
 
@@ -2212,6 +2213,52 @@ msgstr ""
 msgid "Live Secret Key is not valid."
 msgstr ""
 
-#: montonio.php:352
+#: montonio.php:360
 msgid "Go to account settings"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-data-sync.php:159
+msgid "Another sync is already in progress. Please try again in a moment."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/admin/class-wc-montonio-data-sync.php:171
+msgid "Payment method sync failed: %s"
+msgstr ""
+
+#. translators: %s: error message
+#: includes/admin/class-wc-montonio-data-sync.php:187
+msgid "Shipping sync failed: %s"
+msgstr ""
+
+#: montonio.php:269
+msgid "Payment methods and shipping data synced successfully."
+msgstr ""
+
+#: montonio.php:270
+msgid "Payment methods synced successfully."
+msgstr ""
+
+#: montonio.php:271
+msgid "Resync failed. Please try again or check the Montonio log."
+msgstr ""
+
+#: montonio.php:272
+msgid "Your session has expired. Please reload the page and try again."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:295
+msgid "Resync store data from Montonio (payment methods, shipping carriers and store details)"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:296
+msgid "Resync store data from Montonio"
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:298
+msgid "Remove API keys and disconnect this store from Montonio"
+msgstr ""
+
+#: montonio.php:268
+msgid "Syncing data, this may take some time..."
 msgstr ""

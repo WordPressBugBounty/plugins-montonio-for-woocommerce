@@ -270,24 +270,36 @@ class WC_Montonio_Admin_Settings_Page {
     public static function render_api_status_banner( $id = null ) {
         ?>
         <?php if ( WC_Montonio_Helper::has_api_keys() ) : ?>
-            <div class="montonio-card montonio-card--api-status">
+            <div class="montonio-card montonio-card--store-info">
                 <div class="montonio-card__body">
-                        <?php $store_details = WC_Montonio_Helper::get_store_details(); ?>
-                        <?php if ( ! empty( $store_details ) ): ?>
-                            <div class="montonio-store-details">
-                                <div>
-                                    <div class="store-name-container">
-                                        <a href="https://partner.montonio.com/stores/<?php echo esc_attr( $store_details['uuid'] ); ?>" class="store-name" target="_blank" title="<?php esc_html_e( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"><?php echo esc_html( $store_details['name'] ); ?></a>
-                                        <span class="montonio-badge montonio-badge--success"><?php esc_html_e( 'Connected', 'montonio-for-woocommerce' ); ?></span>
-                                     </div>
-                                    <div class="store-uuid">UUID: <?php echo esc_attr( $store_details['uuid'] ); ?></div>
+                    <?php $store_details = WC_Montonio_Helper::get_store_details(); ?>
+                    <?php if ( ! empty( $store_details ) ): ?>
+                        <div class="montonio-connected-store">
+                            <div class="montonio-connected-store__info">
+                                <div class="montonio-connected-store__header">
+                                    <a href="https://partner.montonio.com/stores/<?php echo esc_attr( $store_details['uuid'] ); ?>"
+                                    class="montonio-connected-store__name"
+                                    target="_blank"
+                                    title="<?php esc_html_e( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"
+                                    ><?php echo esc_html( $store_details['name'] ); ?></a>
+                                    <span class="montonio-badge montonio-badge--success"><?php esc_html_e( 'Connected', 'montonio-for-woocommerce' ); ?></span>
                                 </div>
-                                <div>
-                                    <a href="<?php echo esc_url( Montonio_Connection::get_disconnect_url() ); ?>" class="montonio-button montonio-button--secondary"><?php esc_html_e( 'Disconnect', 'montonio-for-woocommerce' ); ?></a>
-                                </div>
+                                <div class="montonio-connected-store__uuid">UUID: <?php echo esc_attr( $store_details['uuid'] ); ?></div>
                             </div>
-                        <?php endif; ?>
-                    
+                            <div class="montonio-connected-store__actions">
+                                <button
+                                    type="button"
+                                    class="montonio-button montonio-button--secondary montonio-has-tooltip"
+                                    id="montonio-resync-btn"
+                                    data-nonce="<?php echo esc_attr( wp_create_nonce( 'montonio_resync_data' ) ); ?>"
+                                    data-tooltip="<?php esc_attr_e( 'Resync store data from Montonio (payment methods, shipping carriers and store details)', 'montonio-for-woocommerce' ); ?>"
+                                    aria-label="<?php esc_attr_e( 'Resync store data from Montonio', 'montonio-for-woocommerce' ); ?>"
+                                ><span class="montonio-button__icon" style="--icon-url: url('<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/refresh.svg'); ?>');"></span></button>
+                                <a href="<?php echo esc_url( Montonio_Connection::get_disconnect_url() ); ?>" class="montonio-button montonio-button--secondary montonio-button--disconnect montonio-has-tooltip" data-tooltip="<?php esc_attr_e( 'Remove API keys and disconnect this store from Montonio', 'montonio-for-woocommerce' ); ?>"><?php esc_html_e( 'Disconnect', 'montonio-for-woocommerce' ); ?></a>
+                            </div>
+                        </div>
+                        <div class="montonio-resync-status" id="montonio-resync-status" role="status" aria-live="polite" style="display:none;"></div>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>

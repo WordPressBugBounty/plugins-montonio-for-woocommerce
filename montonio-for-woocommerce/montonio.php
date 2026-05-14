@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.1.0
+ * Version:           10.1.1
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -13,12 +13,12 @@
  *
  * Requires Plugins: woocommerce
  * WC requires at least: 4.0.0
- * WC tested up to: 10.6.2
+ * WC tested up to: 10.7.0
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.1.0' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.1.1' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -263,6 +263,14 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'wc-montonio-shipping-shipment-manager', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-shipment-manager.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'wc-montonio-shipping-label-printing', WC_MONTONIO_PLUGIN_URL . '/assets/js/wc-montonio-shipping-label-printing.js', array( 'jquery', 'wp-i18n' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-admin-shipping-setup', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-admin-shipping-setup.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
+
+            wp_localize_script( 'montonio-admin-script', 'montonioAdminI18n', array(
+                'syncing'              => __( 'Syncing data, this may take some time...', 'montonio-for-woocommerce' ),
+                'successAll'           => __( 'Payment methods and shipping data synced successfully.', 'montonio-for-woocommerce' ),
+                'successPaymentsOnly'  => __( 'Payment methods synced successfully.', 'montonio-for-woocommerce' ),
+                'errorGeneric'         => __( 'Resync failed. Please try again or check the Montonio log.', 'montonio-for-woocommerce' ),
+                'errorAuth'            => __( 'Your session has expired. Please reload the page and try again.', 'montonio-for-woocommerce' )
+            ) );
 
             wp_enqueue_style( 'montonio-admin-style' );
             wp_enqueue_script( 'montonio-admin-script' );

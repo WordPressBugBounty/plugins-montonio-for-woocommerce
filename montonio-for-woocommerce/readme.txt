@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.1.0
+Version: 10.1.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 10.1.0
+Stable tag: 10.1.1
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,10 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.1.1 =
+* Added – Resync Data button on the Main settings page to manually refresh payment methods, shipping methods and pickup points from Montonio
+* Fix – Payment method sync is now re-enabled after Main settings are saved
+
 = 10.1.0 =
 * Added – Connect button to link the store to a Montonio account directly from the Partner System
 * Fix – Validation compatibility issue with WooCommerce Local Pickup

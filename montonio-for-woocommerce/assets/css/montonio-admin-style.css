@@ -3,6 +3,53 @@
   src: url("../fonts/Satoshi-Variable.woff2") format("woff2") tech("variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2 supports variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2-variations"), url("../fonts/Satoshi-Variable.woff2") format("woff2");
   font-weight: 300 900;
 }
+.montonio-has-tooltip {
+  position: relative;
+}
+.montonio-has-tooltip::after, .montonio-has-tooltip::before {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease-out, visibility 0s linear 0.12s;
+}
+.montonio-has-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1B1B1B;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  width: -moz-max-content;
+  width: max-content;
+  max-width: 260px;
+  white-space: normal;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.montonio-has-tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% - 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1B1B1B;
+  z-index: 10000;
+}
+.montonio-has-tooltip:hover::after, .montonio-has-tooltip:hover::before, .montonio-has-tooltip:focus-visible::after, .montonio-has-tooltip:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
 @keyframes montonio-spinner {
   0% {
     transform: rotate(-43deg);
@@ -43,9 +90,25 @@
   outline: 2px solid #5c14eb;
   outline-offset: 2px;
 }
-.montonio-button:disabled, .montonio-button[disabled] {
-  background: #F8F6F4;
-  color: #94A3B8 !important;
+.montonio-button__icon {
+  width: 20px;
+  height: 20px;
+  padding: 2px 0;
+}
+.montonio-button__icon::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  mask-image: var(--icon-url);
+  -webkit-mask-image: var(--icon-url);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: currentColor;
 }
 .montonio-button--secondary {
   background: #fff;
@@ -95,6 +158,11 @@
 .montonio-button--transparent:focus {
   background: rgba(27, 5, 71, 0.8);
 }
+.montonio-button--disconnect:hover {
+  background: #E9283F;
+  border-color: #E9283F;
+  color: #fff !important;
+}
 .montonio-button--sm {
   padding: 4px 12px;
 }
@@ -105,6 +173,11 @@
 }
 .montonio-button--lg .montonio-button--secondary {
   padding: 14px 23px;
+}
+.montonio-button:disabled, .montonio-button[disabled] {
+  background: #F8F6F4 !important;
+  color: #94A3B8 !important;
+  border-color: #E2E8F0 !important;
 }
 
 .montonio-notice {
@@ -413,7 +486,7 @@
 .montonio-options .montonio-card__body p {
   margin: 0;
 }
-.montonio-options .montonio-card--api-status {
+.montonio-options .montonio-card--store-info {
   background: #FCFBFB;
 }
 .montonio-options .montonio-card--icon {
@@ -774,17 +847,17 @@
 .montonio-options .api-keys__manual-field input {
   width: 100%;
 }
-.montonio-options .montonio-store-details {
+.montonio-options .montonio-connected-store {
   font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.montonio-options .montonio-store-details .store-name-container {
+.montonio-options .montonio-connected-store__header {
   display: flex;
   align-items: center;
 }
-.montonio-options .montonio-store-details .store-name {
+.montonio-options .montonio-connected-store__name {
   font-size: 17px;
   line-height: 23px;
   color: #1B1B1B !important;
@@ -792,15 +865,19 @@
   text-decoration: none;
   letter-spacing: -2%;
 }
-.montonio-options .montonio-store-details .store-name:hover {
+.montonio-options .montonio-connected-store__name:hover {
   color: #5c14eb;
 }
-.montonio-options .montonio-store-details .store-uuid {
+.montonio-options .montonio-connected-store__uuid {
   margin-top: 8px;
   font-size: 13px;
   line-height: 1;
   font-weight: 500;
   color: #7C7C7B;
+}
+.montonio-options .montonio-connected-store__actions {
+  display: flex;
+  gap: 8px;
 }
 .montonio-options .submit {
   margin-bottom: 0;
@@ -1080,10 +1157,12 @@ label[for*=montonio_shipping_sender]::after {
   align-items: center;
   gap: 10px;
   vertical-align: middle;
-  margin-left: 8px;
+  margin-left: 10px;
   padding: 8px 15px 8px 10px;
   background: #fff;
-  color: #260071;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1B1B1B;
   border-radius: 5px;
 }
 .montonio-options-loader::before {
@@ -1096,6 +1175,56 @@ label[for*=montonio_shipping_sender]::after {
   background-repeat: no-repeat;
   animation: montonio-spinner 1s infinite cubic-bezier(0.65, 0.05, 0.36, 0.95);
   transform: rotate(-43deg);
+}
+
+.montonio-resync-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F8F6F4;
+  margin-top: 20px;
+  padding: 16px 24px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.montonio-resync-status::before {
+  content: "";
+  display: none;
+  width: 20px;
+  height: 20px;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+.montonio-resync-status.is-success {
+  background: #EDFBEC;
+  color: #098F04;
+}
+.montonio-resync-status.is-success::before {
+  display: inline-block;
+  mask-image: url("../images/check-circle-broken.svg");
+  -webkit-mask-image: url("../images/check-circle-broken.svg");
+}
+.montonio-resync-status.is-error {
+  background: #FFEBEB;
+  color: #CE0920;
+}
+.montonio-resync-status.is-error::before {
+  display: inline-block;
+  mask-image: url("../images/alert-octagon.svg");
+  -webkit-mask-image: url("../images/alert-octagon.svg");
+}
+.montonio-resync-status .montonio-options-loader {
+  background: none;
+  color: inherit;
+  padding: 0;
+  margin: 0;
 }
 
 .montonio-shipping-panel__status {

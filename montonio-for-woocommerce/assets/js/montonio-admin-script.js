@@ -37,7 +37,7 @@
             $(this).css('pointer-events', 'none');
 
             if ($('#montonio_shipping_enabled').is(':checked')) {
-                $(this).after('<div class="montonio-options-loader">Syncing pickup points, please wait!</div>');
+                $(this).after('<div class="montonio-options-loader">' + montonioAdminI18n.syncing + '</div>');
             }
         });
     }
@@ -197,5 +197,59 @@
         $('.wc-montonio-dynamic-rate-markup').on('input', function () {
             updateMarkupHint($(this));
         });
+    });
+
+    // Resync Data button on the API status banner.
+    $(document).on('click', '#montonio-resync-btn', function (e) {
+        e.preventDefault();
+
+        var $btn    = $(this);
+        var $status = $('#montonio-resync-status');
+        var nonce   = $btn.data('nonce');
+
+        if ($btn.prop('disabled')) {
+            return;
+        }
+
+        // Lock the button before any DOM work or network call, so a second
+        // click during the (very brief) setup window can't queue another sync.
+        $btn.prop('disabled', true);
+
+        // Show the spinner inside the status container, so it doesn't
+        // displace the Disconnect button next to Resync, and so the spinner
+        // and the eventual success/error message share a single home.
+        $status
+            .removeClass('is-success is-error')
+            .html('<div class="montonio-options-loader">' + montonioAdminI18n.syncing + '</div>')
+            .show();
+
+        $.post(ajaxurl, {
+            action: 'montonio_resync_data',
+            nonce: nonce
+        })
+            .done(function (response) {
+                if (response && response.success) {
+                    var shippingState = (response.data && response.data.shipping) || 'skipped';
+                    var msg = shippingState === 'skipped'
+                        ? montonioAdminI18n.successPaymentsOnly
+                        : montonioAdminI18n.successAll;
+                    $status.addClass('is-success').text(msg);
+                } else {
+                    var errMsg = (response && response.data && response.data.message)
+                        ? response.data.message
+                        : montonioAdminI18n.errorGeneric;
+                    $status.addClass('is-error').text(errMsg);
+                }
+            })
+            .fail(function (xhr) {
+                var errMsg = montonioAdminI18n.errorGeneric;
+                if (xhr && xhr.status === 403) {
+                    errMsg = montonioAdminI18n.errorAuth;
+                }
+                $status.addClass('is-error').text(errMsg);
+            })
+            .always(function () {
+                $btn.prop('disabled', false);
+            });
     });
 })(jQuery);
