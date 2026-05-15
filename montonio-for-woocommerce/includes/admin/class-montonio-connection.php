@@ -337,10 +337,17 @@ class Montonio_Connection {
 
         update_option( self::SETTINGS_OPTION, $settings );
 
+        $sync_failed = false;
         try {
             WC_Montonio_Data_Sync::sync_payment_methods();
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Payment method sync after connection failed: ' . $e->getMessage() );
+            $sync_failed = true;
+        }
+
+        do_action( 'montonio_send_telemetry_data' );
+
+        if ( $sync_failed ) {
             return 'sync_failed';
         }
 
