@@ -2098,7 +2098,7 @@ msgstr ""
 msgid "Your store has been connected to Montonio, but we could not refresh the available payment methods."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:163
+#: includes/admin/class-montonio-connection.php:171
 msgid "You do not have permission to disconnect this Montonio account."
 msgstr ""
 

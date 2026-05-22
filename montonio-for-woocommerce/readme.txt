@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.1.2
+Version: 10.1.3
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 10.1.2
+Stable tag: 10.1.3
 Requires PHP: 7.0
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,9 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.1.3 =
+* Tweak – Added state parameter to the Partner System connect flow
+
 = 10.1.2 =
 * Fix – Telemetry data is now sent immediately after connecting the store via the Partner System
 
