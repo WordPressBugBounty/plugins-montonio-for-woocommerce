@@ -23,6 +23,12 @@ class Montonio_Connection {
     const SETTINGS_OPTION = 'woocommerce_wc_montonio_api_settings';
 
     /**
+     * wp_options key that stores the OAuth state value for an in-flight
+     * connect flow. A single global key is used.
+     */
+    const STATE_OPTION = 'montonio_connection_state';
+
+    /**
      * Register the callback and disconnect endpoints.
      *
      * @since 10.1.0
@@ -126,11 +132,7 @@ class Montonio_Connection {
         );
 
         $state = bin2hex( random_bytes( 16 ) );
-        update_option(
-            self::state_option_key(),
-            $state,
-            false
-        );
+        update_option( self::STATE_OPTION, $state, false );
 
         $query = http_build_query( array(
             'action'      => 'connect-plugin',
@@ -208,31 +210,26 @@ class Montonio_Connection {
             return;
         }
 
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            WC_Montonio_Logger::log( 'Connection callback rejected: insufficient capability.' );
-            wp_die(
-                esc_html__( 'Sorry, you are not allowed to access this page.' ),
-                '',
-                array( 'response' => 403 )
-            );
-        }
-
         $cancelled       = sanitize_text_field( wp_unslash( $_POST['cancelled'] ?? '' ) );
         $connection_uuid = sanitize_text_field( wp_unslash( $_POST['connectionUuid'] ?? '' ) );
         $one_time_code   = sanitize_text_field( wp_unslash( $_POST['oneTimeCode'] ?? '' ) );
         $state           = sanitize_text_field( wp_unslash( $_POST['state'] ?? '' ) );
 
-        $stored_state = get_option( self::state_option_key() );
-        if ( false === $stored_state || ! is_string( $stored_state ) || '' === $state || ! hash_equals( $stored_state, $state ) ) {
-            WC_Montonio_Logger::log( 'Connection callback rejected: state mismatch or missing stored state.' );
+        $stored_state = (string) get_option( self::STATE_OPTION, '' );
+        if ( '' === $state || ! hash_equals( $stored_state, $state ) ) {
+            WC_Montonio_Logger::log( sprintf(
+                'Connection callback rejected: state mismatch or missing stored state. Received: "%s", stored: "%s".',
+                $state,
+                $stored_state
+            ) );
             // Clean up whatever may be there so a fresh flow starts cleanly.
-            delete_option( self::state_option_key() );
+            delete_option( self::STATE_OPTION );
             self::redirect_to_settings( 'invalid_request' );
             return;
         }
 
         // State validated; consume it.
-        delete_option( self::state_option_key() );
+        delete_option( self::STATE_OPTION );
 
         if ( 'true' === $cancelled ) {
             self::redirect_to_settings( 'cancelled' );
@@ -271,18 +268,6 @@ class Montonio_Connection {
         }
 
         self::redirect_to_settings( $result );
-    }
-
-    /**
-     * Build the per-user wp_options key that stores the OAuth state value
-     * for an in-flight connect flow. Single source of truth for the four
-     * call sites that read / write / consume it.
-     *
-     * @since 10.1.3
-     * @return string
-     */
-    private static function state_option_key() {
-        return 'montonio_connection_state_' . get_current_user_id();
     }
 
     /**

@@ -2057,43 +2057,43 @@ msgstr ""
 msgid "Route setup is already in progress. Please wait and try again."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:65
+#: includes/admin/class-montonio-connection.php:71
 msgid "Your store has been connected to Montonio successfully."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:69
+#: includes/admin/class-montonio-connection.php:75
 msgid "Your store has been connected to Montonio in sandbox mode. Live API keys will be issued once Montonio approves your store."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:73
+#: includes/admin/class-montonio-connection.php:79
 msgid "Your Montonio account has been disconnected."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:77
+#: includes/admin/class-montonio-connection.php:83
 msgid "Montonio connection was cancelled."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:81
+#: includes/admin/class-montonio-connection.php:87
 msgid "The Montonio connection link has expired. Please try connecting again."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:85
+#: includes/admin/class-montonio-connection.php:91
 msgid "Failed to activate the Montonio connection. Please try again or contact Montonio support."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:89
+#: includes/admin/class-montonio-connection.php:95
 msgid "The Montonio connection request was invalid. Please try again."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:93
+#: includes/admin/class-montonio-connection.php:99
 msgid "Montonio returned no usable API keys for this store. Please try connecting again or contact Montonio support."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:97
+#: includes/admin/class-montonio-connection.php:103
 msgid "Your store has been connected to Montonio, but we could not refresh the available payment methods."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:171
+#: includes/admin/class-montonio-connection.php:173
 msgid "You do not have permission to disconnect this Montonio account."
 msgstr ""
 

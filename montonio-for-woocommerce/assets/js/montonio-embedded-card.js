@@ -90,6 +90,17 @@ jQuery(document).ready(function($) {
 
     // Function to initialize Montonio checkout
     async function initializeMontonioCheckout(uuid) {
+        // WC fragment refresh replaces #montonio-card-form, detaching the prior
+        // iframe — tear down the previous SDK instance so its listeners don't leak.
+        if (montonioCheckout) {
+            try {
+                montonioCheckout.destroy();
+            } catch (e) {
+                console.error('Error destroying previous Montonio checkout instance', e);
+            }
+            montonioCheckout = null;
+        }
+
         const $submitBtn = form.find('button[type="submit"]');
         const $formSections = form.find('#customer_details, .shop_table');
      

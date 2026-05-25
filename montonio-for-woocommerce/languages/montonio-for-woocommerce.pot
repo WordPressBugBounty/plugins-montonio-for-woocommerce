@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 10.1.3\n"
+"Project-Id-Version: Montonio for WooCommerce 10.1.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-22T07:15:01+00:00\n"
+"POT-Creation-Date: 2026-05-25T14:22:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -110,43 +110,43 @@ msgstr ""
 msgid "Pay with your bank"
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:65
+#: includes/admin/class-montonio-connection.php:71
 msgid "Your store has been connected to Montonio successfully."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:69
+#: includes/admin/class-montonio-connection.php:75
 msgid "Your store has been connected to Montonio in sandbox mode. Live API keys will be issued once Montonio approves your store."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:73
+#: includes/admin/class-montonio-connection.php:79
 msgid "Your Montonio account has been disconnected."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:77
+#: includes/admin/class-montonio-connection.php:83
 msgid "Montonio connection was cancelled."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:81
+#: includes/admin/class-montonio-connection.php:87
 msgid "The Montonio connection link has expired. Please try connecting again."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:85
+#: includes/admin/class-montonio-connection.php:91
 msgid "Failed to activate the Montonio connection. Please try again or contact Montonio support."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:89
+#: includes/admin/class-montonio-connection.php:95
 msgid "The Montonio connection request was invalid. Please try again."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:93
+#: includes/admin/class-montonio-connection.php:99
 msgid "Montonio returned no usable API keys for this store. Please try connecting again or contact Montonio support."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:97
+#: includes/admin/class-montonio-connection.php:103
 msgid "Your store has been connected to Montonio, but we could not refresh the available payment methods."
 msgstr ""
 
-#: includes/admin/class-montonio-connection.php:171
+#: includes/admin/class-montonio-connection.php:173
 msgid "You do not have permission to disconnect this Montonio account."
 msgstr ""
 
