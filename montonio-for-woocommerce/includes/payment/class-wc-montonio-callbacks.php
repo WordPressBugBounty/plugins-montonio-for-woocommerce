@@ -273,7 +273,7 @@ class WC_Montonio_Callbacks {
         $payment_method        = sanitize_text_field( $decoded_token->paymentMethod );
         $payment_provider_name = self::resolve_payment_provider_name( $payment_method, $decoded_token );
 
-        $merchant_reference_type = WC_Montonio_Helper::get_api_settings()['merchant_reference_type'];
+        $merchant_reference_type = WC_Montonio_Helper::get_api_settings()['merchant_reference_type'] ?? 'order_id';
         $is_custom_ref = in_array( $merchant_reference_type, array( 'order_number', 'add_prefix' ), true );
 
         // Resolve via UUID immediately for custom reference types

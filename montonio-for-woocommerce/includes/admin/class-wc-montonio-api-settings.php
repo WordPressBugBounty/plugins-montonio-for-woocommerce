@@ -59,6 +59,7 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
                 'title'       => __( 'Merchant reference type', 'montonio-for-woocommerce' ),
                 'type'        => 'select',
                 'description' => __( '<strong>Use order ID:</strong> Uses the default WooCommere order ID.<br><br><strong>Use order number:</strong> Allows you to use a custom order number. This option is useful if you have a custom order numbering system in place.<br><br><strong>Add prefix:</strong> Allows you to add a custom prefix to the default order ID.', 'montonio-for-woocommerce' ),
+                'default'     => 'order_id',
                 'options'     => array(
                     'order_id'     => __( 'Use order ID', 'montonio-for-woocommerce' ),
                     'order_number' => __( 'Use order number', 'montonio-for-woocommerce' ),

@@ -88,14 +88,21 @@ class WC_Montonio_Shipping_Classic_Checkout {
             return;
         }
 
-        if ( 'default' === get_option( 'montonio_shipping_dropdown_type' ) || in_array( $carrier_code, array( 'inpost', 'orlen', 'novaPost' ) ) ) {
+        $dropdown_type      = get_option( 'montonio_shipping_dropdown_type' );
+        $is_legacy_dropdown = in_array( $dropdown_type, array( 'choices-js', 'select2' ), true );
+
+        if ( $is_legacy_dropdown && ! in_array( $carrier_code, array( 'inpost', 'orlen', 'novaPost' ) ) ) {
+            $shipping_method_items = WC_Montonio_Shipping_Helper::get_items_for_montonio_shipping_method( $carrier_code, $type );
+
+            if ( empty( $shipping_method_items ) ) {
+                return;
+            }
+
             wc_get_template(
-                'shipping-pickup-points-search.php',
+                'shipping-pickup-points-dropdown.php',
                 array(
-                    'carrier'   => $carrier_code,
-                    'type'      => $type,
-                    'operators' => $operators,
-                    'country'   => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
+                    'shipping_method'       => $shipping_method->id,
+                    'shipping_method_items' => $shipping_method_items
                 ),
                 '',
                 WC_MONTONIO_PLUGIN_PATH . '/templates/'
@@ -104,17 +111,13 @@ class WC_Montonio_Shipping_Classic_Checkout {
             return;
         }
 
-        $shipping_method_items = WC_Montonio_Shipping_Helper::get_items_for_montonio_shipping_method( $carrier_code, $type );
-
-        if ( empty( $shipping_method_items ) ) {
-            return;
-        }
-
         wc_get_template(
-            'shipping-pickup-points-dropdown.php',
+            'shipping-pickup-points-search.php',
             array(
-                'shipping_method'       => $shipping_method->id,
-                'shipping_method_items' => $shipping_method_items
+                'carrier'   => $carrier_code,
+                'type'      => $type,
+                'operators' => $operators,
+                'country'   => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
             ),
             '',
             WC_MONTONIO_PLUGIN_PATH . '/templates/'

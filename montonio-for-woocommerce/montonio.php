@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.1.4
+ * Version:           10.2.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -12,13 +12,14 @@
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  *
  * Requires Plugins: woocommerce
+ * Requires PHP: 7.2
  * WC requires at least: 4.0.0
- * WC tested up to: 10.7.0
+ * WC tested up to: 10.8.1
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.1.4' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.2.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -95,9 +96,12 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             update_option( 'wc_montonio_plugin_version', WC_MONTONIO_PLUGIN_VERSION );
 
-            // TODO: We should not rely on an external JWT library, but must definitely use our own.
             if ( ! class_exists( 'JWT' ) ) {
                 require_once WC_MONTONIO_PLUGIN_PATH . '/lib/jwt/JWT.php';
+            }
+
+            if ( ! class_exists( '\\MontonioJsonMachine\\Items' ) ) {
+                spl_autoload_register( require WC_MONTONIO_PLUGIN_PATH . '/lib/json-machine/autoloader.php' );
             }
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/lib/class-montonio-lock-manager.php';

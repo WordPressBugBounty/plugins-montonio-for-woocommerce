@@ -187,7 +187,7 @@ class WC_Montonio_Shipping {
                 }
 
                 wp_enqueue_script( 'montonio-shipping-pickup-points-legacy' );
-            } elseif ( 'choices' === get_option( 'montonio_shipping_dropdown_type' ) ) {
+            } elseif ( 'choices-js' === get_option( 'montonio_shipping_dropdown_type' ) ) {
                 wp_enqueue_script( 'montonio-shipping-pickup-points' );
             }
         }

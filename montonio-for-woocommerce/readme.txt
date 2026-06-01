@@ -1,12 +1,12 @@
 === Montonio for WooCommerce ===
-Version: 10.1.4
+Version: 10.2.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 10.1.4
-Requires PHP: 7.0
+Tested up to: 7.0
+Stable tag: 10.2.0
+Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
 License URL: http://www.gnu.org/licenses/gpl-3.0.html
@@ -136,6 +136,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.2.0 =
+* Tweak – Free shipping threshold now evaluates against the whole cart's total rather than per-package, fixing threshold detection for bundle-product plugins
+* Tweak – Pickup-point sync now streams carrier responses, reducing memory usage
+* Fix – Pickup-point selector now defaults to the search UI on classic checkout
+* Fix – Merchant reference type setting now defaults to "Order ID", avoiding an "Undefined array key" warning in the payment callback when the setting was never saved
+
 = 10.1.4 =
 * Fix – Embedded card payment SDK instances are now disposed of before re-initialization to prevent event listener leaks on checkout updates
 

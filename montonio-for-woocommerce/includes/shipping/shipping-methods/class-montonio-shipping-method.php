@@ -251,7 +251,6 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
 
         // Calculate the costs
         $cost             = $this->get_option( 'price' );
-        $cart_total       = $this->get_cart_total( $package );
         $package_item_qty = $this->get_package_item_qty( $package );
 
         if ( '' !== $cost ) {
@@ -300,7 +299,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             }
         }
 
-        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $package_item_qty, $package );
 
         $this->add_rate( $rate );
     }
@@ -308,16 +307,13 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     /**
      * Get the total cost of the cart including taxes.
      *
-     * @param array $package Package of items from cart.
+     * Reads cart-level totals rather than summing the shipping package, so the
+     * free shipping threshold reflects the whole cart's value.
+     *
      * @return float The total cost of the cart.
      */
-    protected function get_cart_total( $package ) {
-        $total = 0;
-        foreach ( $package['contents'] as $item_id => $values ) {
-            $total += $values['line_total'] + $values['line_tax'];
-        }
-
-        return (float) wc_format_decimal( $total, 2 );
+    protected function get_cart_total() {
+        return (float) wc_format_decimal( WC()->cart->get_cart_contents_total() + WC()->cart->get_cart_contents_tax(), 2 );
     }
 
     /**
@@ -366,13 +362,14 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      *
      * @since 9.2.0
      * @param float $current_cost The current shipping cost.
-     * @param float $cart_total The cart total.
      * @param int $package_item_qty The package item quantity.
      * @param array $package The shipping package (for coupon checking).
      * @return float The adjusted cost (0 if free shipping applies, original cost otherwise).
      */
-    protected function apply_free_shipping_rules( $current_cost, $cart_total, $package_item_qty, $package ) {
+    protected function apply_free_shipping_rules( $current_cost, $package_item_qty, $package ) {
         if ( 'yes' === $this->get_option( 'enableFreeShippingThreshold' ) ) {
+            $cart_total = $this->get_cart_total();
+
             // Exclude virtual products from cart total for free shipping threshold calculation
             if ( 'yes' === $this->get_option( 'excludeVirtualFromThreshold' ) ) {
                 $virtual_total = 0;

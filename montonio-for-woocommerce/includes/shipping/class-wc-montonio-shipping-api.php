@@ -104,6 +104,69 @@ class WC_Montonio_Shipping_API {
     }
 
     /**
+     * Download pickup points to a temporary file. Used by the sync to avoid
+     * loading the full response into memory — some carriers (notably DPD) return
+     * tens of MB which expands to hundreds of MB once decoded into a PHP array.
+     *
+     * Caller is responsible for `unlink()`-ing the returned file.
+     *
+     * @since 10.1.5
+     * @param string $carrier Carrier code
+     * @param string $country Country code (ISO 3166-1 alpha-2)
+     * @return string Absolute path to the temp file containing the JSON body
+     * @throws Exception On HTTP error or non-2xx response
+     */
+    public function download_pickup_points( $carrier = null, $country = null ) {
+        $path         = '/v3/shipping-methods/pickup-points';
+        $query_params = array();
+
+        if ( ! empty( $carrier ) ) {
+            $query_params['carrierCode'] = $carrier;
+        }
+
+        if ( ! empty( $country ) ) {
+            $query_params['countryCode'] = $country;
+        }
+
+        if ( ! empty( $query_params ) ) {
+            $path = add_query_arg( $query_params, $path );
+        }
+
+        $tmp = tempnam( get_temp_dir(), 'montonio-pickup-points-' );
+        if ( false === $tmp ) {
+            throw new Exception( 'Failed to create temp file for pickup points download.' );
+        }
+
+        $args = array(
+            'headers'  => array(
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . WC_Montonio_Helper::create_jwt_token()
+            ),
+            'method'   => 'GET',
+            'timeout'  => 60,
+            'stream'   => true,
+            'filename' => $tmp,
+        );
+
+        $url      = trailingslashit( apply_filters( 'wc_montonio_shipping_request_url', $this->get_api_url() ) ) . ltrim( $path, '/' );
+        $response = wp_remote_request( $url, $args );
+
+        if ( is_wp_error( $response ) ) {
+            @unlink( $tmp );
+            throw new Exception( $response->get_error_message() );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( ! in_array( $code, array( 200, 201 ), true ) ) {
+            $body = file_get_contents( $tmp );
+            @unlink( $tmp );
+            throw new Exception( is_string( $body ) ? $body : 'HTTP ' . $code );
+        }
+
+        return $tmp;
+    }
+
+    /**
      * Get courier services
      *
      * @since 7.0.0

@@ -132,7 +132,7 @@ class Montonio_OTA_Updates {
             'montonio_shipping_dropdown_type'           => array(
                 'description'       => __( 'Dropdown type for Montonio Shipping', 'montonio-for-woocommerce' ),
                 'type'              => 'string',
-                'enum'              => array( 'default', 'select2', 'choices' ),
+                'enum'              => array( 'default', 'select2', 'choices-js' ),
                 'sanitize_callback' => 'sanitize_text_field'
             ),
             'woocommerce_wc_montonio_api_settings'      => array(

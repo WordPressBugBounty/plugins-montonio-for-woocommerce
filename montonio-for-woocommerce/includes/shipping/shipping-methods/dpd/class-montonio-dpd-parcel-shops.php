@@ -59,7 +59,6 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
 
         // Calculate the costs
         $flat_rate_cost   = $this->get_option( 'price' );
-        $cart_total       = $this->get_cart_total( $package );
         $package_item_qty = $this->get_package_item_qty( $package );
         $parcels          = $this->get_parcels_with_item_dimensions( $package );
 
@@ -77,7 +76,7 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
 
                 // Set cost
                 $rate['cost'] = $this->apply_dynamic_rate_markup( $carrier_rate['rate'] );
-                $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+                $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $package_item_qty, $package );
 
                 // Add the shipping rate
                 $this->add_rate( $rate );
@@ -133,7 +132,7 @@ class Montonio_DPD_Parcel_Shops extends Montonio_Shipping_Method {
             }
         }
 
-        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+        $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $package_item_qty, $package );
 
         $this->add_rate( $rate );
     }

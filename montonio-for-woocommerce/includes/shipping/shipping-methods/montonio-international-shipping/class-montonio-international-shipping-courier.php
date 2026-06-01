@@ -61,7 +61,6 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
         );
 
         $flat_rate_cost   = $this->get_option( 'flat_rate_cost' );
-        $cart_total       = $this->get_cart_total( $package );
         $package_item_qty = $this->get_package_item_qty( $package );
         $parcels          = $this->get_parcels_with_item_dimensions( $package );
         $labels           = array(
@@ -95,7 +94,7 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
                 $rate['cost'] = $this->apply_dynamic_rate_markup( $carrier_rate['rate'] );
             }
 
-            $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $cart_total, $package_item_qty, $package );
+            $rate['cost'] = $this->apply_free_shipping_rules( $rate['cost'], $package_item_qty, $package );
 
             // Update meta data
             $rate['meta_data'] = array(

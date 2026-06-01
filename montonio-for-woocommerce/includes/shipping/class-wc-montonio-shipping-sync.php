@@ -127,7 +127,7 @@ class WC_Montonio_Shipping_Sync {
                         if ( 'courier' === $method['type'] ) {
                             if ( false === $courier_services_synced ) {
                                 $courier_services_synced = true;
-                                self::import_shipping_items_to_temp( 'courier' );
+                                self::import_courier_services_to_temp();
                             }
                             continue;
                         }
@@ -137,7 +137,7 @@ class WC_Montonio_Shipping_Sync {
                         }
 
                         $pickup_point_carriers[] = $carrier_code;
-                        self::import_shipping_items_to_temp( 'pickupPoints', $carrier_code );
+                        self::import_pickup_points_to_temp( $carrier_code );
                     }
                 }
             }
@@ -221,91 +221,146 @@ class WC_Montonio_Shipping_Sync {
     }
 
     /**
-     * Fetch items from Montonio API and insert into the temp table.
+     * Fetch courier services from the Montonio API and insert into the temp table.
      *
-     * @param string      $type    'courier' or 'pickupPoints'
      * @param string|null $carrier Carrier code
      * @param string|null $country Country code (ISO 3166-1 alpha-2)
      * @return void
      */
-    private static function import_shipping_items_to_temp( $type, $carrier = null, $country = null ) {
-        $api = new WC_Montonio_Shipping_API();
-
-        if ( $type === 'courier' ) {
-            $response = $api->get_courier_services( $carrier, $country );
-            $data_key = 'courierServices';
-        } else {
-            $response = $api->get_pickup_points( $carrier, $country );
-            $data_key = 'pickupPoints';
-        }
+    private static function import_courier_services_to_temp( $carrier = null, $country = null ) {
+        $api      = new WC_Montonio_Shipping_API();
+        $response = $api->get_courier_services( $carrier, $country );
 
         if ( empty( $response ) ) {
             return;
         }
 
         $data = json_decode( $response, true );
+        unset( $response );
 
-        if ( empty( $data[$data_key] ) ) {
+        if ( empty( $data['courierServices'] ) ) {
             return;
         }
 
-        $items = $data[$data_key];
-
-        if ( $type === 'courier' ) {
-            $items = array_filter( $items, function ( $item ) {
-                return ! isset( $item['b2bOnly'] ) || $item['b2bOnly'] === false;
-            } );
-        }
+        $items = array_filter( $data['courierServices'], function ( $item ) {
+            return ! isset( $item['b2bOnly'] ) || $item['b2bOnly'] === false;
+        } );
+        unset( $data );
 
         if ( ! empty( $items ) ) {
-            self::bulk_insert_into_temp_table( $items, $type );
+            self::bulk_insert_into_temp_table( $items, 'courier' );
+        }
+    }
+
+    /**
+     * Stream pickup points from the Montonio API into the temp table.
+     *
+     * The response is downloaded to a temp file and parsed via json-machine so peak
+     * memory stays a few MB regardless of carrier size. On malformed or empty 
+     * payloads we swallow the parser exception so a single misbehaving carrier
+     * doesn't poison the whole sync.
+     *
+     * @param string|null $carrier Carrier code
+     * @param string|null $country Country code (ISO 3166-1 alpha-2)
+     * @return void
+     */
+    private static function import_pickup_points_to_temp( $carrier = null, $country = null ) {
+        $api = new WC_Montonio_Shipping_API();
+        $tmp = $api->download_pickup_points( $carrier, $country );
+
+        try {
+            $items = \MontonioJsonMachine\Items::fromFile( $tmp, array(
+                'pointer' => '/pickupPoints',
+                'decoder' => new \MontonioJsonMachine\JsonDecoder\ExtJsonDecoder( true ),
+            ) );
+            self::bulk_insert_into_temp_table( $items, 'pickupPoints' );
+        } catch ( \MontonioJsonMachine\Exception\PathNotFoundException $e ) {
+            // Well-formed JSON but no `pickupPoints` key — anomalous (contract mismatch).
+            WC_Montonio_Logger::log( sprintf(
+                'Pickup points sync: response for carrier %s has no `pickupPoints` key, skipping.',
+                $carrier ?? 'all'
+            ) );
+        } catch ( \MontonioJsonMachine\Exception\SyntaxErrorException $e ) {
+            // Empty or non-JSON body — do nothing.
+            WC_Montonio_Logger::log( sprintf(
+                'Pickup points sync: unparseable response for carrier %s, skipping. %s',
+                $carrier ?? 'all',
+                $e->getMessage()
+            ) );
+        } finally {
+            @unlink( $tmp );
         }
     }
 
     /**
      * Batch insert items into the temp table.
      *
-     * @param array  $items Items to insert
-     * @param string $type  Method type
+     * Accepts any iterable so a streaming JSON parser can feed items lazily
+     * without materializing the whole list in memory.
+     *
+     * @param iterable $items Items to insert
+     * @param string   $type  Method type
      * @return void
      */
     private static function bulk_insert_into_temp_table( $items, $type ) {
         global $wpdb;
 
         $table_temp = "{$wpdb->prefix}montonio_shipping_method_items_temp";
-        $batches    = array_chunk( $items, 1000 );
+        $batch_size = 1000;
+        $batch      = array();
 
-        foreach ( $batches as $batch ) {
-            $placeholders = array();
-            $values       = array();
+        foreach ( $items as $item ) {
+            $batch[] = $item;
 
-            foreach ( $batch as $item ) {
-                $placeholders[] = '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)';
-
-                $additional_services = isset( $item['additionalServices'] ) && is_array( $item['additionalServices'] )
-                    ? json_encode( $item['additionalServices'] )
-                    : null;
-
-                $values = array_merge( $values, array(
-                    $item['id'] ?? '',
-                    $item['name'] ?? '',
-                    $item['type'] ?? '',
-                    $type,
-                    $item['streetAddress'] ?? '',
-                    $item['locality'] ?? '',
-                    $item['postalCode'] ?? '',
-                    $item['carrierCode'] ?? '',
-                    $item['countryCode'] ?? '',
-                    $item['carrierAssignedId'] ?? '',
-                    $additional_services
-                ) );
+            if ( count( $batch ) >= $batch_size ) {
+                self::insert_batch( $table_temp, $batch, $type );
+                $batch = array();
             }
-
-            $sql = "INSERT INTO {$table_temp}
-                (item_id, item_name, item_type, method_type, street_address, locality, postal_code, carrier_code, country_code, carrier_assigned_id, additional_services)
-                VALUES " . implode( ',', $placeholders );
-
-            $wpdb->query( $wpdb->prepare( $sql, $values ) );
         }
+
+        if ( ! empty( $batch ) ) {
+            self::insert_batch( $table_temp, $batch, $type );
+        }
+    }
+
+    /**
+     * Insert a single batch of items.
+     *
+     * @param string $table Table name
+     * @param array  $batch Items in this batch
+     * @param string $type  Method type
+     * @return void
+     */
+    private static function insert_batch( $table, $batch, $type ) {
+        global $wpdb;
+
+        $placeholders = array();
+        $values       = array();
+
+        foreach ( $batch as $item ) {
+            $placeholders[] = '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)';
+
+            $additional_services = isset( $item['additionalServices'] ) && is_array( $item['additionalServices'] )
+                ? wp_json_encode( $item['additionalServices'] )
+                : null;
+
+            $values[] = $item['id'] ?? '';
+            $values[] = $item['name'] ?? '';
+            $values[] = $item['type'] ?? '';
+            $values[] = $type;
+            $values[] = $item['streetAddress'] ?? '';
+            $values[] = $item['locality'] ?? '';
+            $values[] = $item['postalCode'] ?? '';
+            $values[] = $item['carrierCode'] ?? '';
+            $values[] = $item['countryCode'] ?? '';
+            $values[] = $item['carrierAssignedId'] ?? '';
+            $values[] = $additional_services;
+        }
+
+        $sql = "INSERT INTO {$table}
+            (item_id, item_name, item_type, method_type, street_address, locality, postal_code, carrier_code, country_code, carrier_assigned_id, additional_services)
+            VALUES " . implode( ',', $placeholders );
+
+        $wpdb->query( $wpdb->prepare( $sql, $values ) );
     }
 }

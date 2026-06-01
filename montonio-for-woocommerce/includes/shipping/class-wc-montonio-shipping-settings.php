@@ -179,7 +179,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'desc' => __( 'Choose the pickup point selection type used in the legacy checkout.', 'montonio-for-woocommerce' ),
                 'options' => array(
                     'default' => 'Default selector (recommended)',
-                    'choices' => 'Choices dropdown',
+                    'choices-js' => 'ChoicesJS dropdown',
                     'select2' => 'SelectWoo dropdown (legacy)'
                 ),
                 'id'      => 'montonio_shipping_dropdown_type'
