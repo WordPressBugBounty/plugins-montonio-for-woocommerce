@@ -21,13 +21,13 @@ msgstr ""
 msgid "Enable Montonio Card Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:283
-#: includes/admin/class-wc-montonio-api-settings.php:309
+#: includes/admin/class-wc-montonio-api-settings.php:284
+#: includes/admin/class-wc-montonio-api-settings.php:310
 msgid "Access Key"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:288
-#: includes/admin/class-wc-montonio-api-settings.php:314
+#: includes/admin/class-wc-montonio-api-settings.php:289
+#: includes/admin/class-wc-montonio-api-settings.php:315
 msgid "Secret Key"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr "Maksa krediit- või deebetkaardiga Montonio vahendusel."
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:206
+#: montonio.php:210
 msgid "Settings"
 msgstr ""
 
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Create a separate Montonio shipping label for each of these products"
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:148
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:151
 msgid "Please select a pickup point."
 msgstr "Palun vali pakipunkt."
 
@@ -502,12 +502,12 @@ msgstr ""
 msgid "Pickup point"
 msgstr "Pakipunkt"
 
-#: includes/admin/class-wc-montonio-api-settings.php:255
-#: includes/admin/class-wc-montonio-api-settings.php:272
+#: includes/admin/class-wc-montonio-api-settings.php:256
+#: includes/admin/class-wc-montonio-api-settings.php:273
 msgid "Live keys"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:297
+#: includes/admin/class-wc-montonio-api-settings.php:298
 msgid "Sandbox keys for testing"
 msgstr ""
 
@@ -523,19 +523,19 @@ msgstr ""
 msgid "<strong>Use order ID:</strong> Uses the default WooCommere order ID.<br><br><strong>Use order number:</strong> Allows you to use a custom order number. This option is useful if you have a custom order numbering system in place.<br><br><strong>Add prefix:</strong> Allows you to add a custom prefix to the default order ID."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:63
+#: includes/admin/class-wc-montonio-api-settings.php:64
 msgid "Use order ID"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:64
+#: includes/admin/class-wc-montonio-api-settings.php:65
 msgid "Use order number"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:65
+#: includes/admin/class-wc-montonio-api-settings.php:66
 msgid "Add custom prefix"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:69
+#: includes/admin/class-wc-montonio-api-settings.php:70
 msgid "Order ID prefix"
 msgstr ""
 
@@ -843,7 +843,7 @@ msgid "Montonio"
 msgstr ""
 
 #. translators: link to WooCommerce plugin page
-#: montonio.php:77
+#: montonio.php:78
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
@@ -917,7 +917,7 @@ msgstr "Pakiautomaatide laadimine..."
 msgid "Loading..."
 msgstr "Laadimine..."
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:155
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:158
 msgid "Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again."
 msgstr ""
 
@@ -1332,7 +1332,7 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:364
+#: montonio.php:368
 msgid "Need help?"
 msgstr "Vajad abi?"
 
@@ -1348,12 +1348,12 @@ msgstr ""
 msgid "When enabled, the free shipping threshold will be calculated using the cart total before any coupon codes are applied at checkout"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:68
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php:67
 #: templates/admin-order-shipping-panel.php:50
 msgid "Courier"
 msgstr "Kuller"
 
-#: montonio.php:370
+#: montonio.php:374
 msgid "How to activate Montonio payment methods"
 msgstr "Kuidas aktiveerida Montonio makselahendust"
 
@@ -1463,7 +1463,7 @@ msgstr ""
 msgid "Display \"Pay Later\" payment method when the cart total is more than the specified amount."
 msgstr ""
 
-#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:169
+#: includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php:172
 #: blocks/build/wc-montonio-shipping-dropdown/view.js:1
 msgid "Cash on Delivery is not available for the selected pickup point. Please choose a different pickup point or payment method."
 msgstr "Lunamaks ei ole valitud väljastuspunktis saadaval. Palun vali teine väljastuspunkt või makseviis."
@@ -1488,19 +1488,19 @@ msgstr ""
 msgid "Payment could not be completed. Please try again or choose a different payment method."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:618
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:615
 msgid "Length must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:635
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:632
 msgid "Width must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:652
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:649
 msgid "Height must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:669
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:666
 msgid "Weight must be a positive number."
 msgstr ""
 
@@ -1584,11 +1584,11 @@ msgid ""
 "            </ul>"
 msgstr ""
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:74
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:73
 msgid "Parcel lockers"
 msgstr "Pakiautomaadid"
 
-#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:75
+#: includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php:74
 msgid "Parcel shops"
 msgstr "Pakipunktid"
 
@@ -1623,19 +1623,19 @@ msgstr ""
 msgid "Montonio logo"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:364
+#: includes/admin/class-wc-montonio-api-settings.php:365
 msgid "Sandbox Access Key is not valid."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:365
+#: includes/admin/class-wc-montonio-api-settings.php:366
 msgid "Sandbox Secret Key is not valid."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:415
+#: includes/admin/class-wc-montonio-api-settings.php:416
 msgid "API credentials are invalid. Please check your Access Key and Secret Key."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:419
+#: includes/admin/class-wc-montonio-api-settings.php:420
 msgid "API response: "
 msgstr ""
 
@@ -1653,7 +1653,7 @@ msgstr ""
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:426
+#: includes/admin/class-wc-montonio-api-settings.php:427
 msgid "Payment method sync failed: "
 msgstr ""
 
@@ -2110,7 +2110,7 @@ msgid "Whether live API keys are available for this connection"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-admin-settings-page.php:155
-#: includes/admin/class-wc-montonio-api-settings.php:340
+#: includes/admin/class-wc-montonio-api-settings.php:341
 msgid "Main Settings"
 msgstr ""
 
@@ -2131,89 +2131,89 @@ msgstr ""
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating payment methods</a>"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:189
-#: montonio.php:353
+#: includes/admin/class-wc-montonio-api-settings.php:190
+#: montonio.php:357
 msgid "Connect your store"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:190
-#: montonio.php:357
+#: includes/admin/class-wc-montonio-api-settings.php:191
+#: montonio.php:361
 msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:199
+#: includes/admin/class-wc-montonio-api-settings.php:200
 msgid "Connect via Montonio account"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:200
+#: includes/admin/class-wc-montonio-api-settings.php:201
 msgid "Sign in to your Montonio Partner System and authorise this store. API keys are issued and configured automatically."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:202
+#: includes/admin/class-wc-montonio-api-settings.php:203
 msgid "Faster setup — get connected in minutes"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:203
+#: includes/admin/class-wc-montonio-api-settings.php:204
 msgid "Automatic API key management — no manual entry required"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:204
+#: includes/admin/class-wc-montonio-api-settings.php:205
 msgid "Secure authentication via Montonio Partner System"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:206
+#: includes/admin/class-wc-montonio-api-settings.php:207
 msgid "Connect Montonio account"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:210
+#: includes/admin/class-wc-montonio-api-settings.php:211
 msgid "Or"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:218
+#: includes/admin/class-wc-montonio-api-settings.php:219
 msgid "Enter API keys manually"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:219
+#: includes/admin/class-wc-montonio-api-settings.php:220
 msgid "For advanced setups — copy keys from the Montonio Partner System and paste them below."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:257
+#: includes/admin/class-wc-montonio-api-settings.php:258
 msgid "Pending approval"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:261
+#: includes/admin/class-wc-montonio-api-settings.php:262
 msgid "Your store is not yet approved by Montonio. Once the approval is complete, click the \"Reconnect\" button to receive your live API keys and start accepting real transactions."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:265
+#: includes/admin/class-wc-montonio-api-settings.php:266
 msgid "Reconnect"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:275
+#: includes/admin/class-wc-montonio-api-settings.php:276
 msgid "Issued by Montonio"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:279
+#: includes/admin/class-wc-montonio-api-settings.php:280
 msgid "These are your live API keys for processing real transactions."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:301
+#: includes/admin/class-wc-montonio-api-settings.php:302
 msgid "Test mode"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:305
+#: includes/admin/class-wc-montonio-api-settings.php:306
 msgid "These are your sandbox API keys for testing purposes."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:360
+#: includes/admin/class-wc-montonio-api-settings.php:361
 msgid "Live Access Key is not valid."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-api-settings.php:361
+#: includes/admin/class-wc-montonio-api-settings.php:362
 msgid "Live Secret Key is not valid."
 msgstr ""
 
-#: montonio.php:360
+#: montonio.php:364
 msgid "Go to account settings"
 msgstr ""
 
@@ -2231,19 +2231,19 @@ msgstr ""
 msgid "Shipping sync failed: %s"
 msgstr ""
 
-#: montonio.php:269
+#: montonio.php:273
 msgid "Payment methods and shipping data synced successfully."
 msgstr ""
 
-#: montonio.php:270
+#: montonio.php:274
 msgid "Payment methods synced successfully."
 msgstr ""
 
-#: montonio.php:271
+#: montonio.php:275
 msgid "Resync failed. Please try again or check the Montonio log."
 msgstr ""
 
-#: montonio.php:272
+#: montonio.php:276
 msgid "Your session has expired. Please reload the page and try again."
 msgstr ""
 
@@ -2259,6 +2259,6 @@ msgstr ""
 msgid "Remove API keys and disconnect this store from Montonio"
 msgstr ""
 
-#: montonio.php:268
+#: montonio.php:272
 msgid "Syncing data, this may take some time..."
 msgstr ""

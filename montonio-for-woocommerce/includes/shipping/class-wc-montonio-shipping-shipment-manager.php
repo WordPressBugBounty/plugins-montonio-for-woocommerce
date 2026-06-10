@@ -366,7 +366,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
             $width  = WC_Montonio_Helper::convert_to_meters( $dimensions['width'] );
             $height = WC_Montonio_Helper::convert_to_meters( $dimensions['height'] );
 
-            if ( $product->get_meta( '_montonio_separate_label' ) == 'yes' ) {
+            $parent_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
+            
+            if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_separate_label' ) ) {
                 for ( $i = 0; $i < $quantity; $i++ ) {
                     $parcels[] = array(
                         'weight' => $weight > 0 ? $weight : 1,
@@ -445,7 +447,13 @@ class WC_Montonio_Shipping_Shipment_Manager {
      */
     private static function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
         $shipping_method_id = $shipping_method->get_method_id();
-        $apply_fallback     = false;
+        $instance           = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
+
+        if ( ! $instance ) {
+            return $dimensions;
+        }
+
+        $apply_fallback = false;
 
         // International shipping - always apply fallback
         if ( strpos( $shipping_method_id, 'montonio_international_shipping' ) === 0 ) {
@@ -460,8 +468,6 @@ class WC_Montonio_Shipping_Shipment_Manager {
         );
 
         if ( in_array( $shipping_method_id, $dpd_methods, true ) ) {
-            $instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
-
             if ( 'dynamic' === $instance->get_option( 'pricing_type' ) ) {
                 $apply_fallback = true;
             }
@@ -470,8 +476,6 @@ class WC_Montonio_Shipping_Shipment_Manager {
         if ( ! $apply_fallback ) {
             return $dimensions;
         }
-
-        $instance = $instance ?? WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
 
         if ( empty( $dimensions['length'] ) || empty( $dimensions['width'] ) || empty( $dimensions['height'] ) ) {
             $dimensions['length'] = $instance->get_option( 'default_length', 0 );

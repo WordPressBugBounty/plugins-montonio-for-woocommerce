@@ -748,8 +748,10 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                 'weightUnit'    => 'kg'
             );
 
+            $parent_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
+
             // Check if product requires separate label
-            if ( 'yes' === get_post_meta( $item['product_id'], '_montonio_separate_label', true ) ) {
+            if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_separate_label' ) ) {
                 // Create separate parcel for each unit of this product
                 for ( $i = 0; $i < $item['quantity']; $i++ ) {
                     $parcels[] = array(

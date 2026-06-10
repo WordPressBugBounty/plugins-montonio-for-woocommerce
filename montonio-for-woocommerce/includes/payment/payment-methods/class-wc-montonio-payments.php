@@ -397,7 +397,7 @@ class WC_Montonio_Payments extends WC_Payment_Gateway {
                     'method'        => 'paymentInitiation',
                     'methodDisplay' => $this->get_title(),
                     'methodOptions' => array(
-                        'paymentReference'   => (string) apply_filters( 'wc_montonio_payment_reference', '', $this->id ),
+                        'paymentReference'   => (string) apply_filters( 'wc_montonio_payment_reference', '', $this->id, $order->get_id() ),
                         'paymentDescription' => (string) apply_filters( 'wc_montonio_payment_description', $this->get_payment_description( $order ), $order->get_id() ),
                         'preferredCountry'   => (string) $this->default_country
                     )
