@@ -27,7 +27,7 @@ class WC_Montonio_Banners {
      * @return void
      */
     public static function render_all_banners() {
-        //self::banner_jan_2026();
+        self::banner_jun_2026();
     }
 
     /**
@@ -74,6 +74,130 @@ class WC_Montonio_Banners {
         $montonio_banners = get_user_meta( get_current_user_id(), 'montonio_banners', true );
 
         return is_array( $montonio_banners ) && isset( $montonio_banners[$id] ) && 0 === $montonio_banners[$id];
+    }
+
+    /**
+     * Build the localized Montonio shipping landing page URL based on the admin locale.
+     *
+     * Falls back to the English page for any locale without a dedicated translation.
+     *
+     * @since 10.2.2
+     * @param string $utm_campaign The utm_campaign value to append.
+     * @return string The fully qualified, localized shipping URL.
+     */
+    private static function get_shipping_url( $utm_campaign ) {
+        // Locale => localized path. Locales not listed here fall back to the English page.
+        $paths = array(
+            'et' => 'et/tarne',
+            'lv' => 'lv/piegades',
+            'lt' => 'lt/pristatymas'
+        );
+
+        $locale = WC_Montonio_Helper::get_locale();
+        $path   = isset( $paths[$locale] ) ? $paths[$locale] : 'shipping';
+
+        return add_query_arg(
+            array(
+                'utm_source'   => 'wordpress',
+                'utm_medium'   => 'notification',
+                'utm_campaign' => $utm_campaign
+            ),
+            'https://www.montonio.com/' . $path
+        );
+    }
+
+    /**
+     * Check whether a store UUID is in the montonio_banner_jun_2026 allow-list.
+     *
+     * The allow-list is stored in a flat data file (one UUID per line) and loaded
+     * once per request into a UUID-keyed lookup map for O(1) checks.
+     *
+     * @since 10.2.2
+     * @param string $uuid The store UUID to check.
+     * @return bool True if the store is allowed to see the banner.
+     */
+    private static function is_store_in_jun16_2026_allowlist( $uuid ) {
+        static $allowlist = null;
+
+        if ( null === $allowlist ) {
+            $allowlist = array();
+            $file      = WC_MONTONIO_PLUGIN_PATH . '/includes/admin/data/banner-jun16-2026-store-uuids.txt';
+
+            if ( is_readable( $file ) ) {
+                $lines = file( $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+
+                foreach ( $lines as $line ) {
+                    $line = trim( $line );
+
+                    if ( '' !== $line ) {
+                        $allowlist[$line] = true;
+                    }
+                }
+            }
+        }
+
+        return isset( $allowlist[$uuid] );
+    }
+
+    /**
+     * Render the montonio_banner_jun_2026 promotional banner
+     *
+     * @return void Early return if conditions not met
+     */
+    private static function banner_jun_2026() {
+        $id = 'montonio_banner_jun_2026';
+        $api_keys = WC_Montonio_Helper::get_api_keys();
+
+        if ( empty( $api_keys['access_key'] ) || empty( $api_keys['secret_key'] ) ) {
+            return;
+        }
+
+        if ( self::is_dismissed( $id ) ) {
+            return;
+        }
+
+        // Only show this banner to a specific set of stores (matched by store UUID).
+        $store_details = WC_Montonio_Helper::get_store_details();
+
+        if ( empty( $store_details['uuid'] ) || ! self::is_store_in_jun16_2026_allowlist( $store_details['uuid'] ) ) {
+            return;
+        }
+        ?>
+
+        <div id="<?php echo esc_attr( $id ); ?>" class="montonio-banner notice">
+            <?php wp_nonce_field( esc_attr( $id ) . '_nonce', esc_attr( $id ) . '_nonce_field' ); ?>
+
+            <a class="montonio-banner__close" href="<?php echo esc_url( add_query_arg( $id, 0 ) ); ?>" aria-label="<?php esc_attr_e( 'Dismiss this notice', 'montonio-for-woocommerce' ); ?>">
+                <span><?php esc_attr_e( 'Dismiss this notice', 'montonio-for-woocommerce' ); ?></span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M12 4L4 12M4 4L12 12" stroke="#260071" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+
+            <div class="montonio-banner__content">
+                <div class="montonio-banner__row">
+                    <div class="montonio-banner__col" style="flex: 1;">
+                        <div class="montonio-badge"><?php esc_html_e( 'Montonio Shipping', 'montonio-for-woocommerce' ); ?></div>
+                        <h2><?php esc_html_e( 'Try Montonio shipping - from only €1.99 per package.', 'montonio-for-woocommerce' ); ?></h2>
+            
+                        <div class="montonio-banner__actions">
+                            <div class="montonio-banner__button">
+                                <a class="montonio-button" href="<?php echo esc_url( self::get_shipping_url( 'shipping0626' ) ); ?>" target="_blank">
+                                    <?php esc_html_e( 'Learn more and activate', 'montonio-for-woocommerce' ); ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M17.5 7.50001L17.5 2.50001M17.5 2.50001H12.5M17.5 2.50001L10 10M8.33333 2.5H6.5C5.09987 2.5 4.3998 2.5 3.86502 2.77248C3.39462 3.01217 3.01217 3.39462 2.77248 3.86502C2.5 4.3998 2.5 5.09987 2.5 6.5V13.5C2.5 14.9001 2.5 15.6002 2.77248 16.135C3.01217 16.6054 3.39462 16.9878 3.86502 17.2275C4.3998 17.5 5.09987 17.5 6.5 17.5H13.5C14.9001 17.5 15.6002 17.5 16.135 17.2275C16.6054 16.9878 16.9878 16.6054 17.2275 16.135C17.5 15.6002 17.5 14.9001 17.5 13.5V11.6667" stroke="#ffffff" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="montonio-banner__col">
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/banner_jun16_2026.svg' ); ?>" alt="<?php esc_attr_e( 'Montonio Shipping', 'montonio-for-woocommerce' ); ?>">    
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
     }
 
     /**

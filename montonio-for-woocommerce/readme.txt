@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.2.1
+Version: 10.2.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 10.2.1
+Stable tag: 10.2.2
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,10 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.2.2 =
+* Tweak – DPD courier allowed maximum weight raised to 31.5 kg
+* Tweak – Pickup-point selector UI adjustments
+
 = 10.2.1 =
 * Fix – Shipment creation no longer fatals on orders whose shipping line item has no resolvable zone instance (e.g. manually created orders);
 * Fix – Separate-label parcel splitting now reads the `_montonio_separate_label` flag from the parent product, so product variations correctly produce one parcel per unit

@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 class Montonio_DPD_Courier extends Montonio_Shipping_Method {
     public $default_title      = 'DPD courier';
-    public $default_max_weight = 31; // kg
+    public $default_max_weight = 31.5; // kg
 
     /**
      * Called from parent's constructor

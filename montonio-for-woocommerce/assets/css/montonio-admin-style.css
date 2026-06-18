@@ -1306,25 +1306,40 @@ label[for*=montonio_shipping_sender]::after {
 
 .montonio-banner {
   font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  max-width: 765px;
+  max-width: 912px;
   position: relative;
-  background: #260071 url("../images/banner_pattern.svg") no-repeat right bottom;
-  background-size: auto 100%;
-  color: #F9E0C0;
+  background-color: var(--montonio-banner-bg, #E4DBFA);
+  color: #260071;
   border: none;
   box-shadow: none;
-  padding: 24px 32px !important;
+  padding: 24px !important;
   border-radius: 16px;
   box-sizing: border-box;
   overflow: hidden;
+}
+.montonio-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-color: var(--montonio-banner-pattern, #FFFFFF);
+  -webkit-mask: url("../images/banner_pattern.svg") no-repeat right bottom;
+  mask: url("../images/banner_pattern.svg") no-repeat right bottom;
+  -webkit-mask-size: auto 100%;
+  mask-size: auto 100%;
 }
 @media screen and (max-width: 810px) {
   .montonio-banner {
     padding: 32px 24px !important;
   }
 }
+.montonio-banner .montonio-badge {
+  margin-bottom: 8px;
+}
 .montonio-banner img {
   max-width: 100%;
+  max-height: 169px;
   height: auto;
   display: block;
   margin: 0;
@@ -1343,9 +1358,9 @@ label[for*=montonio_shipping_sender]::after {
 .montonio-banner__close {
   display: block;
   position: absolute;
-  right: 32px;
-  top: 24px;
-  z-index: 2;
+  right: 10px;
+  top: 10px;
+  z-index: 20;
 }
 .montonio-banner__close span {
   display: none;
@@ -1361,6 +1376,7 @@ label[for*=montonio_shipping_sender]::after {
 }
 .montonio-banner__row {
   display: flex;
+  align-items: center;
   gap: 28px;
 }
 @media screen and (max-width: 810px) {
@@ -1375,12 +1391,12 @@ label[for*=montonio_shipping_sender]::after {
   z-index: 2;
 }
 .montonio-banner__content h2 {
-  color: #F9E0C0;
+  color: #260071;
   font-size: 32px;
   font-style: normal;
   font-weight: 700;
-  line-height: 100%;
-  letter-spacing: -0.64px;
+  line-height: 40px;
+  letter-spacing: -1.28px;
   margin: 0 0 16px;
   display: flex;
   gap: 16px;
@@ -1447,7 +1463,7 @@ label[for*=montonio_shipping_sender]::after {
 .montonio-banner__actions {
   display: flex;
   gap: 16px;
-  margin-top: 32px;
+  margin-top: 16px;
 }
 @media screen and (max-width: 465px) {
   .montonio-banner__actions {

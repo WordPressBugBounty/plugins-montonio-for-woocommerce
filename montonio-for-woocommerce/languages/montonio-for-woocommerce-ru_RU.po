@@ -975,6 +975,8 @@ msgstr ""
 msgid "Montonio Bank Payments"
 msgstr ""
 
+#: includes/admin/class-wc-montonio-banners.php:180
+#: includes/admin/class-wc-montonio-banners.php:195
 #: includes/shipping/class-wc-montonio-shipping-settings.php:11
 msgid "Montonio Shipping"
 msgstr ""
@@ -1454,8 +1456,10 @@ msgstr ""
 msgid "Add card fields to the checkout instead of redirecting to the gateway."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:104
-#: includes/admin/class-wc-montonio-banners.php:105
+#: includes/admin/class-wc-montonio-banners.php:170
+#: includes/admin/class-wc-montonio-banners.php:171
+#: includes/admin/class-wc-montonio-banners.php:228
+#: includes/admin/class-wc-montonio-banners.php:229
 msgid "Dismiss this notice"
 msgstr ""
 
@@ -1695,16 +1699,17 @@ msgstr ""
 msgid "Unisend courier"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:129
-#: includes/admin/class-wc-montonio-banners.php:154
+#: includes/admin/class-wc-montonio-banners.php:253
+#: includes/admin/class-wc-montonio-banners.php:278
 msgid "International Shipping"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:137
+#: includes/admin/class-wc-montonio-banners.php:186
+#: includes/admin/class-wc-montonio-banners.php:261
 msgid "Learn more and activate"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:145
+#: includes/admin/class-wc-montonio-banners.php:269
 msgid "Calculate shipping costs"
 msgstr ""
 
@@ -1957,7 +1962,7 @@ msgstr ""
 msgid "Shipping data sync failed."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:131
+#: includes/admin/class-wc-montonio-banners.php:255
 msgid "Send parcels to over 20+ EU countries, including Germany, Spain, Italy, France, and more. <br><strong>Starting from just €5.95 until end of May.</strong>"
 msgstr ""
 
@@ -2261,4 +2266,8 @@ msgstr ""
 
 #: montonio.php:272
 msgid "Syncing data, this may take some time..."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-banners.php:181
+msgid "Try Montonio shipping - from only €1.99 per package."
 msgstr ""
