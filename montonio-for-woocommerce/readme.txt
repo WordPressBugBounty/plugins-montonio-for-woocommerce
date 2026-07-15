@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.2.2
+Version: 10.3.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 10.2.2
+Stable tag: 10.3.0
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.0 =
+* Added – New MobilePay payment method
+* Tweak – On update, MobilePay is enabled automatically for merchants who already have card payments enabled, and placed first among the Montonio payment methods (it can be reordered or disabled afterwards)
+* Dev – Introduced a shared abstract gateway base class (`WC_Montonio_Payment_Gateway`) and consolidated callback endpoints across all Montonio payment methods
+* Fix – Chosen shipping method lookup now bails out when the cart is not available, preventing a fatal error in contexts where `WC()->cart` is not initialized
+
 = 10.2.2 =
 * Tweak – DPD courier allowed maximum weight raised to 31.5 kg
 * Tweak – Pickup-point selector UI adjustments

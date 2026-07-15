@@ -321,7 +321,7 @@ class WC_Montonio_Helper {
      * Get store details.
      *
      * @since 9.4.0
-     * @return array|null Array containing store 'uuid' and 'name', or null if unavailable
+     * @return array|null Array containing store 'uuid', 'name', 'country' and 'businessCountry', or null if unavailable
      */
     public static function get_store_details() {
         $store_data = get_option( 'montonio_payment_methods' );
@@ -337,8 +337,10 @@ class WC_Montonio_Helper {
         }
 
         return array(
-            'uuid' => $store_data['uuid'],
-            'name' => $store_data['name']
+            'uuid'            => $store_data['uuid'],
+            'name'            => $store_data['name'],
+            'country'         => $store_data['country'] ?? '',
+            'businessCountry' => $store_data['businessCountry'] ?? ''
         );
     }
 
@@ -352,10 +354,11 @@ class WC_Montonio_Helper {
     public static function has_other_active_method( $exclude = '' ) {
         $montonio_gateways = array(
             'wc_montonio_payments',
-            'wc_montonio_card',
             'wc_montonio_blik',
             'wc_montonio_bnpl',
             'wc_montonio_hire_purchase'
+            //'wc_montonio_card',
+            //'wc_montonio_mobilepay',
         );
 
         foreach ( $montonio_gateways as $gateway_id ) {
@@ -374,16 +377,21 @@ class WC_Montonio_Helper {
     }
 
     /**
-     * Check if card payments are required to be enabled by subscription plan.
+     * Check if a payment method is required to be enabled by subscription plan.
      *
-     * @since 9.3.3
+     * A method is required when its synced config carries `requiredToBeEnabled`
+     * and at least one other Montonio payment method is active.
+     *
+     * @since 10.3.0
+     * @param string $config_key Payment methods config key (e.g. 'cardPayments', 'mobilePay').
+     * @param string $gateway_id Gateway ID to exclude from the "other active method" check.
      * @return bool
      */
-    public static function is_card_payment_required() {
-        $card_config = self::get_payment_methods( 'cardPayments' );
-        $is_required = $card_config['requiredToBeEnabled'] ?? false;
+    public static function is_payment_method_required( $config_key, $gateway_id ) {
+        $config      = self::get_payment_methods( $config_key );
+        $is_required = $config['requiredToBeEnabled'] ?? false;
 
-        return $is_required && self::has_other_active_method( 'wc_montonio_card' );
+        return $is_required && self::has_other_active_method( $gateway_id );
     }
 
     /**

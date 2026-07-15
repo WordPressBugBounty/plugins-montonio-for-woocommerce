@@ -25,7 +25,7 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
      * @return boolean
      */
     public function is_active() {
-        return 'yes' === $this->get_setting( 'enabled' ) || WC_Montonio_Helper::is_card_payment_required();
+        return 'yes' === $this->get_setting( 'enabled' ) || WC_Montonio_Helper::is_payment_method_required( 'cardPayments', 'wc_montonio_card' );
     }
 
     /**

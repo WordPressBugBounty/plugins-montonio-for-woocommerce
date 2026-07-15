@@ -5,23 +5,16 @@ defined( 'ABSPATH' ) || exit;
  * Montonio Financing (Hire Purchase) Gateway
  *
  * @class       WC_Montonio_Hire_Purchase
- * @extends     WC_Payment_Gateway
+ * @extends     WC_Montonio_Payment_Gateway
  */
-class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
+class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
 
     /**
-     * Notices (array)
+     * Key of this gateway inside the synced `paymentMethods` response.
      *
-     * @var array
+     * @var string
      */
-    protected $admin_notices = array();
-
-    /**
-     * Is test mode active?
-     *
-     * @var bool
-     */
-    public $test_mode;
+    protected $api_method_key = 'hirePurchase';
 
     /**
      * Minimum cart amount required for the payment method to be available
@@ -67,12 +60,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
         }
 
         // Hooks
-        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'validate_settings' ) );
-        add_action( 'woocommerce_api_' . $this->id, array( $this, 'get_order_response' ) );
-        add_action( 'woocommerce_api_' . $this->id . '_notification', array( $this, 'get_order_notification' ) );
-        add_filter( 'woocommerce_gateway_icon', array( $this, 'add_icon_class' ), 10, 2 );
-        add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 999 );
+        $this->register_montonio_hooks();
     }
 
     /**
@@ -176,52 +164,12 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
     }
 
     /**
-     * Validate gateway settings before saving.
-     *
-     * @param  array $settings The settings array being saved.
-     * @return array           Unmodified settings on success, or settings with 'enabled' set to 'no' on failure.
-     */
-    public function validate_settings( $settings ) {
-        if ( ! is_array( $settings ) || 'no' === $settings['enabled'] ) {
-            return $settings;
-        }
-
-        try {
-            $payment_methods = WC_Montonio_Data_Sync::sync_payment_methods();
-            $payment_methods = json_decode( $payment_methods, true );
-
-            if ( empty( $payment_methods['paymentMethods']['hirePurchase'] ) ) {
-                throw new Exception( sprintf( 
-                    /* translators: %s: payment method title */
-                    __( '%s is not active on your Montonio account. Please check your Montonio Partner System settings.', 'montonio-for-woocommerce' ),
-                    $this->method_title
-                    )
-                );
-            }
-        } catch ( Exception $e ) {
-            $message = sprintf(
-                /* translators: 1) payment method title 2) error returned by Montonio API */
-                __( '<strong>%1$s could not be enabled.</strong><br>Error: %2$s', 'montonio-for-woocommerce' ),
-                $this->method_title,
-                esc_html( $e->getMessage() )
-            );
-
-            $this->add_admin_notice( $message, 'error' );
-            $settings['enabled'] = 'no';
-
-            return $settings;
-        }
-       
-        return $settings;
-    }
-
-    /**
      * Checks to see if all criteria is met before showing payment method.
      *
      * @return bool True if the gateway is available, false otherwise.
      */
     public function is_available() {
-        if ( ! parent::is_available() ) {
+        if ( 'yes' !== $this->enabled ) {
             return false;
         }
 
@@ -236,27 +184,12 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
         if ( WC()->cart ) {
             $cart_total = $this->get_order_total();
 
-            if ( $cart_total < (float) $this->min_amount ) {
+            if ( $cart_total < (float) $this->min_amount || $cart_total > $this->max_amount ) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * Add custom CSS class to the gateway icon.
-     *
-     * @param  string $icon The default icon HTML.
-     * @param  string $id   The gateway ID.
-     * @return string       Modified icon HTML with added classes.
-     */
-    public function add_icon_class( $icon, $id = '' ) {
-        if ( $id == $this->id ) {
-            return str_replace( 'src="', 'class="montonio-payment-method-icon montonio-hire-purchase-icon" src="', $icon );
-        }
-
-        return $icon;
     }
 
     /**
@@ -272,7 +205,7 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
             $payment_data = array(
                 'paymentMethodId' => $this->id,
                 'payment'         => array(
-                    'method'        => 'hirePurchase',
+                    'method'        => $this->api_method_key,
                     'methodDisplay' => $this->get_title(),
                     'methodOptions' => null
                 )
@@ -298,77 +231,6 @@ class WC_Montonio_Hire_Purchase extends WC_Payment_Gateway {
             WC_Montonio_Logger::log( 'Error (' . $this->id . ') - Order ID: ' . $order_id . ' Response: ' . $e->getMessage() );
 
             return array( 'result' => 'failure' );
-        }
-    }
-
-    /**
-     * Process a refund for an order.
-     *
-     * @param  int    $order_id The ID of the order to refund.
-     * @param  float  $amount   The amount to refund (null for full refund).
-     * @param  string $reason   The reason for the refund.
-     * @return bool             True on success, false on failure.
-     */
-    public function process_refund( $order_id, $amount = null, $reason = '' ) {
-        return WC_Montonio_Refund::init_refund(
-            $order_id,
-            $amount,
-            $reason
-        );
-    }
-
-    /**
-     * Handle the payment callback/return from Montonio.
-     *
-     * @return void
-     */
-    public function get_order_response() {
-        WC_Montonio_Callbacks::handle_return();
-    }
-
-    /**
-     * Handle webhook notifications from Montonio.
-     *
-     * @return void
-     */
-    public function get_order_notification() {
-        WC_Montonio_Callbacks::handle_notification();
-    }
-
-    /**
-     * Render the admin options/settings page.
-     *
-     * @return void
-     */
-    public function admin_options() {
-        WC_Montonio_Admin_Settings_Page::render_options_page(
-            $this->method_title,
-            $this->generate_settings_html( array(), false ),
-            $this->id
-        );
-    }
-
-    /**
-     * Add an admin notice to be displayed.
-     *
-     * @param  string $message The notice message content.
-     * @param  string $class   The CSS class for the notice (e.g., 'notice-error', 'notice-success').
-     * @return void
-     */
-    public function add_admin_notice( $message, $class ) {
-        $this->admin_notices[] = array( 'message' => $message, 'class' => $class );
-    }
-
-    /**
-     * Display all queued admin notices.
-     *
-     * @return void
-     */
-    public function display_admin_notices() {
-        foreach ( $this->admin_notices as $notice ) {
-            echo '<div class="montonio-notice montonio-notice--' . esc_attr( $notice['class'] ) . ' notice notice-' . esc_attr( $notice['class'] ) . '">';
-            echo '	<p>' . wp_kses_post( $notice['message'] ) . '</p>';
-            echo '</div>';
         }
     }
 }

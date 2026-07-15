@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.2.2
+ * Version:           10.3.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -14,12 +14,12 @@
  * Requires Plugins: woocommerce
  * Requires PHP: 7.2
  * WC requires at least: 4.0.0
- * WC tested up to: 10.8.1
+ * WC tested up to: 10.9.4
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.2.2' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.3.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -82,7 +82,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             $version = get_option( 'wc_montonio_plugin_version', '0' );
 
-            if ( version_compare( $version, '10.2.1', '<' ) ) {
+            if ( version_compare( $version, '10.3.0', '<' ) ) {
                 if ( version_compare( $version, '9.1.4', '<' ) ) {
                     require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-9.1.4.php';
                 }
@@ -91,7 +91,11 @@ if ( ! class_exists( 'Montonio' ) ) {
                     require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.0.1.php';
                 }
 
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.2.1.php';
+                if ( version_compare( $version, '10.2.1', '<' ) ) {
+                    require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.2.1.php';
+                }
+
+                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.3.0.php';
             }
 
             update_option( 'wc_montonio_plugin_version', WC_MONTONIO_PLUGIN_VERSION );
@@ -109,8 +113,12 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/class-wc-montonio-helper.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-api.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/class-wc-montonio-callbacks.php';
+            WC_Montonio_Callbacks::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/abstract-wc-montonio-payment-gateway.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-payments.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-card.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-mobilepay.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-blik.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-bnpl.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/payment/payment-methods/class-wc-montonio-hire-purchase.php';
@@ -165,6 +173,7 @@ if ( ! class_exists( 'Montonio' ) ) {
          * @return array The updated array of payment methods.
          */
         public function add_payment_methods( $methods ) {
+            $methods[] = 'WC_Montonio_Mobilepay';
             $methods[] = 'WC_Montonio_Card';
             $methods[] = 'WC_Montonio_Payments';
             $methods[] = 'WC_Montonio_Blik';
@@ -248,8 +257,12 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'montonio-shipping-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-search', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-search.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-timezone', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-timezone.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );
+
+            // Store the visitor's IANA timezone in a cookie for server-side availability checks.
+            wp_enqueue_script( 'montonio-timezone' );
         }
 
         /**

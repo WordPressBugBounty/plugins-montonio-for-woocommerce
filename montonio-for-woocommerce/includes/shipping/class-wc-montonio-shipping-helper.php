@@ -18,6 +18,10 @@ class WC_Montonio_Shipping_Helper {
             return null;
         }
 
+        if ( ! WC()->cart instanceof WC_Cart ) {
+            return null;
+        }
+
         $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods', array() );
 
         if ( empty( $chosen_shipping_methods ) ) {

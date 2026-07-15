@@ -275,6 +275,7 @@ img.montonio-payment-method-icon {
   height: 29px;
   overflow: hidden;
   justify-content: flex-start;
+  z-index: 10;
 }
 .montonio-pickup-point__search-logo {
   position: absolute;

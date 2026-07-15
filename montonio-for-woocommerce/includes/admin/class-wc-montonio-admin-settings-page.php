@@ -29,8 +29,22 @@ class WC_Montonio_Admin_Settings_Page {
      * @return void
      */
     public static function maybe_restrict_gateway_settings() {
-        add_filter( 'woocommerce_settings_api_form_fields_wc_montonio_card', array( __CLASS__, 'maybe_disable_card_gateway_toggle_when_required' ) );
-        add_filter( 'woocommerce_settings_api_sanitized_fields_wc_montonio_card', array( __CLASS__, 'maybe_override_card_enabled_when_required' ) );
+        // Gateways whose "enabled" toggle can be forced on by the subscription
+        // plan, mapped to the config key that reports whether they're required.
+        $required_gateways = array(
+            'wc_montonio_card'      => 'cardPayments',
+            'wc_montonio_mobilepay' => 'mobilePay',
+        );
+
+        foreach ( $required_gateways as $gateway_id => $config_key ) {
+            add_filter( 'woocommerce_settings_api_form_fields_' . $gateway_id, function( $fields ) use ( $config_key, $gateway_id ) {
+                return self::maybe_disable_gateway_toggle_when_required( $fields, WC_Montonio_Helper::is_payment_method_required( $config_key, $gateway_id ) );
+            } );
+
+            add_filter( 'woocommerce_settings_api_sanitized_fields_' . $gateway_id, function( $settings ) use ( $config_key, $gateway_id ) {
+                return self::maybe_override_gateway_enabled_when_required( $settings, WC_Montonio_Helper::is_payment_method_required( $config_key, $gateway_id ) );
+            } );
+        }
 
         if ( ! isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) ) {
             return;
@@ -104,20 +118,21 @@ class WC_Montonio_Admin_Settings_Page {
     }
 
     /**
-     * Disable the gateway toggle when card payments are required by subscription plan.
+     * Disable the gateway toggle when the payment method is required by subscription plan.
      *
      * @since 9.3.0
-     * @param array $fields Gateway settings fields.
+     * @param array $fields      Gateway settings fields.
+     * @param bool  $is_required Whether the gateway is required to be enabled.
      * @return array Modified fields.
      */
-    public static function maybe_disable_card_gateway_toggle_when_required( $fields ) {
-        if ( ! WC_Montonio_Helper::is_card_payment_required() || ! isset( $fields['enabled'] ) ) {
+    public static function maybe_disable_gateway_toggle_when_required( $fields, $is_required ) {
+        if ( ! $is_required || ! isset( $fields['enabled'] ) ) {
             return $fields;
         }
 
         $message = sprintf(
             /* translators: 1: Opening anchor tag 2: Closing anchor tag */
-            __( 'You can\'t disable this payment method because your %1$spricing plan%2$s requires card payments when any other Montonio payment method is enabled.', 'montonio-for-woocommerce' ),
+            __( 'You can\'t disable this payment method because your %1$spricing plan%2$s requires it when any other Montonio payment method is enabled.', 'montonio-for-woocommerce' ),
             '<a href="https://www.montonio.com/pricing" target="_blank">',
             '</a>'
         );
@@ -129,14 +144,15 @@ class WC_Montonio_Admin_Settings_Page {
     }
 
     /**
-     * Force card payments to be enabled when saving settings if required by subscription plan.
+     * Force the gateway to be enabled when saving settings if required by subscription plan.
      *
      * @since 9.3.3
-     * @param array $settings Sanitized settings before save.
+     * @param array $settings    Sanitized settings before save.
+     * @param bool  $is_required Whether the gateway is required to be enabled.
      * @return array Modified settings.
      */
-    public static function maybe_override_card_enabled_when_required( $settings ) {
-        if ( WC_Montonio_Helper::is_card_payment_required() ) {
+    public static function maybe_override_gateway_enabled_when_required( $settings, $is_required ) {
+        if ( $is_required ) {
             $settings['enabled'] = 'yes';
         }
 
@@ -163,6 +179,11 @@ class WC_Montonio_Admin_Settings_Page {
             ),
             'wc_montonio_card'          => array(
                 'title'        => __( 'Card Payments', 'montonio-for-woocommerce' ),
+                'type'         => 'payment_method',
+                'check_status' => true,
+            ),
+            'wc_montonio_mobilepay'          => array(
+                'title'        => __( 'MobilePay', 'montonio-for-woocommerce' ),
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
@@ -214,7 +235,9 @@ class WC_Montonio_Admin_Settings_Page {
                             $settings   = get_option( 'woocommerce_' . $section . '_settings' );
                             $is_enabled = ( isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] );
 
-                            if ( 'wc_montonio_card' === $section && WC_Montonio_Helper::is_card_payment_required() ) {
+                            if ( 'wc_montonio_card' === $section && WC_Montonio_Helper::is_payment_method_required( 'cardPayments', 'wc_montonio_card' ) ) {
+                                $is_enabled = true;
+                            } elseif ( 'wc_montonio_mobilepay' === $section && WC_Montonio_Helper::is_payment_method_required( 'mobilePay', 'wc_montonio_mobilepay' ) ) {
                                 $is_enabled = true;
                             }
                         } elseif ( 'shipping' === $value['type'] ) {

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "montonio/wc-montonio-mobilepay",
+  "version": "0.1.0",
+  "title": "Montonio MobilePay Block",
+  "category": "widgets",
+  "icon": "money-alt",
+  "description": "Let customers pay with MobilePay",
+  "keywords": [
+    "checkout",
+    "payment",
+    "montonio",
+    "mobilepay"
+  ],
+  "supports": {
+    "html": false,
+    "multiple": false
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./index.js",
+  "textdomain": "montonio-for-woocommerce"
+}

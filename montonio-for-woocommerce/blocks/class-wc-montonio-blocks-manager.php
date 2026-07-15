@@ -61,6 +61,7 @@ class WC_Montonio_Blocks_Manager {
             'abstract-montonio-payment-method-block.php',
             'class-wc-montonio-payments-block.php',
             'class-wc-montonio-card-block.php',
+            'class-wc-montonio-mobilepay-block.php',
             'class-wc-montonio-blik-block.php',
             'class-wc-montonio-bnpl-block.php',
             'class-wc-montonio-hire-purchase-block.php',
@@ -84,6 +85,7 @@ class WC_Montonio_Blocks_Manager {
                 'WC_Montonio_Payments_Block',
                 'WC_Montonio_BNPL_Block',
                 'WC_Montonio_Card_Block',
+                'WC_Montonio_Mobilepay_Block',
                 'WC_Montonio_Blik_Block',
                 'WC_Montonio_Hire_Purchase_Block'
             );

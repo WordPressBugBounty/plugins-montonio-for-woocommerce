@@ -8,6 +8,22 @@ defined( 'ABSPATH' ) || exit;
  */
 class WC_Montonio_Callbacks {
     /**
+     * Register the global callback endpoints.
+     *
+     * These are the single pair of endpoints used by all Montonio gateways for
+     * new orders. The per-gateway `woocommerce_api_{id}[_notification]`
+     * endpoints registered by each gateway remain as back-compat aliases for
+     * orders created before this consolidation.
+     *
+     * @since 10.3.0
+     * @return void
+     */
+    public static function init() {
+        add_action( 'woocommerce_api_montonio_return', array( __CLASS__, 'handle_return' ) );
+        add_action( 'woocommerce_api_montonio_notification', array( __CLASS__, 'handle_notification' ) );
+    }
+
+    /**
      * Handle customer return from Montonio payment page.
      *
      * @since 10.0.0
