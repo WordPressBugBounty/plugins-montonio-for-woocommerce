@@ -16,6 +16,9 @@ class WC_Montonio_Admin_Settings_Page {
      */
     public static function init() {
         add_action( 'admin_init', array( __CLASS__, 'maybe_restrict_gateway_settings' ) );
+
+        // Settings save on wp_loaded (before admin_init); priority 20 runs after the abstract gateway's validate_settings.
+        add_filter( 'woocommerce_settings_api_sanitized_fields_wc_montonio_mobilepay', array( __CLASS__, 'maybe_preserve_mobilepay_enabled_when_missing' ), 20 );
     }
 
     /**
@@ -45,6 +48,9 @@ class WC_Montonio_Admin_Settings_Page {
                 return self::maybe_override_gateway_enabled_when_required( $settings, WC_Montonio_Helper::is_payment_method_required( $config_key, $gateway_id ) );
             } );
         }
+
+        // Priority 20 so the required-lock and missing-keys messages (10) win.
+        add_filter( 'woocommerce_settings_api_form_fields_wc_montonio_mobilepay', array( __CLASS__, 'maybe_disable_mobilepay_toggle_when_missing' ), 20 );
 
         if ( ! isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) ) {
             return;
@@ -160,6 +166,51 @@ class WC_Montonio_Admin_Settings_Page {
     }
 
     /**
+     * Lock the MobilePay toggle while the method is missing from synced data.
+     *
+     * The toggle keeps its stored state but can't be changed; a stored 'yes'
+     * activates automatically once the method appears in the synced data.
+     *
+     * @since 10.3.1
+     * @param array $fields Gateway settings fields.
+     * @return array Modified fields.
+     */
+    public static function maybe_disable_mobilepay_toggle_when_missing( $fields ) {
+        if ( ! isset( $fields['enabled'] ) || ! empty( $fields['enabled']['description'] ) || ! WC_Montonio_Helper::is_payment_method_missing( 'mobilePay' ) ) {
+            return $fields;
+        }
+
+        $fields['enabled']['custom_attributes'] = array( 'disabled' => 'disabled' );
+        $fields['enabled']['description']       = '<div class="montonio-disabled-reason">' . __( 'MobilePay is not yet visible for your shoppers. Contact Montonio if you want to activate it.', 'montonio-for-woocommerce' ) . '</div>';
+
+        return $fields;
+    }
+
+    /**
+     * Keep the stored MobilePay 'enabled' value when saving while the method is missing from synced data.
+     *
+     * The locked toggle submits as 'no', which would disarm merchants pre-armed to auto-activate.
+     *
+     * @since 10.3.1
+     * @param array $settings Sanitized settings before save.
+     * @return array Modified settings.
+     */
+    public static function maybe_preserve_mobilepay_enabled_when_missing( $settings ) {
+        if ( ! WC_Montonio_Helper::is_payment_method_missing( 'mobilePay' ) ) {
+            return $settings;
+        }
+
+        if ( ! is_array( $settings ) ) {
+            $settings = array();
+        }
+
+        $stored_settings     = get_option( 'woocommerce_wc_montonio_mobilepay_settings', array() );
+        $settings['enabled'] = is_array( $stored_settings ) && isset( $stored_settings['enabled'] ) ? $stored_settings['enabled'] : 'no';
+
+        return $settings;
+    }
+
+    /**
      * Get menu items configuration.
      *
      * @since 7.0.0
@@ -237,8 +288,12 @@ class WC_Montonio_Admin_Settings_Page {
 
                             if ( 'wc_montonio_card' === $section && WC_Montonio_Helper::is_payment_method_required( 'cardPayments', 'wc_montonio_card' ) ) {
                                 $is_enabled = true;
-                            } elseif ( 'wc_montonio_mobilepay' === $section && WC_Montonio_Helper::is_payment_method_required( 'mobilePay', 'wc_montonio_mobilepay' ) ) {
-                                $is_enabled = true;
+                            } elseif ( 'wc_montonio_mobilepay' === $section ) {
+                                if ( WC_Montonio_Helper::is_payment_method_missing( 'mobilePay' ) ) {
+                                    $is_enabled = false;
+                                } elseif ( WC_Montonio_Helper::is_payment_method_required( 'mobilePay', 'wc_montonio_mobilepay' ) ) {
+                                    $is_enabled = true;
+                                }
                             }
                         } elseif ( 'shipping' === $value['type'] ) {
                             $is_enabled = ( 'yes' === get_option( 'montonio_shipping_enabled' ) );

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 10.3.0\n"
+"Project-Id-Version: Montonio for WooCommerce 10.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-15T10:54:49+00:00\n"
+"POT-Creation-Date: 2026-07-19T18:08:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -37,7 +37,7 @@ msgid "Montonio"
 msgstr ""
 
 #: blocks/class-wc-montonio-blik-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:191
+#: includes/admin/class-wc-montonio-admin-settings-page.php:242
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:53
 #: includes/payment/payment-methods/class-wc-montonio-blik.php:92
 #: blocks/build/wc-montonio-blik/index.js:1
@@ -51,7 +51,7 @@ msgid "Selected Pickup Point"
 msgstr ""
 
 #: blocks/class-wc-montonio-bnpl-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:196
+#: includes/admin/class-wc-montonio-admin-settings-page.php:247
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:61
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:86
 #: blocks/build/wc-montonio-bnpl/index.js:1
@@ -69,7 +69,7 @@ msgid "Card Payment"
 msgstr ""
 
 #: blocks/class-wc-montonio-hire-purchase-block.php:31
-#: includes/admin/class-wc-montonio-admin-settings-page.php:201
+#: includes/admin/class-wc-montonio-admin-settings-page.php:252
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:55
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:83
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
@@ -78,7 +78,7 @@ msgid "Financing"
 msgstr ""
 
 #: blocks/class-wc-montonio-mobilepay-block.php:36
-#: includes/admin/class-wc-montonio-admin-settings-page.php:186
+#: includes/admin/class-wc-montonio-admin-settings-page.php:237
 #: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:74
 #: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:98
 #: blocks/build/wc-montonio-mobilepay/index.js:1
@@ -255,90 +255,94 @@ msgstr ""
 msgid "Enable or disable Montonio Hire Purchase"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:89
+#: includes/admin/class-wc-montonio-admin-settings-page.php:95
 #: includes/shipping/class-wc-montonio-shipping-settings.php:214
 msgid "Sandbox"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:89
+#: includes/admin/class-wc-montonio-admin-settings-page.php:95
 #: includes/shipping/class-wc-montonio-shipping-settings.php:214
 msgid "Live"
 msgstr ""
 
 #. translators: %1$s: mode (Sandbox/Live), %2$s: URL to API settings
-#: includes/admin/class-wc-montonio-admin-settings-page.php:92
+#: includes/admin/class-wc-montonio-admin-settings-page.php:98
 msgid "%1$s API keys missing. Please <a href=\"%2$s\">add API keys here</a> to enable this payment method."
 msgstr ""
 
 #. translators: 1: Opening anchor tag 2: Closing anchor tag
-#: includes/admin/class-wc-montonio-admin-settings-page.php:135
+#: includes/admin/class-wc-montonio-admin-settings-page.php:141
 msgid "You can't disable this payment method because your %1$spricing plan%2$s requires it when any other Montonio payment method is enabled."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:171
+#: includes/admin/class-wc-montonio-admin-settings-page.php:184
+msgid "MobilePay is not yet visible for your shoppers. Contact Montonio if you want to activate it."
+msgstr ""
+
+#: includes/admin/class-wc-montonio-admin-settings-page.php:222
 #: includes/admin/class-wc-montonio-api-settings.php:341
 msgid "Main Settings"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:176
+#: includes/admin/class-wc-montonio-admin-settings-page.php:227
 msgid "Bank Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:181
+#: includes/admin/class-wc-montonio-admin-settings-page.php:232
 msgid "Card Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:206
+#: includes/admin/class-wc-montonio-admin-settings-page.php:257
 msgid "Shipping"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:306
+#: includes/admin/class-wc-montonio-admin-settings-page.php:361
 msgid "Open Store in Montonio Partner System"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:308
+#: includes/admin/class-wc-montonio-admin-settings-page.php:363
 msgid "Connected"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:318
+#: includes/admin/class-wc-montonio-admin-settings-page.php:373
 msgid "Resync store data from Montonio (payment methods, shipping carriers and store details)"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:319
+#: includes/admin/class-wc-montonio-admin-settings-page.php:374
 msgid "Resync store data from Montonio"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:321
+#: includes/admin/class-wc-montonio-admin-settings-page.php:376
 msgid "Remove API keys and disconnect this store from Montonio"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:321
+#: includes/admin/class-wc-montonio-admin-settings-page.php:376
 msgid "Disconnect"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:348
+#: includes/admin/class-wc-montonio-admin-settings-page.php:403
 msgid "Test mode enabled!"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:349
+#: includes/admin/class-wc-montonio-admin-settings-page.php:404
 msgid "Test mode is for integration testing only. Payments are not processed."
 msgstr ""
 
 #. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:360
+#: includes/admin/class-wc-montonio-admin-settings-page.php:415
 msgid "Follow these instructions to set up shipping: <a href=\"%s\" target=\"_blank\">How to set up Shipping solution</a>"
 msgstr ""
 
 #. translators: %s: help article URL
-#: includes/admin/class-wc-montonio-admin-settings-page.php:370
+#: includes/admin/class-wc-montonio-admin-settings-page.php:425
 msgid "Follow these instructions to set up payment methods: <a href=\"%s\" target=\"_blank\">Activating payment methods</a>"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:381
+#: includes/admin/class-wc-montonio-admin-settings-page.php:436
 msgid "Return to payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-admin-settings-page.php:388
+#: includes/admin/class-wc-montonio-admin-settings-page.php:443
 msgid "Montonio logo"
 msgstr ""
 
@@ -371,12 +375,12 @@ msgid "Order ID prefix"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:190
-#: montonio.php:370
+#: montonio.php:374
 msgid "Connect your store"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:191
-#: montonio.php:374
+#: montonio.php:378
 msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
 msgstr ""
 
@@ -554,59 +558,59 @@ msgstr ""
 msgid "Shipping sync failed: %s"
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:409
+#: includes/class-wc-montonio-helper.php:424
 msgid "A general error has occurred. Please try again later."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:410
-#: includes/class-wc-montonio-helper.php:411
-#: includes/class-wc-montonio-helper.php:412
-#: includes/class-wc-montonio-helper.php:413
-#: includes/class-wc-montonio-helper.php:419
-#: includes/class-wc-montonio-helper.php:420
-#: includes/class-wc-montonio-helper.php:421
-#: includes/class-wc-montonio-helper.php:422
+#: includes/class-wc-montonio-helper.php:425
+#: includes/class-wc-montonio-helper.php:426
+#: includes/class-wc-montonio-helper.php:427
+#: includes/class-wc-montonio-helper.php:428
+#: includes/class-wc-montonio-helper.php:434
+#: includes/class-wc-montonio-helper.php:435
+#: includes/class-wc-montonio-helper.php:436
+#: includes/class-wc-montonio-helper.php:437
 msgid "Incorrect BLIK code was entered. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:414
-#: includes/class-wc-montonio-helper.php:416
-#: includes/class-wc-montonio-helper.php:423
-#: includes/class-wc-montonio-helper.php:425
-#: includes/class-wc-montonio-helper.php:428
+#: includes/class-wc-montonio-helper.php:429
+#: includes/class-wc-montonio-helper.php:431
+#: includes/class-wc-montonio-helper.php:438
+#: includes/class-wc-montonio-helper.php:440
+#: includes/class-wc-montonio-helper.php:443
 msgid "Check the reason in the banking application and try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:415
-#: includes/class-wc-montonio-helper.php:424
 #: includes/class-wc-montonio-helper.php:430
-#: includes/class-wc-montonio-helper.php:431
+#: includes/class-wc-montonio-helper.php:439
+#: includes/class-wc-montonio-helper.php:445
+#: includes/class-wc-montonio-helper.php:446
 msgid "Payment failed - not confirmed on time in the banking application. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:417
-#: includes/class-wc-montonio-helper.php:418
-#: includes/class-wc-montonio-helper.php:426
-#: includes/class-wc-montonio-helper.php:427
-#: includes/class-wc-montonio-helper.php:435
-#: includes/class-wc-montonio-helper.php:436
+#: includes/class-wc-montonio-helper.php:432
+#: includes/class-wc-montonio-helper.php:433
+#: includes/class-wc-montonio-helper.php:441
+#: includes/class-wc-montonio-helper.php:442
+#: includes/class-wc-montonio-helper.php:450
+#: includes/class-wc-montonio-helper.php:451
 msgid "Payment failed. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:429
+#: includes/class-wc-montonio-helper.php:444
 msgid "Payment rejected in a banking application. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:432
+#: includes/class-wc-montonio-helper.php:447
 msgid "Payment amount too high."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:433
-#: includes/class-wc-montonio-helper.php:434
+#: includes/class-wc-montonio-helper.php:448
+#: includes/class-wc-montonio-helper.php:449
 msgid "Payment requires BLIK code."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:437
+#: includes/class-wc-montonio-helper.php:452
 msgid "This order has already been paid for."
 msgstr ""
 
@@ -2086,39 +2090,39 @@ msgstr ""
 msgid "Montonio for WooCommerce requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
-#: montonio.php:219
+#: montonio.php:223
 msgid "Settings"
 msgstr ""
 
-#: montonio.php:285
+#: montonio.php:289
 msgid "Syncing data, this may take some time..."
 msgstr ""
 
-#: montonio.php:286
+#: montonio.php:290
 msgid "Payment methods and shipping data synced successfully."
 msgstr ""
 
-#: montonio.php:287
+#: montonio.php:291
 msgid "Payment methods synced successfully."
 msgstr ""
 
-#: montonio.php:288
+#: montonio.php:292
 msgid "Resync failed. Please try again or check the Montonio log."
 msgstr ""
 
-#: montonio.php:289
+#: montonio.php:293
 msgid "Your session has expired. Please reload the page and try again."
 msgstr ""
 
-#: montonio.php:377
+#: montonio.php:381
 msgid "Go to account settings"
 msgstr ""
 
-#: montonio.php:381
+#: montonio.php:385
 msgid "Need help?"
 msgstr ""
 
-#: montonio.php:387
+#: montonio.php:391
 msgid "How to activate Montonio payment methods"
 msgstr ""
 

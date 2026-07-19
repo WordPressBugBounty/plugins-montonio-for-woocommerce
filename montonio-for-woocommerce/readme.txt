@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.0
+Version: 10.3.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 10.3.0
+Stable tag: 10.3.1
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -15,10 +15,10 @@ License URL: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-Montonio is a complete checkout solution for online stores that includes all popular payment methods (local banks, card payments, Apple Pay, Google Pay) plus financing and shipping. Montonio offers you everything you need in your online store checkout.
+Montonio is a complete checkout solution for online stores that includes all popular payment methods (local banks, card payments, Apple Pay, Google Pay, MobilePay) plus financing and shipping. Montonio offers you everything you need in your online store checkout.
 
 = Payments =
-The easiest way to collect payments in your online store. Montonio payment initiation service offers integrations with all major banks in Estonia, Finland, Latvia, Lithuania and Poland, additionally Apple Pay, Google Pay, Revolut (available everywhere) and Blik in Poland.
+The easiest way to collect payments in your online store. Montonio payment initiation service offers integrations with all major banks in Estonia, Finland, Latvia, Lithuania and Poland, additionally Apple Pay, Google Pay, MobilePay, Revolut (available everywhere) and Blik in Poland.
 
 All funds are immediately deposited to your bank account and an overview of the transactions can be found in our [partner system](https://partner.montonio.com).
 
@@ -50,9 +50,9 @@ Adding Montonio to your store is only a matter of minutes.
 Montonio currently offers services in these countries:
 * Payments: Estonia, Finland, Latvia, Lithuania, Poland
 * Card payments: Estonia, Finland, Latvia, Lithuania, Poland
-* Financing: Estonia
-* Pay Later: Estonia
-* Shipping: Estonia, Latvia, Lithuania
+* Financing: Estonia, Latvia, Lithuania
+* Pay Later: Estonia, Latvia, Lithuania
+* Shipping: Estonia, Latvia, Lithuania, Poland
 We are also working on adding new countries.
 
 = Support =
@@ -136,9 +136,11 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.1 =
+* Tweak – Improved how MobilePay availability is shown and managed in the payment method settings
+
 = 10.3.0 =
 * Added – New MobilePay payment method
-* Tweak – On update, MobilePay is enabled automatically for merchants who already have card payments enabled, and placed first among the Montonio payment methods (it can be reordered or disabled afterwards)
 * Dev – Introduced a shared abstract gateway base class (`WC_Montonio_Payment_Gateway`) and consolidated callback endpoints across all Montonio payment methods
 * Fix – Chosen shipping method lookup now bails out when the cart is not available, preventing a fatal error in contexts where `WC()->cart` is not initialized
 

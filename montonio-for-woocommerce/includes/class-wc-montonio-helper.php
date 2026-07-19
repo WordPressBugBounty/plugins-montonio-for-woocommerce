@@ -395,6 +395,21 @@ class WC_Montonio_Helper {
     }
 
     /**
+     * Check if a payment method is missing from successfully synced payment method data.
+     *
+     * Never-synced and missing-keys states return false.
+     *
+     * @since 10.3.1
+     * @param string $method_key Payment methods config key (e.g. 'mobilePay').
+     * @return bool
+     */
+    public static function is_payment_method_missing( $method_key ) {
+        $methods = self::get_payment_methods();
+
+        return is_array( $methods ) && ! array_key_exists( $method_key, $methods );
+    }
+
+    /**
      * Translates Montonio API error codes to user-friendly messages
      *
      * @since 8.0.5
