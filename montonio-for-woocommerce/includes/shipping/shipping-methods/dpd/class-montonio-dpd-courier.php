@@ -58,7 +58,7 @@ class Montonio_DPD_Courier extends Montonio_Shipping_Method {
         // Calculate the costs
         $flat_rate_cost   = $this->get_option( 'price' );
         $package_item_qty = $this->get_package_item_qty( $package );
-        $parcels          = $this->get_parcels_with_item_dimensions( $package );
+        $parcels          = $this->get_parcels_for_rate_request( $package );
 
         if ( 'dynamic' === $this->get_option( 'pricing_type' ) ) {
             $carrier_rates = WC_Montonio_Shipping_Rate::get_rates_for( 'dpd', 'courier', $parcels, $this->country );

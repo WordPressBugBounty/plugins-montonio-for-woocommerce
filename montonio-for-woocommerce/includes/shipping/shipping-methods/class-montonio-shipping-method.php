@@ -167,21 +167,31 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Calculate the minimum bounding box dimensions for a package.
+     * Calculate the bounding box dimensions of each parcel the package would ship as.
      *
-     * This method determines the smallest box that can contain all items in the package
-     * by finding the maximum dimension across all items in each axis (length, width, height).
+     * Follows the parcel split used by shipment creation: products marked to ship with a
+     * separate label become their own parcel, all other items are combined into a single
+     * parcel by finding the maximum dimension across items per rank. Default dimensions
+     * are substituted like at shipment creation; items with no dimensions at all are skipped.
      *
+     * @since 10.3.2
      * @param array $package The package data containing items to be shipped.
-     * @return array An array of three float values
+     * @return array A list of parcels, each an array of three floats (cm) sorted ascending.
      */
-    protected function get_package_dimensions( $package ) {
-        $package_dimensions = array( 0, 0, 0 );
+    protected function get_parcels_for_size_check( $package ) {
+        $parcels = array();
 
         foreach ( $package['contents'] as $item ) {
-            $length = $item['data']->get_length();
-            $width  = $item['data']->get_width();
-            $height = $item['data']->get_height();
+            $product = $item['data'];
+            $length  = $product->get_length();
+            $width   = $product->get_width();
+            $height  = $product->get_height();
+
+            if ( $this->uses_default_dimensions() && ( empty( $length ) || empty( $width ) || empty( $height ) ) ) {
+                $length = $this->get_option( 'default_length', 0 );
+                $width  = $this->get_option( 'default_width', 0 );
+                $height = $this->get_option( 'default_height', 0 );
+            }
 
             // Skip items without dimensions
             if ( empty( $length ) && empty( $width ) && empty( $height ) ) {
@@ -189,46 +199,74 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             }
 
             $item_dimensions = array(
-                (float) WC_Montonio_Helper::convert_to_cm( $length ),
-                (float) WC_Montonio_Helper::convert_to_cm( $width ),
-                (float) WC_Montonio_Helper::convert_to_cm( $height )
+                WC_Montonio_Helper::convert_to_cm( $length ),
+                WC_Montonio_Helper::convert_to_cm( $width ),
+                WC_Montonio_Helper::convert_to_cm( $height )
             );
 
-            sort( $item_dimensions );
+            $parent_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
 
-            for ( $i = 0; $i < 3; $i++ ) {
-                $package_dimensions[$i] = max( $package_dimensions[$i], $item_dimensions[$i] );
+            if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_separate_label' ) ) {
+                $parcels[] = WC_Montonio_Shipping_Helper::merge_item_into_bounding_box( array( 0, 0, 0 ), $item_dimensions );
+            } else {
+                if ( ! array_key_exists( 'combined', $parcels ) ) {
+                    $parcels['combined'] = array( 0, 0, 0 );
+                }
+
+                $parcels['combined'] = WC_Montonio_Shipping_Helper::merge_item_into_bounding_box( $parcels['combined'], $item_dimensions );
             }
         }
 
-        return $package_dimensions;
+        return array_values( $parcels );
     }
 
     /**
-     * Check if package dimensions fit within maximum dimension constraints.
+     * Check if every parcel in the package fits within maximum dimension constraints.
      * Allows any orientation by comparing sorted dimensions.
      *
-     * @param array $package_dimensions Array of package dimensions in cm.
-     * @param array $max_dimensions Array of maximum allowed dimensions in cm.
-     * @return bool True if package fits, false otherwise.
+     * @since 10.3.2 Validates every parcel from get_parcels_for_size_check() instead of one package bounding box.
+     * @param array $package The package data containing items to validate.
+     * @return bool True if all parcels fit, false otherwise.
      */
     protected function fits_within_dimensions( $package ) {
         if ( empty( $this->max_dimensions ) ) {
             return true;
         }
 
-        $package_dimensions    = $this->get_package_dimensions( $package );
         $max_dimensions_sorted = $this->max_dimensions;
         sort( $max_dimensions_sorted );
 
-        // Each sorted package dimension must fit within corresponding max dimension
-        foreach ( $package_dimensions as $index => $dimension ) {
-            if ( $dimension > $max_dimensions_sorted[$index] ) {
-                return false;
+        // Each sorted parcel dimension must fit within the corresponding max dimension
+        foreach ( $this->get_parcels_for_size_check( $package ) as $parcel_dimensions ) {
+            foreach ( $parcel_dimensions as $index => $dimension ) {
+                if ( $dimension > $max_dimensions_sorted[$index] ) {
+                    return false;
+                }
             }
         }
 
         return true;
+    }
+
+    /**
+     * Whether this method substitutes its configured default measurements for products
+     * that lack dimensions or weight.
+     *
+     * @since 10.3.2
+     * @return bool True if default measurements apply, false otherwise.
+     */
+    public function uses_default_dimensions() {
+        if ( 0 === strpos( $this->id, 'montonio_international_shipping' ) ) {
+            return true;
+        }
+
+        $dpd_methods = array(
+            'montonio_dpd_parcel_machines',
+            'montonio_dpd_parcel_shops',
+            'montonio_dpd_courier'
+        );
+
+        return in_array( $this->id, $dpd_methods, true ) && 'dynamic' === $this->get_option( 'pricing_type' );
     }
 
     /**
@@ -271,9 +309,17 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             $highest_class_cost     = 0;
 
             foreach ( $found_shipping_classes as $shipping_class => $products ) {
-                // Also handles BW compatibility when slugs were used instead of ids.
+                // Also handles BW compatibility when slugs were used instead of ids
                 $shipping_class_term = get_term_by( 'slug', $shipping_class, 'product_shipping_class' );
-                $class_cost_string   = $shipping_class_term && $shipping_class_term->term_id ? $this->get_option( 'class_cost_' . $shipping_class_term->term_id, $this->get_option( 'class_cost_' . $shipping_class, '' ) ) : $this->get_option( 'no_class_cost', '' );
+                $shipping_class_id   = $shipping_class_term && $shipping_class_term->term_id ? $shipping_class_term->term_id : 0;
+
+                // WPML uses per-language term IDs; compare canonical IDs to catch all languages
+                if ( $shipping_class_id && defined( 'ICL_SITEPRESS_VERSION' ) ) {
+                    $default_language  = apply_filters( 'wpml_default_language', null );
+                    $shipping_class_id = apply_filters( 'wpml_object_id', $shipping_class_id, 'product_shipping_class', true, $default_language );
+                }
+
+                $class_cost_string = $shipping_class_id ? $this->get_option( 'class_cost_' . $shipping_class_id, $this->get_option( 'class_cost_' . $shipping_class, '' ) ) : $this->get_option( 'no_class_cost', '' );
 
                 if ( '' === $class_cost_string ) {
                     continue;
@@ -506,7 +552,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                     return true;
                 }
 
-                // If WPML is active, we need to check the canonical ID
+                // WPML uses per-language term IDs; compare canonical IDs to catch all languages.
                 if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
                     $default_language = apply_filters( 'wpml_default_language', null );
 
@@ -703,17 +749,18 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     }
 
     /**
-     * Extract and normalize product dimensions from package items.
+     * Build the parcel list sent to the shipping API for rate calculation.
      *
-     * Retrieves dimensions (length, width, height) and weight for all items in the package.
-     * Falls back to default values when product dimensions are not set.
+     * Splits the package into parcels (separate-label products each become their own parcel,
+     * all other items share one parcel) and normalizes each item's dimensions (length, width,
+     * height) and weight, falling back to default values when product dimensions are not set.
      *
      * @since 9.2.0
      * @param array $package The package data containing items with product information.
      * @return array Array of parcels for API request.
      *               Format: [{ items: [{ length, width, height, weight, quantity }] }]
      */
-    protected function get_parcels_with_item_dimensions( $package ) {
+    protected function get_parcels_for_rate_request( $package ) {
         $parcels      = array();
         $shared_items = array();
 

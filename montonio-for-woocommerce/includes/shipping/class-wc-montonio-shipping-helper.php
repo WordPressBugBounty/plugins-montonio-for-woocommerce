@@ -239,4 +239,29 @@ class WC_Montonio_Shipping_Helper {
 
         return $last_synced_at === 0 || ( time() - $last_synced_at ) > DAY_IN_SECONDS;
     }
+
+    /**
+     * Merge an item's dimensions into a parcel bounding box, allowing any item orientation.
+     *
+     * Sorts the item's dimensions ascending and takes the maximum per rank, so the result
+     * does not depend on which axis a merchant entered as length, width or height.
+     * Both the checkout-time package measurements check and shipment creation must use
+     * this same aggregation so that any shipping method offered at checkout can also be
+     * created as a shipment.
+     *
+     * @since 10.3.2
+     * @param array $bounding_box Current bounding box as three numbers. Must be sorted ascending — the function does not re-sort it.
+     * @param array $item_dimensions The item's three dimensions, in the same unit as $bounding_box.
+     * @return array Updated bounding box as three floats sorted ascending.
+     */
+    public static function merge_item_into_bounding_box( $bounding_box, $item_dimensions ) {
+        $item_dimensions = array_map( 'floatval', array_values( $item_dimensions ) );
+        sort( $item_dimensions );
+
+        for ( $i = 0; $i < 3; $i++ ) {
+            $bounding_box[$i] = max( (float) $bounding_box[$i], $item_dimensions[$i] );
+        }
+
+        return $bounding_box;
+    }
 }

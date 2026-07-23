@@ -62,7 +62,7 @@ class Montonio_International_Shipping_Courier extends Montonio_Shipping_Method {
 
         $flat_rate_cost   = $this->get_option( 'flat_rate_cost' );
         $package_item_qty = $this->get_package_item_qty( $package );
-        $parcels          = $this->get_parcels_with_item_dimensions( $package );
+        $parcels          = $this->get_parcels_for_rate_request( $package );
         $labels           = array(
             'standard' => __( 'Courier', 'montonio-for-woocommerce' )
         );

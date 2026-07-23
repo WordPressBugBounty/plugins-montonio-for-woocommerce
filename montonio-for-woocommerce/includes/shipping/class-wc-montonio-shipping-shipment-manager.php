@@ -369,28 +369,32 @@ class WC_Montonio_Shipping_Shipment_Manager {
             $parent_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
             
             if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_separate_label' ) ) {
+                $bounding_box = WC_Montonio_Shipping_Helper::merge_item_into_bounding_box( array( 0, 0, 0 ), array( $length, $width, $height ) );
+
                 for ( $i = 0; $i < $quantity; $i++ ) {
                     $parcels[] = array(
                         'weight' => $weight > 0 ? $weight : 1,
-                        'length' => $length,
-                        'width'  => $width,
-                        'height' => $height
+                        'height' => $bounding_box[0],
+                        'width'  => $bounding_box[1],
+                        'length' => $bounding_box[2]
                     );
                 }
             } else {
-                if ( array_key_exists( 'combined', $parcels ) ) {
-                    $parcels['combined']['weight'] += $weight * $quantity;
-                    $parcels['combined']['length'] = max( $parcels['combined']['length'], $length );
-                    $parcels['combined']['width']  = max( $parcels['combined']['width'], $width );
-                    $parcels['combined']['height'] = max( $parcels['combined']['height'], $height );
-                } else {
-                    $parcels['combined'] = array(
-                        'weight' => $weight * $quantity,
-                        'length' => $length,
-                        'width'  => $width,
-                        'height' => $height
-                    );
+                if ( ! array_key_exists( 'combined', $parcels ) ) {
+                    $parcels['combined'] = array( 'weight' => 0, 'height' => 0, 'width' => 0, 'length' => 0 );
                 }
+
+                $parcels['combined']['weight'] += $weight * $quantity;
+
+                $bounding_box = WC_Montonio_Shipping_Helper::merge_item_into_bounding_box(
+                    array( $parcels['combined']['height'], $parcels['combined']['width'], $parcels['combined']['length'] ),
+                    array( $length, $width, $height )
+                );
+
+                // The bounding box is sorted ascending — length carries the longest side
+                $parcels['combined']['height'] = $bounding_box[0];
+                $parcels['combined']['width']  = $bounding_box[1];
+                $parcels['combined']['length'] = $bounding_box[2];
             }
 
             // Check for duplicate SKUs
@@ -446,34 +450,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
      * @return array The dimensions with fallbacks applied if applicable.
      */
     private static function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
-        $shipping_method_id = $shipping_method->get_method_id();
-        $instance           = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
+        $instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
 
-        if ( ! $instance ) {
-            return $dimensions;
-        }
-
-        $apply_fallback = false;
-
-        // International shipping - always apply fallback
-        if ( strpos( $shipping_method_id, 'montonio_international_shipping' ) === 0 ) {
-            $apply_fallback = true;
-        }
-
-        // DPD methods - only if pricing_type is dynamic
-        $dpd_methods = array(
-            'montonio_dpd_parcel_machines',
-            'montonio_dpd_parcel_shops',
-            'montonio_dpd_courier'
-        );
-
-        if ( in_array( $shipping_method_id, $dpd_methods, true ) ) {
-            if ( 'dynamic' === $instance->get_option( 'pricing_type' ) ) {
-                $apply_fallback = true;
-            }
-        }
-
-        if ( ! $apply_fallback ) {
+        if ( ! $instance instanceof Montonio_Shipping_Method || ! $instance->uses_default_dimensions() ) {
             return $dimensions;
         }
 

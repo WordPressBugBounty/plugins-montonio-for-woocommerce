@@ -857,7 +857,7 @@
   display: flex;
   align-items: center;
 }
-.montonio-options .montonio-connected-store__name {
+.montonio-options .montonio-connected-store__title {
   font-size: 17px;
   line-height: 23px;
   color: #1B1B1B !important;
@@ -865,8 +865,11 @@
   text-decoration: none;
   letter-spacing: -2%;
 }
-.montonio-options .montonio-connected-store__name:hover {
+.montonio-options .montonio-connected-store__title:hover {
   color: #5c14eb;
+}
+.montonio-options .montonio-connected-store__title--not-synced {
+  color: #CE0920 !important;
 }
 .montonio-options .montonio-connected-store__uuid {
   margin-top: 8px;

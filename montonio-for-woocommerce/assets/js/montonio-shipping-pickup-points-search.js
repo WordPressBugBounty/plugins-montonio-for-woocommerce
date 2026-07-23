@@ -45,6 +45,59 @@ class MontonioPickupPointSelector {
         
         // Close dropdown when clicking outside
         document.addEventListener('click', this.boundDocumentClick);
+
+        // Keep the dual-form mirror in sync with the (freshly rendered) source input.
+        this.syncPickupPointMirror();
+    }
+
+    /**
+     * Dual-form checkout compatibility.
+     *
+     * Some themes render a visible form that the customer fills in, but actually submit
+     * a separate hidden form with duplicated hidden input fields with values form the visible form.
+     *
+     * To stay compatible we mirror the selected pickup-point value into a hidden input inside the
+     * form that actually submits (the ancestor <form> of the place-order button).
+     */
+    syncPickupPointMirror() {
+        if (!this.hiddenInput) {
+            return;
+        }
+
+        const sourceForm = this.hiddenInput.closest('form');
+
+        // The place-order button lives inside the form that actually submits
+        const placeOrderButton = document.querySelector('[name="woocommerce_checkout_place_order"], #place_order');
+        const submitForm = ( placeOrderButton && placeOrderButton.closest('form') ) || document.querySelector('form[name="checkout"]');
+
+        // Single-form theme (or no separate submit form): the field already submits, nothing to mirror
+        if (!submitForm || submitForm === sourceForm) {
+            return;
+        }
+
+        // Reuse the existing mirror if present to avoid duplicate hidden inputs
+        let mirror = submitForm.querySelector('input.montonio-pickup-point__mirror[name="montonio_pickup_point"]');
+        if (!mirror) {
+            mirror = document.createElement('input');
+            mirror.type = 'hidden';
+            mirror.name = 'montonio_pickup_point';
+            mirror.className = 'montonio-pickup-point__mirror';
+            submitForm.appendChild(mirror);
+        }
+
+        mirror.value = this.hiddenInput.value;
+
+        // Final guard: re-sync right before the form submits
+        if (!submitForm.dataset.montonioMirrorBound) {
+            submitForm.dataset.montonioMirrorBound = 'true';
+            submitForm.addEventListener('submit', () => {
+                const source = document.getElementById('montonio_pickup_point');
+                const target = submitForm.querySelector('input.montonio-pickup-point__mirror[name="montonio_pickup_point"]');
+                if (source && target) {
+                    target.value = source.value;
+                }
+            });
+        }
     }
 
     initLogoCarousel() {
@@ -294,8 +347,9 @@ class MontonioPickupPointSelector {
         this.selectedPoint = point;
         this.input.value = point.name || 'Selected Pickup Point';
         this.hiddenInput.value = point.id;
+        this.syncPickupPointMirror();
         this.hideDropdown();
-    
+
         // Trigger custom event
         this.input.dispatchEvent(new CustomEvent('montonio-pickup-point-selected', {
             detail: point,
@@ -307,6 +361,7 @@ class MontonioPickupPointSelector {
         this.selectedPoint = null;
         this.input.value = '';
         this.hiddenInput.value = '';
+        this.syncPickupPointMirror();
     }
 
     showLoading() {
@@ -343,16 +398,27 @@ class MontonioPickupPointSelector {
     }
 }
 
+// Remove the dual-form mirror input(s) when the pickup point selector is no longer present
+// (e.g. the customer switched to a shipping method that has no pickup point).
+function removePickupPointMirror() {
+    document.querySelectorAll('input.montonio-pickup-point__mirror[name="montonio_pickup_point"]').forEach(function(mirror) {
+        mirror.remove();
+    });
+}
+
 // Helper function to safely initialize
 function initializePickupPointSelector() {
     // Destroy existing instance if it exists
     if (window.montonioPickupPointSelector && typeof window.montonioPickupPointSelector.destroy === 'function') {
         window.montonioPickupPointSelector.destroy();
     }
-    
+
     // Create new instance
     if (document.getElementById('montonio-pickup-point__search-input')) {
         window.montonioPickupPointSelector = new MontonioPickupPointSelector();
+    } else {
+        // Pickup point no longer applies — drop any lingering dual-form mirror input.
+        removePickupPointMirror();
     }
 }
 

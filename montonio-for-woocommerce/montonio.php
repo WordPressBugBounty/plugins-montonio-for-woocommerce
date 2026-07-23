@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.3.1
+ * Version:           10.3.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.3.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.3.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -82,7 +82,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             $version = get_option( 'wc_montonio_plugin_version', '0' );
 
-            if ( version_compare( $version, '10.3.1', '<' ) ) {
+            if ( version_compare( $version, '10.3.2', '<' ) ) {
                 if ( version_compare( $version, '9.1.4', '<' ) ) {
                     require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-9.1.4.php';
                 }
@@ -95,11 +95,7 @@ if ( ! class_exists( 'Montonio' ) ) {
                     require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.2.1.php';
                 }
 
-                if ( version_compare( $version, '10.3.0', '<' ) ) {
-                    require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.3.0.php';
-                }
-
-                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.3.1.php';
+                require_once WC_MONTONIO_PLUGIN_PATH . '/includes/migrations/montonio-migration-10.3.2.php';
             }
 
             update_option( 'wc_montonio_plugin_version', WC_MONTONIO_PLUGIN_VERSION );

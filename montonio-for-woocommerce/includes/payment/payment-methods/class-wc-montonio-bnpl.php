@@ -30,6 +30,14 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
      */
     public $secret_key;
 
+    
+    /**
+     * BNPL payment configuration
+     *
+     * @var array
+     */
+    public $method_config;
+
     /**
      * Constructor for the gateway.
      */
@@ -51,11 +59,12 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
         $this->init_settings();
 
         // Get settings
-        $this->title       = $this->get_option( 'title', 'Pay Later' );
-        $this->description = $this->get_option( 'description' );
-        $this->enabled     = $this->get_option( 'enabled' );
-        $this->test_mode   = WC_Montonio_Helper::is_test_mode();
-        $this->max_amount  = 2500;
+        $this->title         = $this->get_option( 'title', 'Pay Later' );
+        $this->description   = $this->get_option( 'description' );
+        $this->enabled       = $this->get_option( 'enabled' );
+        $this->test_mode     = WC_Montonio_Helper::is_test_mode();
+        $this->method_config = WC_Montonio_Helper::get_payment_methods( $this->api_method_key );
+        $this->max_amount    = 2500;
 
         if ( 'Pay Later' === $this->title ) {
             $this->title = __( 'Pay Later', 'montonio-for-woocommerce' );
@@ -115,7 +124,7 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
             return false;
         }
 
-        if ( ! WC_Montonio_Helper::has_api_keys() ) {
+        if ( empty( $this->method_config ) ) {
             return false;
         }
 

@@ -51,8 +51,15 @@ if ( ! empty( $shipping_classes ) ) {
         }
 
         $shipping_classes_options[$shipping_class->term_id] = $shipping_class->name;
+        $class_cost_id = $shipping_class->term_id;
 
-        $settings['class_cost_' . $shipping_class->term_id] = array(
+        // WPML uses per-language term IDs; compare canonical IDs to catch all languages.
+        if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+            $default_language = apply_filters( 'wpml_default_language', null );
+            $class_cost_id    = apply_filters( 'wpml_object_id', $shipping_class->term_id, 'product_shipping_class', true, $default_language );
+        }
+
+        $settings['class_cost_' . $class_cost_id] = array(
             /* translators: %s: shipping class name */
             'title'             => sprintf( __( '"%s" shipping class cost', 'montonio-for-woocommerce' ), esc_html( $shipping_class->name ) ),
             'type'              => 'text',

@@ -195,6 +195,8 @@ class Montonio_Connection {
 
         update_option( self::SETTINGS_OPTION, $settings );
 
+        delete_option( 'montonio_payment_methods' );
+
         self::redirect_to_settings( 'disconnected' );
     }
 

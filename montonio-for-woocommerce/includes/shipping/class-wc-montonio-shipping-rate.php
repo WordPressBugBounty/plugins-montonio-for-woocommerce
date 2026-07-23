@@ -179,7 +179,7 @@ class WC_Montonio_Shipping_Rate {
      * @since 9.4.3
      * @param string $carrier_code Montonio carrier code (e.g. 'dpd', 'novaPost').
      * @param string $type         Shipping method type: 'courier' or 'pickupPoint'.
-     * @param array  $parcels      Parcel array from get_parcels_with_item_dimensions().
+     * @param array  $parcels      Parcel array from get_parcels_for_rate_request().
      * @param string $country      Two-letter ISO shipping country code.
      * @return array[]|null Flat subtypes array, or null on API failure.
      */

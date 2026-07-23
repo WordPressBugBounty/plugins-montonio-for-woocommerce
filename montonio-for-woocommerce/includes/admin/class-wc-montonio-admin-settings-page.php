@@ -269,7 +269,9 @@ class WC_Montonio_Admin_Settings_Page {
      * @return void
      */
     public static function render_admin_menu( $id = null ) {
-        $menu_items = self::get_menu_items();
+        $menu_items   = self::get_menu_items();
+        $is_test_mode = WC_Montonio_Helper::is_test_mode();
+        $has_api_keys = WC_Montonio_Helper::has_api_keys();
         ?>
         <div class="montonio-menu">
             <ul class="montonio-menu__list">
@@ -278,10 +280,9 @@ class WC_Montonio_Admin_Settings_Page {
                     ? admin_url( 'admin.php?page=wc-settings&tab=' . $section )
                     : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $section );
 
-                    $is_enabled   = false;
-                    $is_test_mode = WC_Montonio_Helper::is_test_mode();
+                    $is_enabled = false;
 
-                    if ( WC_Montonio_Helper::has_api_keys() && $value['check_status'] ) {
+                    if ( $has_api_keys && $value['check_status'] ) {
                         if ( 'payment_method' === $value['type'] ) {
                             $settings   = get_option( 'woocommerce_' . $section . '_settings' );
                             $is_enabled = ( isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] );
@@ -351,18 +352,21 @@ class WC_Montonio_Admin_Settings_Page {
             <div class="montonio-card montonio-card--store-info">
                 <div class="montonio-card__body">
                     <?php $store_details = WC_Montonio_Helper::get_store_details(); ?>
-                    <?php if ( ! empty( $store_details ) ): ?>
                         <div class="montonio-connected-store">
                             <div class="montonio-connected-store__info">
-                                <div class="montonio-connected-store__header">
-                                    <a href="https://partner.montonio.com/stores/<?php echo esc_attr( $store_details['uuid'] ); ?>"
-                                    class="montonio-connected-store__name"
-                                    target="_blank"
-                                    title="<?php esc_html_e( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"
-                                    ><?php echo esc_html( $store_details['name'] ); ?></a>
-                                    <span class="montonio-badge montonio-badge--success"><?php esc_html_e( 'Connected', 'montonio-for-woocommerce' ); ?></span>
-                                </div>
-                                <div class="montonio-connected-store__uuid">UUID: <?php echo esc_attr( $store_details['uuid'] ); ?></div>
+                                <?php if ( ! empty( $store_details ) ): ?>
+                                    <div class="montonio-connected-store__header">
+                                        <a href="https://partner.montonio.com/stores/<?php echo esc_attr( $store_details['uuid'] ); ?>"
+                                        class="montonio-connected-store__title"
+                                        target="_blank"
+                                        title="<?php esc_html_e( 'Open Store in Montonio Partner System', 'montonio-for-woocommerce' ); ?>"
+                                        ><?php echo esc_html( $store_details['name'] ); ?></a>
+                                        <span class="montonio-badge montonio-badge--success"><?php esc_html_e( 'Connected', 'montonio-for-woocommerce' ); ?></span>
+                                    </div>
+                                    <div class="montonio-connected-store__uuid">UUID: <?php echo esc_attr( $store_details['uuid'] ); ?></div>
+                                <?php else: ?>
+                                    <div class="montonio-connected-store__title montonio-connected-store__title--not-synced"><?php esc_html_e( 'Store data sync failed. Please try again!', 'montonio-for-woocommerce' ); ?></div>
+                                <?php endif; ?>
                             </div>
                             <div class="montonio-connected-store__actions">
                                 <button
@@ -377,7 +381,6 @@ class WC_Montonio_Admin_Settings_Page {
                             </div>
                         </div>
                         <div class="montonio-resync-status" id="montonio-resync-status" role="status" aria-live="polite" style="display:none;"></div>
-                    <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>

@@ -68,7 +68,7 @@ class Montonio_International_Shipping_Pickup_Points extends Montonio_Shipping_Me
 
         $flat_rate_cost   = $this->get_option( 'flat_rate_cost' );
         $package_item_qty = $this->get_package_item_qty( $package );
-        $parcels          = $this->get_parcels_with_item_dimensions( $package );
+        $parcels          = $this->get_parcels_for_rate_request( $package );
         $labels           = array(
             'parcelMachine' => __( 'Parcel lockers', 'montonio-for-woocommerce' ),
             'parcelShop'    => __( 'Parcel shops', 'montonio-for-woocommerce' )

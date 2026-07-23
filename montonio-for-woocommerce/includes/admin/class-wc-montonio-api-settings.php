@@ -406,6 +406,8 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
      */
     private function sync_payment_methods( $prefix ) {
         try {
+            delete_option( 'montonio_payment_methods' );
+
             WC_Montonio_Data_Sync::sync_payment_methods();
         } catch ( Exception $e ) {
             $message = $e->getMessage();

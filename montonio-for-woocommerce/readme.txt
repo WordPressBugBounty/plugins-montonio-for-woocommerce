@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.1
+Version: 10.3.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 10.3.1
+Stable tag: 10.3.2
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,17 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.2 =
+* Fix – Pickup-point selection is now carried through to order placement on themes that submit a separate (dual) checkout form
+* Fix – Shipping class costs are now matched using canonical shipping class IDs under WPML, so per-class costs apply correctly across all languages
+* Fix – Checkout parcel size checks now use the same orientation-agnostic dimension aggregation as shipment creation, so any shipping method offered at checkout can also be created as a shipment
+* Fix – Products flagged for a separate shipping label are now counted as their own parcels, and default dimensions are applied, in the checkout size check
+* Tweak – The connected-store status banner now shows a clear sync-failure state when store data could not be fetched, instead of hiding
+* Tweak – MobilePay is now enabled automatically on update for stores that already have card payments turned on (one-time; can be disabled again afterwards)
+* Tweak – MobilePay is now placed first among the Montonio payment methods after update
+* Dev – BNPL and Hire Purchase gateways now hide when no matching payment method configuration is synced from Montonio
+* Dev – Payment methods cache is now cleared before syncing and removed on disconnect
+
 = 10.3.1 =
 * Tweak – Improved how MobilePay availability is shown and managed in the payment method settings
 
