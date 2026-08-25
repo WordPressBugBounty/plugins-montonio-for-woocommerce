@@ -6,7 +6,8 @@ defined( 'ABSPATH' ) || exit;
  *
  * A standalone payment method backed by the `mobilePay` entry in the synced
  * Montonio payment methods. It has its own settings and enabled state, always
- * redirects (no embedded fields), and is only available in Finland.
+ * redirects (no embedded fields), and is only available in the countries where
+ * MobilePay is offered (Finland and Denmark).
  *
  * @class       WC_Montonio_Mobilepay
  * @extends     WC_Payment_Gateway
@@ -40,6 +41,31 @@ class WC_Montonio_Mobilepay extends WC_Montonio_Payment_Gateway {
      * @var bool
      */
     public $is_required;
+
+    /**
+     * Countries where MobilePay is offered.
+     *
+     * @var string[]
+     */
+    protected $supported_countries = array( 'FI', 'DK' );
+
+    /**
+     * Language subtags of the MobilePay countries.
+     *
+     * @var string[]
+     */
+    protected $supported_languages = array( 'fi', 'da' );
+
+    /**
+     * IANA timezones of the MobilePay countries.
+     *
+     * Finland uses Europe/Helsinki; the autonomous Åland Islands use the
+     * Europe/Mariehamn zone (a link to Helsinki), so both are accepted.
+     * Denmark uses Europe/Copenhagen.
+     *
+     * @var string[]
+     */
+    protected $supported_timezones = array( 'Europe/Helsinki', 'Europe/Mariehamn', 'Europe/Copenhagen' );
 
     /**
      * Constructor for the gateway.
@@ -137,15 +163,15 @@ class WC_Montonio_Mobilepay extends WC_Montonio_Payment_Gateway {
         $billing_country  = ( WC()->customer ) ? WC()->customer->get_billing_country() : '';
         $shipping_country = ( WC()->customer ) ? WC()->customer->get_shipping_country() : '';
 
-        $is_finnish = 'FI' === $billing_country
-            || 'FI' === $shipping_country
-            || $this->is_finnish_timezone()
-            || $this->is_finnish_language()
-            || $this->is_finnish_account_country()
-            || $this->is_finnish_store()
-            || $this->is_finnish_ip_country();
+        $is_supported = $this->is_supported_country( $billing_country )
+            || $this->is_supported_country( $shipping_country )
+            || $this->is_supported_timezone()
+            || $this->is_supported_language()
+            || $this->is_supported_account_country()
+            || $this->is_supported_store()
+            || $this->is_supported_ip_country();
 
-        if ( ! $is_finnish ) {
+        if ( ! $is_supported ) {
             return false;
         }
 
@@ -153,86 +179,114 @@ class WC_Montonio_Mobilepay extends WC_Montonio_Payment_Gateway {
     }
 
     /**
-     * Whether the active language is Finnish.
+     * Whether a country code is one where MobilePay is offered.
      *
-     * Considers, in order, the WPML/Polylang current language (via the
-     * `wpml_current_language` filter, which Polylang also implements), the
-     * WordPress locale (e.g. "fi" or "fi_FI"), and the browser's preferred
-     * language from the Accept-Language header.
-     *
+     * @param  string $country Two-letter country code.
      * @return bool
      */
-    protected function is_finnish_language() {
-        $current_language = apply_filters( 'wpml_current_language', null );
-
-        if ( ! empty( $current_language ) && 'fi' === strtolower( $current_language ) ) {
-            return true;
-        }
-
-        if ( 0 === strpos( strtolower( get_locale() ), 'fi' ) ) {
-            return true;
-        }
-
-        return $this->is_finnish_browser_language();
+    protected function is_supported_country( $country ) {
+        return in_array( strtoupper( (string) $country ), $this->supported_countries, true );
     }
 
     /**
-     * Whether the browser's preferred language (Accept-Language header) is Finnish.
+     * Extract the language subtag from a locale or language tag.
+     *
+     * For example "fi", "fi_FI" and "da-DK" all yield the bare subtag ("fi",
+     * "fi", "da"), so tags can be compared without matching unrelated locales
+     * that merely share a prefix (e.g. "fil" for Filipino).
+     *
+     * @param  string $language Locale or language tag.
+     * @return string Lowercased language subtag.
+     */
+    protected function get_language_subtag( $language ) {
+        return strtolower( preg_replace( '/[_-].*$/', '', (string) $language ) );
+    }
+
+    /**
+     * Whether the active language belongs to a MobilePay country.
+     *
+     * Considers, in order, the WPML/Polylang current language (via the
+     * `wpml_current_language` filter, which Polylang also implements), the
+     * WordPress locale (e.g. "fi", "fi_FI" or "da_DK"), and the browser's
+     * preferred language from the Accept-Language header.
      *
      * @return bool
      */
-    protected function is_finnish_browser_language() {
+    protected function is_supported_language() {
+        $current_language = apply_filters( 'wpml_current_language', null );
+
+        if ( in_array( $this->get_language_subtag( $current_language ), $this->supported_languages, true ) ) {
+            return true;
+        }
+
+        if ( in_array( $this->get_language_subtag( get_locale() ), $this->supported_languages, true ) ) {
+            return true;
+        }
+
+        return $this->is_supported_browser_language();
+    }
+
+    /**
+     * Whether the browser's preferred language (Accept-Language header) belongs
+     * to a MobilePay country.
+     *
+     * @return bool
+     */
+    protected function is_supported_browser_language() {
         if ( empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
             return false;
         }
 
         $accept_language = strtolower( sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) );
 
-        // Match "fi" as a standalone language tag (e.g. "fi", "fi-FI"), not a substring of other tags.
-        return 1 === preg_match( '/(^|,)\s*fi\b/', $accept_language );
+        // Match a supported subtag as a standalone language tag (e.g. "da", "da-DK"), not a substring of other tags.
+        $pattern = '/(^|,)\s*(' . implode( '|', array_map( 'preg_quote', $this->supported_languages ) ) . ')\b/';
+
+        return 1 === preg_match( $pattern, $accept_language );
     }
 
     /**
-     * Whether the store is configured for Finland.
+     * Whether the store is configured for a MobilePay country.
      *
      * Checks the WooCommerce base country and, as a fallback, the default
      * customer location country.
      *
      * @return bool
      */
-    protected function is_finnish_store() {
+    protected function is_supported_store() {
         $base_country = ( WC()->countries ) ? WC()->countries->get_base_country() : '';
 
-        if ( 'FI' === $base_country ) {
+        if ( $this->is_supported_country( $base_country ) ) {
             return true;
         }
 
         $default_location = wc_get_customer_default_location();
         $default_country  = isset( $default_location['country'] ) ? $default_location['country'] : '';
 
-        return 'FI' === $default_country;
+        return $this->is_supported_country( $default_country );
     }
 
     /**
-     * Whether the connected Montonio account is Finnish.
+     * Whether the connected Montonio account belongs to a MobilePay country.
      *
      * Checks the synced store's `country` and `businessCountry` (from the
-     * Montonio Partner System); either being Finland makes the method eligible.
+     * Montonio Partner System); either being a MobilePay country makes the
+     * method eligible.
      *
      * @return bool
      */
-    protected function is_finnish_account_country() {
+    protected function is_supported_account_country() {
         $store_details = WC_Montonio_Helper::get_store_details();
 
         if ( empty( $store_details ) ) {
             return false;
         }
 
-        return 'FI' === ( $store_details['country'] ?? '' ) || 'FI' === ( $store_details['businessCountry'] ?? '' );
+        return $this->is_supported_country( $store_details['country'] ?? '' ) || $this->is_supported_country( $store_details['businessCountry'] ?? '' );
     }
 
     /**
-     * Whether the visitor's geo-IP country is Finland.
+     * Whether the visitor's geo-IP country is a MobilePay country.
      *
      * Uses WooCommerce's geolocation, restricted to request headers only
      * (MM_COUNTRY_CODE, GEOIP_COUNTRY_CODE, CF-IPCountry, X-Country-Code) plus
@@ -242,37 +296,34 @@ class WC_Montonio_Mobilepay extends WC_Montonio_Payment_Gateway {
      *
      * @return bool
      */
-    protected function is_finnish_ip_country() {
+    protected function is_supported_ip_country() {
         if ( ! class_exists( 'WC_Geolocation' ) ) {
             return false;
         }
 
         $location = WC_Geolocation::geolocate_ip( '', false, false );
 
-        return ! empty( $location['country'] ) && 'FI' === $location['country'];
+        return ! empty( $location['country'] ) && $this->is_supported_country( $location['country'] );
     }
 
     /**
-     * Whether the visitor's browser timezone is Finnish.
+     * Whether the visitor's browser timezone belongs to a MobilePay country.
      *
      * The IANA timezone is only available client-side, so it is captured by
      * `assets/js/montonio-timezone.js` into the `montonio_tz` cookie. This will
      * be empty on the very first page view (before the script has run), in
-     * which case the other Finnish signals govern.
-     *
-     * Finland uses Europe/Helsinki; the autonomous Åland Islands use the
-     * Europe/Mariehamn zone (a link to Helsinki), so both are accepted.
+     * which case the other country signals govern.
      *
      * @return bool
      */
-    protected function is_finnish_timezone() {
+    protected function is_supported_timezone() {
         if ( empty( $_COOKIE['montonio_tz'] ) ) {
             return false;
         }
 
         $timezone = sanitize_text_field( wp_unslash( $_COOKIE['montonio_tz'] ) );
 
-        return in_array( $timezone, array( 'Europe/Helsinki', 'Europe/Mariehamn' ), true );
+        return in_array( $timezone, $this->supported_timezones, true );
     }
 
     /**

@@ -46,7 +46,8 @@ class Montonio_Migration_9_1_4 {
                 carrier_code VARCHAR(50),
                 country_code CHAR(2),
                 carrier_assigned_id VARCHAR(50),
-                additional_services TEXT NULL
+                additional_services TEXT NULL,
+                KEY idx_montonio_lookup (country_code, carrier_code, item_type)
             ) $collate;";
 
             dbDelta( $sql );

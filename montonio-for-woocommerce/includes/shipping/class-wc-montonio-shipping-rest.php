@@ -190,7 +190,12 @@ class WC_Montonio_Shipping_REST {
             return new WP_Error( 'wc_montonio_shipping_invalid_label_file_id', 'Invalid or no label file ID provided.', array( 'status' => 400 ) );
         }
 
-        $label = WC_Montonio_Shipping_Label_Printing::get_label_file_by_id( $label_file_id );
+        try {
+            $label = WC_Montonio_Shipping_Label_Printing::get_label_file_by_id( $label_file_id );
+        } catch ( Exception $e ) {
+            WC_Montonio_Logger::log( 'Label file fetch failed. Response: ' . $e->getMessage() );
+            return new WP_Error( 'wc_montonio_shipping_label_fetch_error', 'Error fetching label file: ' . $e->getMessage(), array( 'status' => 503 ) );
+        }
 
         return rest_ensure_response( array( 'message' => 'Label fetched successfully.', 'data' => $label ) );
     }

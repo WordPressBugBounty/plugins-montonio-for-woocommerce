@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.2
+Version: 10.3.3
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
-Tested up to: 7.0
-Stable tag: 10.3.2
+Tested up to: 7.1
+Stable tag: 10.3.3
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,13 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.3 =
+* Fix – Added a database index to the shipping method items table so pickup-point and shipping-method lookups no longer trigger a full table scan on every checkout render, reducing database and CPU load on larger stores
+* Tweak – Printing now waits for labels more reliably. Temporary network or server errors are now retried instead of failing on the first try, and only one status check runs at a time
+* Fix – The label printing spinner no longer stays stuck when label creation returns an unexpected response, and label files that are already generated are downloaded immediately instead of waiting for the next poll
+* Tweak – MobilePay is now also shown to shoppers in Denmark, when MobilePay is supported
+* Dev – The label file REST endpoint now logs the failure and returns a 503 when fetching the label file from Montonio fails, instead of letting the exception surface
+
 = 10.3.2 =
 * Fix – Pickup-point selection is now carried through to order placement on themes that submit a separate (dual) checkout form
 * Fix – Shipping class costs are now matched using canonical shipping class IDs under WPML, so per-class costs apply correctly across all languages

@@ -2,7 +2,13 @@ jQuery(document).ready(function($) {
     'use strict'; 
 
     const { __, _x, _n, _nx } = wp.i18n;
-    var labelPrintingInterval = null;
+
+
+    var pollDelays = [2000, 2000, 2000, 2000, 4000, 4000, 4000, 4000];
+    var pollMaxDelay = 8000; // Used for every poll once pollDelays is exhausted
+    var pollMaxDuration = 300000; // Stop waiting after 5 minutes
+    var pollMaxConsecutiveErrors = 5;
+    var labelPolling = null; // The single in-flight polling job, if any
     var shippingPanel = $('.montonio-shipping-panel');
     
     $(document).on('click', '.wc-action-button-montonio_print_label', function(event) {
@@ -86,17 +92,21 @@ jQuery(document).ready(function($) {
                 xhr.setRequestHeader('X-WP-Nonce', wcMontonioShippingLabelPrintingData.nonce);
             },
             success: function(response) {
-                if (response && response.data && response.data.id) {
-                    saveLatestLabelFileIdToSession(response.data.id);
+                var label = response && response.data ? response.data : null;
 
-                    if (!labelPrintingInterval && getLatestLabelFileIdFromSession().length > 0) {
-                        labelPrintingInterval = setInterval(function() {
-                            pollMontonioShippingLabels();
-                        }, 1000);
-                    } else {
-                        showNotice('error', __('Montonio: Unable to start polling for labels', 'montonio-for-woocommerce'));
-                    }
+                if (!label || !label.id) {
+                    shippingPanel.removeClass('montonio-shipping-panel--loading');
+
+                    showNotice('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+
+                    return;
                 }
+
+                if (handleFinishedLabelFile(label)) {
+                    return;
+                }
+
+                startLabelPolling(label.id);
             },
             error: function(response) {
                 console.error(response);
@@ -107,53 +117,168 @@ jQuery(document).ready(function($) {
         });
     }
 
-    function saveLatestLabelFileIdToSession(labelFileId) {
-        sessionStorage.setItem('wc_montonio_shipping_latest_label_file_id', labelFileId);
+    /**
+     * Begin polling for a label file. Any job still polling is superseded.
+     */
+    function startLabelPolling(labelFileId) {
+        stopLabelPolling();
+
+        labelPolling = {
+            labelFileId: labelFileId,
+            deadline: Date.now() + pollMaxDuration,
+            polls: 0,
+            consecutiveErrors: 0,
+            timeoutId: null,
+            request: null
+        };
+
+        scheduleNextPoll();
     }
 
-    function getLatestLabelFileIdFromSession() {
-        return sessionStorage.getItem('wc_montonio_shipping_latest_label_file_id');
+    function stopLabelPolling() {
+        if (!labelPolling) {
+            return;
+        }
+
+        if (labelPolling.timeoutId) {
+            clearTimeout(labelPolling.timeoutId);
+        }
+
+        if (labelPolling.request) {
+            labelPolling.request.abort();
+        }
+
+        labelPolling = null;
+    }
+
+    function finishLabelPolling(type, message) {
+        stopLabelPolling();
+
+        shippingPanel.removeClass('montonio-shipping-panel--loading');
+
+        showNotice(type, message);
+    }
+
+    /**
+     * Handle a label file that has reached a final state, downloading it when it
+     * is ready. Shared by the create and poll responses, which return the same
+     * payload, so the two cannot drift apart.
+     *
+     * @param object label The label file payload.
+     * @return bool True if the label file was finished and no polling is needed.
+     */
+    function handleFinishedLabelFile(label) {
+        if (label.labelFileUrl) {
+            downloadLabelFile(label);
+
+            finishLabelPolling('success', __('Montonio: Labels downloaded. Refresh the browser for updated order statuses', 'montonio-for-woocommerce'));
+
+            return true;
+        }
+
+        if (label.status === 'failed') {
+            finishLabelPolling('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Queue the next poll. Called only once the previous poll has settled, so
+     * there is never more than one label status request in flight.
+     */
+    function scheduleNextPoll() {
+        if (!labelPolling) {
+            return;
+        }
+
+        if (Date.now() >= labelPolling.deadline) {
+            finishLabelPolling('error', __('Montonio: Labels are taking longer than expected to generate. They may still complete - please refresh the page and try again in a moment.', 'montonio-for-woocommerce'));
+
+            return;
+        }
+
+        var delay = labelPolling.polls < pollDelays.length ? pollDelays[labelPolling.polls] : pollMaxDelay;
+
+        labelPolling.polls++;
+
+        labelPolling.timeoutId = setTimeout(pollMontonioShippingLabels, delay);
     }
 
     function pollMontonioShippingLabels() {
-        $.ajax({
-            url: wcMontonioShippingLabelPrintingData.restUrl + '/labels?label_file_id=' + getLatestLabelFileIdFromSession(),
+        if (!labelPolling) {
+            return;
+        }
+
+        // Keep a reference to the job this request belongs to, so a late response
+        // from a superseded job cannot affect the current one.
+        var job = labelPolling;
+        job.timeoutId = null;
+
+        job.request = $.ajax({
+            url: wcMontonioShippingLabelPrintingData.restUrl + '/labels?label_file_id=' + encodeURIComponent(job.labelFileId),
             type: 'GET',
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('X-WP-Nonce', wcMontonioShippingLabelPrintingData.nonce);
             },
             success: function(response) {
-                if (response && response.data && response.data.labelFileUrl && labelPrintingInterval) {
-                    var anchor = document.createElement("a");
-                    anchor.href = response.data.labelFileUrl;
-                    anchor.download = 'labels-' + response.data.id + '.pdf';
-
-                    document.body.appendChild(anchor);
-                    anchor.click();
-                    document.body.removeChild(anchor);
-
-                    shippingPanel.removeClass('montonio-shipping-panel--loading');
-                    clearInterval(labelPrintingInterval);
-                    labelPrintingInterval = null;
-
-                    showNotice('success',  __('Montonio: Labels downloaded. Refresh the browser for updated order statuses', 'montonio-for-woocommerce'));
-                } else if (response && response.data && response.data.status === 'failed') {
-                    shippingPanel.removeClass('montonio-shipping-panel--loading');
-                    clearInterval(labelPrintingInterval);
-                    labelPrintingInterval = null;
-
-                    showNotice('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+                if (job !== labelPolling) {
+                    return;
                 }
-            },
-            error: function(response) {
-                console.error(response);
-                shippingPanel.removeClass('montonio-shipping-panel--loading');
-                clearInterval(labelPrintingInterval);
-                labelPrintingInterval = null;
 
-                showNotice('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+                var label = response && response.data ? response.data : null;
+
+                if (label && handleFinishedLabelFile(label)) {
+                    return;
+                }
+
+                // Still generating - keep waiting.
+                job.consecutiveErrors = 0;
+
+                scheduleNextPoll();
+            },
+            error: function(xhr, textStatus) {
+                if (job !== labelPolling || textStatus === 'abort') {
+                    return;
+                }
+
+                console.error(xhr);
+
+                if (xhr.status === 400 || xhr.status === 403) {
+                    finishLabelPolling('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+
+                    return;
+                }
+
+                job.consecutiveErrors++;
+
+                // Timeouts and 5xx responses - retry rather than abandoning the job on the first transient failure.
+                if (job.consecutiveErrors >= pollMaxConsecutiveErrors) {
+                    finishLabelPolling('error', __('Montonio: Failed to print labels', 'montonio-for-woocommerce'));
+
+                    return;
+                }
+
+                scheduleNextPoll();
+            },
+            complete: function() {
+                if (job === labelPolling) {
+                    job.request = null;
+                }
             }
         });
+    }
+
+    function downloadLabelFile(label) {
+        var anchor = document.createElement('a');
+        anchor.href = label.labelFileUrl;
+        anchor.download = 'labels-' + label.id + '.pdf';
+
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
     }
 
     function showNotice(type, message) {

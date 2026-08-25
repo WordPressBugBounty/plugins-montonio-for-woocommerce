@@ -36,7 +36,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:93
 #: includes/payment/payment-methods/class-wc-montonio-card.php:122
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:89
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:96
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:122
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:109
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:10
 #: includes/shipping/shipping-methods/shipping-method-settings.php:8
@@ -56,7 +56,7 @@ msgstr "Płatność Kartą"
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:100
 #: includes/payment/payment-methods/class-wc-montonio-card.php:129
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:96
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:103
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:129
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:116
 msgid "Description"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr "Zapłać swoją kartą kredytową lub debetową"
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:219
+#: montonio.php:223
 msgid "Settings"
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-card.php:107
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:82
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:120
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:89
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:115
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:102
 #: includes/shipping/class-wc-montonio-shipping-settings.php:90
 msgid "Enable/Disable"
@@ -554,7 +554,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:173
 #: includes/payment/payment-methods/class-wc-montonio-card.php:210
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:67
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:290
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:341
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:261
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
@@ -606,7 +606,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:96
 #: includes/payment/payment-methods/class-wc-montonio-card.php:125
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:92
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:99
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:125
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:112
 msgid "Payment method title which the user sees during checkout."
 msgstr ""
@@ -619,7 +619,7 @@ msgstr "Zapłać BLIKiem"
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:104
 #: includes/payment/payment-methods/class-wc-montonio-card.php:133
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:100
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:107
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:133
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:120
 msgid "Payment method description which the user sees during checkout."
 msgstr ""
@@ -635,7 +635,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:173
 #: includes/payment/payment-methods/class-wc-montonio-card.php:210
 #: includes/payment/payment-methods/class-wc-montonio-hire-purchase.php:67
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:290
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:341
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:261
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
@@ -1167,17 +1167,15 @@ msgstr ""
 msgid "Delivered"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:77
+#: assets/js/wc-montonio-shipping-label-printing.js:83
 msgid "Montonio: Started downloading Shipping labels"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:97
-msgid "Montonio: Unable to start polling for labels"
-msgstr ""
-
-#: assets/js/wc-montonio-shipping-label-printing.js:105
-#: assets/js/wc-montonio-shipping-label-printing.js:145
-#: assets/js/wc-montonio-shipping-label-printing.js:154
+#: assets/js/wc-montonio-shipping-label-printing.js:100
+#: assets/js/wc-montonio-shipping-label-printing.js:115
+#: assets/js/wc-montonio-shipping-label-printing.js:180
+#: assets/js/wc-montonio-shipping-label-printing.js:250
+#: assets/js/wc-montonio-shipping-label-printing.js:259
 msgid "Montonio: Failed to print labels"
 msgstr ""
 
@@ -1238,8 +1236,8 @@ msgstr ""
 msgid "When calculating the cart total for free shipping, exclude the price of virtual products"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:55
-#: assets/js/wc-montonio-shipping-label-printing.js:72
+#: assets/js/wc-montonio-shipping-label-printing.js:61
+#: assets/js/wc-montonio-shipping-label-printing.js:78
 msgid "Montonio: Failed to print labels, missing wcMontonioShippingLabelPrintingData"
 msgstr ""
 
@@ -1342,11 +1340,11 @@ msgstr ""
 msgid "Print shipping label"
 msgstr ""
 
-#: assets/js/wc-montonio-shipping-label-printing.js:139
+#: assets/js/wc-montonio-shipping-label-printing.js:174
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:381
+#: montonio.php:385
 msgid "Need help?"
 msgstr "Potrzebujesz pomocy?"
 
@@ -1367,7 +1365,7 @@ msgstr ""
 msgid "Courier"
 msgstr "Kurier"
 
-#: montonio.php:387
+#: montonio.php:391
 msgid "How to activate Montonio payment methods"
 msgstr "Jak aktywować metody płatności Montonio"
 
@@ -2136,12 +2134,12 @@ msgid "Follow these instructions to set up payment methods: <a href=\"%s\" targe
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:190
-#: montonio.php:370
+#: montonio.php:374
 msgid "Connect your store"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:191
-#: montonio.php:374
+#: montonio.php:378
 msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
 msgstr ""
 
@@ -2217,7 +2215,7 @@ msgstr ""
 msgid "Live Secret Key is not valid."
 msgstr ""
 
-#: montonio.php:377
+#: montonio.php:381
 msgid "Go to account settings"
 msgstr ""
 
@@ -2235,19 +2233,19 @@ msgstr ""
 msgid "Shipping sync failed: %s"
 msgstr ""
 
-#: montonio.php:286
+#: montonio.php:290
 msgid "Payment methods and shipping data synced successfully."
 msgstr ""
 
-#: montonio.php:287
+#: montonio.php:291
 msgid "Payment methods synced successfully."
 msgstr ""
 
-#: montonio.php:288
+#: montonio.php:292
 msgid "Resync failed. Please try again or check the Montonio log."
 msgstr ""
 
-#: montonio.php:289
+#: montonio.php:293
 msgid "Your session has expired. Please reload the page and try again."
 msgstr ""
 
@@ -2263,7 +2261,7 @@ msgstr ""
 msgid "Remove API keys and disconnect this store from Montonio"
 msgstr ""
 
-#: montonio.php:285
+#: montonio.php:289
 msgid "Syncing data, this may take some time..."
 msgstr ""
 
@@ -2273,17 +2271,17 @@ msgstr ""
 
 #: blocks/class-wc-montonio-mobilepay-block.php:36
 #: includes/admin/class-wc-montonio-admin-settings-page.php:237
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:74
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:98
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:100
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:124
 #: blocks/build/wc-montonio-mobilepay/index.js:1
 msgid "MobilePay"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:106
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:132
 msgid "Pay with MobilePay via Montonio."
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:51
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:77
 msgid "Montonio MobilePay"
 msgstr ""
 
@@ -2292,11 +2290,11 @@ msgstr ""
 msgid "You can't disable this payment method because your %1$spricing plan%2$s requires it when any other Montonio payment method is enabled."
 msgstr "Nie możesz wyłączyć tej metody płatności, ponieważ Twój %1$splan cenowy%2$s wymaga jej, gdy włączona jest jakakolwiek inna metoda płatności Montonio."
 
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:52
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:78
 msgid "Allows MobilePay payments via Montonio"
 msgstr ""
 
-#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:90
+#: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:116
 msgid "Enable Montonio MobilePay"
 msgstr ""
 
@@ -2306,4 +2304,8 @@ msgstr "MobilePay nie jest jeszcze widoczny dla Twoich klientów. Skontaktuj si�
 
 #: includes/admin/class-wc-montonio-admin-settings-page.php:368
 msgid "Store data sync failed. Please try again!"
+msgstr ""
+
+#: assets/js/wc-montonio-shipping-label-printing.js:198
+msgid "Montonio: Labels are taking longer than expected to generate. They may still complete - please refresh the page and try again in a moment."
 msgstr ""
