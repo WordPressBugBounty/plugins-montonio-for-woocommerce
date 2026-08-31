@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.3
+Version: 10.3.4
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.3.3
+Stable tag: 10.3.4
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,9 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.4 =
+* Added – New PostNord parcel machines shipping method
+
 = 10.3.3 =
 * Fix – Added a database index to the shipping method items table so pickup-point and shipping-method lookups no longer trigger a full table scan on every checkout render, reducing database and CPU load on larger stores
 * Tweak – Printing now waits for labels more reliably. Temporary network or server errors are now retried instead of failing on the first try, and only one status check runs at a time

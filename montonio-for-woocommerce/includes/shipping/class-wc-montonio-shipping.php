@@ -105,6 +105,7 @@ class WC_Montonio_Shipping {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/orlen/class-montonio-orlen-parcel-machines.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php';
         }
     }
 
@@ -159,6 +160,7 @@ class WC_Montonio_Shipping {
         $methods['montonio_unisend_courier']                      = 'Montonio_Unisend_Courier';
         $methods['montonio_latvian_post_parcel_machines']         = 'Montonio_Latvian_Post_Parcel_Machines';
         $methods['montonio_latvian_post_courier']                 = 'Montonio_Latvian_Post_Courier';
+        $methods['montonio_postnord_parcel_machines']             = 'Montonio_Postnord_Parcel_Machines';
         $methods['montonio_inpost_parcel_machines']               = 'Montonio_Inpost_Parcel_Machines';
         $methods['montonio_orlen_parcel_machines']                = 'Montonio_Orlen_Parcel_Machines';
 
