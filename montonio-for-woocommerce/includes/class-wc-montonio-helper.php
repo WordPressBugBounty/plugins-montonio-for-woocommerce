@@ -166,10 +166,67 @@ class WC_Montonio_Helper {
     }
 
     /**
-     * Check if checkout blocks are used
+     * Check if the store is configured to use the Checkout block.
+     *
+     * This is a store-level setting check and says nothing about what renders on any
+     * given request. Use is_checkout_block_rendering() when deciding whether to load
+     * classic checkout assets.
+     *
+     * @since 10.3.5 Renamed from is_checkout_block().
+     * @return bool Whether the store is configured to check out with the Checkout block.
+     */
+    public static function is_checkout_block_default() {
+        return class_exists( 'Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils' ) && CartCheckoutUtils::is_checkout_block_default();
+    }
+
+    /**
+     * Check if the store is configured to use the Checkout block.
+     *
+     * @deprecated 10.3.5 Use is_checkout_block_default() instead.
+     * @return bool
      */
     public static function is_checkout_block() {
-        return class_exists( 'Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils' ) && CartCheckoutUtils::is_checkout_block_default();
+        _deprecated_function( __METHOD__, '10.3.5', 'WC_Montonio_Helper::is_checkout_block_default()' );
+
+        return self::is_checkout_block_default();
+    }
+
+    /**
+     * Check if the Checkout block is what renders the current request.
+     *
+     * @since 10.3.5
+     * @return bool Whether the Checkout block renders the current request.
+     */
+    public static function is_checkout_block_rendering() {
+        global $post, $_wp_current_template_content;
+
+        // The Checkout block refuses to render on checkout endpoints and defers to the
+        // classic shortcode, so order-pay and order-received always render classic.
+        if ( is_wc_endpoint_url( 'order-pay' ) || is_wc_endpoint_url( 'order-received' ) ) {
+            return false;
+        }
+
+        if ( ! empty( $_wp_current_template_content ) && has_block( 'woocommerce/checkout', $_wp_current_template_content ) ) {
+            return true;
+        }
+
+        if ( $post instanceof WP_Post ) {
+            if ( has_block( 'woocommerce/checkout', $post ) ) {
+                return true;
+            }
+
+            if ( has_shortcode( $post->post_content, 'woocommerce_checkout' ) ) {
+                return false;
+            }
+
+            // The classic shortcode wrapped in the Classic Shortcode block renders the classic form too.
+            if ( method_exists( 'Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils', 'has_block_variation' )
+                && CartCheckoutUtils::has_block_variation( 'woocommerce/classic-shortcode', 'shortcode', 'checkout', $post->post_content ) ) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /**

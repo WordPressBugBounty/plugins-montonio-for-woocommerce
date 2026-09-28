@@ -79,6 +79,10 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
             } else {
                 $dependency = 'montonio-js';
             }
+
+            if ( 'yes' !== $this->get_setting( 'inline_checkout', 'yes' ) ) {
+                $dependency = null;
+            }
         }
 
         $handle       = $this->name_slug . '-block';
@@ -89,7 +93,9 @@ abstract class AbstractMontonioPaymentMethodBlock extends AbstractPaymentMethodT
                 'version'      => WC_MONTONIO_PLUGIN_VERSION
             );
 
-        $script_asset['dependencies'][] = $dependency;
+        if ( ! empty( $dependency ) ) {
+            $script_asset['dependencies'][] = $dependency;
+        }
 
         wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
         wp_register_script( 'montonio-js', 'https://js.montonio.com/1.x.x/montonio.umd.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );

@@ -120,7 +120,7 @@ $settings['enableFreeShippingThreshold'] = array(
     'title'       => '',
     'label'       => __( 'Enable free shipping based on cart total', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __( 'Allow free shipping if the cart total exceeds the specified amount', 'montonio-for-woocommerce' ),
+    'description' => __( 'Allow free shipping if the cart total equals or exceeds the specified amount', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'no'
 );
@@ -147,14 +147,14 @@ $settings['freeShippingThreshold'] = array(
     'title'             => __( 'Free shipping threshold', 'montonio-for-woocommerce' ),
     'type'              => 'text',
     'class'             => 'wc-shipping-modal-price',
-    'description'       => __( 'Minimum cart total for free shipping', 'montonio-for-woocommerce' ),
+    'description'       => __( 'Minimum cart total for free shipping (incl. tax)', 'montonio-for-woocommerce' ),
     'default'           => 200,
     'sanitize_callback' => array( $this, 'sanitize_cost' )
 );
 
 $settings['enableFreeShippingQty'] = array(
     'title'       => '',
-    'label'       => __( 'Enable quantity based free shipping', 'montonio-for-woocommerce' ),
+    'label'       => __( 'Enable free shipping based on item quantity', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
     'description' => __( 'Allow free shipping if the product quantity in the cart equals or exceeds the specified amount', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
@@ -164,7 +164,7 @@ $settings['enableFreeShippingQty'] = array(
 $settings['freeShippingQty'] = array(
     'title'       => __( 'Free shipping product quantity', 'montonio-for-woocommerce' ),
     'type'        => 'text',
-    'description' => __( 'Minimum amount of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce' ),
+    'description' => __( 'Minimum number of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce' ),
     'default'     => 10
 );
 
@@ -172,7 +172,8 @@ $settings['enable_free_shipping_text'] = array(
     'title'       => '',
     'label'       => __( 'Enable free shipping rate text', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __( 'Display 0.00 amount or custom text for free shipping rate', 'montonio-for-woocommerce' ),
+    /* translators: %s: zero price formatted in the store currency, e.g. €0.00 */
+    'description' => sprintf( __( 'Show a zero price (e.g. %s) or custom text next to the shipping method when shipping is free', 'montonio-for-woocommerce' ), wc_price( 0 ) ),
     'desc_tip'    => true,
     'default'     => 'no'
 );
@@ -180,7 +181,8 @@ $settings['enable_free_shipping_text'] = array(
 $settings['free_shipping_text'] = array(
     'title'       => __( 'Free shipping rate text', 'montonio-for-woocommerce' ),
     'type'        => 'text',
-    'description' => __( 'Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate.', 'montonio-for-woocommerce' ),
+    /* translators: %s: zero price formatted in the store currency, e.g. €0.00 */
+    'description' => sprintf( __( 'Leave empty to show a formatted zero price (e.g. %s), or enter custom text to show when shipping is free.', 'montonio-for-woocommerce' ), wc_price( 0 ) ),
     'default'     => ''
 );
 
@@ -195,7 +197,7 @@ $settings['enablePackageMeasurementsCheck'] = array(
     'title'       => '',
     'label'       => __( 'Enable package measurements check', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __( 'Hide this shipping method if package\'s weight or dimensions exceed limits', 'montonio-for-woocommerce' ),
+    'description' => __( 'Hide this shipping method if the package exceeds the maximum weight set below or the carrier\'s size limits', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'yes'
 );
@@ -203,15 +205,15 @@ $settings['enablePackageMeasurementsCheck'] = array(
 $settings['maximumWeight'] = array(
     'title'       => __( 'Maximum weight (kg)', 'montonio-for-woocommerce' ),
     'type'        => 'number',
-    'description' => __( 'The total weight of items in the cart that is allowed for this option to be displayed', 'montonio-for-woocommerce' ),
+    'description' => __( 'Hide this shipping method if the total weight of items in the cart exceeds this limit', 'montonio-for-woocommerce' ),
     'default'     => $this->default_max_weight
 );
 
 $settings['hideWhenNoMeasurements'] = array(
     'title'       => '',
-    'label'       => __( 'Hide when no measurements', 'montonio-for-woocommerce' ),
+    'label'       => __( 'Hide when measurements are missing', 'montonio-for-woocommerce' ),
     'type'        => 'checkbox',
-    'description' => __( 'Hide this shipping method when an item in cart has no set weight or dimensions', 'montonio-for-woocommerce' ),
+    'description' => __( 'Hide this shipping method when an item in the cart has no weight or dimensions set', 'montonio-for-woocommerce' ),
     'desc_tip'    => true,
     'default'     => 'no'
 );

@@ -207,7 +207,7 @@ class WC_Montonio_Telemetry_Service {
                     'timezone'              => wp_timezone_string(),
                     'siteName'              => get_bloginfo( 'name' ),
                     'siteDescription'       => get_bloginfo( 'description' ),
-                    'hasBlocksInCheckout'   => WC_Montonio_Helper::is_checkout_block(),
+                    'hasBlocksInCheckout'   => WC_Montonio_Helper::is_checkout_block_default(),
                     'merchantReferenceType' => self::get_api_setting( 'merchant_reference_type' ),
                     'services'              => array(
                         'paymentInitiationV2' => self::get_payment_service_data( 'wc_montonio_payments' ),

@@ -435,13 +435,13 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                 $cart_total += $discount_total;
             }
 
-            // Check if cart total exceeds free shipping threshold
+            // Check if cart total meets free shipping threshold
             $free_shipping_threshold = $this->get_option( 'freeShippingThreshold' );
 
             if ( ! empty( $free_shipping_threshold ) ) {
                 $free_shipping_threshold = (float) wc_format_decimal( $free_shipping_threshold, 2 );
 
-                if ( $cart_total > $free_shipping_threshold ) {
+                if ( $cart_total >= $free_shipping_threshold ) {
                     return 0;
                 }
             }

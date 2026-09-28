@@ -180,7 +180,7 @@ class WC_Montonio_Shipping {
             return;
         }
 
-        if ( ! WC_Montonio_Helper::is_checkout_block() ) {
+        if ( ! WC_Montonio_Helper::is_checkout_block_rendering() ) {
             if ( 'select2' === get_option( 'montonio_shipping_dropdown_type' ) ) {
                 wp_enqueue_style( 'montonio-pickup-points' );
 
@@ -261,7 +261,7 @@ class WC_Montonio_Shipping {
                     'country'   => strtoupper( $pickup_point->country_code ?? '' )
                 );
 
-                if ( ! WC_Montonio_Helper::is_checkout_block() ) {
+                if ( ! WC_Montonio_Helper::is_checkout_block_default() ) {
                     $shipping_data['state'] = '';
                 }
 

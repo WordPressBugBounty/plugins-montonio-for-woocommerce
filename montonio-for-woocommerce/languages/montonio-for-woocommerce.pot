@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Montonio for WooCommerce 10.3.4\n"
+"Project-Id-Version: Montonio for WooCommerce 10.3.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/montonio-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-31T12:00:04+00:00\n"
+"POT-Creation-Date: 2026-09-24T13:16:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: montonio-for-woocommerce\n"
@@ -59,9 +59,10 @@ msgstr ""
 msgid "Pay Later"
 msgstr ""
 
-#: blocks/class-wc-montonio-card-block.php:51
+#: blocks/class-wc-montonio-card-block.php:84
 #: includes/payment/payment-methods/class-wc-montonio-card.php:78
 #: includes/payment/payment-methods/class-wc-montonio-card.php:124
+#: blocks/build/wc-montonio-card/index-editor.js:1
 #: blocks/build/wc-montonio-card/index-legacy.js:1
 #: blocks/build/wc-montonio-card/index.js:1
 #: blocks/src/wc-montonio-card/index.js:16
@@ -562,59 +563,59 @@ msgstr ""
 msgid "Shipping sync failed: %s"
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:424
+#: includes/class-wc-montonio-helper.php:481
 msgid "A general error has occurred. Please try again later."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:425
-#: includes/class-wc-montonio-helper.php:426
-#: includes/class-wc-montonio-helper.php:427
-#: includes/class-wc-montonio-helper.php:428
-#: includes/class-wc-montonio-helper.php:434
-#: includes/class-wc-montonio-helper.php:435
-#: includes/class-wc-montonio-helper.php:436
-#: includes/class-wc-montonio-helper.php:437
+#: includes/class-wc-montonio-helper.php:482
+#: includes/class-wc-montonio-helper.php:483
+#: includes/class-wc-montonio-helper.php:484
+#: includes/class-wc-montonio-helper.php:485
+#: includes/class-wc-montonio-helper.php:491
+#: includes/class-wc-montonio-helper.php:492
+#: includes/class-wc-montonio-helper.php:493
+#: includes/class-wc-montonio-helper.php:494
 msgid "Incorrect BLIK code was entered. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:429
-#: includes/class-wc-montonio-helper.php:431
-#: includes/class-wc-montonio-helper.php:438
-#: includes/class-wc-montonio-helper.php:440
-#: includes/class-wc-montonio-helper.php:443
+#: includes/class-wc-montonio-helper.php:486
+#: includes/class-wc-montonio-helper.php:488
+#: includes/class-wc-montonio-helper.php:495
+#: includes/class-wc-montonio-helper.php:497
+#: includes/class-wc-montonio-helper.php:500
 msgid "Check the reason in the banking application and try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:430
-#: includes/class-wc-montonio-helper.php:439
-#: includes/class-wc-montonio-helper.php:445
-#: includes/class-wc-montonio-helper.php:446
+#: includes/class-wc-montonio-helper.php:487
+#: includes/class-wc-montonio-helper.php:496
+#: includes/class-wc-montonio-helper.php:502
+#: includes/class-wc-montonio-helper.php:503
 msgid "Payment failed - not confirmed on time in the banking application. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:432
-#: includes/class-wc-montonio-helper.php:433
-#: includes/class-wc-montonio-helper.php:441
-#: includes/class-wc-montonio-helper.php:442
-#: includes/class-wc-montonio-helper.php:450
-#: includes/class-wc-montonio-helper.php:451
+#: includes/class-wc-montonio-helper.php:489
+#: includes/class-wc-montonio-helper.php:490
+#: includes/class-wc-montonio-helper.php:498
+#: includes/class-wc-montonio-helper.php:499
+#: includes/class-wc-montonio-helper.php:507
+#: includes/class-wc-montonio-helper.php:508
 msgid "Payment failed. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:444
+#: includes/class-wc-montonio-helper.php:501
 msgid "Payment rejected in a banking application. Try again."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:447
+#: includes/class-wc-montonio-helper.php:504
 msgid "Payment amount too high."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:448
-#: includes/class-wc-montonio-helper.php:449
+#: includes/class-wc-montonio-helper.php:505
+#: includes/class-wc-montonio-helper.php:506
 msgid "Payment requires BLIK code."
 msgstr ""
 
-#: includes/class-wc-montonio-helper.php:452
+#: includes/class-wc-montonio-helper.php:509
 msgid "This order has already been paid for."
 msgstr ""
 
@@ -811,6 +812,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:261
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
+#: blocks/build/wc-montonio-card/index-editor.js:1
 #: blocks/build/wc-montonio-card/index-legacy.js:1
 #: blocks/build/wc-montonio-card/index.js:1
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
@@ -834,6 +836,7 @@ msgstr ""
 #: includes/payment/payment-methods/class-wc-montonio-payments.php:261
 #: blocks/build/wc-montonio-blik/index.js:1
 #: blocks/build/wc-montonio-bnpl/index.js:1
+#: blocks/build/wc-montonio-card/index-editor.js:1
 #: blocks/build/wc-montonio-card/index-legacy.js:1
 #: blocks/build/wc-montonio-card/index.js:1
 #: blocks/build/wc-montonio-hire-purchase/index.js:1
@@ -1724,19 +1727,19 @@ msgid "Per order: Charge shipping for the most expensive shipping class"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:192
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:224
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:226
 #: includes/shipping/shipping-methods/shipping-method-settings.php:98
 msgid "Shipping class restrictions"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:197
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:229
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:231
 #: includes/shipping/shipping-methods/shipping-method-settings.php:103
 msgid "Disable for shipping classes"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:202
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:234
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:236
 #: includes/shipping/shipping-methods/shipping-method-settings.php:108
 msgid "This method will be hidden if the cart contains products from any of the selected shipping classes."
 msgstr ""
@@ -1756,7 +1759,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:217
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:153
 #: includes/shipping/shipping-methods/shipping-method-settings.php:123
-msgid "Allow free shipping if the cart total exceeds the specified amount"
+msgid "Allow free shipping if the cart total equals or exceeds the specified amount"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:224
@@ -1791,14 +1794,13 @@ msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:244
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:177
-#: includes/shipping/shipping-methods/shipping-method-settings.php:150
-msgid "Minimum cart total for free shipping"
+msgid "Minimum cart total for free shipping (incl. tax, excludes shipping costs and fees)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:251
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:183
 #: includes/shipping/shipping-methods/shipping-method-settings.php:157
-msgid "Enable quantity based free shipping"
+msgid "Enable free shipping based on item quantity"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:253
@@ -1816,7 +1818,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:261
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:192
 #: includes/shipping/shipping-methods/shipping-method-settings.php:167
-msgid "Minimum amount of items in the cart for free shipping (excludes virtual products)"
+msgid "Minimum number of items in the cart for free shipping (excludes virtual products)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:267
@@ -1825,57 +1827,59 @@ msgstr ""
 msgid "Enable free shipping rate text"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:269
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:199
-#: includes/shipping/shipping-methods/shipping-method-settings.php:175
-msgid "Display 0.00 amount or custom text for free shipping rate"
+#. translators: %s: zero price formatted in the store currency, e.g. €0.00
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:270
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:200
+#: includes/shipping/shipping-methods/shipping-method-settings.php:176
+msgid "Show a zero price (e.g. %s) or custom text next to the shipping method when shipping is free"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:275
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:204
-#: includes/shipping/shipping-methods/shipping-method-settings.php:181
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:276
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:205
+#: includes/shipping/shipping-methods/shipping-method-settings.php:182
 msgid "Free shipping rate text"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:277
-#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:206
-#: includes/shipping/shipping-methods/shipping-method-settings.php:183
-msgid "Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate."
+#. translators: %s: zero price formatted in the store currency, e.g. €0.00
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:279
+#: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:208
+#: includes/shipping/shipping-methods/shipping-method-settings.php:185
+msgid "Leave empty to show a formatted zero price (e.g. %s), or enter custom text to show when shipping is free."
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:282
-#: includes/shipping/shipping-methods/shipping-method-settings.php:188
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:284
+#: includes/shipping/shipping-methods/shipping-method-settings.php:190
 msgid "Measurement check options"
-msgstr ""
-
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:290
-#: includes/shipping/shipping-methods/shipping-method-settings.php:196
-msgid "Enable package measurements check"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:292
 #: includes/shipping/shipping-methods/shipping-method-settings.php:198
-msgid "Hide this shipping method if package's weight or dimensions exceed limits"
+msgid "Enable package measurements check"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:298
-#: includes/shipping/shipping-methods/shipping-method-settings.php:204
-msgid "Maximum weight (kg)"
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:294
+#: includes/shipping/shipping-methods/shipping-method-settings.php:200
+msgid "Hide this shipping method if the package exceeds the maximum weight set below or the carrier's size limits"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:300
 #: includes/shipping/shipping-methods/shipping-method-settings.php:206
-msgid "The total weight of items in the cart that is allowed for this option to be displayed"
+msgid "Maximum weight (kg)"
 msgstr ""
 
-#: includes/shipping/shipping-methods/dpd/dpd-settings.php:306
-#: includes/shipping/shipping-methods/shipping-method-settings.php:212
-msgid "Hide when no measurements"
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:302
+#: includes/shipping/shipping-methods/shipping-method-settings.php:208
+msgid "Hide this shipping method if the total weight of items in the cart exceeds this limit"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:308
 #: includes/shipping/shipping-methods/shipping-method-settings.php:214
-msgid "Hide this shipping method when an item in cart has no set weight or dimensions"
+msgid "Hide when measurements are missing"
+msgstr ""
+
+#: includes/shipping/shipping-methods/dpd/dpd-settings.php:310
+#: includes/shipping/shipping-methods/shipping-method-settings.php:216
+msgid "Hide this shipping method when an item in the cart has no weight or dimensions set"
 msgstr ""
 
 #: includes/shipping/shipping-methods/inpost/class-montonio-inpost-parcel-machines.php:17
@@ -1997,14 +2001,18 @@ msgstr ""
 msgid "Orlen parcel machines"
 msgstr ""
 
-#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:19
+#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:17
 msgid "Montonio Postnord parcel machines"
 msgstr ""
 
-#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:20
-#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:25
-#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:28
+#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:18
+#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:23
+#: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:26
 msgid "Postnord parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/shipping-method-settings.php:150
+msgid "Minimum cart total for free shipping (incl. tax)"
 msgstr ""
 
 #: includes/shipping/shipping-methods/smartpost/class-montonio-smartpost-courier.php:15

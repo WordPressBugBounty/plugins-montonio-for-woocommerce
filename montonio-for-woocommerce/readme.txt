@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.4
+Version: 10.3.5
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.3.4
+Stable tag: 10.3.5
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,17 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.3.5 =
+* Fix – Improved Checkout block detection so classic checkout scripts (pickup points, embedded card and BLIK) load reliably
+* Fix – Embedded card and BLIK payments are now hidden in the Checkout block when their payment form cannot load, instead of showing a form that fails with "Invalid payment reference"
+* Fix – Opening the Checkout block in the page editor no longer creates a card payment session
+* Fix – Card payments no longer show "does not yet support this block" in the Checkout block editor
+* Tweak – Free shipping based on cart total is now applied when the cart total is exactly equal to the threshold, not only when it is above it
+* Tweak – Card payments in redirect mode no longer load the Montonio SDK on checkout, and card and BLIK scripts are no longer loaded on the cart page, which avoids unused payment sessions
+* Tweak – Clearer descriptions for the free shipping, weight limit and measurement settings on shipping methods
+* Tweak – Order notes now show "Apple Pay", "Google Pay" or "MobilePay" as the payment method for these payments, instead of "N/A"
+* Dev – `WC_Montonio_Helper::is_checkout_block()` renamed to `is_checkout_block_default()`; the old name remains as a deprecated alias
+
 = 10.3.4 =
 * Added – New PostNord parcel machines shipping method
 

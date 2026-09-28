@@ -17,7 +17,7 @@
     "html": false,
     "multiple": false
   },
-  "editorScript": "file:./index.js",
+  "editorScript": "file:./index-editor.js",
   "viewScript": [
     "file:./index.js",
     "file:./index-legacy.js"

@@ -258,7 +258,7 @@ class WC_Montonio_Blik extends WC_Montonio_Payment_Gateway {
      * @return void
      */
     public function payment_scripts() {
-        if ( ! is_cart() && ! is_checkout() || ! $this->embedded_fields || WC_Montonio_Helper::is_checkout_block() ) {
+        if ( ! is_checkout() || ! $this->embedded_fields || WC_Montonio_Helper::is_checkout_block_rendering() ) {
             return;
         }
 

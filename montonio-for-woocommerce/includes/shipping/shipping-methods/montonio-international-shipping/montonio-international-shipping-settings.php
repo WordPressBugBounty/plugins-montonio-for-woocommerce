@@ -150,7 +150,7 @@ $settings = array(
         'title'       => '',
         'label'       => __( 'Enable free shipping based on cart total', 'montonio-for-woocommerce' ),
         'type'        => 'checkbox',
-        'description' => __( 'Allow free shipping if the cart total exceeds the specified amount', 'montonio-for-woocommerce' ),
+        'description' => __( 'Allow free shipping if the cart total equals or exceeds the specified amount', 'montonio-for-woocommerce' ),
         'desc_tip'    => true,
         'default'     => 'no'
     ),
@@ -174,13 +174,13 @@ $settings = array(
         'title'             => __( 'Free shipping threshold', 'montonio-for-woocommerce' ),
         'type'              => 'text',
         'class'             => 'wc-shipping-modal-price',
-        'description'       => __( 'Minimum cart total for free shipping', 'montonio-for-woocommerce' ),
+        'description'       => __( 'Minimum cart total for free shipping (incl. tax, excludes shipping costs and fees)', 'montonio-for-woocommerce' ),
         'default'           => 200,
         'sanitize_callback' => array( $this, 'sanitize_cost' )
     ),
     'enableFreeShippingQty'                      => array(
         'title'       => '',
-        'label'       => __( 'Enable quantity based free shipping', 'montonio-for-woocommerce' ),
+        'label'       => __( 'Enable free shipping based on item quantity', 'montonio-for-woocommerce' ),
         'type'        => 'checkbox',
         'description' => __( 'Allow free shipping if the product quantity in the cart equals or exceeds the specified amount', 'montonio-for-woocommerce' ),
         'desc_tip'    => true,
@@ -189,21 +189,23 @@ $settings = array(
     'freeShippingQty'                            => array(
         'title'       => __( 'Free shipping product quantity', 'montonio-for-woocommerce' ),
         'type'        => 'text',
-        'description' => __( 'Minimum amount of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce' ),
+        'description' => __( 'Minimum number of items in the cart for free shipping (excludes virtual products)', 'montonio-for-woocommerce' ),
         'default'     => 10
     ),
     'enable_free_shipping_text'                  => array(
         'title'       => '',
         'label'       => __( 'Enable free shipping rate text', 'montonio-for-woocommerce' ),
         'type'        => 'checkbox',
-        'description' => __( 'Display 0.00 amount or custom text for free shipping rate', 'montonio-for-woocommerce' ),
+        /* translators: %s: zero price formatted in the store currency, e.g. €0.00 */
+        'description' => sprintf( __( 'Show a zero price (e.g. %s) or custom text next to the shipping method when shipping is free', 'montonio-for-woocommerce' ), wc_price( 0 ) ),
         'desc_tip'    => true,
         'default'     => 'no'
     ),
     'free_shipping_text'                         => array(
         'title'       => __( 'Free shipping rate text', 'montonio-for-woocommerce' ),
         'type'        => 'text',
-        'description' => __( 'Leave empty to display formated price e.g €0.00, or add you custom text for free shipping rate.', 'montonio-for-woocommerce' ),
+        /* translators: %s: zero price formatted in the store currency, e.g. €0.00 */
+        'description' => sprintf( __( 'Leave empty to show a formatted zero price (e.g. %s), or enter custom text to show when shipping is free.', 'montonio-for-woocommerce' ), wc_price( 0 ) ),
         'default'     => ''
     )
 );

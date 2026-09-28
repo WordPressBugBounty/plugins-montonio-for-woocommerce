@@ -287,7 +287,7 @@ class WC_Montonio_Callbacks {
         $grand_total           = sanitize_text_field( $decoded_token->grandTotal );
         $currency              = sanitize_text_field( $decoded_token->currency );
         $payment_method        = sanitize_text_field( $decoded_token->paymentMethod );
-        $payment_provider_name = self::resolve_payment_provider_name( $payment_method, $decoded_token );
+        $payment_provider_name = self::resolve_payment_provider_name( $payment_method, sanitize_text_field( $decoded_token->paymentProviderName ?? '' ) );
 
         $merchant_reference_type = WC_Montonio_Helper::get_api_settings()['merchant_reference_type'] ?? 'order_id';
         $is_custom_ref = in_array( $merchant_reference_type, array( 'order_number', 'add_prefix' ), true );
@@ -440,13 +440,13 @@ class WC_Montonio_Callbacks {
      * Resolve a human-readable payment provider name from the payment method identifier.
      *
      * @param string $payment_method The payment method identifier from Montonio.
-     * @param object $decoded_token  The decoded JWT token.
+     * @param string $provider_name  The payment provider name from Montonio, used for bank payments.
      * @return string
      */
-    private static function resolve_payment_provider_name( $payment_method, $decoded_token ) {
+    private static function resolve_payment_provider_name( $payment_method, $provider_name ) {
         switch ( $payment_method ) {
             case 'paymentInitiation':
-                return sanitize_text_field( $decoded_token->paymentProviderName );
+                return $provider_name;
             case 'cardPayments':
                 return 'Card payment';
             case 'bnpl':
@@ -455,8 +455,14 @@ class WC_Montonio_Callbacks {
                 return 'Financing';
             case 'blik':
                 return 'BLIK';
+            case 'applePay':
+                return 'Apple Pay';
+            case 'googlePay':
+                return 'Google Pay';
+            case 'mobilePay':
+                return 'MobilePay';
             default:
-                return 'N/A';
+                return ! empty( $payment_method ) ? $payment_method : 'N/A';
         }
     }
 
