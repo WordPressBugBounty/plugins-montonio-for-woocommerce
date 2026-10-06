@@ -345,7 +345,7 @@ img {
             background-position: center;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            background-image: url('../images/default-carrier-logo.svg');
+            background-image: url('../images/carriers/default-carrier-logo.svg');
 
             &:only-child {
                 opacity: 1;
@@ -356,60 +356,64 @@ img {
             }
 
             &--omniva {
-                background-image: url(../images/omniva-rect.svg);
+                background-image: url(../images/carriers/omniva.svg);
             }
 
             &--dpd {
-                background-image: url(../images/dpd-rect.svg);
+                background-image: url(../images/carriers/dpd.svg);
             }
 
             &--latvian_post {
-                background-image: url(../images/latvian_post-rect.svg);
+                background-image: url(../images/carriers/latvian_post.svg);
             }
 
             &--smartpost,
             &--smartposti {
-                background-image: url(../images/smartposti-rect.svg);
+                background-image: url(../images/carriers/smartposti.svg);
             }
 
             &--unisend {
-                background-image: url(../images/unisend-rect.svg);
+                background-image: url(../images/carriers/unisend.svg);
             }
 
             &--venipak {
-                background-image: url(../images/venipak-rect.svg);
+                background-image: url(../images/carriers/venipak.svg);
             }
 
             &--inpost {
-                background-image: url(../images/inpost-rect.svg);
+                background-image: url(../images/carriers/inpost.svg);
             }
 
             &--orlen {
-                background-image: url(../images/orlen-rect.svg);
+                background-image: url(../images/carriers/orlen.svg);
             }
 
             &--novapost {
-                background-image: url(../images/novaPost-rect.svg);
+                background-image: url(../images/carriers/novaPost.svg);
             }
 
             &--dhl {
-                background-image: url(../images/dhl-rect.svg);
+                background-image: url(../images/carriers/dhl.svg);
             }
 
             &--expressone {
-                background-image: url(../images/expressone-rect.svg);
+                background-image: url(../images/carriers/expressone.svg);
             }
 
             &--chronopost {
-                background-image: url(../images/chronopost-rect.svg);
+                background-image: url(../images/carriers/chronopost.svg);
             }
 
             &--gls {
-                background-image: url(../images/gls-rect.svg);
+                background-image: url(../images/carriers/gls.svg);
             }
 
             &--alzabox {
-                background-image: url(../images/alzabox-rect.svg);
+                background-image: url(../images/carriers/alzabox.svg);
+            }
+
+            &--postnord {
+                background-image: url(../images/carriers/postnord.svg);
             }
         }
 

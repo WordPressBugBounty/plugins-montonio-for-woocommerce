@@ -219,44 +219,49 @@ class WC_Montonio_Admin_Settings_Page {
     private static function get_menu_items() {
         return array(
             'wc_montonio_api'           => array(
-                'title'        => __( 'Main Settings', 'montonio-for-woocommerce' ),
+                'title'        => 'Main Settings',
                 'type'         => 'settings',
                 'check_status' => false,
             ),
             'wc_montonio_payments'      => array(
-                'title'        => __( 'Bank Payments', 'montonio-for-woocommerce' ),
+                'title'        => 'Bank Payments',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'wc_montonio_card'          => array(
-                'title'        => __( 'Card Payments', 'montonio-for-woocommerce' ),
+                'title'        => 'Card Payments',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'wc_montonio_mobilepay'          => array(
-                'title'        => __( 'MobilePay', 'montonio-for-woocommerce' ),
+                'title'        => 'MobilePay',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'wc_montonio_blik'          => array(
-                'title'        => __( 'BLIK', 'montonio-for-woocommerce' ),
+                'title'        => 'BLIK',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'wc_montonio_bnpl'          => array(
-                'title'        => __( 'Pay Later', 'montonio-for-woocommerce' ),
+                'title'        => 'Pay Later',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'wc_montonio_hire_purchase' => array(
-                'title'        => __( 'Financing', 'montonio-for-woocommerce' ),
+                'title'        => 'Financing',
                 'type'         => 'payment_method',
                 'check_status' => true,
             ),
             'montonio_shipping'         => array(
-                'title'        => __( 'Shipping', 'montonio-for-woocommerce' ),
+                'title'        => 'Shipping',
                 'type'         => 'shipping',
                 'check_status' => true,
+            ),
+            'montonio_withdrawals'      => array(
+                'title'        => 'Right of withdrawal page',
+                'type'         => 'withdrawals',
+                'check_status' => false,
             )
         );
     }
@@ -276,7 +281,7 @@ class WC_Montonio_Admin_Settings_Page {
         <div class="montonio-menu">
             <ul class="montonio-menu__list">
                 <?php foreach ( $menu_items as $section => $value ):
-                    $url = 'montonio_shipping' === $section
+                    $url = in_array( $section, array( 'montonio_shipping', 'montonio_withdrawals' ), true )
                     ? admin_url( 'admin.php?page=wc-settings&tab=' . $section )
                     : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $section );
 
@@ -319,22 +324,22 @@ class WC_Montonio_Admin_Settings_Page {
     }
 
     /**
-     * Render a banner/notice card.
+     * Render a Montonio notice, usable on any admin screen.
      *
      * @since 7.0.0
-     * @param string      $content Banner content (HTML allowed).
-     * @param string      $class   Additional CSS classes.
-     * @param string|null $icon    Dashicon class name.
+     * @param string      $content Notice content (HTML allowed).
+     * @param string      $class   Modifier classes, e.g. montonio-notice--purple or montonio-notice--compact.
+     * @param string|null $icon    Icon file name in assets/images, without .svg.
      * @return void
      */
     public static function render_banner( $content, $class = '', $icon = null ) {
         ?>
-        <div class="<?php echo esc_attr( trim( 'montonio-card ' . $class ) ); ?>">
-            <div class="montonio-card__body">
+        <div class="<?php echo esc_attr( trim( 'montonio-notice ' . ( $icon ? 'montonio-notice--icon ' : '' ) . $class ) ); ?>">
+            <div class="montonio-notice__body">
                 <?php if ( ! empty( $icon ) ): ?>
-                    <div class="montonio-card__icon" style="--icon-url: url('<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . $icon . '.svg'); ?>');"></div>
+                    <div class="montonio-notice__icon" style="--icon-url: url('<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . $icon . '.svg'); ?>');"></div>
                 <?php endif; ?>
-                <div class="montonio-card__content"><?php echo wp_kses_post( $content ); ?></div>
+                <div class="montonio-notice__content"><?php echo wp_kses_post( $content ); ?></div>
             </div>
         </div>
         <?php
@@ -399,14 +404,18 @@ class WC_Montonio_Admin_Settings_Page {
     public static function render_options_page( $title, $settings, $id ) {
         $banners = array();
 
-        if ( WC_Montonio_Helper::is_test_mode() ) {
+        // The Withdrawals tab is not payment-related: it renders without the
+        // test-mode, store-info and API status banners.
+        $payments_related = 'montonio_withdrawals' !== $id;
+
+        if ( WC_Montonio_Helper::is_test_mode() && $payments_related ) {
             $banners[] = array(
                 'content' => sprintf(
                     '<strong>%s</strong><br>%s',
                     __( 'Test mode enabled!', 'montonio-for-woocommerce' ),
                     __( 'Test mode is for integration testing only. Payments are not processed.', 'montonio-for-woocommerce' )
                 ),
-                'class'   => 'montonio-card--notice montonio-card--yellow',
+                'class'   => 'montonio-notice--warning',
                 'icon'    => null
             );
         }
@@ -418,17 +427,17 @@ class WC_Montonio_Admin_Settings_Page {
                     __( 'Follow these instructions to set up shipping: <a href="%s" target="_blank">How to set up Shipping solution</a>', 'montonio-for-woocommerce' ),
                     'https://help.montonio.com/en/articles/57066-how-to-set-up-shipping-solution'
                 ),
-                'class'   => 'montonio-card--notice montonio-card--purple montonio-card--icon',
+                'class'   => 'montonio-notice--purple',
                 'icon'    => 'info-circle'
             );
-        } else {
+        } elseif ( $payments_related ) {
             $banners[] = array(
                 'content' => sprintf(
                     /* translators: %s: help article URL */
                     __( 'Follow these instructions to set up payment methods: <a href="%s" target="_blank">Activating payment methods</a>', 'montonio-for-woocommerce' ),
                     'https://help.montonio.com/en/articles/68142-activating-payment-methods-in-woocommerce'
                 ),
-                'class'   => 'montonio-card--notice montonio-card--purple montonio-card--icon',
+                'class'   => 'montonio-notice--purple',
                 'icon'    => 'info-circle'
             );
         }
@@ -443,7 +452,7 @@ class WC_Montonio_Admin_Settings_Page {
         <div class="montonio-options <?php echo esc_attr( $id ); ?>">
             <div class="montonio-options__container">
                 <div class="montonio-sidebar">
-                    <img class="montonio-logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo.svg' ); ?>" alt="<?php esc_attr_e( 'Montonio logo', 'montonio-for-woocommerce' ); ?>" />
+                    <img class="montonio-logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/brand/montonio-logo.svg' ); ?>" alt="<?php esc_attr_e( 'Montonio logo', 'montonio-for-woocommerce' ); ?>" />
 
                     <?php self::render_admin_menu( $id ); ?>
                 </div>
@@ -454,7 +463,9 @@ class WC_Montonio_Admin_Settings_Page {
                         self::render_banner( $banner['content'], $banner['class'], $banner['icon'] );
                     }
 
-                    self::render_api_status_banner( $id );
+                    if ( $payments_related ) {
+                        self::render_api_status_banner( $id );
+                    }
                     ?>
 
                     <div class="montonio-card montonio-card--settings montonio-card--border">

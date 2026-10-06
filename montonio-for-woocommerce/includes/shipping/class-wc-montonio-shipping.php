@@ -277,19 +277,14 @@ class WC_Montonio_Shipping {
             $type                = 'pickupPoint';
         } else {
             // Handle courier methods
-            $shipping_method_item_id = WC_Montonio_Shipping_Item_Manager::get_courier_id( WC_Montonio_Shipping_Helper::get_customer_shipping_country(), $carrier );
+            $courier_items = WC_Montonio_Shipping_Item_Manager::get_shipping_method_items( WC_Montonio_Shipping_Helper::get_customer_shipping_country(), $carrier, 'courier' );
 
-            if ( empty( $shipping_method_item_id ) ) {
+            if ( empty( $courier_items ) ) {
                 return;
             }
 
-            $courier_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
-
-            if ( empty( $courier_item ) ) {
-                return;
-            }
-
-            $carrier_assigned_id = $courier_item->carrier_assigned_id ?? '';
+            $shipping_method_item_id = $courier_items[0]->item_id;
+            $carrier_assigned_id     = $courier_items[0]->carrier_assigned_id ?? '';
         }
 
         $order->update_meta_data( '_montonio_pickup_point_uuid', $shipping_method_item_id );

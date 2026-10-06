@@ -50,16 +50,16 @@ class WC_Montonio_Shipping_Classic_Checkout {
                 $label .= '<div class="montonio-shipping-carrier-logos">';
 
                 foreach ( $meta_data['operators'] as $operator ) {
-                    $logo_path = WC_MONTONIO_PLUGIN_PATH . '/assets/images/' . strtolower( $operator ) . '-rect.svg';
+                    $logo_path = WC_MONTONIO_PLUGIN_PATH . '/assets/images/carriers/' . strtolower( $operator ) . '.svg';
 
                     if ( file_exists( $logo_path ) ) {
-                        $label .= '<img class="montonio-shipping-carrier-logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . strtolower( $operator ) . '-rect.svg' ) . '" width="50" alt="' . esc_attr( $operator ) . '">';
+                        $label .= '<img class="montonio-shipping-carrier-logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/' . strtolower( $operator ) . '.svg' ) . '" width="50" alt="' . esc_attr( $operator ) . '">';
                     }
                 }
 
                 $label .= '</div>';
             } elseif ( ! empty( $meta_data['carrier_code'] ) ) {
-                $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-carrier-logo" id="' . $method->get_id() . '_logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . $meta_data['carrier_code'] . '-rect.svg' ) . '" width="50">';
+                $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-carrier-logo" id="' . $method->get_id() . '_logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/' . $meta_data['carrier_code'] . '.svg' ) . '" width="50">';
             }
         }
 

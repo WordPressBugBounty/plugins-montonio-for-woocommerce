@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.3.5
+ * Version:           10.4.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.3.5' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -157,6 +157,9 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping.php';
             WC_Montonio_Shipping::get_instance();
 
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/withdrawals/class-wc-montonio-withdrawals.php';
+            WC_Montonio_Withdrawals::get_instance();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/blocks/class-wc-montonio-blocks-manager.php';
             WC_Montonio_Blocks_Manager::init();
 
@@ -234,8 +237,10 @@ if ( ! class_exists( 'Montonio' ) ) {
          */
         public function add_settings_pages( $settings ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-settings.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/withdrawals/class-wc-montonio-withdrawals-settings.php';
 
             $settings[] = new WC_Montonio_Shipping_Settings();
+            $settings[] = new WC_Montonio_Withdrawals_Settings();
             return $settings;
         }
 
@@ -262,6 +267,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'montonio-shipping-pickup-points-search', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-search.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-timezone', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-timezone.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-withdrawal', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-withdrawal.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );
 
@@ -364,9 +370,9 @@ if ( ! class_exists( 'Montonio' ) ) {
                 <div class="montonio-connect-notice__body">
 
                     <div class="montonio-connect-notice__icon">
-                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/woo-logo.svg' ); ?>" alt="WooCommerce">
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/brand/woo-logo.svg' ); ?>" alt="WooCommerce">
                         <span></span>
-                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-icon-dark.svg' ); ?>" alt="Montonio">
+                        <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/brand/montonio-logo-icon-dark.svg' ); ?>" alt="Montonio">
                     </div>
 
                     <div class="montonio-connect-notice__content">

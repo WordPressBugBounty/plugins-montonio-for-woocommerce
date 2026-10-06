@@ -69,7 +69,7 @@ if ( ! empty( $shipment_status_reason ) ) {
     <div class="montonio-shipping-panel__body">
         <div class="montonio-shipping-panel__header">
             <div class="montonio-shipping-panel__header-content">
-                <img class="montonio-shipping-panel__logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/' . $carrier_name . '-rect.svg' ); ?>">
+                <img class="montonio-shipping-panel__logo" src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/' . $carrier_name . '.svg' ); ?>">
                 <div class="montonio-shipping-panel__title"><?php echo esc_html( str_replace( '_', ' ', $carrier_name ) ); ?><span><?php echo esc_html( $type_label ); ?></span></div>
             </div>
 
@@ -98,9 +98,7 @@ if ( ! empty( $shipment_status_reason ) ) {
 
         <?php if ( empty( $shipment_id ) ): ?>
             <?php if ( empty( $error_reason ) ): ?>
-                <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--yellow">
-                    <p><?php echo esc_html__( 'We\'ve noticed that this order includes Montonio\'s shipping method, but it seems that it\'s not registred in our Partner System yet, please click on "Create shipment in Montonio" to generate the shipment and obtain the tracking codes.', 'montonio-for-woocommerce' ); ?></p>
-                </div>
+                <?php WC_Montonio_Admin_Settings_Page::render_banner( esc_html__( 'We\'ve noticed that this order includes Montonio\'s shipping method, but it seems that it\'s not registred in our Partner System yet, please click on "Create shipment in Montonio" to generate the shipment and obtain the tracking codes.', 'montonio-for-woocommerce' ), 'montonio-notice--warning montonio-notice--compact' ); ?>
             <?php endif; ?>
         <?php else: ?>
             <div class="montonio-shipping-panel__row">
@@ -116,16 +114,12 @@ if ( ! empty( $shipment_status_reason ) ) {
             <?php endif; ?>
 
             <?php if ( 'pending' === $shipment_status ): ?>
-                <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--blue">
-                    <p><?php echo esc_html__( 'Shipment successfully created in Montonio. Waiting for tracking codes.', 'montonio-for-woocommerce' ); ?></p>
-                </div>
+                <?php WC_Montonio_Admin_Settings_Page::render_banner( esc_html__( 'Shipment successfully created in Montonio. Waiting for tracking codes.', 'montonio-for-woocommerce' ), 'montonio-notice--blue montonio-notice--compact' ); ?>
             <?php endif; ?>
         <?php endif; ?>
 
         <?php if ( ! empty( $error_reason ) ): ?>
-            <div class="montonio-shipping-panel__notice montonio-shipping-panel__notice--red">
-                <p><?php echo wp_kses_post( $error_reason ); ?></p>
-            </div>
+            <?php WC_Montonio_Admin_Settings_Page::render_banner( $error_reason, 'montonio-notice--error montonio-notice--compact' ); ?>
         <?php endif; ?>
 
         <?php

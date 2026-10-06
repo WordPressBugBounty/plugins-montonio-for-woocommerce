@@ -39,7 +39,7 @@ class WC_Montonio_Mobilepay_Block extends AbstractMontonioPaymentMethodBlock {
         return array(
             'title'       => $title,
             'description' => $this->get_setting( 'description' ),
-            'iconurl'     => WC_MONTONIO_PLUGIN_URL . '/assets/images/mobilepay.png',
+            'iconurl'     => WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/mobilepay.png',
             'sandboxMode' => WC_Montonio_Helper::is_test_mode()
         );
     }

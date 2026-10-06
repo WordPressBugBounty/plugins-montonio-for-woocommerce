@@ -61,6 +61,26 @@ class WC_Montonio_Shipping_Item_Manager {
     }
 
     /**
+     * Check if a shipping method item (pickup point or courier service) supports an additional service
+     *
+     * @since 10.4.0
+     * @param string $item_id Shipping method item ID
+     * @param string $code Additional service code, e.g. 'cod' or 'fragile'
+     * @return bool True if the item's synced additional services include the code, false otherwise.
+     */
+    public static function item_supports_additional_service( $item_id, $code ) {
+        $item = self::get_shipping_method_item( $item_id );
+
+        if ( empty( $item ) || empty( $item->additional_services ) ) {
+            return false;
+        }
+
+        $additional_services = json_decode( $item->additional_services, true );
+
+        return is_array( $additional_services ) && in_array( $code, array_column( $additional_services, 'code' ), true );
+    }
+
+    /**
      * Get courier ID by country and carrier
      *
      * @since 7.0.0

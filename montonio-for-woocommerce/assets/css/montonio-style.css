@@ -290,7 +290,7 @@ img.montonio-payment-method-icon {
   background-position: center;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
-  background-image: url("../images/default-carrier-logo.svg");
+  background-image: url("../images/carriers/default-carrier-logo.svg");
 }
 .montonio-pickup-point__search-logo:only-child {
   opacity: 1;
@@ -299,46 +299,49 @@ img.montonio-payment-method-icon {
   opacity: 1;
 }
 .montonio-pickup-point__search-logo--omniva {
-  background-image: url(../images/omniva-rect.svg);
+  background-image: url(../images/carriers/omniva.svg);
 }
 .montonio-pickup-point__search-logo--dpd {
-  background-image: url(../images/dpd-rect.svg);
+  background-image: url(../images/carriers/dpd.svg);
 }
 .montonio-pickup-point__search-logo--latvian_post {
-  background-image: url(../images/latvian_post-rect.svg);
+  background-image: url(../images/carriers/latvian_post.svg);
 }
 .montonio-pickup-point__search-logo--smartpost, .montonio-pickup-point__search-logo--smartposti {
-  background-image: url(../images/smartposti-rect.svg);
+  background-image: url(../images/carriers/smartposti.svg);
 }
 .montonio-pickup-point__search-logo--unisend {
-  background-image: url(../images/unisend-rect.svg);
+  background-image: url(../images/carriers/unisend.svg);
 }
 .montonio-pickup-point__search-logo--venipak {
-  background-image: url(../images/venipak-rect.svg);
+  background-image: url(../images/carriers/venipak.svg);
 }
 .montonio-pickup-point__search-logo--inpost {
-  background-image: url(../images/inpost-rect.svg);
+  background-image: url(../images/carriers/inpost.svg);
 }
 .montonio-pickup-point__search-logo--orlen {
-  background-image: url(../images/orlen-rect.svg);
+  background-image: url(../images/carriers/orlen.svg);
 }
 .montonio-pickup-point__search-logo--novapost {
-  background-image: url(../images/novaPost-rect.svg);
+  background-image: url(../images/carriers/novaPost.svg);
 }
 .montonio-pickup-point__search-logo--dhl {
-  background-image: url(../images/dhl-rect.svg);
+  background-image: url(../images/carriers/dhl.svg);
 }
 .montonio-pickup-point__search-logo--expressone {
-  background-image: url(../images/expressone-rect.svg);
+  background-image: url(../images/carriers/expressone.svg);
 }
 .montonio-pickup-point__search-logo--chronopost {
-  background-image: url(../images/chronopost-rect.svg);
+  background-image: url(../images/carriers/chronopost.svg);
 }
 .montonio-pickup-point__search-logo--gls {
-  background-image: url(../images/gls-rect.svg);
+  background-image: url(../images/carriers/gls.svg);
 }
 .montonio-pickup-point__search-logo--alzabox {
-  background-image: url(../images/alzabox-rect.svg);
+  background-image: url(../images/carriers/alzabox.svg);
+}
+.montonio-pickup-point__search-logo--postnord {
+  background-image: url(../images/carriers/postnord.svg);
 }
 .montonio-pickup-point__search-input {
   width: 100%;

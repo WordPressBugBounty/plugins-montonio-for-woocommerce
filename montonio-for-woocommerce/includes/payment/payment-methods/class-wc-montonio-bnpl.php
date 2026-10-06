@@ -43,7 +43,7 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
      */
     public function __construct() {
         $this->id                 = 'wc_montonio_bnpl';
-        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/inbank.svg';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/inbank.svg';
         $this->has_fields         = true;
         $this->method_title       = __( 'Montonio Pay Later', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Pay in multiple parts provided in co-operation with Inbank', 'montonio-for-woocommerce' );
@@ -207,7 +207,7 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
             if ( $cart_total < $value['min'] ) {
                 $class = ' montonio-bnpl-item--disabled';
                 /* translators: additional amount needed */
-                $subtitle = '<div class="montonio-bnpl-item-subtitle">' . sprintf( __( 'Add %s to the cart to use this payment method', 'montonio-for-woocommerce' ), wc_price( $value['min'] - $cart_total ) ) . '</div>';
+                $subtitle = '<div class="montonio-bnpl-item-subtitle">' . sprintf( __( 'Add %s more to your cart to use this payment method', 'montonio-for-woocommerce' ), wc_price( $value['min'] - $cart_total ) ) . '</div>';
             }
 
             if ( $value['max'] >= $cart_total ) {

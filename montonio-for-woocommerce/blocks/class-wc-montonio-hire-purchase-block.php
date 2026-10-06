@@ -34,7 +34,7 @@ class WC_Montonio_Hire_Purchase_Block extends AbstractMontonioPaymentMethodBlock
         return array(
             'title'       => $title,
             'description' => $this->get_setting( 'description' ),
-            'iconurl'     => apply_filters( 'wc_montonio_hire_purchase_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/inbank.svg' ),
+            'iconurl'     => WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/inbank.svg',
             'sandboxMode' => WC_Montonio_Helper::is_test_mode()
         );
     }

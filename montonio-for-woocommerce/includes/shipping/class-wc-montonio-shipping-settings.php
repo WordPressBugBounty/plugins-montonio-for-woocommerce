@@ -249,7 +249,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
         );
 
         $logo_overrides = array(
-            'novaPost' => 'montonio_international_shipping-rect.svg',
+            'novaPost' => 'montonio_international_shipping.svg',
         );
 
         ?>
@@ -273,11 +273,11 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                     <?php foreach ( $carriers as $carrier ) :
                         $carrier_code = $carrier->code;
                         $display_name = isset( $name_overrides[ $carrier_code ] ) ? $name_overrides[ $carrier_code ] : $carrier->name;
-                        $logo_filename = isset( $logo_overrides[ $carrier_code ] ) ? $logo_overrides[ $carrier_code ] : $carrier_code . '-rect.svg';
-                        $logo_path     = '/assets/images/' . $logo_filename;
+                        $logo_filename = isset( $logo_overrides[ $carrier_code ] ) ? $logo_overrides[ $carrier_code ] : $carrier_code . '.svg';
+                        $logo_path     = '/assets/images/carriers/' . $logo_filename;
                         $logo_url      = file_exists( WC_MONTONIO_PLUGIN_PATH . $logo_path )
                             ? WC_MONTONIO_PLUGIN_URL . $logo_path
-                            : WC_MONTONIO_PLUGIN_URL . '/assets/images/default-carrier-logo.svg';
+                            : WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/default-carrier-logo.svg';
                     ?>
                         <tr>
                             <td class="montonio-carriers-table__logo">

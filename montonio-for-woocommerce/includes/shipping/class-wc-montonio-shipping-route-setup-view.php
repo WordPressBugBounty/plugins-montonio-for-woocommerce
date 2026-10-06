@@ -148,7 +148,7 @@ class WC_Montonio_Shipping_Route_Setup_View {
                                     <label for="montonio-php-dim-length">
                                         <?php
                                         printf(
-                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
                                             esc_html__( 'Length (%s)', 'montonio-for-woocommerce' ),
                                             esc_html( $dimension_unit )
                                         );
@@ -163,7 +163,7 @@ class WC_Montonio_Shipping_Route_Setup_View {
                                     <label for="montonio-php-dim-width">
                                         <?php
                                         printf(
-                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
                                             esc_html__( 'Width (%s)', 'montonio-for-woocommerce' ),
                                             esc_html( $dimension_unit )
                                         );
@@ -178,7 +178,7 @@ class WC_Montonio_Shipping_Route_Setup_View {
                                     <label for="montonio-php-dim-height">
                                         <?php
                                         printf(
-                                            /* translators: %s: dimension unit (e.g. cm) */
+                                            /* translators: %s: Dimension unit (e.g. cm, mm, in) */
                                             esc_html__( 'Height (%s)', 'montonio-for-woocommerce' ),
                                             esc_html( $dimension_unit )
                                         );
@@ -193,7 +193,7 @@ class WC_Montonio_Shipping_Route_Setup_View {
                                     <label for="montonio-php-dim-weight">
                                         <?php
                                         printf(
-                                            /* translators: %s: weight unit (e.g. kg) */
+                                            /* translators: %s: Weight unit (e.g. kg, lbs) */
                                             esc_html__( 'Weight (%s)', 'montonio-for-woocommerce' ),
                                             esc_html( $weight_unit )
                                         );

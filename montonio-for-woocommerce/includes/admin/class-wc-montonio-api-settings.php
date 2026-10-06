@@ -192,9 +192,9 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
 
             <div class="api-keys__connect">
                 <div class="api-keys__connect-icon">
-                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/woo-logo.svg' ); ?>" alt="WooCommerce">
+                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/brand/woo-logo.svg' ); ?>" alt="WooCommerce">
                     <span></span>
-                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/montonio-logo-icon-dark.svg' ); ?>" alt="Montonio">
+                    <img src="<?php echo esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/brand/montonio-logo-icon-dark.svg' ); ?>" alt="Montonio">
                 </div>
                 <div class="api-keys__connect-body">
                     <h3 class="api-keys__connect-title"><?php esc_html_e( 'Connect via Montonio account', 'montonio-for-woocommerce' ); ?></h3>

@@ -222,12 +222,121 @@ $montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", R
     }
 }
 
+// Notice: a tinted message. Its two forms share the palette:
+// - a skin over a WordPress .notice (the payment, connection and shipping messages);
+// - a standalone box for any admin screen, like .montonio-button (settings banners,
+//   the order panel's withdrawal notices), rendered by render_banner().
 .montonio-notice {
     background: #F0EEFB;
-    padding: 8px 12px 8px 12px !important;
 
     strong {
         color: #442DD2;
+    }
+
+    &.notice {
+        padding: 8px 12px 8px 12px !important;
+    }
+
+    &:not(.notice) {
+        font-family: $montonio-font-family;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px;
+        color: #27364B;
+        padding: 16px 24px;
+        margin-bottom: 32px;
+        border-radius: 8px;
+
+        a {
+            color: #260071;
+            text-decoration: none;
+
+            &:hover {
+                color: #5c14eb;
+            }
+        }
+
+        &.montonio-notice--icon {
+            padding: 12px 24px;
+        }
+
+        // Tighter, for a settings form or a narrow column.
+        &.montonio-notice--compact {
+            margin: 8px 0 24px;
+            padding: 14px 16px;
+            font-size: 14px;
+            line-height: 20px;
+        }
+    }
+
+    &__body {
+        p {
+            margin: 0;
+        }
+    }
+
+    &--icon .montonio-notice__body {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    // A compact notice keeps its icon on the first line.
+    &--compact .montonio-notice__body {
+        align-items: flex-start;
+    }
+
+    &__icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+
+        &::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 20px;
+            mask-image: var(--icon-url);
+            -webkit-mask-image: var(--icon-url);
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            mask-position: center;
+            -webkit-mask-position: center;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            background-color: currentColor;
+        }
+    }
+
+    &--purple {
+        strong {
+            color: #260071;
+        }
+
+        .montonio-notice__icon::before {
+            background-color: #260071;
+        }
+    }
+
+    &--neutral {
+        background: #FCFBFB;
+
+        strong {
+            color: #000;
+        }
+
+        .montonio-notice__icon::before {
+            background-color: #000;
+        }
+    }
+
+    &--blue {
+        background: #E7EFFF;
+
+        strong {
+            color: #0A4DDE;
+        }
     }
 
     &--success {
@@ -555,14 +664,6 @@ $montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", R
             border: 1px solid #E1DDDB;
         }
 
-        &--notice {
-            font-size: 15px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 24px;
-            color: #27364B; 
-        }
-
         h4 {
             margin-top: 0;
             margin-bottom: 10px;
@@ -576,76 +677,6 @@ $montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", R
 
         &--store-info {
             background: #FCFBFB;
-        }
-
-        &--icon {
-            padding: 12px 24px;
-
-            .montonio-card__body {
-                display: flex;
-                align-items: center;
-                gap: 10px;    
-            }
-        }
-
-        &__icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-
-            &::before {
-                content: '';
-                display: block;
-                width: 20px;
-                height: 20px;
-                mask-image: var(--icon-url);
-                -webkit-mask-image: var(--icon-url);
-                mask-repeat: no-repeat;
-                -webkit-mask-repeat: no-repeat;
-                mask-position: center;
-                -webkit-mask-position: center;
-                mask-size: contain;
-                -webkit-mask-size: contain;
-                background-color: currentColor;
-            }
-        }
-
-        &--purple {
-            background: #F0EEFB;
-
-            strong {
-                color: #260071;
-            }
-
-            .montonio-card__icon {
-                &:before {
-                    background-color: #260071;
-                }
-            }
-        }
-
-        &--blue {
-            background: #E7EFFF;
-
-            strong {
-                color: #0A4DDE;
-            }
-        }
-
-        &--yellow {
-            background: #fff6da;
-
-            strong {
-                color: #e3a500;
-            }
-        }
-
-        &--red {
-            background: #ffebeb;
-
-            strong {
-                color: #ce0920;
-            }
         }
 
         .description {
@@ -688,8 +719,8 @@ $montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", R
                 width: 25px;
                 height: 15px;
                 background-color: #ffffff;
-                -webkit-mask-image: url('../images/montonio-logo-mark.svg');
-                mask-image: url('../images/montonio-logo-mark.svg');
+                -webkit-mask-image: url('../images/brand/montonio-logo-mark.svg');
+                mask-image: url('../images/brand/montonio-logo-mark.svg');
                 -webkit-mask-repeat: no-repeat;
                 mask-repeat: no-repeat;
                 -webkit-mask-size: contain;
@@ -1128,38 +1159,9 @@ $montonio-font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", R
             display: inline-block !important;
         }
 
-        &__notice {
-            background: #e7efff;
-            padding: 14px 16px;
-            overflow-wrap: break-word;
-            border-radius: 6px;
-
-            strong {
-                color: #0A4DDE;
-            }
-
-            &--yellow {
-                background: #fff6da;
-                border-color: #fad791;
-                color: #1b1b1b;
-
-                strong {
-                    color: #e3a500;
-                }
-            }
-
-            &--red {
-                background: #ffebeb;
-
-                strong {
-                    color: #ce0920;
-                }
-            }
-
-            p {
-                color: inherit !important;
-                margin: 0;
-            }
+        // Notices sit flush between the panel's rows.
+        .montonio-notice:not(.notice) {
+            margin: 0;
         }
 
         &__row {
@@ -1515,6 +1517,222 @@ label[for*=montonio_shipping_sender] {
         background-color: #edfbec;
         color: #20b01b;
     }
+}
+
+// Withdrawal status pill in WooCommerce's order-status shape. The base rules are
+// repeated because WooCommerce's admin CSS does not load on the Withdrawals screens.
+.order-status.montonio-withdrawal-status {
+    display: inline-flex;
+    max-width: 100%;
+    margin: -0.25em 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    background: #e5e5e5;
+    color: #454545;
+    font-weight: 400;
+    line-height: 2.5em;
+    white-space: nowrap;
+    cursor: inherit;
+
+    > span {
+        margin: 0 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &--pending {
+        background-color: #fff6da;
+        color: #bf8b00;
+    }
+
+    &--completed {
+        background-color: #edfbec;
+        color: #20b01b;
+    }
+}
+
+// Withdrawal detail page, after WooCommerce's order data panel and items table.
+.montonio-wdr-panel {
+    padding: 23px 24px 12px;
+}
+
+// #poststuff: core styles every h2 there as a metabox heading.
+#poststuff .montonio-wdr-title {
+    margin: 0 0 3px;
+    padding: 0;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.montonio-wdr-meta {
+    margin: 0;
+    color: #777;
+    overflow-wrap: anywhere;
+}
+
+.montonio-wdr-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4%;
+
+    > div {
+        flex: 1 1 28%;
+        min-width: 200px;
+    }
+
+    h3 {
+        margin: 1.33em 0 0;
+        font-size: 14px;
+    }
+
+    p {
+        margin: 1em 0 0;
+        overflow-wrap: anywhere;
+    }
+
+    strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+}
+
+.montonio-wdr-muted {
+    display: block;
+    color: #888;
+    font-size: 0.92em;
+}
+
+.montonio-wdr-items {
+    width: 100%;
+    border-collapse: collapse;
+
+    // Child selectors: the attribute tables inside must keep their own cells.
+    > thead > tr > th {
+        padding: 1em;
+        border-bottom: 1px solid #dcdcde;
+        background: #f8f8f8;
+        font-weight: 400;
+        text-align: left;
+    }
+
+    > tbody > tr > td {
+        padding: 1.5em 1em 1em;
+        border-bottom: 1px solid #f0f0f1;
+        vertical-align: top;
+    }
+
+    > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    > * > tr > .montonio-wdr-num {
+        width: 1%;
+        text-align: right;
+        white-space: nowrap;
+    }
+}
+
+.montonio-wdr-totals {
+    padding: 1em 1em 0.5em;
+    border-top: 1px solid #dcdcde;
+
+    table {
+        margin-left: auto;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 0 0 0.5em 1.5em;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    th {
+        font-weight: 400;
+    }
+
+    td {
+        font-weight: 600;
+    }
+
+    .montonio-wdr-grand {
+        th,
+        td {
+            padding-top: 0.5em;
+            border-top: 1px solid #dcdcde;
+            font-weight: 600;
+        }
+    }
+}
+
+.montonio-wdr-note {
+    max-width: 480px;
+    margin: 0 0 0.5em auto;
+    text-align: right;
+}
+
+.montonio-wdr-thumb {
+    width: 38px;
+
+    img {
+        display: block;
+        width: 38px;
+        height: 38px;
+        border: 2px solid #e8e8e8;
+        background: #f8f8f8;
+        object-fit: cover;
+    }
+}
+
+.montonio-wdr-item-name {
+    font-weight: 600;
+}
+
+.montonio-wdr-item-info,
+.montonio-wdr-attributes {
+    margin-top: 0.5em;
+    color: #888;
+    font-size: 0.92em;
+}
+
+.montonio-wdr-attributes {
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: 0 8px 0.25em 0;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+}
+
+.montonio-wdr-status {
+    margin: 0 0 12px;
+
+    strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+}
+
+.montonio-wdr-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+}
+
+// Withdrawal notices in the order panel's General column, below its floated fields.
+#order_data .montonio-wdr-order-notices {
+    clear: both;
+    padding-top: 8px;
 }
 
 .wc-action-button-montonio_print_label {

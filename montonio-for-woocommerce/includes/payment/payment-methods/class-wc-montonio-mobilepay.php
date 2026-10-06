@@ -72,7 +72,7 @@ class WC_Montonio_Mobilepay extends WC_Montonio_Payment_Gateway {
      */
     public function __construct() {
         $this->id                 = 'wc_montonio_mobilepay';
-        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/mobilepay.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/mobilepay.png';
         $this->has_fields         = false;
         $this->method_title       = __( 'Montonio MobilePay', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Allows MobilePay payments via Montonio', 'montonio-for-woocommerce' );

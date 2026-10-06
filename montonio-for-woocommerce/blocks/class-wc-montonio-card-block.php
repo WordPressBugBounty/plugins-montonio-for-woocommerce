@@ -71,7 +71,7 @@ class WC_Montonio_Card_Block extends AbstractMontonioPaymentMethodBlock {
         $config          = WC_Montonio_Helper::get_payment_methods( 'cardPayments' );
         $processor       = $config['processor'] ?? 'stripe';
         $inline_checkout = $this->get_setting( 'inline_checkout', 'yes' );
-        $icon            = 'yes' === $inline_checkout && 'adyen' !== $processor ? WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
+        $icon            = 'yes' === $inline_checkout && 'adyen' !== $processor ? WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/visa-mc.png' : WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/visa-mc-ap-gp.png';
         $locale          = WC_Montonio_Helper::get_locale();
 
         if ( ! in_array( $locale, array( 'en', 'et', 'fi', 'lt', 'lv', 'pl', 'ru' ) ) ) {

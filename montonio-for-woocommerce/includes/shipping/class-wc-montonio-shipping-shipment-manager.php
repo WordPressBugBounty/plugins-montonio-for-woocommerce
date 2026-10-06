@@ -337,8 +337,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
             $data['receiver']['region']        = $address_data['region'];
         }
 
-        $parcels  = array();
-        $products = array();
+        $parcels    = array();
+        $products   = array();
+        $is_fragile = false;
 
         foreach ( $order->get_items() as $item ) {
             $product    = $item->get_product();
@@ -367,7 +368,11 @@ class WC_Montonio_Shipping_Shipment_Manager {
             $height = WC_Montonio_Helper::convert_to_meters( $dimensions['height'] );
 
             $parent_product = $product->is_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : $product;
-            
+
+            if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_fragile' ) ) {
+                $is_fragile = true;
+            }
+
             if ( $parent_product && 'yes' === $parent_product->get_meta( '_montonio_separate_label' ) ) {
                 $bounding_box = WC_Montonio_Shipping_Helper::merge_item_into_bounding_box( array( 0, 0, 0 ), array( $length, $width, $height ) );
 
@@ -435,6 +440,20 @@ class WC_Montonio_Shipping_Shipment_Manager {
         }
 
         $data['parcels'] = array_values( $parcels );
+
+        // Order contains a product marked as fragile: send it if the selected pickup point or courier service supports it
+        if ( $is_fragile ) {
+            if ( WC_Montonio_Shipping_Item_Manager::item_supports_additional_service( $method_id, 'fragile' ) ) {
+                $data['shippingMethod']['additionalServices'][] = array( 'code' => 'fragile' );
+            } else {
+                WC_Montonio_Logger::log( 'Order ' . $order->get_id() . ' contains fragile products, but the selected shipping method does not support the fragile service.' );
+
+                // Only on create, so shipment updates don't repeat the note
+                if ( 'create' === $type ) {
+                    $order->add_order_note( '<strong>' . __( 'Fragile shipping was not applied.', 'montonio-for-woocommerce' ) . '</strong><br>' . __( 'The selected shipping method does not support the fragile service.', 'montonio-for-woocommerce' ) );
+                }
+            }
+        }
 
         $data = apply_filters( 'wc_montonio_before_shipping_data_submission', $data, $order );
         WC_Montonio_Logger::log( 'Create shipment payload: ' . json_encode( $data ) );

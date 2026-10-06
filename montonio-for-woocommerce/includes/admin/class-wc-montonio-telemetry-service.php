@@ -215,7 +215,8 @@ class WC_Montonio_Telemetry_Service {
                         'bnpl'                => self::get_payment_service_data( 'wc_montonio_bnpl' ),
                         'hirePurchase'        => self::get_payment_service_data( 'wc_montonio_hire_purchase' ),
                         'blik'                => self::get_payment_service_data( 'wc_montonio_blik' ),
-                        'shipping'            => self::get_shipping_service_data()
+                        'shipping'            => self::get_shipping_service_data(),
+                        'withdrawals'         => self::get_withdrawal_service_data()
                     )
                 )
             )
@@ -333,6 +334,33 @@ class WC_Montonio_Telemetry_Service {
         }
 
         return $data;
+    }
+
+    /**
+     * Get withdrawal page service data.
+     *
+     * The submission counters are plain options updated when a notice is
+     * confirmed and when submissions are marked complete, so they survive
+     * records being trashed or deleted.
+     *
+     * @since 10.4.0
+     * @return array The withdrawal service data
+     */
+    public static function get_withdrawal_service_data() {
+        if ( ! class_exists( 'WC_Montonio_Withdrawals' ) ) {
+            return array();
+        }
+
+        return array(
+            'status'                => WC_Montonio_Withdrawals::is_enabled() ? 'enabled' : 'disabled',
+            'published_instances'   => WC_Montonio_Withdrawals::count_published_instances(),
+            'submissions_total'     => (int) get_option( 'montonio_withdrawal_submissions_total', 0 ),
+            'submissions_completed' => (int) get_option( 'montonio_withdrawal_submissions_completed', 0 ),
+            'settings'              => array(
+                'montonio_withdrawal_enabled'   => get_option( 'montonio_withdrawal_enabled' ),
+                'montonio_withdrawal_page_mode' => get_option( 'montonio_withdrawal_page_mode' )
+            )
+        );
     }
 
     /**

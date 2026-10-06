@@ -49,7 +49,7 @@ class WC_Montonio_Card extends WC_Montonio_Payment_Gateway {
      */
     public function __construct() {
         $this->id                 = 'wc_montonio_card';
-        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc-ap-gp.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/visa-mc-ap-gp.png';
         $this->has_fields         = false;
         $this->method_title       = __( 'Montonio Card Payments', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Allows card payments via Montonio', 'montonio-for-woocommerce' );
@@ -87,7 +87,7 @@ class WC_Montonio_Card extends WC_Montonio_Payment_Gateway {
 
             // Show all options for Adyen but hide wallets for other processors
             if ( 'adyen' !== $this->processor ) {
-                $this->icon = WC_MONTONIO_PLUGIN_URL . '/assets/images/visa-mc.png';
+                $this->icon = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/visa-mc.png';
             }
         }
 

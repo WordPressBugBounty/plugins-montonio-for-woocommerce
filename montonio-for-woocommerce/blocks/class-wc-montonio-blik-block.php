@@ -34,7 +34,7 @@ class WC_Montonio_Blik_Block extends AbstractMontonioPaymentMethodBlock {
         return array(
             'title'          => $title,
             'description'    => $this->get_setting( 'description' ),
-            'iconurl'        => apply_filters( 'wc_montonio_blik_block_logo', WC_MONTONIO_PLUGIN_URL . '/assets/images/blik.png' ),
+            'iconurl'        => WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/blik.png',
             'sandboxMode'    => WC_Montonio_Helper::is_test_mode(),
             'locale'         => WC_Montonio_Helper::get_locale(),
             'inlineCheckout' => $this->get_setting( 'blik_in_checkout', 'no' ),

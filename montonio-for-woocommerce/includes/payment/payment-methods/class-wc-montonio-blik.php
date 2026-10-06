@@ -26,7 +26,7 @@ class WC_Montonio_Blik extends WC_Montonio_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'wc_montonio_blik';
-        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/blik.png';
+        $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/blik.png';
         $this->has_fields         = false;
         $this->method_title       = __( 'Montonio BLIK', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Separate BLIK Payment option for checkout', 'montonio-for-woocommerce' );

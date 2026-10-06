@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.3.5
+Version: 10.4.0
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.3.5
+Stable tag: 10.4.0
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,13 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.4.0 =
+* Added – New Withdrawals feature: customers can now request withdrawals directly from a dedicated page on your site.
+* Added – New "Fragile shipping" product setting. Shipments containing these products use the carrier's fragile service when the selected pickup point or courier supports it
+* Added – "Disable parcel machines", "Separate shipping label" and "Fragile shipping" can now be set for many products at once using bulk edit in the products list
+* Dev – Plugin images are reorganised into `assets/images/brand/`, `carriers/` and `payments/` folders, and carrier logos no longer have the `-rect` suffix
+* Dev – Removed the `wc_montonio_blik_block_logo` filter
+
 = 10.3.5 =
 * Fix – Improved Checkout block detection so classic checkout scripts (pickup points, embedded card and BLIK) load reliably
 * Fix – Embedded card and BLIK payments are now hidden in the Checkout block when their payment form cannot load, instead of showing a form that fails with "Invalid payment reference"

@@ -182,10 +182,91 @@
 
 .montonio-notice {
   background: #F0EEFB;
-  padding: 8px 12px 8px 12px !important;
 }
 .montonio-notice strong {
   color: #442DD2;
+}
+.montonio-notice.notice {
+  padding: 8px 12px 8px 12px !important;
+}
+.montonio-notice:not(.notice) {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  color: #27364B;
+  padding: 16px 24px;
+  margin-bottom: 32px;
+  border-radius: 8px;
+}
+.montonio-notice:not(.notice) a {
+  color: #260071;
+  text-decoration: none;
+}
+.montonio-notice:not(.notice) a:hover {
+  color: #5c14eb;
+}
+.montonio-notice:not(.notice).montonio-notice--icon {
+  padding: 12px 24px;
+}
+.montonio-notice:not(.notice).montonio-notice--compact {
+  margin: 8px 0 24px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.montonio-notice__body p {
+  margin: 0;
+}
+.montonio-notice--icon .montonio-notice__body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.montonio-notice--compact .montonio-notice__body {
+  align-items: flex-start;
+}
+.montonio-notice__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.montonio-notice__icon::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  mask-image: var(--icon-url);
+  -webkit-mask-image: var(--icon-url);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  background-color: currentColor;
+}
+.montonio-notice--purple strong {
+  color: #260071;
+}
+.montonio-notice--purple .montonio-notice__icon::before {
+  background-color: #260071;
+}
+.montonio-notice--neutral {
+  background: #FCFBFB;
+}
+.montonio-notice--neutral strong {
+  color: #000;
+}
+.montonio-notice--neutral .montonio-notice__icon::before {
+  background-color: #000;
+}
+.montonio-notice--blue {
+  background: #E7EFFF;
+}
+.montonio-notice--blue strong {
+  color: #0A4DDE;
 }
 .montonio-notice--success {
   background: #EDFBEC;
@@ -472,13 +553,6 @@
 .montonio-options .montonio-card--border {
   border: 1px solid #E1DDDB;
 }
-.montonio-options .montonio-card--notice {
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  color: #27364B;
-}
 .montonio-options .montonio-card h4 {
   margin-top: 0;
   margin-bottom: 10px;
@@ -488,61 +562,6 @@
 }
 .montonio-options .montonio-card--store-info {
   background: #FCFBFB;
-}
-.montonio-options .montonio-card--icon {
-  padding: 12px 24px;
-}
-.montonio-options .montonio-card--icon .montonio-card__body {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.montonio-options .montonio-card__icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-}
-.montonio-options .montonio-card__icon::before {
-  content: "";
-  display: block;
-  width: 20px;
-  height: 20px;
-  mask-image: var(--icon-url);
-  -webkit-mask-image: var(--icon-url);
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-position: center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
-  background-color: currentColor;
-}
-.montonio-options .montonio-card--purple {
-  background: #F0EEFB;
-}
-.montonio-options .montonio-card--purple strong {
-  color: #260071;
-}
-.montonio-options .montonio-card--purple .montonio-card__icon:before {
-  background-color: #260071;
-}
-.montonio-options .montonio-card--blue {
-  background: #E7EFFF;
-}
-.montonio-options .montonio-card--blue strong {
-  color: #0A4DDE;
-}
-.montonio-options .montonio-card--yellow {
-  background: #fff6da;
-}
-.montonio-options .montonio-card--yellow strong {
-  color: #e3a500;
-}
-.montonio-options .montonio-card--red {
-  background: #ffebeb;
-}
-.montonio-options .montonio-card--red strong {
-  color: #ce0920;
 }
 .montonio-options .montonio-card .description {
   font-size: 12px;
@@ -579,8 +598,8 @@
   width: 25px;
   height: 15px;
   background-color: #ffffff;
-  -webkit-mask-image: url("../images/montonio-logo-mark.svg");
-  mask-image: url("../images/montonio-logo-mark.svg");
+  -webkit-mask-image: url("../images/brand/montonio-logo-mark.svg");
+  mask-image: url("../images/brand/montonio-logo-mark.svg");
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-size: contain;
@@ -953,31 +972,7 @@
   max-width: 60px !important;
   display: inline-block !important;
 }
-.montonio-shipping-panel__notice {
-  background: #e7efff;
-  padding: 14px 16px;
-  overflow-wrap: break-word;
-  border-radius: 6px;
-}
-.montonio-shipping-panel__notice strong {
-  color: #0A4DDE;
-}
-.montonio-shipping-panel__notice--yellow {
-  background: #fff6da;
-  border-color: #fad791;
-  color: #1b1b1b;
-}
-.montonio-shipping-panel__notice--yellow strong {
-  color: #e3a500;
-}
-.montonio-shipping-panel__notice--red {
-  background: #ffebeb;
-}
-.montonio-shipping-panel__notice--red strong {
-  color: #ce0920;
-}
-.montonio-shipping-panel__notice p {
-  color: inherit !important;
+.montonio-shipping-panel .montonio-notice:not(.notice) {
   margin: 0;
 }
 .montonio-shipping-panel__row {
@@ -1291,6 +1286,195 @@ label[for*=montonio_shipping_sender]::after {
 .montonio-shipping-panel__status--delivered {
   background-color: #edfbec;
   color: #20b01b;
+}
+
+.order-status.montonio-withdrawal-status {
+  display: inline-flex;
+  max-width: 100%;
+  margin: -0.25em 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  background: #e5e5e5;
+  color: #454545;
+  font-weight: 400;
+  line-height: 2.5em;
+  white-space: nowrap;
+  cursor: inherit;
+}
+.order-status.montonio-withdrawal-status > span {
+  margin: 0 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.order-status.montonio-withdrawal-status--pending {
+  background-color: #fff6da;
+  color: #bf8b00;
+}
+.order-status.montonio-withdrawal-status--completed {
+  background-color: #edfbec;
+  color: #20b01b;
+}
+
+.montonio-wdr-panel {
+  padding: 23px 24px 12px;
+}
+
+#poststuff .montonio-wdr-title {
+  margin: 0 0 3px;
+  padding: 0;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.montonio-wdr-meta {
+  margin: 0;
+  color: #777;
+  overflow-wrap: anywhere;
+}
+
+.montonio-wdr-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4%;
+}
+.montonio-wdr-columns > div {
+  flex: 1 1 28%;
+  min-width: 200px;
+}
+.montonio-wdr-columns h3 {
+  margin: 1.33em 0 0;
+  font-size: 14px;
+}
+.montonio-wdr-columns p {
+  margin: 1em 0 0;
+  overflow-wrap: anywhere;
+}
+.montonio-wdr-columns strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.montonio-wdr-muted {
+  display: block;
+  color: #888;
+  font-size: 0.92em;
+}
+
+.montonio-wdr-items {
+  width: 100%;
+  border-collapse: collapse;
+}
+.montonio-wdr-items > thead > tr > th {
+  padding: 1em;
+  border-bottom: 1px solid #dcdcde;
+  background: #f8f8f8;
+  font-weight: 400;
+  text-align: left;
+}
+.montonio-wdr-items > tbody > tr > td {
+  padding: 1.5em 1em 1em;
+  border-bottom: 1px solid #f0f0f1;
+  vertical-align: top;
+}
+.montonio-wdr-items > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+.montonio-wdr-items > * > tr > .montonio-wdr-num {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.montonio-wdr-totals {
+  padding: 1em 1em 0.5em;
+  border-top: 1px solid #dcdcde;
+}
+.montonio-wdr-totals table {
+  margin-left: auto;
+  border-collapse: collapse;
+}
+.montonio-wdr-totals th,
+.montonio-wdr-totals td {
+  padding: 0 0 0.5em 1.5em;
+  text-align: right;
+  white-space: nowrap;
+}
+.montonio-wdr-totals th {
+  font-weight: 400;
+}
+.montonio-wdr-totals td {
+  font-weight: 600;
+}
+.montonio-wdr-totals .montonio-wdr-grand th,
+.montonio-wdr-totals .montonio-wdr-grand td {
+  padding-top: 0.5em;
+  border-top: 1px solid #dcdcde;
+  font-weight: 600;
+}
+
+.montonio-wdr-note {
+  max-width: 480px;
+  margin: 0 0 0.5em auto;
+  text-align: right;
+}
+
+.montonio-wdr-thumb {
+  width: 38px;
+}
+.montonio-wdr-thumb img {
+  display: block;
+  width: 38px;
+  height: 38px;
+  border: 2px solid #e8e8e8;
+  background: #f8f8f8;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.montonio-wdr-item-name {
+  font-weight: 600;
+}
+
+.montonio-wdr-item-info,
+.montonio-wdr-attributes {
+  margin-top: 0.5em;
+  color: #888;
+  font-size: 0.92em;
+}
+
+.montonio-wdr-attributes {
+  border-collapse: collapse;
+}
+.montonio-wdr-attributes th,
+.montonio-wdr-attributes td {
+  padding: 0 8px 0.25em 0;
+  text-align: left;
+  vertical-align: top;
+}
+.montonio-wdr-attributes th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.montonio-wdr-status {
+  margin: 0 0 12px;
+}
+.montonio-wdr-status strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.montonio-wdr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+#order_data .montonio-wdr-order-notices {
+  clear: both;
+  padding-top: 8px;
 }
 
 .wc-action-button-montonio_print_label {
