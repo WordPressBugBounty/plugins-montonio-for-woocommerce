@@ -91,6 +91,8 @@ class Montonio_OTA_Updates {
         $data['montonio_shipping_create_shipment_on_status']    = get_option( 'montonio_shipping_create_shipment_on_status', false );
         $data['montonio_shipping_orderStatusWhenLabelPrinted']  = get_option( 'montonio_shipping_orderStatusWhenLabelPrinted', false );
         $data['montonio_shipping_order_status_when_delivered']  = get_option( 'montonio_shipping_order_status_when_delivered', false );
+        $data['montonio_cart_capture_enabled']                  = get_option( 'montonio_cart_capture_enabled', 'no' );
+        $data['montonio_cart_capture_endpoint']                 = get_option( 'montonio_cart_capture_endpoint', '' );
 
         return new WP_REST_Response( $data, 200 );
     }
@@ -134,6 +136,17 @@ class Montonio_OTA_Updates {
                 'type'              => 'string',
                 'enum'              => array( 'default', 'select2', 'choices-js' ),
                 'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'montonio_cart_capture_enabled'             => array(
+                'description'       => __( 'Enable or disable abandoned cart capture', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'enum'              => array( 'yes', 'no' ),
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'montonio_cart_capture_endpoint'            => array(
+                'description'       => __( 'Endpoint that receives captured carts', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'sanitize_callback' => 'esc_url_raw'
             ),
             'woocommerce_wc_montonio_api_settings'      => array(
                 'description' => __( 'Main settings for Montonio', 'montonio-for-woocommerce' ),

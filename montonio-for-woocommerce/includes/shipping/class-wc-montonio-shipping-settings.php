@@ -148,16 +148,17 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                 'id'      => 'montonio_email_tracking_code_text'
             ),
             array(
-                'title'   => __( 'Show parcel machine address in dropdown in checkout', 'montonio-for-woocommerce' ),
-                'desc'    => __( 'Enable', 'montonio-for-woocommerce' ),
-                'type'    => 'checkbox',
-                'default' => 'yes',
-                'id'      => 'montonio_shipping_show_address'
+                'title'    => __( 'Show pickup point address', 'montonio-for-woocommerce' ),
+                'desc'     => __( 'Enable', 'montonio-for-woocommerce' ),
+                'desc_tip' => __( 'Displays the street address next to the pickup point name in the checkout pickup point list, order details and emails.', 'montonio-for-woocommerce' ),
+                'type'     => 'checkbox',
+                'default'  => 'yes',
+                'id'       => 'montonio_shipping_show_address'
             ),
             array(
-                'title'    => __( 'Show shipping provider logos in checkout', 'montonio-for-woocommerce' ),
+                'title'    => __( 'Show carrier logos', 'montonio-for-woocommerce' ),
                 'desc'     => __( 'Enable', 'montonio-for-woocommerce' ),
-                'desc_tip' => __( 'Applicable only in legacy checkout', 'montonio-for-woocommerce' ),
+                'desc_tip' => __( 'Displays the carrier logo next to each Montonio shipping method name in the cart and checkout.', 'montonio-for-woocommerce' ),
                 'type'     => 'checkbox',
                 'default'  => 'no',
                 'id'       => 'montonio_shipping_show_provider_logos'

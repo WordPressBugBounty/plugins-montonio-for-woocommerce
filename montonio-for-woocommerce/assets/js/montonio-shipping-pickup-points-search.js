@@ -107,7 +107,7 @@ class MontonioPickupPointSelector {
         this.logosContainer.innerHTML = '';
         
         // Define supported operators (operators that have logo files)
-        const supportedOperators = ['dpd', 'inpost', 'latvian_post', 'omniva', 'orlen', 'smartpost', 'unisend', 'venipak', 'dhl', 'chronopost', 'gls', 'alzabox', 'expressone'];
+        const supportedOperators = ['dpd', 'inpost', 'latvian_post', 'omniva', 'orlen', 'smartpost', 'unisend', 'venipak', 'dhl', 'chronopost', 'gls', 'alzabox', 'expressone', 'postnord', 'posti'];
         
         try {
             const operatorsData = this.logosContainer.dataset.operators;

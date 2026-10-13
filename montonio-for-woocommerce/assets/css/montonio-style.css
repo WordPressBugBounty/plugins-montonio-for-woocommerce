@@ -139,6 +139,91 @@ img.montonio-payment-method-icon {
   flex-wrap: wrap;
 }
 
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  display: inline-block;
+  vertical-align: middle;
+  width: 40px;
+  height: 24px;
+  margin-right: 8px;
+  background: no-repeat left center/contain;
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_omniva_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/omniva.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_dpd_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/dpd.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_latvian_post_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/latvian_post.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_smartpost_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/smartposti.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_smartposti_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/smartposti.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_itella_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/smartposti.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_unisend_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/unisend.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_venipak_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/venipak.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_inpost_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/inpost.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_orlen_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/orlen.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_novapost_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/novaPost.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_dhl_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/dhl.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_expressone_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/expressone.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_chronopost_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/chronopost.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_gls_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/gls.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_alzabox_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/alzabox.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_postnord_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/postnord.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_posti_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/posti.svg);
+}
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_international_shipping_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/montonio_international_shipping.svg);
+}
+
 .montonio-pickup-point {
   overflow: visible !important;
 }
@@ -307,7 +392,13 @@ img.montonio-payment-method-icon {
 .montonio-pickup-point__search-logo--latvian_post {
   background-image: url(../images/carriers/latvian_post.svg);
 }
-.montonio-pickup-point__search-logo--smartpost, .montonio-pickup-point__search-logo--smartposti {
+.montonio-pickup-point__search-logo--smartpost {
+  background-image: url(../images/carriers/smartposti.svg);
+}
+.montonio-pickup-point__search-logo--smartposti {
+  background-image: url(../images/carriers/smartposti.svg);
+}
+.montonio-pickup-point__search-logo--itella {
   background-image: url(../images/carriers/smartposti.svg);
 }
 .montonio-pickup-point__search-logo--unisend {
@@ -342,6 +433,12 @@ img.montonio-payment-method-icon {
 }
 .montonio-pickup-point__search-logo--postnord {
   background-image: url(../images/carriers/postnord.svg);
+}
+.montonio-pickup-point__search-logo--posti {
+  background-image: url(../images/carriers/posti.svg);
+}
+.montonio-pickup-point__search-logo--international_shipping {
+  background-image: url(../images/carriers/montonio_international_shipping.svg);
 }
 .montonio-pickup-point__search-input {
   width: 100%;

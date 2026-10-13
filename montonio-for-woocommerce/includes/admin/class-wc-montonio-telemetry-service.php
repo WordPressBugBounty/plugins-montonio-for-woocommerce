@@ -341,19 +341,24 @@ class WC_Montonio_Telemetry_Service {
      *
      * The submission counters are plain options updated when a notice is
      * confirmed and when submissions are marked complete, so they survive
-     * records being trashed or deleted.
+     * records being trashed or deleted. Published instances are the published
+     * pages and posts that contain the form, as a shortcode or as the block.
      *
      * @since 10.4.0
      * @return array The withdrawal service data
      */
     public static function get_withdrawal_service_data() {
-        if ( ! class_exists( 'WC_Montonio_Withdrawals' ) ) {
-            return array();
-        }
+        global $wpdb;
+
+        $published_instances = (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type IN ( 'page', 'post' ) AND ( post_content LIKE %s OR post_content LIKE %s )",
+            '%' . $wpdb->esc_like( '[' . WC_Montonio_Withdrawals::SHORTCODE ) . '%',
+            '%' . $wpdb->esc_like( '<!-- wp:' . WC_Montonio_Withdrawal_Block::NAME ) . '%'
+        ) );
 
         return array(
             'status'                => WC_Montonio_Withdrawals::is_enabled() ? 'enabled' : 'disabled',
-            'published_instances'   => WC_Montonio_Withdrawals::count_published_instances(),
+            'published_instances'   => $published_instances,
             'submissions_total'     => (int) get_option( 'montonio_withdrawal_submissions_total', 0 ),
             'submissions_completed' => (int) get_option( 'montonio_withdrawal_submissions_completed', 0 ),
             'settings'              => array(

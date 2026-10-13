@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.4.0
+Version: 10.4.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.4.0
+Stable tag: 10.4.1
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -136,6 +136,12 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 
 == Changelog ==
+= 10.4.1 =
+* Added – New Posti courier and parcel machines shipping methods
+* Added – Carrier logos are now shown next to Montonio shipping methods also in the Checkout block, not only in classic checkout
+* Added – Abandoned cart recovery with Montonio Ladu
+* Fix – Incorrect WooCommerce Checkout block detection when a custom checkout plugin replaces the checkout
+
 = 10.4.0 =
 * Added – New Withdrawals feature: customers can now request withdrawals directly from a dedicated page on your site.
 * Added – New "Fragile shipping" product setting. Shipments containing these products use the carrier's fragile service when the selected pickup point or courier supports it

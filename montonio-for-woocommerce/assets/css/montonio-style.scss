@@ -1,3 +1,26 @@
+// Carrier code (lowercase) => logo file in images/carriers. Keys also match shipping method ids (montonio_{key}_...)
+$montonio-carrier-logos: (
+    omniva: 'omniva.svg',
+    dpd: 'dpd.svg',
+    latvian_post: 'latvian_post.svg',
+    smartpost: 'smartposti.svg',
+    smartposti: 'smartposti.svg',
+    itella: 'smartposti.svg',
+    unisend: 'unisend.svg',
+    venipak: 'venipak.svg',
+    inpost: 'inpost.svg',
+    orlen: 'orlen.svg',
+    novapost: 'novaPost.svg',
+    dhl: 'dhl.svg',
+    expressone: 'expressone.svg',
+    chronopost: 'chronopost.svg',
+    gls: 'gls.svg',
+    alzabox: 'alzabox.svg',
+    postnord: 'postnord.svg',
+    posti: 'posti.svg',
+    international_shipping: 'montonio_international_shipping.svg'
+);
+
 img {
     &.montonio-payment-method-icon {
         height: 24px !important;
@@ -163,6 +186,27 @@ img {
     display: flex !important;
     gap: 5px;
     flex-wrap: wrap;
+}
+
+// Blocks cart/checkout render rate labels as plain text, so the logo is matched from the shipping method id in the radio value
+$montonio-rate-label: '+ .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before';
+
+.montonio-show-carrier-logos {
+    .wc-block-components-radio-control__input[value^="montonio_"] #{$montonio-rate-label} {
+        display: inline-block;
+        vertical-align: middle;
+        width: 40px;
+        height: 24px;
+        margin-right: 8px;
+        background: no-repeat left center / contain;
+    }
+
+    @each $carrier, $file in $montonio-carrier-logos {
+        .wc-block-components-radio-control__input[value^="montonio_#{$carrier}_"] #{$montonio-rate-label} {
+            content: '';
+            background-image: url(../images/carriers/#{$file});
+        }
+    }
 }
 
 .montonio-pickup-point {
@@ -355,65 +399,10 @@ img {
                 opacity: 1;
             }
 
-            &--omniva {
-                background-image: url(../images/carriers/omniva.svg);
-            }
-
-            &--dpd {
-                background-image: url(../images/carriers/dpd.svg);
-            }
-
-            &--latvian_post {
-                background-image: url(../images/carriers/latvian_post.svg);
-            }
-
-            &--smartpost,
-            &--smartposti {
-                background-image: url(../images/carriers/smartposti.svg);
-            }
-
-            &--unisend {
-                background-image: url(../images/carriers/unisend.svg);
-            }
-
-            &--venipak {
-                background-image: url(../images/carriers/venipak.svg);
-            }
-
-            &--inpost {
-                background-image: url(../images/carriers/inpost.svg);
-            }
-
-            &--orlen {
-                background-image: url(../images/carriers/orlen.svg);
-            }
-
-            &--novapost {
-                background-image: url(../images/carriers/novaPost.svg);
-            }
-
-            &--dhl {
-                background-image: url(../images/carriers/dhl.svg);
-            }
-
-            &--expressone {
-                background-image: url(../images/carriers/expressone.svg);
-            }
-
-            &--chronopost {
-                background-image: url(../images/carriers/chronopost.svg);
-            }
-
-            &--gls {
-                background-image: url(../images/carriers/gls.svg);
-            }
-
-            &--alzabox {
-                background-image: url(../images/carriers/alzabox.svg);
-            }
-
-            &--postnord {
-                background-image: url(../images/carriers/postnord.svg);
+            @each $carrier, $file in $montonio-carrier-logos {
+                &--#{$carrier} {
+                    background-image: url(../images/carriers/#{$file});
+                }
             }
         }
 

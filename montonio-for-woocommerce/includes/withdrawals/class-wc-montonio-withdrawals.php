@@ -268,23 +268,6 @@ class WC_Montonio_Withdrawals {
     }
 
     /**
-     * Count published pages and posts that contain the withdrawal form,
-     * as a shortcode or as the block. Reported through telemetry.
-     *
-     * @since 10.4.0
-     * @return int
-     */
-    public static function count_published_instances() {
-        global $wpdb;
-
-        return (int) $wpdb->get_var( $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type IN ( 'page', 'post' ) AND ( post_content LIKE %s OR post_content LIKE %s )",
-            '%' . $wpdb->esc_like( '[' . self::SHORTCODE ) . '%',
-            '%' . $wpdb->esc_like( '<!-- wp:' . WC_Montonio_Withdrawal_Block::NAME ) . '%'
-        ) );
-    }
-
-    /**
      * Create the withdrawal page, or bring the existing one in line with the
      * page editor format setting.
      *

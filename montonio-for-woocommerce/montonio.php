@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.4.0
+ * Version:           10.4.1
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -14,12 +14,12 @@
  * Requires Plugins: woocommerce
  * Requires PHP: 7.2
  * WC requires at least: 4.0.0
- * WC tested up to: 11.0.1
+ * WC tested up to: 11.2.1
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.0' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.1' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -138,7 +138,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-admin-settings-page.php';
             WC_Montonio_Admin_Settings_Page::init();
-            
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-data-sync.php';
             WC_Montonio_Data_Sync::init();
 
@@ -150,6 +150,12 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-updates.php';
             Montonio_OTA_Updates::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-capture.php';
+            WC_Montonio_Cart_Capture::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-restore.php';
+            WC_Montonio_Cart_Restore::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-connection.php';
             Montonio_Connection::init();

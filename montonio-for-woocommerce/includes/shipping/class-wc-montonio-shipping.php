@@ -55,7 +55,7 @@ class WC_Montonio_Shipping {
 
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-sync.php';
         WC_Montonio_Shipping_Sync::init();
-        
+
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup-view.php';
         require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-route-setup.php';
         WC_Montonio_Shipping_Route_Setup::init();
@@ -82,7 +82,7 @@ class WC_Montonio_Shipping {
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/checkout/class-wc-montonio-shipping-classic-checkout.php';
             WC_Montonio_Shipping_Classic_Checkout::init();
-            
+
             // Shipping methods
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/class-montonio-shipping-method.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/dpd/class-montonio-dpd-parcel-machines.php';
@@ -106,6 +106,8 @@ class WC_Montonio_Shipping {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-pickup-points.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/montonio-international-shipping/class-montonio-international-shipping-courier.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/posti/class-montonio-posti-parcel-machines.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/posti/class-montonio-posti-courier.php';
         }
     }
 
@@ -131,6 +133,9 @@ class WC_Montonio_Shipping {
 
             // Swap Montonio-specific placeholders with their actual values in outgoing emails
             add_filter( 'woocommerce_email_format_string', array( $this, 'replace_email_placeholders' ), 10, 2 );
+
+            // Show carrier logos next to shipping method labels in the Blocks cart and checkout
+            add_filter( 'body_class', array( $this, 'add_carrier_logos_body_class' ) );
         }
     }
 
@@ -161,6 +166,8 @@ class WC_Montonio_Shipping {
         $methods['montonio_latvian_post_parcel_machines']         = 'Montonio_Latvian_Post_Parcel_Machines';
         $methods['montonio_latvian_post_courier']                 = 'Montonio_Latvian_Post_Courier';
         $methods['montonio_postnord_parcel_machines']             = 'Montonio_Postnord_Parcel_Machines';
+        $methods['montonio_posti_parcel_machines']                = 'Montonio_Posti_Parcel_Machines';
+        $methods['montonio_posti_courier']                        = 'Montonio_Posti_Courier';
         $methods['montonio_inpost_parcel_machines']               = 'Montonio_Inpost_Parcel_Machines';
         $methods['montonio_orlen_parcel_machines']                = 'Montonio_Orlen_Parcel_Machines';
 
@@ -204,6 +211,20 @@ class WC_Montonio_Shipping {
             'error_text'   => __( 'Failed to load pickup points. Please try again.', 'montonio-for-woocommerce' ),
             'no_results'   => __( 'No pickup points found', 'montonio-for-woocommerce' )
         ) );
+    }
+
+    /**
+     * Adds a body class that enables carrier logos in the Blocks shipping method list.
+     *
+     * @param array $classes The body classes.
+     * @return array
+     */
+    public function add_carrier_logos_body_class( $classes ) {
+        if ( 'yes' === get_option( 'montonio_shipping_show_provider_logos' ) ) {
+            $classes[] = 'montonio-show-carrier-logos';
+        }
+
+        return $classes;
     }
 
     /**

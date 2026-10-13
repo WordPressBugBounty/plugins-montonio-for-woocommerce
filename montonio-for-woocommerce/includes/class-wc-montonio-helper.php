@@ -206,6 +206,12 @@ class WC_Montonio_Helper {
             return false;
         }
 
+        $checkout_block = WP_Block_Type_Registry::get_instance()->get_registered( 'woocommerce/checkout' );
+
+        if ( ! $checkout_block || ! is_array( $checkout_block->render_callback ) || ! $checkout_block->render_callback[0] instanceof \Automattic\WooCommerce\Blocks\BlockTypes\Checkout ) {
+            return false;
+        }
+
         if ( ! empty( $_wp_current_template_content ) && has_block( 'woocommerce/checkout', $_wp_current_template_content ) ) {
             return true;
         }
