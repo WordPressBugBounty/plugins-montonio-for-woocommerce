@@ -320,15 +320,15 @@ class WC_Montonio_Telemetry_Service {
         );
 
         foreach ( $shipping_zones as $zone ) {
-            foreach ( $zone['shipping_methods'] as $method ) {
-                if ( 'yes' !== $method->enabled ) {
+            foreach ( $zone['shipping_methods'] as $shipping_method ) {
+                if ( 'yes' !== $shipping_method->enabled ) {
                     continue;
                 }
 
-                $is_montonio = strpos( $method->id, 'montonio_' ) !== false;
+                $is_montonio = strpos( $shipping_method->id, 'montonio_' ) !== false;
 
-                $data['shipping_methods'][$method->id] = array(
-                    'setting' => $is_montonio ? $method->instance_settings : null
+                $data['shipping_methods'][$shipping_method->id] = array(
+                    'setting' => $is_montonio ? $shipping_method->instance_settings : null
                 );
             }
         }

@@ -1,19 +1,35 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
+/**
+ * The Shipping section of the Montonio settings tab.
+ *
+ * @see WC_Montonio_Settings
+ */
+class WC_Montonio_Shipping_Settings {
+
+    /**
+     * Montonio menu item ID.
+     *
+     * @var string
+     */
+    public $id = 'montonio_shipping';
+
+    /**
+     * Page title.
+     *
+     * @var string
+     */
+    public $label;
 
     /**
      * Constructor
      */
     public function __construct() {
-        $this->id    = 'montonio_shipping';
         $this->label = __( 'Montonio Shipping', 'montonio-for-woocommerce' );
 
         add_action( 'woocommerce_admin_field_montonio_carriers_table', array( $this, 'output_montonio_carriers_table' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_route_setup_scripts' ) );
-
-        parent::__construct();
     }
 
     /**
@@ -28,7 +44,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
             return;
         }
 
-        if ( ! isset( $_GET['tab'] ) || 'montonio_shipping' !== sanitize_text_field( wp_unslash( $_GET['tab'] ) ) ) {
+        if ( ! WC_Montonio_Admin_Settings_Page::is_settings_page( $this->id ) ) {
             return;
         }
 
@@ -63,20 +79,11 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
     }
 
     /**
-     * Legacy support for Woocommerce 5.4 and earlier
+     * Get the settings fields.
      *
      * @return array
      */
     public function get_settings() {
-        return $this->get_settings_for_default_section();
-    }
-
-    /**
-     * Used when creating Montonio shipping settings tab
-     *
-     * @return array
-     */
-    public function get_settings_for_default_section() {
         $countries      = array( '' => '-- Choose country --' );
         $countries      = array_merge( $countries, ( new WC_Countries() )->get_countries() );
         $order_statuses = wc_get_order_statuses();
@@ -219,7 +226,7 @@ class WC_Montonio_Shipping_Settings extends WC_Settings_Page {
                     /* translators: %1$s: mode (Sandbox/Live), %2$s: opening link tag to API settings, %3$s: closing link tag */
                     __( '%1$s API keys are not configured. %2$sConfigure API keys%3$s to view carriers.', 'montonio-for-woocommerce' ),
                     esc_html( $mode ),
-                    '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ) . '">',
+                    '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' ) ) . '">',
                     '</a>'
                 )
             );

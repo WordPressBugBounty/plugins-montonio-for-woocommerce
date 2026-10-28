@@ -46,9 +46,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
         }
 
         // Check if order has Montonio shipping method and no tracking code has already been generated
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) || $shipping_method->get_meta( 'tracking_codes' ) ) {
+        if ( empty( $shipping_item ) || $shipping_item->get_meta( 'tracking_codes' ) ) {
             return;
         }
 
@@ -172,9 +172,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
             return null;
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return null;
         }
 
@@ -199,8 +199,8 @@ class WC_Montonio_Shipping_Shipment_Manager {
 
                 if ( $existing_tracking_links !== $tracking_links ) {
                     $order->add_order_note( __( '<strong>Shipment created.</strong><br>Tracking codes: ', 'montonio-for-woocommerce' ) . $tracking_links );
-                    $shipping_method->update_meta_data( 'tracking_codes', $tracking_links );
-                    $shipping_method->save_meta_data();
+                    $shipping_item->update_meta_data( 'tracking_codes', $tracking_links );
+                    $shipping_item->save_meta_data();
 
                     $order->update_meta_data( '_montonio_tracking_info', $tracking_links );
                 }
@@ -241,9 +241,9 @@ class WC_Montonio_Shipping_Shipment_Manager {
      * @return array The formatted shipment data ready for API submission.
      */
     public static function get_shipment_data( $order, $type = 'create' ) {
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return;
         }
 
@@ -359,7 +359,7 @@ class WC_Montonio_Shipping_Shipment_Manager {
             );
 
             // Apply fallbacks if applicable
-            $dimensions = self::maybe_apply_dimension_fallbacks( $dimensions, $shipping_method );
+            $dimensions = self::maybe_apply_dimension_fallbacks( $dimensions, $shipping_item );
 
             // Convert to metric
             $weight = WC_Montonio_Helper::convert_to_kg( $dimensions['weight'] );
@@ -462,27 +462,27 @@ class WC_Montonio_Shipping_Shipment_Manager {
     }
 
     /**
-     * Apply fallback dimensions and weight if needed for the shipping method.
+     * Apply the shipping method's fallback dimensions and weight if needed.
      *
-     * @param array  $dimensions Array with 'weight', 'length', 'width', 'height' keys.
-     * @param object $shipping_method The shipping method object.
+     * @param array                  $dimensions    Array with 'weight', 'length', 'width', 'height' keys.
+     * @param WC_Order_Item_Shipping $shipping_item The order's Montonio shipping item.
      * @return array The dimensions with fallbacks applied if applicable.
      */
-    private static function maybe_apply_dimension_fallbacks( $dimensions, $shipping_method ) {
-        $instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $shipping_method->get_instance_id() );
+    private static function maybe_apply_dimension_fallbacks( $dimensions, $shipping_item ) {
+        $shipping_method = WC_Shipping_Zones::get_shipping_method( $shipping_item->get_instance_id() );
 
-        if ( ! $instance instanceof Montonio_Shipping_Method || ! $instance->uses_default_dimensions() ) {
+        if ( ! $shipping_method instanceof Montonio_Shipping_Method || ! $shipping_method->uses_default_dimensions() ) {
             return $dimensions;
         }
 
         if ( empty( $dimensions['length'] ) || empty( $dimensions['width'] ) || empty( $dimensions['height'] ) ) {
-            $dimensions['length'] = $instance->get_option( 'default_length', 0 );
-            $dimensions['width']  = $instance->get_option( 'default_width', 0 );
-            $dimensions['height'] = $instance->get_option( 'default_height', 0 );
+            $dimensions['length'] = $shipping_method->get_option( 'default_length', 0 );
+            $dimensions['width']  = $shipping_method->get_option( 'default_width', 0 );
+            $dimensions['height'] = $shipping_method->get_option( 'default_height', 0 );
         }
 
         if ( empty( $dimensions['weight'] ) ) {
-            $dimensions['weight'] = $instance->get_option( 'default_weight', 0 );
+            $dimensions['weight'] = $shipping_method->get_option( 'default_weight', 0 );
         }
 
         return $dimensions;

@@ -13,13 +13,13 @@ $shipment_status_reason = $order->get_meta( '_wc_montonio_shipping_shipment_stat
 $carrier_name           = '';
 $type                   = '';
 
-$shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+$shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-if ( empty( $shipping_method ) ) {
+if ( empty( $shipping_item ) ) {
     return;
 }
 
-$tracking_codes          = $shipping_method->get_meta( 'tracking_codes' );
+$tracking_codes          = $shipping_item->get_meta( 'tracking_codes' );
 $shipping_method_item_id = $order->get_meta( '_montonio_pickup_point_uuid' );
 
 if ( ! empty( $shipping_method_item_id ) ) {
@@ -32,11 +32,11 @@ if ( ! empty( $shipping_method_item_id ) ) {
 }
 
 if ( empty( $carrier_name ) || empty( $type ) ) {
-    $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method->get_method_id(), $shipping_method->get_instance_id() );
+    $shipping_method = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_item->get_method_id(), $shipping_item->get_instance_id() );
     
-    if ( $shipping_method_instance ) {
-        $carrier_name = $shipping_method_instance->carrier_code ?? '';
-        $type         = $shipping_method_instance->type_v2 ?? '';
+    if ( $shipping_method ) {
+        $carrier_name = $shipping_method->carrier_code ?? '';
+        $type         = $shipping_method->type_v2 ?? '';
     }
 }
 

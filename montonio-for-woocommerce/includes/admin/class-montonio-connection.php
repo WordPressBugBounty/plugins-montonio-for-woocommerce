@@ -51,15 +51,7 @@ class Montonio_Connection {
      * @return void
      */
     public static function display_status_notice() {
-        if ( ! isset( $_GET['page'], $_GET['tab'], $_GET['section'], $_GET['montonio_connect'] ) ) {
-            return;
-        }
-
-        $page    = sanitize_text_field( wp_unslash( $_GET['page'] ) );
-        $tab     = sanitize_text_field( wp_unslash( $_GET['tab'] ) );
-        $section = sanitize_text_field( wp_unslash( $_GET['section'] ) );
-
-        if ( 'wc-settings' !== $page || 'checkout' !== $tab || 'wc_montonio_api' !== $section ) {
+        if ( ! isset( $_GET['montonio_connect'] ) || ! WC_Montonio_Admin_Settings_Page::is_settings_page( 'wc_montonio_api' ) ) {
             return;
         }
 
@@ -393,15 +385,7 @@ class Montonio_Connection {
      * @return void
      */
     private static function redirect_to_settings( $status ) {
-        $url = add_query_arg(
-            array(
-                'page'             => 'wc-settings',
-                'tab'              => 'checkout',
-                'section'          => 'wc_montonio_api',
-                'montonio_connect' => $status
-            ),
-            admin_url( 'admin.php' )
-        );
+        $url = add_query_arg( 'montonio_connect', $status, admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' ) );
 
         wp_safe_redirect( $url );
         exit;

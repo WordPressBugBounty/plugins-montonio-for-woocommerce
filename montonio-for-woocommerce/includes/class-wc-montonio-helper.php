@@ -159,6 +159,16 @@ class WC_Montonio_Helper {
     }
 
     /**
+     * Whether the active WooCommerce is $version or newer.
+     *
+     * @param string $version A version such as '10.9.0'.
+     * @return bool
+     */
+    public static function is_wc_at_least( $version ) {
+        return version_compare( WC()->version, $version, '>=' );
+    }
+
+    /**
      * Check if High-Performance Order Storage (HPOS) is used
      */
     public static function is_hpos_enabled() {

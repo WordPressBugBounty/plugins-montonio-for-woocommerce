@@ -5,7 +5,8 @@ defined( 'ABSPATH' ) || exit;
  * Class WC_Montonio_Cart_Restore
  *
  * Fills a guest's checkout with the details Ladu captured when the shopper arrives
- * through a cart rescue email's restore link. The link goes through WooCommerce's
+ * through a cart rescue email's restore link, and puts back the recommendation tag of each rebuilt
+ * cart item that had a usable one, while tagging is on. The link goes through WooCommerce's
  * checkout-link, which rebuilds the cart's items, and carries only a restore id,
  * which is resolved with a signed request to Ladu.
  */
@@ -14,6 +15,8 @@ class WC_Montonio_Cart_Restore {
     const SESSION_TRIED_KEY     = 'montonio_cart_restore_tried';
     const SESSION_ELSEWHERE_KEY = 'montonio_cart_restore_ship_elsewhere';
     const TIMEOUT_SECONDS       = 3;
+    // A shopper whose details are not filled only waits for the recommendation tags, so the wait is short.
+    const TAGS_TIMEOUT_SECONDS  = 1;
 
     // CUSTOMER_FIELDS without the phone: a different phone number alone is no reason to ship elsewhere.
     const SHIP_ELSEWHERE_FIELDS = array( 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state', 'postcode', 'country' );
@@ -39,7 +42,8 @@ class WC_Montonio_Cart_Restore {
         try {
             $token = self::requested_token();
 
-            if ( null === $token || ! self::is_fillable_session() ) {
+            // The cart is checkout-link's to rebuild, so an empty one means the link did not restore it.
+            if ( null === $token || ! WC()->session || ! WC()->cart || WC()->cart->is_empty() ) {
                 return;
             }
 
@@ -48,23 +52,39 @@ class WC_Montonio_Cart_Restore {
                 return;
             }
 
+            $fillable = self::is_fillable_session();
+            $retag    = class_exists( 'WC_Montonio_Recommendation_Tagging' ) && WC_Montonio_Recommendation_Tagging::is_active();
+
+            if ( ! $fillable && ! $retag ) {
+                return;
+            }
+
             // Ladu answers only while cart rescue is on, and the endpoint is the one the capture sends to.
             if ( ! WC_Montonio_Cart_Capture::is_active() ) {
                 return;
             }
 
-            $result = self::fetch( untrailingslashit( get_option( WC_Montonio_Cart_Capture::OPTION_ENDPOINT, '' ) ) . '/restore', $token );
+            $result = self::fetch( untrailingslashit( get_option( WC_Montonio_Cart_Capture::OPTION_ENDPOINT, '' ) ) . '/restore', $token, $fillable ? self::TIMEOUT_SECONDS : self::TAGS_TIMEOUT_SECONDS );
 
-            // A timeout or a server error may pass, so a reload asks again.
-            if ( $result['definitive'] ) {
+            // A timeout or a server error may pass, so a reload asks again; for the tags alone it does not.
+            if ( $result['definitive'] || ! $fillable ) {
                 WC()->session->set( self::SESSION_TRIED_KEY, $token );
             }
 
-            if ( null !== $result['details'] ) {
+            if ( null === $result['details'] ) {
+                return;
+            }
+
+            // A logged-in shopper's or emailed session's answer is used for the tags only; its customer details are dropped here.
+            if ( $retag ) {
+                WC_Montonio_Recommendation_Tagging::restore_tags( isset( $result['details']['lines'] ) ? $result['details']['lines'] : null );
+            }
+
+            if ( $fillable ) {
                 self::apply( $result['details'] );
             }
         } catch ( Throwable $e ) {
-            self::log( 'Cart restore failed: ' . get_class( $e ) . ': ' . $e->getMessage() . ' at ' . basename( $e->getFile() ) . ':' . $e->getLine() );
+            WC_Montonio_Logger::log( 'Cart restore failed: ' . WC_Montonio_Logger::describe( $e ) );
         }
     }
 
@@ -74,7 +94,7 @@ class WC_Montonio_Cart_Restore {
      * @return void
      */
     public static function print_url_cleanup() {
-        if ( ! self::is_checkout_page() || ! isset( $_GET[self::QUERY_ARG] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if ( ! WC_Montonio_Cart_Capture::is_checkout_page() || ! isset( $_GET[self::QUERY_ARG] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return;
         }
 
@@ -105,7 +125,7 @@ class WC_Montonio_Cart_Restore {
     }
 
     private static function requested_token() {
-        if ( ! self::is_checkout_page() || ! isset( $_GET[self::QUERY_ARG] ) || ! is_string( $_GET[self::QUERY_ARG] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if ( ! WC_Montonio_Cart_Capture::is_checkout_page() || ! isset( $_GET[self::QUERY_ARG] ) || ! is_string( $_GET[self::QUERY_ARG] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return null;
         }
 
@@ -114,14 +134,9 @@ class WC_Montonio_Cart_Restore {
         return 1 === preg_match( '/^[0-9a-f]{64}$/', $token ) ? $token : null;
     }
 
-    private static function is_checkout_page() {
-        return function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url( 'order-received' ) && ! is_wc_endpoint_url( 'order-pay' );
-    }
-
-    // A logged-in customer's details belong to the account, and a session that already has an email is the
-    // shopper's own. The cart is checkout-link's to rebuild, so an empty one means the link did not restore it.
+    // A logged-in customer's details belong to the account, and a session that already has an email is the shopper's own.
     private static function is_fillable_session() {
-        if ( is_user_logged_in() || ! WC()->session || ! WC()->customer || ! WC()->cart || WC()->cart->is_empty() ) {
+        if ( is_user_logged_in() || ! WC()->customer ) {
             return false;
         }
 
@@ -131,17 +146,17 @@ class WC_Montonio_Cart_Restore {
     /**
      * @return array 'details': Ladu's answer, or null; 'definitive': whether asking again cannot change it.
      */
-    private static function fetch( $url, $token ) {
+    private static function fetch( $url, $token, $timeout ) {
         $jwt = WC_Montonio_Helper::create_jwt_token( array( 'restore_token' => $token, 'exp' => time() + 60 ) );
 
         $response = wp_remote_post( $url, array(
-            'timeout' => self::TIMEOUT_SECONDS,
+            'timeout' => $timeout,
             'headers' => array( 'Content-Type' => 'application/json' ),
             'body'    => wp_json_encode( array( 'data' => $jwt ) )
         ) );
 
         if ( is_wp_error( $response ) ) {
-            self::log( 'Cart restore request failed: ' . $response->get_error_code() . ': ' . $response->get_error_message() );
+            WC_Montonio_Logger::log( 'Cart restore request failed: ' . $response->get_error_code() . ': ' . $response->get_error_message() );
             return array( 'details' => null, 'definitive' => false );
         }
 
@@ -149,19 +164,19 @@ class WC_Montonio_Cart_Restore {
 
         // Ladu answers 404 for a restore id it no longer answers for, and 400 or 401 for a request it cannot verify.
         if ( 200 !== $status ) {
-            self::log( 'Cart restore request answered HTTP ' . $status );
-            return array( 'details' => null, 'definitive' => 408 !== $status && 429 !== $status && $status < 500 );
+            WC_Montonio_Logger::log( 'Cart restore request answered HTTP ' . $status );
+            return array( 'details' => null, 'definitive' => ! WC_Montonio_Cart_Capture::is_retryable_status( $status ) );
         }
 
         $details = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
         if ( ! is_array( $details ) ) {
-            self::log( 'Cart restore response was not JSON: ' . json_last_error_msg() );
+            WC_Montonio_Logger::log( 'Cart restore response was not JSON: ' . json_last_error_msg() );
             return array( 'details' => null, 'definitive' => true );
         }
 
         if ( ! isset( $details['email'] ) || ! is_string( $details['email'] ) ) {
-            self::log( 'Cart restore response had no email' );
+            WC_Montonio_Logger::log( 'Cart restore response had no email' );
             return array( 'details' => null, 'definitive' => true );
         }
 
@@ -272,12 +287,6 @@ class WC_Montonio_Cart_Restore {
 
         if ( isset( $gateways[$details['payment_method']] ) ) {
             WC()->session->set( 'chosen_payment_method', $details['payment_method'] );
-        }
-    }
-
-    private static function log( $message ) {
-        if ( function_exists( 'wc_get_logger' ) ) {
-            wc_get_logger()->warning( $message, array( 'source' => WC_Montonio_Cart_Capture::LOG_SOURCE ) );
         }
     }
 }

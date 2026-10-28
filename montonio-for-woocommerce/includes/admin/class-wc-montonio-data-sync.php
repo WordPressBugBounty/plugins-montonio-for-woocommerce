@@ -152,9 +152,9 @@ class WC_Montonio_Data_Sync {
             'shipping'        => 'skipped'
         );
 
-        $payment_lock = new Montonio_Lock_Manager();
+        $lock_manager = new Montonio_Lock_Manager();
 
-        if ( ! $payment_lock->acquire_lock( 'montonio_payment_methods_sync' ) ) {
+        if ( ! $lock_manager->acquire_lock( 'montonio_payment_methods_sync' ) ) {
             wp_send_json_error( array(
                 'message' => __( 'Another sync is already in progress. Please try again in a moment.', 'montonio-for-woocommerce' )
             ) );
@@ -164,7 +164,7 @@ class WC_Montonio_Data_Sync {
             self::sync_payment_methods();
         } catch ( Exception $e ) {
             WC_Montonio_Logger::log( 'Manual resync: payment methods failed: ' . $e->getMessage() );
-            $payment_lock->release_lock( 'montonio_payment_methods_sync' );
+            $lock_manager->release_lock( 'montonio_payment_methods_sync' );
             wp_send_json_error( array(
                 'message' => sprintf(
                     /* translators: %s: error message */
@@ -174,7 +174,7 @@ class WC_Montonio_Data_Sync {
             ) );
         }
 
-        $payment_lock->release_lock( 'montonio_payment_methods_sync' );
+        $lock_manager->release_lock( 'montonio_payment_methods_sync' );
 
         if ( 'yes' === get_option( 'montonio_shipping_enabled' ) && class_exists( 'WC_Montonio_Shipping_Sync' ) ) {
             $shipping_result = WC_Montonio_Shipping_Sync::sync();

@@ -891,13 +891,13 @@ class WC_Montonio_Shipping_Route_Setup {
      * @since 9.4.0
      * @param int    $instance_id The shipping method instance ID.
      * @param string $method_id   The WC shipping method ID.
-     * @param float  $rate        The rate to set.
+     * @param float  $price       The price to set.
      */
-    private static function set_method_price( $instance_id, $method_id, $rate ) {
+    private static function set_method_price( $instance_id, $method_id, $price ) {
         $option_key = 'woocommerce_' . $method_id . '_' . $instance_id . '_settings';
         $settings   = get_option( $option_key, array() );
 
-        $settings['price'] = wc_format_decimal( $rate, 2 );
+        $settings['price'] = wc_format_decimal( $price, 2 );
 
         update_option( $option_key, $settings );
     }

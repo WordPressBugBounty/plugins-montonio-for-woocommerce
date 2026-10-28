@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.4.1
+ * Version:           10.4.5
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.5' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -63,7 +63,6 @@ if ( ! class_exists( 'Montonio' ) ) {
         protected function __construct() {
             add_action( 'plugins_loaded', array( $this, 'init' ) );
             add_action( 'before_woocommerce_init', array( $this, 'load_textdomain' ) );
-            add_action( 'woocommerce_init', array( $this, 'init_api_settings' ) );
             add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 9999 );
         }
 
@@ -157,6 +156,9 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-restore.php';
             WC_Montonio_Cart_Restore::init();
 
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php';
+            WC_Montonio_Recommendation_Tagging::init();
+
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-connection.php';
             Montonio_Connection::init();
 
@@ -171,6 +173,7 @@ if ( ! class_exists( 'Montonio' ) ) {
 
             add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
             add_action( 'admin_notices', array( $this, 'live_api_keys_notice' ) );
+            add_action( 'init', array( $this, 'register_shared_assets' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
             add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
             add_filter( 'woocommerce_payment_gateways', array( $this, 'add_payment_methods' ) );
@@ -226,7 +229,7 @@ if ( ! class_exists( 'Montonio' ) ) {
          * @return array The updated array of plugin action links.
          */
         public function plugin_action_links( $links ) {
-            $setting_link = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' );
+            $setting_link = admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' );
 
             $plugin_links = array(
                 '<a href="' . $setting_link . '">' . __( 'Settings', 'montonio-for-woocommerce' ) . '</a>'
@@ -242,12 +245,25 @@ if ( ! class_exists( 'Montonio' ) ) {
          * @return array The updated array of WooCommerce settings pages.
          */
         public function add_settings_pages( $settings ) {
-            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/class-wc-montonio-shipping-settings.php';
-            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/withdrawals/class-wc-montonio-withdrawals-settings.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-settings.php';
 
-            $settings[] = new WC_Montonio_Shipping_Settings();
-            $settings[] = new WC_Montonio_Withdrawals_Settings();
+            $settings[] = new WC_Montonio_Settings();
             return $settings;
+        }
+
+        /**
+         * Register assets shared by the storefront, admin and block editor.
+         *
+         * The Montonio SDK scripts are dependencies of the payment method blocks.
+         * WooCommerce Blocks verifies those dependencies on wp_print_scripts, which
+         * the block editor fires before admin_enqueue_scripts, so they must be
+         * registered on init to keep the methods from showing as incompatible.
+         *
+         * @return void
+         */
+        public function register_shared_assets() {
+            wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-js', 'https://js.montonio.com/1.x.x/montonio.umd.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
         }
 
         /**
@@ -262,8 +278,6 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_style( 'montonio-style', WC_MONTONIO_PLUGIN_URL . '/assets/css/montonio-style.css', array(), WC_MONTONIO_PLUGIN_VERSION );
             wp_register_style( 'montonio-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/css/pickup-points.css', array(), WC_MONTONIO_PLUGIN_VERSION );
 
-            wp_register_script( 'montonio-js-legacy', 'https://public.montonio.com/assets/montonio-js/3.x/montonio.bundle.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-js', 'https://js.montonio.com/1.x.x/montonio.umd.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-pis', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-pis.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-bnpl', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-bnpl.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-embedded-card-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card-legacy.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
@@ -274,6 +288,7 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_script( 'montonio-shipping-pickup-points-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-shipping-pickup-points-legacy.js', array( 'selectWoo' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-timezone', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-timezone.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-withdrawal', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-withdrawal.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-recommendation-note', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-recommendation-note.js', array(), WC_MONTONIO_PLUGIN_VERSION, true );
 
             wp_enqueue_style( 'montonio-style' );
 
@@ -319,16 +334,6 @@ if ( ! class_exists( 'Montonio' ) ) {
         }
 
         /**
-         * Initialize Montonio API Settings.
-         *
-         * @return void
-         */
-        public function init_api_settings() {
-            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-api-settings.php';
-            new WC_Montonio_API_Settings();
-        }
-
-        /**
          * Add an admin notice to be displayed.
          *
          * @param string $message The message to be displayed in the admin notice.
@@ -362,14 +367,8 @@ if ( ! class_exists( 'Montonio' ) ) {
                 return;
             }
 
-            if ( isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) ) {
-                $page    = sanitize_text_field( wp_unslash( $_GET['page'] ) );
-                $tab     = sanitize_text_field( wp_unslash( $_GET['tab'] ) );
-                $section = sanitize_text_field( wp_unslash( $_GET['section'] ) );
-
-                if ( 'wc-settings' === $page && 'checkout' === $tab && 'wc_montonio_api' === $section ) {
-                    return;
-                }
+            if ( WC_Montonio_Admin_Settings_Page::is_settings_page( 'wc_montonio_api' ) ) {
+                return;
             }
             ?>
             <div class="montonio-connect-notice notice notice-info is-dismissible">
@@ -390,7 +389,7 @@ if ( ! class_exists( 'Montonio' ) ) {
                             <?php esc_html_e( 'Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders.', 'montonio-for-woocommerce' ); ?>
                         </p>
 
-                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' ) ); ?>" class="montonio-connect-notice__button montonio-button montonio-button--lg"><?php esc_html_e( 'Go to account settings', 'montonio-for-woocommerce' ); ?></a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' ) ); ?>" class="montonio-connect-notice__button montonio-button montonio-button--lg"><?php esc_html_e( 'Go to account settings', 'montonio-for-woocommerce' ); ?></a>
 
                         <div class="montonio-connect-notice__help">
                             <h4 class="montonio-connect-notice__help-title">

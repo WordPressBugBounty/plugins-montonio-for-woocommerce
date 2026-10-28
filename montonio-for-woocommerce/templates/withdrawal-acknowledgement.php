@@ -8,7 +8,15 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <p class="montonio-withdrawal-help montonio-withdrawal-ack-copy">
-    <?php /* translators: %s: seller legal entity name */ echo esc_html( sprintf( __( 'Once you confirm your withdrawal, %s will send you an acknowledgement by email without delay, which you can save for your records.', 'montonio-for-woocommerce' ), $settings['legal_name'] ) ); ?>
+    <?php
+    echo esc_html(
+        sprintf(
+            /* translators: %s: seller legal entity name */
+            __( 'Once you confirm your withdrawal, %s will send you an acknowledgement by email without delay, which you can save for your records.', 'montonio-for-woocommerce' ),
+            $settings['legal_name']
+        )
+    );
+    ?>
     <?php esc_html_e( 'This acknowledges your notice and does not confirm a refund or return approval.', 'montonio-for-woocommerce' ); ?>
     <?php
     printf(

@@ -23,7 +23,7 @@
                 if (response.success === true) {
                     $('.shipping_method').after(response.data);
                 } else {
-                    $('.shipping_method').after('<div class="montonio_carrier_country">Sorry, we couldn\'t load pickup point list. Resave <a href="admin.php?page=wc-settings&tab=montonio_shipping" target="_blank">Montonio shipping settings</a> to resync pickup point list.</a></div>');
+                    $('.shipping_method').after('<div class="montonio_carrier_country">Sorry, we couldn\'t load pickup point list. Resave <a href="admin.php?page=wc-settings&tab=montonio&section=shipping" target="_blank">Montonio shipping settings</a> to resync pickup point list.</a></div>');
                 }
             });
         }
@@ -52,7 +52,7 @@
                         width: '100%',
                     });
                 } else {
-                    $('.montonio_carrier_country').after('<div class="montonio_carrier_country">Sorry, we couldn\'t load pickup point list. Resave <a href="admin.php?page=wc-settings&tab=montonio_shipping" target="_blank">Montonio shipping settings</a> to resync pickup point list.</a></div>');
+                    $('.montonio_carrier_country').after('<div class="montonio_carrier_country">Sorry, we couldn\'t load pickup point list. Resave <a href="admin.php?page=wc-settings&tab=montonio&section=shipping" target="_blank">Montonio shipping settings</a> to resync pickup point list.</a></div>');
                 }
             });
         }

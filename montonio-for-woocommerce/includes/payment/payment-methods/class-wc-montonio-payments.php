@@ -242,8 +242,8 @@ class WC_Montonio_Payments extends WC_Montonio_Payment_Gateway {
             if ( 'EE' === $user_country ) {
                 $this->default_country = 'EE';
             } else {
-                foreach ( $available_countries as $locale => $country_name ) {
-                    if ( $locale === $user_country ) {
+                foreach ( $available_countries as $country_code => $country_name ) {
+                    if ( $country_code === $user_country ) {
                         $this->default_country = $user_country;
                     }
                 }

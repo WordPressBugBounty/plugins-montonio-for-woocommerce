@@ -102,6 +102,7 @@ class WC_Montonio_Withdrawal_Admin {
             'submitted'  => 'Date',
             'mwd_status' => 'Status',
             'order'      => 'Order number',
+            'customer'   => 'Name',
             'email'      => 'Email'
         );
     }
@@ -151,6 +152,9 @@ class WC_Montonio_Withdrawal_Admin {
             echo $order ? '<a href="' . esc_url( $order->get_edit_order_url() ) . '">' . esc_html( $record['order_number'] ) . '</a>' : esc_html( $record['order_number'] );
         } elseif ( 'submitted' === $column ) {
             echo self::list_date( $record['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        } elseif ( 'customer' === $column ) {
+            // Records from before the name field have none.
+            echo '' !== $record['customer_name'] ? esc_html( $record['customer_name'] ) : '&ndash;';
         } elseif ( 'email' === $column ) {
             echo '<a href="' . esc_url( 'mailto:' . $record['email'] ) . '">' . esc_html( $record['email'] ) . '</a>';
         } elseif ( 'mwd_status' === $column ) {
@@ -328,14 +332,19 @@ class WC_Montonio_Withdrawal_Admin {
     }
 
     /**
-     * Core menu count bubble markup.
+     * Menu count bubble markup, the same as WooCommerce's own submenu counts.
+     * Not core's awaiting-mod: admin color schemes recolor that one on hover
+     * and on the current page, so it differs from the Orders count beside it.
+     * WordPress styles menu-counter from 6.1; older versions get awaiting-mod.
      *
      * @since 10.4.0
      * @param int $count Count to show.
      * @return string
      */
     public static function menu_bubble( $count ) {
-        return ' <span class="awaiting-mod count-' . (int) $count . '"><span class="pending-count">' . esc_html( number_format_i18n( $count ) ) . '</span></span>';
+        $class = version_compare( get_bloginfo( 'version' ), '6.1', '>=' ) ? 'menu-counter' : 'awaiting-mod';
+
+        return ' <span class="' . $class . ' count-' . (int) $count . '"><span class="pending-count">' . esc_html( number_format_i18n( $count ) ) . '</span></span>';
     }
 
     /**
@@ -441,11 +450,11 @@ class WC_Montonio_Withdrawal_Admin {
             $returned = (int) array_sum( wp_list_pluck( $record['items'], 'quantity' ) );
 
             if ( $record['item_count'] && $returned >= $record['item_count'] ) {
-                $items = 'the whole order';
+                $items_text = 'the whole order';
             } elseif ( $record['item_count'] ) {
-                $items = $returned . ' of ' . $record['item_count'] . ' items';
+                $items_text = $returned . ' of ' . $record['item_count'] . ' items';
             } else {
-                $items = $returned . ( 1 === $returned ? ' item' : ' items' );
+                $items_text = $returned . ( 1 === $returned ? ' item' : ' items' );
             }
 
             $pending = 'inbox' === $record['status'];
@@ -455,7 +464,7 @@ class WC_Montonio_Withdrawal_Admin {
                     '<strong>%1$s</strong><br>On %2$s the customer asked to return %3$s. <a href="%4$s">View request</a>',
                     $pending ? 'Withdrawal requested.' : 'Withdrawal request completed.',
                     esc_html( get_the_date( '', $id ) . ' ' . get_the_time( '', $id ) ),
-                    esc_html( $items ),
+                    esc_html( $items_text ),
                     esc_url( self::detail_url( $id ) )
                 ),
                 ( $pending ? 'montonio-notice--warning' : 'montonio-notice--neutral' ) . ' montonio-notice--compact'
@@ -499,21 +508,33 @@ class WC_Montonio_Withdrawal_Admin {
         $date   = $record['order_date'] ? esc_html( mysql2date( wc_date_format(), $record['order_date'] ) ) : '&ndash;';
         $reason = '' !== $record['reason'] ? nl2br( esc_html( $record['reason'] ) ) : '<span class="montonio-wdr-muted">None</span>';
         $method = '' !== $record['payment_method'] ? esc_html( $record['payment_method'] ) : '&ndash;';
+        $name   = '' !== $record['customer_name'] ? esc_html( $record['customer_name'] ) : '&ndash;';
 
         $html  = '<div id="poststuff"><div id="post-body" class="metabox-holder columns-2"><div id="post-body-content">';
         $html .= '<div class="postbox montonio-wdr-panel">';
         $html .= '<h2 class="montonio-wdr-title">Withdrawal for order ' . $number . '</h2>';
-        $html .= '<p class="montonio-wdr-meta">Submitted on ' . esc_html( get_the_date( '', $id ) . ' ' . get_the_time( '', $id ) ) . '. Request reference: ' . esc_html( $record['reference'] ) . '</p>';
+        $html .= '<p class="montonio-wdr-meta">';
+        $html .= 'Submitted on ' . esc_html( get_the_date( '', $id ) . ' ' . get_the_time( '', $id ) ) . '. ';
+        $html .= 'Request reference: ' . esc_html( $record['reference'] );
+        $html .= '</p>';
         $html .= '<div class="montonio-wdr-columns">';
         $html .= '<div><h3>General</h3>';
         $html .= '<p><strong>Order number</strong>' . ( $order ? '<a href="' . esc_url( $order->get_edit_order_url() ) . '">' . $number . '</a>' : $number ) . '</p>';
         $html .= '<p><strong>Order date</strong>' . $date . '</p>';
         $html .= '<p><strong>Payment method</strong>' . $method . '</p></div>';
-        $html .= '<div><h3>Customer</h3><p><strong>Email</strong><a href="' . esc_url( 'mailto:' . $record['email'] ) . '">' . esc_html( $record['email'] ) . '</a></p></div>';
+        $html .= '<div><h3>Customer</h3>';
+        $html .= '<p><strong>Name</strong>' . $name . '</p>';
+        $html .= '<p><strong>Email</strong><a href="' . esc_url( 'mailto:' . $record['email'] ) . '">' . esc_html( $record['email'] ) . '</a></p></div>';
         $html .= '<div><h3>Additional information</h3><p>' . $reason . '</p></div>';
         $html .= '</div></div>';
 
-        $html .= '<div class="postbox montonio-wdr-items-box"><table class="montonio-wdr-items"><thead><tr><th colspan="2">Items to refund</th><th class="montonio-wdr-num">Price</th><th class="montonio-wdr-num">Qty</th><th class="montonio-wdr-num">Total</th></tr></thead><tbody>';
+        $html .= '<div class="postbox montonio-wdr-items-box"><table class="montonio-wdr-items">';
+        $html .= '<thead><tr>';
+        $html .= '<th colspan="2">Items to refund</th>';
+        $html .= '<th class="montonio-wdr-num">Price</th>';
+        $html .= '<th class="montonio-wdr-num">Qty</th>';
+        $html .= '<th class="montonio-wdr-num">Total</th>';
+        $html .= '</tr></thead><tbody>';
 
         $returned = 0;
         $total    = '' !== $record['currency'] ? 0 : null;
@@ -528,23 +549,23 @@ class WC_Montonio_Withdrawal_Admin {
         }
 
         // Withdrawing from the whole order also refunds its delivery.
-        $money    = array( 'currency' => $record['currency'] );
-        $shipping = null !== $total && $record['item_count'] && $returned >= $record['item_count'] && $record['shipping_total'] > 0;
+        $price_args = array( 'currency' => $record['currency'] );
+        $shipping   = null !== $total && $record['item_count'] && $returned >= $record['item_count'] && $record['shipping_total'] > 0;
 
         $html .= '</tbody></table><div class="montonio-wdr-totals"><table>';
         $html .= '<tr><th>Items to refund:</th><td>' . esc_html( $record['item_count'] ? $returned . ' of ' . $record['item_count'] : $returned ) . '</td></tr>';
 
         if ( $shipping ) {
             $label = '' !== $record['shipping_method'] ? 'Shipping (' . $record['shipping_method'] . '):' : 'Shipping:';
-            $html .= '<tr><th>' . esc_html( $label ) . '</th><td>' . wc_price( $record['shipping_total'], $money ) . '</td></tr>';
+            $html .= '<tr><th>' . esc_html( $label ) . '</th><td>' . wc_price( $record['shipping_total'], $price_args ) . '</td></tr>';
         }
 
         if ( null !== $total ) {
-            $html .= '<tr><th>Items total:</th><td>' . wc_price( $total, $money ) . '</td></tr>';
+            $html .= '<tr><th>Items total:</th><td>' . wc_price( $total, $price_args ) . '</td></tr>';
         }
 
         if ( $shipping ) {
-            $html .= '<tr class="montonio-wdr-grand"><th>Refund total:</th><td>' . wc_price( $total + $record['shipping_total'], $money ) . '</td></tr>';
+            $html .= '<tr class="montonio-wdr-grand"><th>Refund total:</th><td>' . wc_price( $total + $record['shipping_total'], $price_args ) . '</td></tr>';
         }
 
         $html .= '</table>';

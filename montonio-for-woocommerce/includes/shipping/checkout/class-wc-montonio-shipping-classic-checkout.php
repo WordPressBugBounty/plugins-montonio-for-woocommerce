@@ -24,26 +24,26 @@ class WC_Montonio_Shipping_Classic_Checkout {
      *
      * @since 7.0.0
      * @param string $label The shipping method label
-     * @param WC_Shipping_Rate $method Shipping method rate data.
+     * @param WC_Shipping_Rate $rate The shipping rate whose label is shown.
      * @return string
      */
-    public static function update_shipping_method_label( $label, $method ) {
-        if ( strpos( $method->get_method_id(), 'montonio_' ) === false ) {
+    public static function update_shipping_method_label( $label, $rate ) {
+        if ( strpos( $rate->get_method_id(), 'montonio_' ) === false ) {
             return $label;
         }
 
-        $shipping_method_instance = WC_Montonio_Shipping_Helper::get_shipping_method_instance( $method->get_instance_id() );
+        $shipping_method = WC_Shipping_Zones::get_shipping_method( $rate->get_instance_id() );
 
-        if ( ! ( $method->get_cost() > 0 ) && 'yes' === $shipping_method_instance->get_option( 'enable_free_shipping_text' ) ) {
-            if ( ! empty( $shipping_method_instance->get_option( 'free_shipping_text' ) ) ) {
-                $label .= ': <span class="montonio-free-shipping-text">' . $shipping_method_instance->get_option( 'free_shipping_text' ) . '</span>';
+        if ( $shipping_method instanceof WC_Shipping_Method && ! ( $rate->get_cost() > 0 ) && 'yes' === $shipping_method->get_option( 'enable_free_shipping_text' ) ) {
+            if ( ! empty( $shipping_method->get_option( 'free_shipping_text' ) ) ) {
+                $label .= ': <span class="montonio-free-shipping-text">' . $shipping_method->get_option( 'free_shipping_text' ) . '</span>';
             } else {
                 $label .= ': ' . wc_price( 0 );
             }
         }
 
         if ( get_option( 'montonio_shipping_show_provider_logos' ) === 'yes' ) {
-            $meta_data = $method->get_meta_data();
+            $meta_data = $rate->get_meta_data();
 
             if ( ! empty( $meta_data['operators'] ) && is_array( $meta_data['operators'] ) ) {
                 $label = '<span class="montonio-shipping-label">' . $label . '</span>';
@@ -59,7 +59,7 @@ class WC_Montonio_Shipping_Classic_Checkout {
 
                 $label .= '</div>';
             } elseif ( ! empty( $meta_data['carrier_code'] ) ) {
-                $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-carrier-logo" id="' . $method->get_id() . '_logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/' . $meta_data['carrier_code'] . '.svg' ) . '" width="50">';
+                $label = '<span class="montonio-shipping-label">' . $label . '</span><img class="montonio-shipping-carrier-logo" id="' . $rate->get_id() . '_logo" src="' . esc_url( WC_MONTONIO_PLUGIN_URL . '/assets/images/carriers/' . $meta_data['carrier_code'] . '.svg' ) . '" width="50">';
             }
         }
 
@@ -74,15 +74,15 @@ class WC_Montonio_Shipping_Classic_Checkout {
      * @return void
      */
     public static function render_shipping_method_items_dropdown() {
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
+        $chosen_rate = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $chosen_rate ) ) {
             return;
         }
 
-        $carrier_code = $shipping_method->carrier_code;
-        $type         = $shipping_method->type;
-        $operators    = $shipping_method->operators ?? null;
+        $carrier_code = $chosen_rate->carrier_code;
+        $type         = $chosen_rate->type;
+        $operators    = $chosen_rate->operators ?? null;
 
         if ( 'courier' === $type ) {
             return;
@@ -101,7 +101,7 @@ class WC_Montonio_Shipping_Classic_Checkout {
             wc_get_template(
                 'shipping-pickup-points-dropdown.php',
                 array(
-                    'shipping_method'       => $shipping_method->id,
+                    'shipping_method'       => $chosen_rate->id,
                     'shipping_method_items' => $shipping_method_items
                 ),
                 '',
@@ -117,7 +117,8 @@ class WC_Montonio_Shipping_Classic_Checkout {
                 'carrier'   => $carrier_code,
                 'type'      => $type,
                 'operators' => $operators,
-                'country'   => WC_Montonio_Shipping_Helper::get_customer_shipping_country()
+                'country'   => WC_Montonio_Shipping_Helper::get_customer_shipping_country(),
+                'city'      => WC_Montonio_Shipping_Helper::get_customer_shipping_city()
             ),
             '',
             WC_MONTONIO_PLUGIN_PATH . '/templates/'
@@ -135,13 +136,13 @@ class WC_Montonio_Shipping_Classic_Checkout {
             return;
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
+        $chosen_rate = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $chosen_rate ) ) {
             return;
         }
 
-        if ( ! in_array( $shipping_method->type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
+        if ( ! in_array( $chosen_rate->type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             return;
         }
 
@@ -154,7 +155,14 @@ class WC_Montonio_Shipping_Classic_Checkout {
 
         $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
 
-        if ( $shipping_method->carrier_code !== $shipping_method_item->carrier_code ) {
+        // Removed by a pickup point sync since it was selected, e.g. a point restored from sessionStorage.
+        // The notice ID tells the pickup point script to forget the point, so a reload does not restore it again.
+        if ( empty( $shipping_method_item ) ) {
+            wc_add_notice( __( 'The selected pickup point is no longer available. Please select another pickup point.', 'montonio-for-woocommerce' ), 'error', array( 'id' => 'montonio-pickup-point-unavailable' ) );
+            return;
+        }
+
+        if ( $chosen_rate->carrier_code !== $shipping_method_item->carrier_code ) {
             wc_add_notice( __( 'Selected pickup point carrier does not match the selected shipping method. Please refresh the page and try again.', 'montonio-for-woocommerce' ), 'error' );
             return;
         }
@@ -183,9 +191,9 @@ class WC_Montonio_Shipping_Classic_Checkout {
      * @return string
      */
     public static function add_details_to_shipping_label_ordered( $shipping_label, $order ) {
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return $shipping_label;
         }
 

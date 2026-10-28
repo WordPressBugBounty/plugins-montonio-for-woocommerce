@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.4.1
+Version: 10.4.5
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.4.1
+Stable tag: 10.4.5
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -135,7 +135,31 @@ Service URL: https://plugin-telemetry.montonio.com/api
 Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/public.montonio.com/terms_and_conditions/montonio_general/v3.0/montonio_general_ee.pdf) | [Privacy Policy](https://montonio.com/legal/privacy-policy/)
 
 
+== Recommendation notes ==
+
+When Montonio Ladu has switched recommendation tagging on for the store, clicking a product recommendation on a product or cart page sends the shop a short note: product ids, a page-section word, the ids of the cards shown and, for a card without a product id, a short hash of the clicked product's link; no shopper identifier. The shop keeps the note with the shopper's WooCommerce session for 30 minutes, uses it when the shopper adds a product to the cart, and sets no cookie of its own; a click from a shopper who has no WooCommerce session yet starts one. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. The `wc_montonio_recommendation_note_creates_session` filter, returning false, keeps notes to shoppers who already have a session. The plugin suggests matching text for the store's privacy policy page under Settings → Privacy.
+
 == Changelog ==
+= 10.4.5 =
+* Added – New "Montonio" item in the WordPress admin menu, linking to the Montonio settings
+* Added – The withdrawal form now asks for the customer's name, prefilled from the order
+* Added – The withdrawal request email to the merchant is now in the WordPress Site Language instead of always English
+* Added – The pickup point selectot is now prefilled with results for the city in the customer's address
+* Added – Recommendation tagging for Montonio Ladu: when Ladu switches it on for a store, each order item records whether it was added from an up-sell or cross-sell recommendation
+* Fix – Montonio payment methods no longer show as "Incompatible with block-based checkout" when editing the Checkout page in the block editor
+* Fix – Embedded BLIK in classic checkout no longer throws a "Cannot read properties of null (reading 'closeModal')" console error
+* Fix - Changing the shipping method with BLIK selected no longer leaves the checkout stuck loading
+* Fix - Unrelated AJAX requests no longer clear a BLIK code the customer is typing
+* Fix – Classic checkout no longer fails with a fatal error when a Montonio shipping rate belongs to a shipping method that no longer exists
+* Fix – The selected pickup point is no longer lost when the checkout updates or the page is reloaded
+* Fix – Pickup point selector in the Checkout block are no longer sent twice
+* Tweak – The pickup point selector now looks and works like a dropdown: clicking it opens a search field with the list of pickup points, and it can be used with the keyboard
+* Tweak – The selected pickup point's address is now shown next to its name, and a long name or address is cut off with "…" instead of making the checkout wider on mobile
+* Dev – Removed `WC_Montonio_Shipping_Helper::get_shipping_method_instance()`; use `WC_Shipping_Zones::get_shipping_method()` instead
+* Dev – The Montonio SDK scripts (`montonio-js-legacy`, `montonio-js`) are now registered on `init` instead of in the frontend and block asset hooks
+* Dev – A store below WooCommerce 10.9.0 where Ladu switched recommendation tagging on logs once a day that it is off
+* Dev – An enabled but inactive cart capture now logs its reason once a day as a warning instead of a debug line, in the `montonio-for-woocommerce` log with the plugin version, and not at all while the `wc_montonio_logging` filter is false
+
 = 10.4.1 =
 * Added – New Posti courier and parcel machines shipping methods
 * Added – Carrier logos are now shown next to Montonio shipping methods also in the Checkout block, not only in classic checkout

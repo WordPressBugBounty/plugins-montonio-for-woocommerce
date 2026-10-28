@@ -309,7 +309,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
             $highest_class_cost     = 0;
 
             foreach ( $found_shipping_classes as $shipping_class => $products ) {
-                // Also handles BW compatibility when slugs were used instead of ids
+                // Products report their shipping class by slug; class cost settings are keyed by term ID
                 $shipping_class_term = get_term_by( 'slug', $shipping_class, 'product_shipping_class' );
                 $shipping_class_id   = $shipping_class_term && $shipping_class_term->term_id ? $shipping_class_term->term_id : 0;
 
@@ -319,7 +319,7 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                     $shipping_class_id = apply_filters( 'wpml_object_id', $shipping_class_id, 'product_shipping_class', true, $default_language );
                 }
 
-                $class_cost_string = $shipping_class_id ? $this->get_option( 'class_cost_' . $shipping_class_id, $this->get_option( 'class_cost_' . $shipping_class, '' ) ) : $this->get_option( 'no_class_cost', '' );
+                $class_cost_string = $shipping_class_id ? $this->get_option( 'class_cost_' . $shipping_class_id, '' ) : $this->get_option( 'no_class_cost', '' );
 
                 if ( '' === $class_cost_string ) {
                     continue;

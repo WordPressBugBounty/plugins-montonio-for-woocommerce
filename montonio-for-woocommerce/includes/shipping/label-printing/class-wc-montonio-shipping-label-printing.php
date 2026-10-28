@@ -165,16 +165,16 @@ class WC_Montonio_Shipping_Label_Printing {
      *
      * @param string $redirect_to The URL to redirect to after handling the bulk action.
      * @param string $action The bulk action being performed.
-     * @param array $post_ids The array of order IDs selected for the bulk action.
+     * @param array $order_ids The array of order IDs selected for the bulk action.
      * @return string The URL to redirect to after handling the bulk action.
      */
-    public static function handle_label_printed_bulk_action( $redirect_to, $action, $post_ids ) {
+    public static function handle_label_printed_bulk_action( $redirect_to, $action, $order_ids ) {
         if ( $action !== 'mark_label-printed' ) {
             return $redirect_to; // If it's not the action we are handling, exit.
         }
 
-        foreach ( $post_ids as $post_id ) {
-            $order = wc_get_order( $post_id );
+        foreach ( $order_ids as $order_id ) {
+            $order = wc_get_order( $order_id );
 
             if ( $order && 'wc-mon-label-printed' !== $order->get_status() ) {
                 // Update order status to "Label Printed".
@@ -183,7 +183,7 @@ class WC_Montonio_Shipping_Label_Printing {
         }
 
         // Add a query parameter to the redirect URL to indicate how many orders were updated.
-        $redirect_to = add_query_arg( 'bulk_label_printed_orders', count( $post_ids ), $redirect_to );
+        $redirect_to = add_query_arg( 'bulk_label_printed_orders', count( $order_ids ), $redirect_to );
 
         return $redirect_to;
     }

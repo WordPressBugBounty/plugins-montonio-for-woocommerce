@@ -183,16 +183,17 @@ class WC_Montonio_Withdrawal_Frontend {
 
         if ( ! self::is_post() ) {
             // A URL order ID alone never grants access to an order, including guest orders.
-            $id    = isset( $_GET['order'] ) && is_scalar( $_GET['order'] ) ? absint( $_GET['order'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only; the order must belong to the logged-in customer.
-            $order = $id && is_user_logged_in() ? wc_get_order( $id ) : false;
+            $order_id = isset( $_GET['order'] ) && is_scalar( $_GET['order'] ) ? absint( $_GET['order'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only; the order must belong to the logged-in customer.
+            $order    = $order_id && is_user_logged_in() ? wc_get_order( $order_id ) : false;
 
             if ( $order && 'shop_order' === $order->get_type() && $order->get_customer_id() === get_current_user_id() ) {
                 self::$order = $order;
                 self::$stage = 'form';
                 self::$input = array(
-                    'email'        => $order->get_billing_email(),
-                    'order_number' => $order->get_order_number(),
-                    'matched_id'   => $id
+                    'email'         => $order->get_billing_email(),
+                    'order_number'  => $order->get_order_number(),
+                    'customer_name' => WC_Montonio_Withdrawal_Request::order_customer_name( $order ),
+                    'matched_id'    => $order_id
                 );
             }
 
@@ -231,7 +232,9 @@ class WC_Montonio_Withdrawal_Frontend {
         }
 
         if ( 'change' === $action ) {
-            self::$input['matched_id'] = 0;
+            // The name belongs to the order being left; the next lookup prefills the new order's.
+            self::$input['customer_name'] = '';
+            self::$input['matched_id']    = 0;
             self::$order = false;
             return;
         }
@@ -285,6 +288,11 @@ class WC_Montonio_Withdrawal_Frontend {
                 // A matched lookup goes straight to the details step.
                 if ( 'lookup' === $action ) {
                     self::$stage = 'form';
+
+                    // Only an empty name is prefilled; Change order empties it.
+                    if ( '' === trim( WC_Montonio_Withdrawal_Request::text( self::$input, 'customer_name', 200 ) ) ) {
+                        self::$input['customer_name'] = WC_Montonio_Withdrawal_Request::order_customer_name( self::$order );
+                    }
                 }
             } else {
                 self::$input['matched_id'] = 0;
@@ -360,11 +368,11 @@ class WC_Montonio_Withdrawal_Frontend {
             return;
         }
 
-        $id          = isset( self::$input['matched_id'] ) && is_scalar( self::$input['matched_id'] ) ? absint( self::$input['matched_id'] ) : 0;
-        self::$order = $id ? WC_Montonio_Withdrawal_Request::find_order(
+        $order_id    = isset( self::$input['matched_id'] ) && is_scalar( self::$input['matched_id'] ) ? absint( self::$input['matched_id'] ) : 0;
+        self::$order = $order_id ? WC_Montonio_Withdrawal_Request::find_order(
             WC_Montonio_Withdrawal_Request::text( self::$input, 'order_number' ),
             WC_Montonio_Withdrawal_Request::text( self::$input, 'email', 254 ),
-            $id
+            $order_id
         ) : false;
 
         if ( ! self::$order ) {
@@ -469,12 +477,15 @@ class WC_Montonio_Withdrawal_Frontend {
     public static function field( $input, $key, $label, $type = 'text', $required = false ) {
         $value = WC_Montonio_Withdrawal_Request::text( $input, $key, 3000, 'textarea' === $type );
 
-        echo '<div class="montonio-withdrawal-field"><label for="montonio-withdrawal-' . esc_attr( $key ) . '">' . esc_html( $label ) . ( $required ? ' <span aria-hidden="true">*</span>' : '' ) . '</label>';
+        echo '<div class="montonio-withdrawal-field">';
+        echo '<label for="montonio-withdrawal-' . esc_attr( $key ) . '">' . esc_html( $label ) . ( $required ? ' <span aria-hidden="true">*</span>' : '' ) . '</label>';
 
         $attrs = ' id="montonio-withdrawal-' . esc_attr( $key ) . '" name="montonio_withdrawal[' . esc_attr( $key ) . ']"' . ( $required ? ' required' : '' );
 
         if ( 'email' === $key ) {
             $attrs .= ' autocomplete="email"';
+        } elseif ( 'customer_name' === $key ) {
+            $attrs .= ' autocomplete="name"';
         }
 
         if ( 'textarea' === $type ) {

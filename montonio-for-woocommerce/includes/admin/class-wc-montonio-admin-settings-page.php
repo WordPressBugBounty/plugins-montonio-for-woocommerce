@@ -9,6 +9,37 @@ defined( 'ABSPATH' ) || exit;
 class WC_Montonio_Admin_Settings_Page {
 
     /**
+     * Montonio settings tab sections, by Montonio menu item ID. The other menu
+     * items are sections of the WooCommerce Payments tab.
+     *
+     * @since 10.4.1
+     * @var array
+     */
+    const SETTINGS_TAB_SECTIONS = array(
+        'wc_montonio_api'      => 'api',
+        'montonio_shipping'    => 'shipping',
+        'montonio_withdrawals' => 'withdrawals'
+    );
+
+    /**
+     * Admin menu slug, the Montonio main settings URL.
+     *
+     * @since 10.4.1
+     * @var string
+     */
+    const MENU_LINK = 'admin.php?page=wc-settings&tab=montonio&section=api';
+
+    /**
+     * Admin menu icon: assets/images/brand/montonio-menu-icon.svg as a base64
+     * data URI, kept here so building the menu reads no file. Regenerate it
+     * when the SVG changes.
+     *
+     * @since 10.4.5
+     * @var string
+     */
+    const MENU_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzkiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzOSAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNC4xNzExIDE2Ljc0MjZDMjMuMzU5MyAxNy41NTM0IDIyLjI4MDUgMTcuOTk5OCAyMS4xMzI1IDE3Ljk5OThDMTkuOTg0OCAxNy45OTk4IDE4LjkwNTUgMTcuNTUzNCAxOC4wOTM4IDE2Ljc0MjZMMTUuMTMxNyAxMy43ODQyTDEzLjcxNjEgMTIuMzdMMTIuMzAwMiAxMy43ODQyTDkuMzM4MzYgMTYuNzQyNkM4LjUyNjgxIDE3LjU1MzQgNy40NDczNSAxNy45OTk4IDYuMjk5NjEgMTcuOTk5OEM1LjE1MTg3IDE3Ljk5OTggNC4wNzI4MSAxNy41NTM0IDMuMjYwODYgMTYuNzQyNkMyLjQ0OTUxIDE1LjkzMiAyLjAwMjM5IDE0Ljg1NDIgMi4wMDIzOSAxMy43MDc2QzIuMDAyMzkgMTIuNTYxMiAyLjQ0OTUxIDExLjQ4MzIgMy4yNjA4NiAxMC42NzI0TDEwLjQyMjQgMy41MTk2TDEwLjQ2MjUgMy40Nzk2TDEwLjUwMDMgMy40Mzc0QzEwLjU2MTggMy4zNjg0IDEwLjYxNzUgMy4zMDk0IDEwLjY2OTcgMy4yNTdDMTEuNDgxMyAyLjQ0NjQgMTIuNTYwNSAyIDEzLjcwOTEgMkgxMy43MjE1SDEzLjcyMzlDMTQuODcxOCAyIDE1Ljk1MDkgMi40NDY0IDE2Ljc2MjggMy4yNTc0QzE2LjgxNTEgMy4zMDk2IDE2Ljg3MDIgMy4zNjgyIDE2LjkzMTIgMy40MzY2TDE2Ljk2OTMgMy40NzkyTDE3LjAwOTcgMy41MTk0TDI0LjE3MTMgMTAuNjcyNEMyNC45ODI4IDExLjQ4MzIgMjUuNDI5OCAxMi41NjEyIDI1LjQyOTggMTMuNzA3NkMyNS40Mjk4IDE0Ljg1NDIgMjQuOTgyOCAxNS45MzIgMjQuMTcxMSAxNi43NDI2Wk0zMC4zNDA5IDMuMjU3MkMyOS41MjkxIDIuNDQ2NiAyOC40NTAxIDIgMjcuMzAyMyAyQzI2LjE1NDQgMiAyNS4wNzUzIDIuNDQ2NiAyNC4yNjM2IDMuMjU3MkwyMS45MjEzIDUuNTk2OEwxOC40MjU2IDIuMTA1MkMxOC4zNDU5IDIuMDE2IDE4LjI2NCAxLjkyODQgMTguMTc4MyAxLjg0MjhDMTYuOTQ4NCAwLjYxNDIgMTUuMzM2IDAgMTMuNzIzOSAwSDEzLjcxNjFIMTMuNzA4M0MxMi4wOTYyIDAgMTAuNDgzOSAwLjYxNCA5LjI1Mzg2IDEuODQyOEM5LjE2ODE2IDEuOTI4NCA5LjA4NjI2IDIuMDE2MiA5LjAwNjc3IDIuMTA1MkwxLjg0NTIxIDkuMjU4MkMtMC42MTUwNjggMTEuNzE1NiAtMC42MTUwNjggMTUuNjk5NiAxLjg0NTIxIDE4LjE1NjhDMy4wNzUyNCAxOS4zODU2IDQuNjg3NTIgMTkuOTk5OCA2LjI5OTYxIDE5Ljk5OThDNy45MTE4OSAxOS45OTk4IDkuNTI0MTcgMTkuMzg1NiAxMC43NTQyIDE4LjE1NjhMMTMuNzE2MSAxNS4xOTg0TDE2LjY3ODEgMTguMTU2OEMxNy45MDgyIDE5LjM4NTYgMTkuNTIwMiAxOS45OTk4IDIxLjEzMjUgMTkuOTk5OEMyMi43NDQ2IDE5Ljk5OTggMjQuMzU3MSAxOS4zODU2IDI1LjU4NjkgMTguMTU2OEMyNy4xNjc0IDE2LjU3ODQgMjcuNzMwNiAxNC4zNzAyIDI3LjI4MDcgMTIuMzQxTDMxLjY2NCAxNi43MTkyQzMyLjQ3NTggMTcuNTI5OCAzMy41NTQ2IDE3Ljk3NjIgMzQuNzAyOCAxNy45NzYyQzM1Ljg1MDUgMTcuOTc2MiAzNi45Mjk2IDE3LjUyOTggMzcuNzQxMSAxNi43MTkyQzM4LjU1MjkgMTUuOTA4NCAzOSAxNC44MzA0IDM5IDEzLjY4NEMzOSAxMi41Mzc2IDM4LjU1MjkgMTEuNDU5NiAzNy43NDExIDEwLjY0OUwzMC4zNDA5IDMuMjU3MloiIGZpbGw9IiNhMmFhYjIiLz4KPC9zdmc+Cg==';
+
+    /**
      * Initialize hooks.
      *
      * @since 7.0.0
@@ -16,9 +47,73 @@ class WC_Montonio_Admin_Settings_Page {
      */
     public static function init() {
         add_action( 'admin_init', array( __CLASS__, 'maybe_restrict_gateway_settings' ) );
+        add_action( 'admin_init', array( __CLASS__, 'maybe_redirect_settings_url' ) );
+
+        add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
 
         // Settings save on wp_loaded (before admin_init); priority 20 runs after the abstract gateway's validate_settings.
         add_filter( 'woocommerce_settings_api_sanitized_fields_wc_montonio_mobilepay', array( __CLASS__, 'maybe_preserve_mobilepay_enabled_when_missing' ), 20 );
+    }
+
+    /**
+     * Add a top-level Montonio admin menu item, linking to the Montonio main
+     * settings.
+     *
+     * A slug that is not a registered page is output as the link itself.
+     * The icon is the Montonio mark cropped to its edges, so it fills the
+     * 20px menu icon width, in the admin menu icon grey, which WordPress
+     * recolours to match the admin colour scheme.
+     *
+     * Position 55.6 puts it after WooCommerce (55.5), which WooCommerce
+     * follows with Products, and before Payments (56).
+     *
+     * @since 10.4.1
+     * @return void
+     */
+    public static function add_menu() {
+        add_menu_page( 'Montonio', 'Montonio', 'manage_woocommerce', self::MENU_LINK, null, self::MENU_ICON, '55.6' );
+    }
+
+    /**
+     * Whether the current request is the settings page of a Montonio menu item.
+     *
+     * @since 10.4.1
+     * @param string $id Montonio menu item ID.
+     * @return bool
+     */
+    public static function is_settings_page( $id ) {
+        if ( ! isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) || 'wc-settings' !== $_GET['page'] ) {
+            return false;
+        }
+
+        $tab     = sanitize_key( wp_unslash( $_GET['tab'] ) );
+        $section = sanitize_key( wp_unslash( $_GET['section'] ) );
+
+        if ( isset( self::SETTINGS_TAB_SECTIONS[ $id ] ) ) {
+            return 'montonio' === $tab && self::SETTINGS_TAB_SECTIONS[ $id ] === $section;
+        }
+
+        return 'checkout' === $tab && $id === $section;
+    }
+
+    /**
+     * Redirect the Montonio settings tab without a section, which is the tab
+     * bar link, to the API section. The tab has no page of its own.
+     *
+     * @since 10.4.1
+     * @return void
+     */
+    public static function maybe_redirect_settings_url() {
+        if ( ! isset( $_GET['page'], $_GET['tab'], $_SERVER['REQUEST_METHOD'] ) || 'wc-settings' !== $_GET['page'] || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
+            return;
+        }
+
+        if ( 'montonio' !== $_GET['tab'] || ! empty( $_GET['section'] ) ) {
+            return;
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' ) );
+        exit;
     }
 
     /**
@@ -97,7 +192,7 @@ class WC_Montonio_Admin_Settings_Page {
             /* translators: %1$s: mode (Sandbox/Live), %2$s: URL to API settings */
             __( '%1$s API keys missing. Please <a href="%2$s">add API keys here</a> to enable this payment method.', 'montonio-for-woocommerce' ),
             $mode,
-            admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' )
+            admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' )
         );
 
         $fields['enabled']['custom_attributes'] = array( 'disabled' => 'disabled' );
@@ -281,9 +376,9 @@ class WC_Montonio_Admin_Settings_Page {
         <div class="montonio-menu">
             <ul class="montonio-menu__list">
                 <?php foreach ( $menu_items as $section => $value ):
-                    $url = in_array( $section, array( 'montonio_shipping', 'montonio_withdrawals' ), true )
-                    ? admin_url( 'admin.php?page=wc-settings&tab=' . $section )
-                    : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $section );
+                    $url = isset( self::SETTINGS_TAB_SECTIONS[ $section ] )
+                        ? admin_url( 'admin.php?page=wc-settings&tab=montonio&section=' . self::SETTINGS_TAB_SECTIONS[ $section ] )
+                        : admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $section );
 
                     $is_enabled = false;
 

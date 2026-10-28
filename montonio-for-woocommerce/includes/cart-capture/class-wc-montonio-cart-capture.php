@@ -25,7 +25,6 @@ class WC_Montonio_Cart_Capture {
     const SESSION_CART_KEY     = 'montonio_cart_capture_key';
     // The rescue email's button opens WooCommerce's checkout-link, which 10.0.0 introduced.
     const MIN_WC_VERSION       = '10.0.0';
-    const LOG_SOURCE           = 'montonio-cart-capture';
     const MAX_ATTEMPTS         = 5;
     const BACKOFF_BASE_SECONDS = 60;
     // Ladu answers in milliseconds; a slow Ladu must not hold Action Scheduler's queue, which other plugins' jobs share.
@@ -91,7 +90,7 @@ class WC_Montonio_Cart_Capture {
 
             self::capture_update();
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture failed: ' . $e->getMessage() );
         }
 
         return $response;
@@ -104,22 +103,14 @@ class WC_Montonio_Cart_Capture {
      */
     public static function capture_checkout_page() {
         try {
-            if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
-                return;
-            }
-
-            if ( is_wc_endpoint_url( 'order-received' ) || is_wc_endpoint_url( 'order-pay' ) ) {
-                return;
-            }
-
-            if ( ! self::is_active() ) {
+            if ( ! self::is_checkout_page() || ! self::is_active() ) {
                 return;
             }
 
             self::mark_checkout();
             self::capture_update();
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (checkout page) failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (checkout page) failed: ' . $e->getMessage() );
         }
     }
 
@@ -128,7 +119,7 @@ class WC_Montonio_Cart_Capture {
         try {
             return $suppress || self::is_active();
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (recovery email check) failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (recovery email check) failed: ' . $e->getMessage() );
             return $suppress;
         }
     }
@@ -162,7 +153,7 @@ class WC_Montonio_Cart_Capture {
                 'form'       => $posted
             ) );
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (order review) failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (order review) failed: ' . $e->getMessage() );
         }
 
         return $fragments;
@@ -184,7 +175,7 @@ class WC_Montonio_Cart_Capture {
 
             self::capture_placed( $order instanceof WC_Order ? $order : wc_get_order( $order_id ) );
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (placed) failed for order ' . absint( $order_id ) . ': ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (placed) failed for order ' . absint( $order_id ) . ': ' . $e->getMessage() );
         }
     }
 
@@ -196,11 +187,7 @@ class WC_Montonio_Cart_Capture {
      */
     public static function enqueue_classic_checkout_script() {
         try {
-            if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url( 'order-received' ) || is_wc_endpoint_url( 'order-pay' ) ) {
-                return;
-            }
-
-            if ( ! self::is_active() || ! wp_script_is( 'wc-checkout', 'enqueued' ) || WC_Montonio_Helper::is_checkout_block_rendering() ) {
+            if ( ! self::is_checkout_page() || ! self::is_active() || ! wp_script_is( 'wc-checkout', 'enqueued' ) || WC_Montonio_Helper::is_checkout_block_rendering() ) {
                 return;
             }
 
@@ -213,7 +200,7 @@ class WC_Montonio_Cart_Capture {
                 "jQuery( function( $ ) { $( document.body ).on( 'change', '" . $selector . "', function() { $( document.body ).trigger( 'update_checkout' ); } ); } );"
             );
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (checkout script) failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (checkout script) failed: ' . $e->getMessage() );
         }
     }
 
@@ -277,7 +264,7 @@ class WC_Montonio_Cart_Capture {
 
             self::ensure_pending_action( $session_key );
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (placed) failed for order ' . $order_id . ': ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (placed) failed for order ' . $order_id . ': ' . $e->getMessage() );
         }
     }
 
@@ -295,7 +282,7 @@ class WC_Montonio_Cart_Capture {
                 WC()->session->set( self::SESSION_CART_KEY, (string) $guest_id );
             }
         } catch ( Throwable $e ) {
-            self::log( 'error', 'Cart capture (login) failed: ' . $e->getMessage() );
+            WC_Montonio_Logger::log( 'Cart capture (login) failed: ' . $e->getMessage() );
         }
     }
 
@@ -343,18 +330,18 @@ class WC_Montonio_Cart_Capture {
             }
 
             delete_transient( $attempts_key );
-            self::log( 'error', $message . '; giving up' );
+            WC_Montonio_Logger::log( $message . '; giving up' );
             throw new Exception( $message . '; giving up' );
         }
 
         // A capture during this send has already queued the next push, which is the retry then.
         if ( ! self::has_pending_action( $session_key ) && ! as_schedule_single_action( time() + $delay, self::ACTION_HOOK, array( $session_key ), self::ACTION_GROUP, false, self::ACTION_PRIORITY ) ) {
-            self::log( 'error', $message . '; scheduling the retry failed' );
+            WC_Montonio_Logger::log( $message . '; scheduling the retry failed' );
             throw new Exception( $message . '; scheduling the retry failed' );
         }
 
         set_transient( $attempts_key, $attempt + 1, DAY_IN_SECONDS );
-        self::log( 'warning', $message . '; retrying in ' . $delay . 's' );
+        WC_Montonio_Logger::log( $message . '; retrying in ' . $delay . 's' );
     }
 
     /**
@@ -424,6 +411,28 @@ class WC_Montonio_Cart_Capture {
     }
 
     /**
+     * Whether the request is the checkout form: the checkout page, but not its order-received or order-pay endpoint.
+     *
+     * @return bool
+     */
+    public static function is_checkout_page() {
+        return function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url( 'order-received' ) && ! is_wc_endpoint_url( 'order-pay' );
+    }
+
+    /**
+     * Whether a later try at a Ladu request may succeed. Ladu answers 400, 401, 404 and 413 for a request
+     * no retry can fix; 0 is a transport error.
+     *
+     * @param int $status The HTTP status, or 0 when no response arrived.
+     * @return bool
+     */
+    public static function is_retryable_status( $status ) {
+        $status = (int) $status;
+
+        return 0 === $status || 408 === $status || 429 === $status || $status >= 500;
+    }
+
+    /**
      * The current UTC time in RFC 3339 with microseconds, the precision Ladu stores.
      *
      * @return string
@@ -490,11 +499,11 @@ class WC_Montonio_Cart_Capture {
                 self::send( $endpoint, $entry['snapshot'] );
                 self::delete_if_unchanged( $key, $entry['fp'] );
             } catch ( Throwable $e ) {
-                $retryable = self::is_retryable( $e );
+                $retryable = self::is_retryable_status( $e->getCode() );
 
                 if ( ! $retryable ) {
                     self::delete_if_unchanged( $key, $entry['fp'] );
-                    self::log( 'error', 'Ladu refused the ' . $kind . ' snapshot for ' . self::session_ref( $session_key ) . self::order_ref( $entry['snapshot'] ) . ', so it is dropped: ' . $e->getMessage() );
+                    WC_Montonio_Logger::log( 'Ladu refused the ' . $kind . ' snapshot for ' . self::session_ref( $session_key ) . self::order_ref( $entry['snapshot'] ) . ', so it is dropped: ' . $e->getMessage() );
                 }
 
                 $failures[$kind] = array(
@@ -508,17 +517,10 @@ class WC_Montonio_Cart_Capture {
 
         // Routine when a push queued during a running one finds that the running one already sent the snapshot.
         if ( ! $found ) {
-            self::log( 'debug', 'Cart capture push for ' . self::session_ref( $session_key ) . ' found no snapshot to send.' );
+            WC_Montonio_Logger::log( 'Cart capture push for ' . self::session_ref( $session_key ) . ' found no snapshot to send.' );
         }
 
         return $failures;
-    }
-
-    // Ladu answers 400, 401, 404 and 413 for a snapshot that no retry can fix.
-    private static function is_retryable( $e ) {
-        $status = (int) $e->getCode();
-
-        return 0 === $status || 408 === $status || 429 === $status || $status >= 500;
     }
 
     private static function delete_if_unchanged( $transient_key, $fp ) {
@@ -530,7 +532,7 @@ class WC_Montonio_Cart_Capture {
     }
 
     private static function inert_reason() {
-        if ( version_compare( WC()->version, self::MIN_WC_VERSION, '<' ) ) {
+        if ( ! WC_Montonio_Helper::is_wc_at_least( self::MIN_WC_VERSION ) ) {
             return 'WooCommerce is older than ' . self::MIN_WC_VERSION . ', so a rescue email cannot restore the cart';
         }
 
@@ -550,14 +552,7 @@ class WC_Montonio_Cart_Capture {
     }
 
     private static function log_inert( $reason ) {
-        $throttle_key = 'montonio_cc_inert_' . md5( $reason );
-
-        if ( false !== get_transient( $throttle_key ) ) {
-            return;
-        }
-
-        set_transient( $throttle_key, 1, DAY_IN_SECONDS );
-        self::log( 'error', 'Cart capture is enabled but inactive: ' . $reason . '.' );
+        WC_Montonio_Logger::warning_once( 'cc_inert_' . md5( $reason ), 'Cart capture is enabled but inactive: ' . $reason . '.' );
     }
 
     private static function mark_checkout() {
@@ -615,6 +610,12 @@ class WC_Montonio_Cart_Capture {
                 'line_total'   => self::money( (float) ( $item['line_total'] ?? 0 ) + (float) ( $item['line_tax'] ?? 0 ) )
             );
 
+            $rec = class_exists( 'WC_Montonio_Recommendation_Tagging' ) ? WC_Montonio_Recommendation_Tagging::snapshot_rec( $item ) : null;
+
+            if ( null !== $rec ) {
+                $line['rec'] = $rec;
+            }
+
             if ( self::is_valid_line( $line ) ) {
                 $lines[] = $line;
             }
@@ -643,9 +644,10 @@ class WC_Montonio_Cart_Capture {
     /**
      * @param WC_Customer|WC_Order $source Read for every field the form did not post.
      * @param array                $form   Classic checkout only: the posted checkout form.
+     * @return array The 'billing' and 'shipping' addresses, each keyed by CUSTOMER_FIELDS.
      */
     private static function customer_from( $source, $form ) {
-        $customer = array();
+        $addresses = array();
 
         foreach ( array( 'billing', 'shipping' ) as $side ) {
             foreach ( self::CUSTOMER_FIELDS as $field ) {
@@ -660,16 +662,16 @@ class WC_Montonio_Cart_Capture {
                     $value = '';
                 }
 
-                $customer[$side][$field] = $value;
+                $addresses[$side][$field] = $value;
             }
         }
 
         // WooCommerce ships to the billing address when the classic form's ship-elsewhere box is unticked.
         if ( ! empty( $form ) && empty( $form['ship_to_different_address'] ) ) {
-            $customer['shipping'] = $customer['billing'];
+            $addresses['shipping'] = $addresses['billing'];
         }
 
-        return $customer;
+        return $addresses;
     }
 
     // Only the first package's chosen rate is captured, here and in WC_Montonio_Cart_Restore.
@@ -708,9 +710,9 @@ class WC_Montonio_Cart_Capture {
             return '';
         }
 
-        $method = WC_Shipping_Zones::get_shipping_method( $instance_id );
+        $shipping_method = WC_Shipping_Zones::get_shipping_method( $instance_id );
 
-        return $method instanceof WC_Shipping_Method ? (string) $method->get_title() : '';
+        return $shipping_method instanceof WC_Shipping_Method ? (string) $shipping_method->get_title() : '';
     }
 
     private static function order_shipping_method( $order ) {
@@ -844,12 +846,6 @@ class WC_Montonio_Cart_Capture {
 
     private static function is_entry( $entry ) {
         return is_array( $entry ) && isset( $entry['snapshot'], $entry['fp'] ) && is_array( $entry['snapshot'] );
-    }
-
-    private static function log( $level, $message ) {
-        if ( function_exists( 'wc_get_logger' ) ) {
-            wc_get_logger()->log( $level, $message, array( 'source' => self::LOG_SOURCE ) );
-        }
     }
 
     private static function update_transient_key( $session_key ) {

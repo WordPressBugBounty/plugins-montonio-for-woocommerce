@@ -128,18 +128,20 @@ class WC_Montonio_Withdrawal_Store {
         // Only strings: wp_slash() of a whole array turns integers into strings
         // before WordPress 5.5.
         $items = map_deep( is_array( $d['items'] ) ? $d['items'] : array(), array( __CLASS__, 'slash_string' ) );
+        $name  = isset( $d['customer_name'] ) ? (string) $d['customer_name'] : '';
 
         $id = wp_insert_post( array(
             'post_type'   => self::POST_TYPE,
             'post_status' => self::STATUS_INBOX,
             'post_name'   => $reference,
-            // Core list search matches the title, so it carries the order, email and reference.
-            'post_title'  => wp_slash( sprintf( 'Order #%s — %s — %s', $d['order_number'], $d['email'], $reference ) ),
+            // Core list search matches the title, so it carries the order, name, email and reference.
+            'post_title'  => wp_slash( implode( ' — ', array_filter( array( 'Order #' . $d['order_number'], $name, $d['email'], $reference ), 'strlen' ) ) ),
             'post_author' => 0,
             'meta_input'  => array(
                 '_reference'       => $reference,
                 '_order_id'        => (int) $d['order_id'],
                 '_order_number'    => wp_slash( (string) $d['order_number'] ),
+                '_customer_name'   => wp_slash( $name ),
                 '_email'           => wp_slash( (string) $d['email'] ),
                 '_locale'          => isset( $d['locale'] ) && is_string( $d['locale'] ) ? $d['locale'] : determine_locale(),
                 '_items'           => $items,
@@ -231,6 +233,7 @@ class WC_Montonio_Withdrawal_Store {
             'created'         => $post->post_date_gmt,
             'order_id'        => (int) get_post_meta( $post->ID, '_order_id', true ),
             'order_number'    => (string) get_post_meta( $post->ID, '_order_number', true ),
+            'customer_name'   => (string) get_post_meta( $post->ID, '_customer_name', true ),
             'email'           => (string) get_post_meta( $post->ID, '_email', true ),
             'locale'          => (string) get_post_meta( $post->ID, '_locale', true ),
             'items'           => is_array( $items ) ? $items : array(),

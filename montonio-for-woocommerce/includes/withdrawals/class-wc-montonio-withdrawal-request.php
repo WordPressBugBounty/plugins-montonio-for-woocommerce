@@ -63,24 +63,24 @@ class WC_Montonio_Withdrawal_Request {
      * Find an order matching an order number and billing email.
      *
      * @since 10.4.0
-     * @param string $number Customer-supplied order number.
-     * @param string $email  Customer-supplied billing email.
-     * @param int    $id     Known order ID to verify, or 0 to search.
+     * @param string $number   Customer-supplied order number.
+     * @param string $email    Customer-supplied billing email.
+     * @param int    $order_id Known order ID to verify, or 0 to search.
      * @return WC_Order|false
      */
-    public static function find_order( $number, $email, $id = 0 ) {
+    public static function find_order( $number, $email, $order_id = 0 ) {
         if ( ! $number || ! is_email( $email ) ) {
             return false;
         }
 
-        $candidate = $id ? $id : ( ctype_digit( (string) $number ) ? (int) $number : 0 );
+        $candidate = $order_id ? $order_id : ( ctype_digit( (string) $number ) ? (int) $number : 0 );
         $order     = $candidate ? wc_get_order( $candidate ) : false;
 
         if ( self::matches( $order, $number, $email ) ) {
             return $order;
         }
 
-        if ( $id ) {
+        if ( $order_id ) {
             return false;
         }
 
@@ -98,6 +98,24 @@ class WC_Montonio_Withdrawal_Request {
         $order    = $resolved ? wc_get_order( $resolved ) : false;
 
         return self::matches( $order, $number, $email ) ? $order : false;
+    }
+
+    /**
+     * The customer's name on an order, for prefilling the withdrawal form:
+     * the billing name, or the shipping name when billing has none.
+     *
+     * @since 10.4.5
+     * @param WC_Order $order Matched order.
+     * @return string
+     */
+    public static function order_customer_name( $order ) {
+        $name = trim( $order->get_formatted_billing_full_name() );
+
+        if ( '' === $name ) {
+            $name = trim( $order->get_formatted_shipping_full_name() );
+        }
+
+        return mb_substr( $name, 0, 200 );
     }
 
     /**
@@ -128,11 +146,16 @@ class WC_Montonio_Withdrawal_Request {
     public static function validate( $input ) {
         $d = array();
 
-        $d['email']        = self::text( $input, 'email', 254 );
-        $d['order_number'] = self::text( $input, 'order_number' );
-        $d['reason']       = self::text( $input, 'reason', 3000, true );
+        $d['email']         = self::text( $input, 'email', 254 );
+        $d['order_number']  = self::text( $input, 'order_number' );
+        $d['customer_name'] = self::text( $input, 'customer_name', 200 );
+        $d['reason']        = self::text( $input, 'reason', 3000, true );
 
         $errors = array();
+
+        if ( '' === trim( $d['customer_name'] ) ) {
+            $errors[] = __( 'Enter your name.', 'montonio-for-woocommerce' );
+        }
 
         $raw_email = isset( $input['email'] ) && is_string( $input['email'] ) ? $input['email'] : '';
 
@@ -152,8 +175,8 @@ class WC_Montonio_Withdrawal_Request {
         // the notification emails and is stored on the submission.
         $d['locale']          = determine_locale();
 
-        $id    = isset( $input['matched_id'] ) && is_scalar( $input['matched_id'] ) ? absint( $input['matched_id'] ) : 0;
-        $order = $id ? self::find_order( $d['order_number'], $d['email'], $id ) : false;
+        $order_id = isset( $input['matched_id'] ) && is_scalar( $input['matched_id'] ) ? absint( $input['matched_id'] ) : 0;
+        $order    = $order_id ? self::find_order( $d['order_number'], $d['email'], $order_id ) : false;
 
         if ( ! $order ) {
             $errors[] = __( 'The order details changed. Load the order again.', 'montonio-for-woocommerce' );
@@ -262,15 +285,15 @@ class WC_Montonio_Withdrawal_Request {
      * set by WooCommerce's mailer; see deliver().
      *
      * @since 10.4.0
-     * @param array  $settings Withdrawal settings.
-     * @param bool   $merchant Whether this is the merchant notice.
-     * @param string $email    Customer email for the merchant Reply-To.
+     * @param array  $settings           Withdrawal settings.
+     * @param bool   $is_merchant_notice Whether this is the merchant notice.
+     * @param string $email              Customer email for the merchant Reply-To.
      * @return array
      */
-    public static function headers( $settings, $merchant, $email = '' ) {
+    public static function headers( $settings, $is_merchant_notice, $email = '' ) {
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
 
-        $reply = $merchant ? $email : $settings['contact_email'];
+        $reply = $is_merchant_notice ? $email : $settings['contact_email'];
 
         // is_email() also rejects line breaks, so neither address can inject headers.
         if ( $reply && is_email( $reply ) ) {
@@ -292,31 +315,31 @@ class WC_Montonio_Withdrawal_Request {
      * one, which no default can cover, and an empty sender fails the send.
      *
      * @since 10.4.0
-     * @param int    $id        Withdrawal record ID.
+     * @param int    $record_id Withdrawal record ID.
      * @param string $reference Request reference, for the log.
      * @param string $recipient 'merchant' or 'customer'.
      * @param array  $message   To, subject, heading, body (escaped HTML) and headers.
      * @param array  $settings  Withdrawal settings.
      * @return bool Whether the mail service accepted the message.
      */
-    private static function deliver( $id, $reference, $recipient, $message, $settings ) {
-        $address = function ( $sender ) use ( $settings ) {
-            foreach ( array( $sender, $settings['contact_email'], get_option( 'admin_email' ) ) as $candidate ) {
+    private static function deliver( $record_id, $reference, $recipient, $message, $settings ) {
+        $from_address_filter = function ( $from_address ) use ( $settings ) {
+            foreach ( array( $from_address, $settings['contact_email'], get_option( 'admin_email' ) ) as $candidate ) {
                 if ( is_string( $candidate ) && is_email( $candidate ) ) {
                     return $candidate;
                 }
             }
 
-            return $sender;
+            return $from_address;
         };
 
         // Without a name the mail would carry no sender name at all.
-        $name = function ( $sender ) {
-            return is_string( $sender ) && '' !== trim( $sender ) ? $sender : get_bloginfo( 'name', 'display' );
+        $from_name_filter = function ( $from_name ) {
+            return is_string( $from_name ) && '' !== trim( $from_name ) ? $from_name : get_bloginfo( 'name', 'display' );
         };
 
-        add_filter( 'woocommerce_email_from_address', $address, 100 );
-        add_filter( 'woocommerce_email_from_name', $name, 100 );
+        add_filter( 'woocommerce_email_from_address', $from_address_filter, 100 );
+        add_filter( 'woocommerce_email_from_name', $from_name_filter, 100 );
 
         try {
             $sent = (bool) wc_mail( $message['to'], $message['subject'], WC()->mailer()->wrap_message( $message['heading'], $message['body'] ), $message['headers'] );
@@ -325,11 +348,11 @@ class WC_Montonio_Withdrawal_Request {
             WC_Montonio_Logger::log( 'Withdrawal notice: ' . $recipient . ' email threw ' . get_class( $e ) . ': ' . $e->getMessage() . ' Reference: ' . $reference );
             $sent = false;
         } finally {
-            remove_filter( 'woocommerce_email_from_address', $address, 100 );
-            remove_filter( 'woocommerce_email_from_name', $name, 100 );
+            remove_filter( 'woocommerce_email_from_address', $from_address_filter, 100 );
+            remove_filter( 'woocommerce_email_from_name', $from_name_filter, 100 );
         }
 
-        WC_Montonio_Withdrawal_Store::set_mail( $id, $recipient, $sent );
+        WC_Montonio_Withdrawal_Store::set_mail( $record_id, $recipient, $sent );
 
         if ( ! $sent ) {
             WC_Montonio_Logger::log( 'Withdrawal notice: ' . $recipient . ' email could not be handed to the mail service. Reference: ' . $reference );
@@ -396,43 +419,27 @@ class WC_Montonio_Withdrawal_Request {
     }
 
     /**
-     * Build the labelled summary rows for a validated submission.
-     *
-     * The store notice gets English labels and values whatever the current
-     * locale; customers get the translated ones. Both columns of each text sit
-     * on one line so a missing entry is visible. Item lines keep the store's own
-     * product and attribute names.
+     * Build the labelled summary rows for a validated submission, in the
+     * current locale. Item lines keep the store's own product and attribute
+     * names.
      *
      * @since 10.4.0
-     * @param array  $d        Validated withdrawal data.
-     * @param string $audience 'merchant' for English literals, anything else for translated text.
+     * @param array $d Validated withdrawal data.
      * @return array Label => value rows.
      */
-    public static function summary( $d, $audience = 'customer' ) {
-        $table = array(
-            'email'        => array( 'Email', __( 'Email', 'montonio-for-woocommerce' ) ),
-            'order_number' => array( 'Order number', __( 'Order number', 'montonio-for-woocommerce' ) ),
-            'items'        => array( 'Items', __( 'Items', 'montonio-for-woocommerce' ) ),
-            'order_date'   => array( 'Order date', __( 'Order date', 'montonio-for-woocommerce' ) ),
-            'reason'       => array( 'Additional information', __( 'Additional information', 'montonio-for-woocommerce' ) )
-        );
+    public static function summary( $d ) {
+        $rows = array();
 
-        $column = 'merchant' === $audience ? 0 : 1;
-        $text   = array();
-
-        foreach ( $table as $key => $texts ) {
-            $text[ $key ] = $texts[ $column ];
+        // Review tokens signed before the name field existed carry no name.
+        if ( ! empty( $d['customer_name'] ) ) {
+            $rows[ __( 'Name', 'montonio-for-woocommerce' ) ] = $d['customer_name'];
         }
 
-        $rows = array(
-            $text['email']        => $d['email'],
-            $text['order_number'] => $d['order_number']
-        );
+        $rows[ __( 'Email', 'montonio-for-woocommerce' ) ]        = $d['email'];
+        $rows[ __( 'Order number', 'montonio-for-woocommerce' ) ] = $d['order_number'];
 
         if ( $d['order_date'] ) {
-            // The store notice keeps ISO dates: it is English end to end, and a formatted
-            // date would bring in month names in the site language.
-            $rows[ $text['order_date'] ] = 'merchant' === $audience ? $d['order_date'] : mysql2date( wc_date_format(), $d['order_date'] );
+            $rows[ __( 'Order date', 'montonio-for-woocommerce' ) ] = mysql2date( wc_date_format(), $d['order_date'] );
         }
 
         if ( $d['items'] ) {
@@ -450,11 +457,11 @@ class WC_Montonio_Withdrawal_Request {
                 $items[] = $line;
             }
 
-            $rows[ $text['items'] ] = implode( "\n", $items );
+            $rows[ __( 'Items', 'montonio-for-woocommerce' ) ] = implode( "\n", $items );
         }
 
         if ( $d['reason'] ) {
-            $rows[ $text['reason'] ] = $d['reason'];
+            $rows[ __( 'Additional information', 'montonio-for-woocommerce' ) ] = $d['reason'];
         }
 
         return $rows;
@@ -481,6 +488,53 @@ class WC_Montonio_Withdrawal_Request {
     }
 
     /**
+     * The Site Language from Settings → General.
+     *
+     * Read from the option, as get_locale() does, rather than through
+     * get_locale() itself: multilingual plugins filter that to the language of
+     * the page the customer submitted from.
+     *
+     * @since 10.4.5
+     * @return string Locale, en_US when none is set.
+     */
+    private static function site_locale() {
+        $locale = get_option( 'WPLANG' );
+
+        // A site without its own setting uses the network's.
+        if ( false === $locale && is_multisite() ) {
+            $locale = get_site_option( 'WPLANG' );
+        }
+
+        return is_string( $locale ) && '' !== $locale ? $locale : 'en_US';
+    }
+
+    /**
+     * Run a callback in a locale, then restore the previous one.
+     *
+     * @since 10.4.5
+     * @param string   $locale   Locale to switch to; empty to stay in the current one.
+     * @param callable $callback Callback to run.
+     * @return mixed The callback's return value.
+     */
+    private static function in_locale( $locale, $callback ) {
+        // switch_to_locale() returns false when the locale is already current.
+        $switched = $locale ? switch_to_locale( $locale ) : false;
+
+        if ( $switched ) {
+            self::reload_textdomain();
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if ( $switched ) {
+                restore_previous_locale();
+                self::reload_textdomain();
+            }
+        }
+    }
+
+    /**
      * Record a confirmed submission, then send the merchant notice and
      * customer acknowledgement, with independent retry states per recipient,
      * kept on the withdrawal record.
@@ -491,9 +545,10 @@ class WC_Montonio_Withdrawal_Request {
      * that failed; the confirmation page offers it when the acknowledgement
      * failed, and the admin detail page shows which emails went out.
      *
-     * The merchant notice is English whatever language the customer used.
-     * The customer acknowledgement follows the locale captured when the
-     * customer submitted the form. A short-lived lock prevents double-sends
+     * The merchant notice is in the Site Language whatever language the
+     * customer used. The customer acknowledgement follows the locale captured
+     * when the customer submitted the form. Each is built and wrapped inside
+     * its locale, so text and template match. A short-lived lock prevents double-sends
      * from concurrent confirms of the same review token.
      *
      * @since 10.4.0
@@ -502,31 +557,29 @@ class WC_Montonio_Withdrawal_Request {
      * @return array|WP_Error Delivery state, or an error to show the customer.
      */
     public static function send( $payload, $settings ) {
-        $locks = new Montonio_Lock_Manager();
-        $lock  = 'withdrawal_send_' . hash( 'sha256', $payload['id'] );
-        $state = self::delivery( $payload['id'] );
+        $lock_manager = new Montonio_Lock_Manager();
+        $lock_name    = 'withdrawal_send_' . hash( 'sha256', $payload['id'] );
+        $state        = self::delivery( $payload['id'] );
 
         if ( $state && $state['merchant'] && $state['customer'] ) {
             return $state;
         }
 
         // Expires by itself, so a request that dies mid-send does not block retries.
-        if ( ! $locks->acquire_lock( $lock ) ) {
+        if ( ! $lock_manager->acquire_lock( $lock_name ) ) {
             return new WP_Error( 'busy', __( 'This request is being sent. Wait a moment and try again.', 'montonio-for-woocommerce' ) );
         }
 
-        $switched = false;
-
         try {
             // Read again after acquiring the lock: another request may have just finished.
-            $id = WC_Montonio_Withdrawal_Store::find( $payload['id'] );
+            $record_id = WC_Montonio_Withdrawal_Store::find( $payload['id'] );
 
-            if ( ! $id ) {
-                $id = self::record( $payload['id'], $payload['data'] );
+            if ( ! $record_id ) {
+                $record_id = self::record( $payload['id'], $payload['data'] );
             }
 
             // The record holds the delivery state, so nothing is sent without one.
-            if ( ! $id ) {
+            if ( ! $record_id ) {
                 return new WP_Error( 'record', __( 'We could not record your request. Try again or contact the store directly.', 'montonio-for-woocommerce' ) );
             }
 
@@ -540,41 +593,31 @@ class WC_Montonio_Withdrawal_Request {
                 if ( is_wp_error( $to ) || ! $to ) {
                     WC_Montonio_Logger::log( 'Withdrawal notice: no valid store email is configured. Reference: ' . $state['reference'] );
                 } else {
-                    $state['merchant'] = self::deliver( $id, $state['reference'], 'merchant', self::merchant_message( $to, $d, $state, $settings ), $settings );
+                    $state['merchant'] = self::in_locale( self::site_locale(), function () use ( $record_id, $to, $d, $state, $settings ) {
+                        return self::deliver( $record_id, $state['reference'], 'merchant', self::merchant_message( $to, $d, $state, $settings ), $settings );
+                    } );
                 }
             }
 
             if ( ! $state['customer'] ) {
                 $locale = isset( $d['locale'] ) && is_string( $d['locale'] ) ? $d['locale'] : '';
-                // switch_to_locale() returns false when the locale is already current.
-                $switched = $locale ? switch_to_locale( $locale ) : false;
 
-                if ( $switched ) {
-                    self::reload_textdomain();
-                }
-
-                // Built and wrapped inside the switched locale, so text and template match.
-                $state['customer'] = self::deliver( $id, $state['reference'], 'customer', self::customer_message( $d, $state, $settings ), $settings );
+                $state['customer'] = self::in_locale( $locale, function () use ( $record_id, $d, $state, $settings ) {
+                    return self::deliver( $record_id, $state['reference'], 'customer', self::customer_message( $d, $state, $settings ), $settings );
+                } );
             }
 
             return $state;
         } finally {
-            if ( $switched ) {
-                restore_previous_locale();
-                self::reload_textdomain();
-            }
-
-            $locks->release_lock( $lock );
+            $lock_manager->release_lock( $lock_name );
         }
     }
 
     /**
-     * Build the merchant notice.
-     *
-     * English literals throughout, independent of the current locale: the
-     * store reads this whatever language the customer used. The declaration
-     * is the customer's statement, forwarded verbatim. The submission time
-     * follows the WordPress date and time settings, like the rest of the admin.
+     * Build the merchant notice in the current locale, which send() sets to
+     * the Site Language. The declaration is the customer's statement,
+     * forwarded verbatim. The submission time follows the WordPress date and
+     * time settings, like the rest of the admin.
      *
      * @since 10.4.0
      * @param array $to       Merchant recipients.
@@ -584,21 +627,21 @@ class WC_Montonio_Withdrawal_Request {
      * @return array Message for deliver().
      */
     private static function merchant_message( $to, $d, $state, $settings ) {
-        $body  = '<p>I hereby give notice that I withdraw from the purchase identified below.</p>';
+        $body  = '<p>' . esc_html__( 'I hereby give notice that I withdraw from the purchase identified below.', 'montonio-for-woocommerce' ) . '</p>';
         $body .= self::rows_html( array(
-            'Request reference' => $state['reference'],
-            'Submitted at'      => get_the_date( '', $state['id'] ) . ' ' . get_the_time( '', $state['id'] )
+            __( 'Request reference', 'montonio-for-woocommerce' ) => $state['reference'],
+            __( 'Submitted at', 'montonio-for-woocommerce' )      => get_the_date( '', $state['id'] ) . ' ' . get_the_time( '', $state['id'] )
         ), true );
-        $body .= self::rows_html( self::summary( $d, 'merchant' ) );
-        $body .= '<p>Order lookup: Order number and billing email matched. Customer-supplied contact details are not identity verification.</p>';
+        $body .= self::rows_html( self::summary( $d ) );
+        $body .= '<p>' . esc_html__( 'Order lookup: Order number and billing email matched. Customer-supplied contact details are not identity verification.', 'montonio-for-woocommerce' ) . '</p>';
 
         $order = $d['order_id'] ? wc_get_order( $d['order_id'] ) : false;
 
         if ( $order ) {
-            $body .= '<p><a href="' . esc_url( $order->get_edit_order_url() ) . '">View matched order</a></p>';
+            $body .= '<p><a href="' . esc_url( $order->get_edit_order_url() ) . '">' . esc_html__( 'View matched order', 'montonio-for-woocommerce' ) . '</a></p>';
         }
 
-        $title = 'Withdrawal request';
+        $title = __( 'Withdrawal request', 'montonio-for-woocommerce' );
 
         return array(
             'to'      => $to,
@@ -678,9 +721,9 @@ class WC_Montonio_Withdrawal_Request {
      * @return int Record post ID, or 0 when it could not be created.
      */
     public static function record( $reference, $d ) {
-        $id = WC_Montonio_Withdrawal_Store::create( $reference, $d );
+        $record_id = WC_Montonio_Withdrawal_Store::create( $reference, $d );
 
-        if ( ! $id ) {
+        if ( ! $record_id ) {
             WC_Montonio_Logger::log( 'Withdrawal notice: the request could not be recorded. Reference: ' . $reference );
             return 0;
         }
@@ -698,6 +741,6 @@ class WC_Montonio_Withdrawal_Request {
             ) );
         }
 
-        return $id;
+        return $record_id;
     }
 }

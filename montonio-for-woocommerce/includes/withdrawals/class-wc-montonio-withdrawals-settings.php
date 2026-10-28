@@ -2,24 +2,34 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * WooCommerce settings tab for the Montonio Withdrawals module.
+ * The Right of withdrawal section of the Montonio settings tab.
  *
  * @since 10.4.0
+ * @see WC_Montonio_Settings
  */
-class WC_Montonio_Withdrawals_Settings extends WC_Settings_Page {
+class WC_Montonio_Withdrawals_Settings {
+
+    /**
+     * Montonio menu item ID.
+     *
+     * @var string
+     */
+    public $id = 'montonio_withdrawals';
+
+    /**
+     * Page title.
+     *
+     * @var string
+     */
+    public $label = 'Right of withdrawal page';
 
     /**
      * Constructor
      */
     public function __construct() {
-        $this->id    = 'montonio_withdrawals';
-        $this->label = 'Right of withdrawal page';
-
         add_filter( 'woocommerce_admin_settings_sanitize_option_montonio_withdrawal_contact_email', array( $this, 'sanitize_contact_email' ), 10, 3 );
         add_filter( 'woocommerce_admin_settings_sanitize_option_montonio_withdrawal_recipient', array( $this, 'sanitize_recipient' ), 10, 3 );
         add_action( 'woocommerce_admin_field_montonio_withdrawal_notice', array( $this, 'output_notice' ) );
-
-        parent::__construct();
     }
 
     /**
@@ -41,20 +51,11 @@ class WC_Montonio_Withdrawals_Settings extends WC_Settings_Page {
     }
 
     /**
-     * Legacy support for Woocommerce 5.4 and earlier
+     * Get the settings fields.
      *
      * @return array
      */
     public function get_settings() {
-        return $this->get_settings_for_default_section();
-    }
-
-    /**
-     * Used when creating the Montonio Withdrawals settings tab
-     *
-     * @return array
-     */
-    public function get_settings_for_default_section() {
         $defaults = WC_Montonio_Withdrawals::get_defaults();
         $page_id  = WC_Montonio_Withdrawals::get_page_id();
         $status   = $page_id ? get_post_status( $page_id ) : false;

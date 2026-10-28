@@ -217,13 +217,13 @@ class WC_Montonio_Withdrawals {
         $new_order_settings = get_option( 'woocommerce_new_order_settings', array() );
         $recipient          = self::parse_email_list( isset( $new_order_settings['recipient'] ) ? $new_order_settings['recipient'] : '' );
 
-        $store     = WC()->countries;
-        $countries = $store->get_countries();
-        $country   = $store->get_base_country();
-        $address   = array(
-            $store->get_base_address(),
-            $store->get_base_address_2(),
-            trim( $store->get_base_postcode() . ' ' . $store->get_base_city() ),
+        $wc_countries = WC()->countries;
+        $countries    = $wc_countries->get_countries();
+        $country      = $wc_countries->get_base_country();
+        $address      = array(
+            $wc_countries->get_base_address(),
+            $wc_countries->get_base_address_2(),
+            trim( $wc_countries->get_base_postcode() . ' ' . $wc_countries->get_base_city() ),
             isset( $countries[ $country ] ) ? $countries[ $country ] : $country
         );
 

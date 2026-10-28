@@ -31,8 +31,7 @@
     });
 
     // Add loader when settings are saved
-    var currentUrl = window.location.href;
-    if (currentUrl.indexOf('tab=montonio_shipping') !== -1) {
+    if ($('.montonio-options.montonio_shipping').length) {
         $('button.woocommerce-save-button').on('click', function () {
             $(this).css('pointer-events', 'none');
 

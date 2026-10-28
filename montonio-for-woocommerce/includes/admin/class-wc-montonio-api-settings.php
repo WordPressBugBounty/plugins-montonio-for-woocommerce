@@ -4,21 +4,30 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Montonio API Settings
  *
- * Handles the API settings page for Montonio payment gateway.
- * Provides configuration for live and sandbox API credentials.
+ * Handles the API settings page for Montonio payment gateway, the API section
+ * of the Montonio settings tab. Provides configuration for live and sandbox
+ * API credentials.
  *
  * @extends WC_Settings_API
+ * @see WC_Montonio_Settings
  */
 class WC_Montonio_API_Settings extends WC_Settings_API {
+    /**
+     * Page title.
+     *
+     * @var string
+     */
+    public $label;
+
     /**
      * WC_Montonio_API_Settings constructor.
      */
     public function __construct() {
-        $this->id = 'wc_montonio_api';
+        $this->id    = 'wc_montonio_api';
+        $this->label = __( 'Main Settings', 'montonio-for-woocommerce' );
 
-        add_action( 'woocommerce_settings_checkout', array( $this, 'output_settings' ) );
-        add_action( 'woocommerce_update_options_checkout_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_action( 'woocommerce_update_options_checkout_' . $this->id, array( $this, 'on_setting_save' ), 20 );
+        add_action( 'woocommerce_update_options_montonio_api', array( $this, 'process_admin_options' ) );
+        add_action( 'woocommerce_update_options_montonio_api', array( $this, 'on_setting_save' ), 20 );
 
         $this->init_form_fields();
     }
@@ -240,10 +249,11 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
      * test mode toggle.
      *
      * @since 10.1.0
+     * @param bool $is_connected Whether the store is connected, which makes the key inputs read-only.
      * @return string Rendered HTML.
      */
     private function api_keys_form_html( $is_connected = false ) {
-        $disabled_attr       = $is_connected ? 'readonly' : '';
+        $readonly_attr       = $is_connected ? 'readonly' : '';
         $live_keys_available = 'yes' === $this->get_option( 'live_keys_available' );
         $awaiting_approval   = $is_connected && ! $live_keys_available;
 
@@ -282,12 +292,12 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
                     <div class="api-keys__fields">
                         <div class="api-keys__field">
                             <label for="woocommerce_wc_montonio_api_access_key"><?php esc_html_e( 'Access Key', 'montonio-for-woocommerce' ); ?></label>
-                            <input type="text" id="woocommerce_wc_montonio_api_access_key" name="woocommerce_wc_montonio_api_access_key" value="<?php echo esc_attr( $this->get_option( 'access_key' ) ); ?>" <?php echo esc_attr( $disabled_attr ); ?> />
+                            <input type="text" id="woocommerce_wc_montonio_api_access_key" name="woocommerce_wc_montonio_api_access_key" value="<?php echo esc_attr( $this->get_option( 'access_key' ) ); ?>" <?php echo esc_attr( $readonly_attr ); ?> />
                         </div>
 
                         <div class="api-keys__field">
                             <label for="woocommerce_wc_montonio_api_secret_key"><?php esc_html_e( 'Secret Key', 'montonio-for-woocommerce' ); ?></label>
-                            <input type="password" id="woocommerce_wc_montonio_api_secret_key" name="woocommerce_wc_montonio_api_secret_key" value="<?php echo esc_attr( $this->get_option( 'secret_key' ) ); ?>" <?php echo esc_attr( $disabled_attr ); ?> />
+                            <input type="password" id="woocommerce_wc_montonio_api_secret_key" name="woocommerce_wc_montonio_api_secret_key" value="<?php echo esc_attr( $this->get_option( 'secret_key' ) ); ?>" <?php echo esc_attr( $readonly_attr ); ?> />
                         </div>
                     </div>
                 </div>
@@ -308,12 +318,12 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
                 <div class="api-keys__fields">
                     <div class="api-keys__field">
                         <label for="woocommerce_wc_montonio_api_sandbox_access_key"><?php esc_html_e( 'Access Key', 'montonio-for-woocommerce' ); ?></label>
-                        <input type="text" id="woocommerce_wc_montonio_api_sandbox_access_key" name="woocommerce_wc_montonio_api_sandbox_access_key" value="<?php echo esc_attr( $this->get_option( 'sandbox_access_key' ) ); ?>" <?php echo esc_attr( $disabled_attr ); ?> />
+                        <input type="text" id="woocommerce_wc_montonio_api_sandbox_access_key" name="woocommerce_wc_montonio_api_sandbox_access_key" value="<?php echo esc_attr( $this->get_option( 'sandbox_access_key' ) ); ?>" <?php echo esc_attr( $readonly_attr ); ?> />
                     </div>
 
                     <div class="api-keys__field">
                         <label for="woocommerce_wc_montonio_api_sandbox_secret_key"><?php esc_html_e( 'Secret Key', 'montonio-for-woocommerce' ); ?></label>
-                        <input type="password" id="woocommerce_wc_montonio_api_sandbox_secret_key" name="woocommerce_wc_montonio_api_sandbox_secret_key" value="<?php echo esc_attr( $this->get_option( 'sandbox_secret_key' ) ); ?>" <?php echo esc_attr( $disabled_attr ); ?> />
+                        <input type="password" id="woocommerce_wc_montonio_api_sandbox_secret_key" name="woocommerce_wc_montonio_api_sandbox_secret_key" value="<?php echo esc_attr( $this->get_option( 'sandbox_secret_key' ) ); ?>" <?php echo esc_attr( $readonly_attr ); ?> />
                     </div>
                 </div>
             </div>
@@ -330,15 +340,9 @@ class WC_Montonio_API_Settings extends WC_Settings_API {
      * @since 9.3.0
      * @return void
      */
-    public function output_settings() {
-        global $current_section;
-
-        if ( $current_section !== $this->id ) {
-            return;
-        }
-
+    public function output() {
         WC_Montonio_Admin_Settings_Page::render_options_page(
-            __( 'Main Settings', 'montonio-for-woocommerce' ),
+            $this->label,
             $this->generate_settings_html( array(), false ),
             $this->id
         );

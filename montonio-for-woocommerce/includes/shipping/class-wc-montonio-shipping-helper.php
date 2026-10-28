@@ -8,10 +8,10 @@ defined( 'ABSPATH' ) || exit;
  */
 class WC_Montonio_Shipping_Helper {
     /**
-     * Gets the chosen Montonio shipping method at checkout. If the chosen shipping method is not Montonio, returns null.
+     * Gets the chosen Montonio shipping rate at checkout. If the chosen rate is not Montonio, returns null.
      *
      * @since 7.0.0
-     * @return Montonio_Shipping_Method|null The chosen Montonio shipping method at checkout, or null if the chosen shipping method is not Montonio.
+     * @return object|null The chosen rate's id ('id', as "method_id:instance_id"), 'carrier_code', 'type' and 'operators', or null.
      */
     public static function get_chosen_montonio_shipping_method_at_checkout() {
         if ( ! WC()->session ) {
@@ -69,12 +69,12 @@ class WC_Montonio_Shipping_Helper {
     }
 
     /**
-     * Gets the order's chosen Montonio shipping method. If the chosen shipping method is not Montonio, returns null.
+     * Gets the order's Montonio shipping item. If the order has no Montonio shipping item, returns null.
      *
      * @since 7.0.1 - fixed calling get_shipping_methods() on $order that does not have the method. For example WC_Coupon.
      * @since 7.0.0
-     * @param WC_Order $order The order to get the chosen Montonio shipping method for.
-     * @return Montonio_Shipping_Method|null The chosen Montonio shipping method for the order, or null if the chosen shipping method is not Montonio.
+     * @param WC_Order|mixed $order The order. Anything without get_shipping_methods(), such as an email's WP_User, returns null.
+     * @return WC_Order_Item_Shipping|null The order's Montonio shipping item, or null.
      */
     public static function get_chosen_montonio_shipping_method_for_order( $order ) {
         if ( empty( $order ) ) {
@@ -85,17 +85,17 @@ class WC_Montonio_Shipping_Helper {
             return;
         }
 
-        $shipping_methods = $order->get_shipping_methods();
+        $shipping_items = $order->get_shipping_methods();
 
-        if ( empty( $shipping_methods ) ) {
+        if ( empty( $shipping_items ) ) {
             return;
         }
 
-        foreach ( $shipping_methods as $shipping_method ) {
-            $shipping_method_id = $shipping_method->get_method_id();
+        foreach ( $shipping_items as $shipping_item ) {
+            $shipping_method_id = $shipping_item->get_method_id();
 
             if ( strpos( $shipping_method_id, 'montonio_' ) !== false ) {
-                return $shipping_method;
+                return $shipping_item;
             }
         }
 
@@ -114,23 +114,6 @@ class WC_Montonio_Shipping_Helper {
         $shipping_class_names = WC()->shipping->get_shipping_method_class_names();
 
         return new $shipping_class_names[$method_id]( $instance_id );
-    }
-
-    /**
-     * Get shipping method instance.
-     *
-     * @since 9.2.0
-     * @param int $instance_id The shipping method instance ID.
-     * @return Montonio_Shipping_Method The shipping method instance.
-     */
-    public static function get_shipping_method_instance( $instance_id ) {
-        $shipping_method_instance = WC_Shipping_Zones::get_shipping_method( $instance_id );
-
-        if ( empty( $shipping_method_instance ) ) {
-            return null;
-        }
-
-        return $shipping_method_instance;
     }
 
     /**
@@ -175,6 +158,28 @@ class WC_Montonio_Shipping_Helper {
         }
 
         return $country;
+    }
+
+    /**
+     * Gets the customer's shipping city at checkout, or the billing city when no shipping city is set.
+     *
+     * @since 10.4.5
+     * @return string The city, or an empty string if the customer has not entered one.
+     */
+    public static function get_customer_shipping_city() {
+        $customer = WC()->customer;
+
+        if ( empty( $customer ) ) {
+            return '';
+        }
+
+        $city = $customer->get_shipping_city();
+
+        if ( empty( $city ) ) {
+            $city = $customer->get_billing_city();
+        }
+
+        return trim( (string) $city );
     }
 
     /**

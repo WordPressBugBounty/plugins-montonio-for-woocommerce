@@ -40,9 +40,9 @@ class Montonio_Migration_10_3_2 {
      * @return void
      */
     private static function position_mobilepay_first() {
-        $order = get_option( 'woocommerce_gateway_order', array() );
+        $gateway_order = get_option( 'woocommerce_gateway_order', array() );
 
-        if ( ! is_array( $order ) ) {
+        if ( ! is_array( $gateway_order ) ) {
             return;
         }
 
@@ -57,8 +57,8 @@ class Montonio_Migration_10_3_2 {
         $target_position = null;
 
         foreach ( $montonio_gateways as $gateway_id ) {
-            if ( isset( $order[ $gateway_id ] ) && is_numeric( $order[ $gateway_id ] ) ) {
-                $position = (int) $order[ $gateway_id ];
+            if ( isset( $gateway_order[ $gateway_id ] ) && is_numeric( $gateway_order[ $gateway_id ] ) ) {
+                $position = (int) $gateway_order[ $gateway_id ];
 
                 if ( null === $target_position || $position < $target_position ) {
                     $target_position = $position;
@@ -70,19 +70,19 @@ class Montonio_Migration_10_3_2 {
             return;
         }
 
-        if ( isset( $order['wc_montonio_mobilepay'] ) && is_numeric( $order['wc_montonio_mobilepay'] ) && (int) $order['wc_montonio_mobilepay'] <= $target_position ) {
+        if ( isset( $gateway_order['wc_montonio_mobilepay'] ) && is_numeric( $gateway_order['wc_montonio_mobilepay'] ) && (int) $gateway_order['wc_montonio_mobilepay'] <= $target_position ) {
             return;
         }
 
-        foreach ( $order as $gateway_id => $position ) {
+        foreach ( $gateway_order as $gateway_id => $position ) {
             if ( 'wc_montonio_mobilepay' !== $gateway_id && is_numeric( $position ) && (int) $position >= $target_position ) {
-                $order[ $gateway_id ] = (int) $position + 1;
+                $gateway_order[ $gateway_id ] = (int) $position + 1;
             }
         }
 
-        $order['wc_montonio_mobilepay'] = $target_position;
+        $gateway_order['wc_montonio_mobilepay'] = $target_position;
 
-        update_option( 'woocommerce_gateway_order', $order );
+        update_option( 'woocommerce_gateway_order', $gateway_order );
     }
 }
 

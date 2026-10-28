@@ -177,14 +177,14 @@ class WC_Montonio_Shipping_Order {
             return;
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return;
         }
 
-        if ( $shipping_method->get_meta( 'tracking_codes' ) ) {
-            echo esc_html__( 'Tracking code(s)', 'montonio-for-woocommerce' ) . ':<br />' . wp_kses_post( $shipping_method->get_meta( 'tracking_codes' ) );
+        if ( $shipping_item->get_meta( 'tracking_codes' ) ) {
+            echo esc_html__( 'Tracking code(s)', 'montonio-for-woocommerce' ) . ':<br />' . wp_kses_post( $shipping_item->get_meta( 'tracking_codes' ) );
             return;
         }
 
@@ -273,14 +273,14 @@ class WC_Montonio_Shipping_Order {
      * @return array Modified actions array.
      */
     public static function add_montonio_print_label_action( $actions, $order ) {
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return $actions;
         }
 
         $status         = $order->get_meta( '_wc_montonio_shipping_shipment_status' );
-        $tracking_codes = $shipping_method->get_meta( 'tracking_codes' );
+        $tracking_codes = $shipping_item->get_meta( 'tracking_codes' );
 
         if ( ! empty( $tracking_codes ) && ! in_array( $status, array( 'pending', 'inTransit', 'awaitingCollection', 'delivered', 'returned' ) ) ) {
             $actions['montonio_print_label'] = array(

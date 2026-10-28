@@ -17,9 +17,9 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_shipping_method_item( $id ) {
         global $wpdb;
 
-        $query = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE item_id = %s", array( $id ) ) );
+        $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE item_id = %s", array( $id ) ) );
 
-        return $query;
+        return $row;
     }
 
     /**
@@ -34,9 +34,9 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_shipping_method_items( $country, $carrier, $type ) {
         global $wpdb;
 
-        $query = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s", array( $country, $carrier, $type ) ) );
+        $rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s", array( $country, $carrier, $type ) ) );
 
-        return $query;
+        return $rows;
     }
 
     /**
@@ -51,13 +51,13 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_additional_services( $country, $carrier, $type ) {
         global $wpdb;
 
-        $query = $wpdb->get_var( $wpdb->prepare( "SELECT additional_services FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s", array( $country, $carrier, $type ) ) );
+        $additional_services_json = $wpdb->get_var( $wpdb->prepare( "SELECT additional_services FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s", array( $country, $carrier, $type ) ) );
 
-        if ( empty( $query ) ) {
+        if ( empty( $additional_services_json ) ) {
             return array();
         }
 
-        return json_decode( $query, true ) ?: array();
+        return json_decode( $additional_services_json, true ) ?: array();
     }
 
     /**
@@ -91,9 +91,9 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_courier_id( $country, $carrier ) {
         global $wpdb;
 
-        $query = $wpdb->get_var( $wpdb->prepare( "SELECT DISTINCT item_id FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND method_type = 'courier'", array( $country, $carrier ) ) );
+        $courier_id = $wpdb->get_var( $wpdb->prepare( "SELECT DISTINCT item_id FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND method_type = 'courier'", array( $country, $carrier ) ) );
 
-        return $query;
+        return $courier_id;
     }
 
     /**
@@ -107,9 +107,9 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function get_shipping_method_countries( $carrier, $type ) {
         global $wpdb;
 
-        $query = $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT country_code FROM {$wpdb->prefix}montonio_shipping_method_items WHERE carrier_code = %s AND item_type = %s", array( $carrier, $type ) ), ARRAY_A );
+        $rows = $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT country_code FROM {$wpdb->prefix}montonio_shipping_method_items WHERE carrier_code = %s AND item_type = %s", array( $carrier, $type ) ), ARRAY_A );
 
-        $country_codes = array_column( $query, 'country_code' );
+        $country_codes = array_column( $rows, 'country_code' );
 
         return $country_codes;
     }
@@ -126,9 +126,9 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function shipping_method_items_exist( $country, $carrier, $type ) {
         global $wpdb;
 
-        $query = $wpdb->get_var( $wpdb->prepare( "SELECT 1 FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s LIMIT 1", array( $country, $carrier, $type ) ) );
+        $found = $wpdb->get_var( $wpdb->prepare( "SELECT 1 FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s LIMIT 1", array( $country, $carrier, $type ) ) );
 
-        return $query !== null;
+        return $found !== null;
     }
 
     /**
@@ -143,11 +143,11 @@ class WC_Montonio_Shipping_Item_Manager {
     public static function fetch_and_group_pickup_points( $country, $carrier, $type ) {
         global $wpdb;
 
-        $query = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s ORDER BY item_name ASC", array( $country, $carrier, $type ) ) );
+        $pickup_points = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}montonio_shipping_method_items WHERE country_code = %s AND carrier_code = %s AND item_type = %s ORDER BY item_name ASC", array( $country, $carrier, $type ) ) );
 
         $grouped_localities = array();
 
-        foreach ( $query as $pickup_point ) {
+        foreach ( $pickup_points as $pickup_point ) {
             $locality                        = $pickup_point->locality;
             $grouped_localities[$locality][] = array(
                 'id'      => $pickup_point->item_id,

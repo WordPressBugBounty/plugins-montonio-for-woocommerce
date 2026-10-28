@@ -215,19 +215,19 @@ class WC_Montonio_Shipping_REST {
             return new WP_Error( 'wc_montonio_shipping_invalid_order_id', 'Invalid or no order ID provided.', array( 'status' => 400 ) );
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return new WP_Error( 'wc_montonio_shipping_unupported_method', 'Order doesn\'t have Montonio shipping method.', array( 'status' => 400 ) );
         }
 
-        $shipment = WC_Montonio_Shipping_Shipment_Manager::create_shipment( $order );
+        $response = WC_Montonio_Shipping_Shipment_Manager::create_shipment( $order );
 
-        if ( empty( $shipment ) ) {
+        if ( empty( $response ) ) {
             return new WP_Error( 'wc_montonio_shipping_shipment_creation_error', 'Shipment creation failed.', array( 'status' => 500 ) );
         }
 
-        return rest_ensure_response( array( 'message' => 'Shipment created successfully.', 'shipment' => $shipment ) );
+        return rest_ensure_response( array( 'message' => 'Shipment created successfully.', 'shipment' => $response ) );
     }
 
     /**
@@ -245,19 +245,19 @@ class WC_Montonio_Shipping_REST {
             return new WP_Error( 'wc_montonio_shipping_invalid_order_id', 'Invalid or no order ID provided.', array( 'status' => 400 ) );
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return new WP_Error( 'wc_montonio_shipping_unupported_method', 'Order doesn\'t have Montonio shipping method.', array( 'status' => 400 ) );
         }
 
-        $shipment = WC_Montonio_Shipping_Shipment_Manager::update_shipment( $order );
+        $response = WC_Montonio_Shipping_Shipment_Manager::update_shipment( $order );
 
-        if ( empty( $shipment ) ) {
+        if ( empty( $response ) ) {
             return new WP_Error( 'wc_montonio_shipping_shipment_update_error', 'Shipment update failed.', array( 'status' => 500 ) );
         }
 
-        return rest_ensure_response( array( 'message' => 'Shipment successfully updated.', 'shipment' => $shipment ) );
+        return rest_ensure_response( array( 'message' => 'Shipment successfully updated.', 'shipment' => $response ) );
     }
 
     /**
@@ -320,12 +320,12 @@ class WC_Montonio_Shipping_REST {
             return new WP_Error( 'wc_montonio_shipping_invalid_order_id', 'Invalid or no order ID provided.', array( 'status' => 400 ) );
         }
 
-        $shipment = WC_Montonio_Shipping_Shipment_Manager::sync_shipment_details( $order );
+        $response = WC_Montonio_Shipping_Shipment_Manager::sync_shipment_details( $order );
 
-        if ( empty( $shipment ) ) {
+        if ( empty( $response ) ) {
             return new WP_Error( 'wc_montonio_shipping_sync_shipment_error', 'Shipment retrieval failed.', array( 'status' => 500 ) );
         }
 
-        return rest_ensure_response( array( 'message' => 'Shipment successfully retrieved.', 'shipment' => $shipment ) );
+        return rest_ensure_response( array( 'message' => 'Shipment successfully retrieved.', 'shipment' => $response ) );
     }
 }

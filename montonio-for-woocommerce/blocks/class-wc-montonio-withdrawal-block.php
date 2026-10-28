@@ -102,17 +102,17 @@ class WC_Montonio_Withdrawal_Block {
      * @return void
      */
     public static function register() {
-        $block = register_block_type_from_metadata(
+        $block_type = register_block_type_from_metadata(
             WC_MONTONIO_PLUGIN_PATH . '/blocks/build/wc-montonio-withdrawal',
             array( 'render_callback' => array( __CLASS__, 'render' ) )
         );
 
-        if ( ! $block || empty( $block->editor_script ) ) {
+        if ( ! $block_type || empty( $block_type->editor_script ) ) {
             return;
         }
 
         wp_set_script_translations(
-            $block->editor_script,
+            $block_type->editor_script,
             'montonio-for-woocommerce',
             WC_MONTONIO_PLUGIN_PATH . '/languages'
         );
@@ -131,9 +131,9 @@ class WC_Montonio_Withdrawal_Block {
      * @return void
      */
     public static function add_editor_defaults() {
-        $block = WP_Block_Type_Registry::get_instance()->get_registered( self::NAME );
+        $block_type = WP_Block_Type_Registry::get_instance()->get_registered( self::NAME );
 
-        if ( ! $block || empty( $block->editor_script ) ) {
+        if ( ! $block_type || empty( $block_type->editor_script ) ) {
             return;
         }
 
@@ -141,7 +141,7 @@ class WC_Montonio_Withdrawal_Block {
         $store    = array( 'legal_name', 'contact_email', 'return_address' );
 
         wp_add_inline_script(
-            $block->editor_script,
+            $block_type->editor_script,
             'window.wcMontonioWithdrawalBlock = ' . wp_json_encode( array( 'store' => array_intersect_key( $settings, array_flip( $store ) ) ) ) . ';',
             'before'
         );

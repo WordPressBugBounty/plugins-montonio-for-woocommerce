@@ -66,7 +66,7 @@ if ( ! empty( $shipping_classes ) ) {
             'class'             => 'wc-shipping-modal-price',
             'placeholder'       => __( 'N/A', 'montonio-for-woocommerce' ),
             'description'       => $cost_desc,
-            'default'           => $this->get_option( 'class_cost_' . $shipping_class->slug ),
+            'default'           => '',
             'desc_tip'          => true,
             'sanitize_callback' => array( $this, 'sanitize_cost' )
         );

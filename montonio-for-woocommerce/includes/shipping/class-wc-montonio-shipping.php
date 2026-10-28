@@ -209,7 +209,10 @@ class WC_Montonio_Shipping {
             'show_address' => get_option( 'montonio_shipping_show_address' ),
             'loading_text' => __( 'Searching pickup points...', 'montonio-for-woocommerce' ),
             'error_text'   => __( 'Failed to load pickup points. Please try again.', 'montonio-for-woocommerce' ),
-            'no_results'   => __( 'No pickup points found', 'montonio-for-woocommerce' )
+            'no_results'   => __( 'No pickup points found', 'montonio-for-woocommerce' ),
+            'search_hint'  => __( 'Start typing to search pickup points (at least 3 characters)', 'montonio-for-woocommerce' ),
+            /* translators: 1: number of pickup points shown, 2: number of pickup points found */
+            'more_results' => __( 'Showing %1$s of %2$s pickup points. Type more to narrow the search.', 'montonio-for-woocommerce' )
         ) );
     }
 
@@ -245,19 +248,19 @@ class WC_Montonio_Shipping {
      * Update order meta data
      *
      * @since 7.0.0
-     * @param WC_Order $order The order object
-     * @param array $data The data that is being passed to the order
+     * @param WC_Order    $order                   The order object
+     * @param string|null $shipping_method_item_id The selected pickup point's UUID, for pickup point methods
      * @return void
      */
     public function update_order_meta( $order, $shipping_method_item_id = null ) {
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return;
         }
 
-        $carrier = $shipping_method->get_meta( 'carrier_code' );
-        $type    = $shipping_method->get_meta( 'type_v2' );
+        $carrier = $shipping_item->get_meta( 'carrier_code' );
+        $type    = $shipping_item->get_meta( 'type_v2' );
 
         if ( in_array( $type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             // Handle pickup point methods
@@ -332,7 +335,7 @@ class WC_Montonio_Shipping {
                 sprintf(
                     /* translators: %s: URL to the API settings page */
                     __( 'Montonio Shipping requires API credentials. Please <a href="%s">add them here</a>.', 'montonio-for-woocommerce' ),
-                    admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_montonio_api' )
+                    admin_url( 'admin.php?page=wc-settings&tab=montonio&section=api' )
                 ),
                 'error'
             );
@@ -364,14 +367,14 @@ class WC_Montonio_Shipping {
      * @return string The email content string with replaced placeholders
      */
     public function replace_email_placeholders( $string, $email ) {
-        $order         = $email->object;
+        $email_object  = $email->object;
         $tracking_info = '';
 
-        if ( ! empty( $order ) ) {
-            $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        if ( ! empty( $email_object ) ) {
+            $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $email_object );
 
-            if ( ! empty( $shipping_method ) ) {
-                $tracking_links = $shipping_method->get_meta( 'tracking_codes' );
+            if ( ! empty( $shipping_item ) ) {
+                $tracking_links = $shipping_item->get_meta( 'tracking_codes' );
                 $tracking_title = get_option( 'montonio_email_tracking_code_text' );
 
                 if ( empty( $tracking_title ) || $tracking_title === 'Track your shipment:' ) {
@@ -422,14 +425,14 @@ class WC_Montonio_Shipping {
             return $available_gateways;
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
+        $chosen_rate = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_at_checkout();
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $chosen_rate ) ) {
             return $available_gateways;
         }
 
-        $carrier = $shipping_method->carrier_code;
-        $type    = $shipping_method->type;
+        $carrier = $chosen_rate->carrier_code;
+        $type    = $chosen_rate->type;
 
         if ( 'courier' !== $type ) {
             return $available_gateways;

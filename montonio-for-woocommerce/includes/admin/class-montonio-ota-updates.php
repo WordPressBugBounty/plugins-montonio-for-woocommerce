@@ -93,6 +93,7 @@ class Montonio_OTA_Updates {
         $data['montonio_shipping_order_status_when_delivered']  = get_option( 'montonio_shipping_order_status_when_delivered', false );
         $data['montonio_cart_capture_enabled']                  = get_option( 'montonio_cart_capture_enabled', 'no' );
         $data['montonio_cart_capture_endpoint']                 = get_option( 'montonio_cart_capture_endpoint', '' );
+        $data['montonio_rec_tagging_enabled']                   = get_option( 'montonio_rec_tagging_enabled', 'no' );
 
         return new WP_REST_Response( $data, 200 );
     }
@@ -147,6 +148,12 @@ class Montonio_OTA_Updates {
                 'description'       => __( 'Endpoint that receives captured carts', 'montonio-for-woocommerce' ),
                 'type'              => 'string',
                 'sanitize_callback' => 'esc_url_raw'
+            ),
+            'montonio_rec_tagging_enabled'              => array(
+                'description'       => __( 'Enable or disable recommendation tagging of cart items', 'montonio-for-woocommerce' ),
+                'type'              => 'string',
+                'enum'              => array( 'yes', 'no' ),
+                'sanitize_callback' => 'sanitize_text_field'
             ),
             'woocommerce_wc_montonio_api_settings'      => array(
                 'description' => __( 'Main settings for Montonio', 'montonio-for-woocommerce' ),
@@ -430,17 +437,17 @@ class Montonio_OTA_Updates {
      * Filters out sensitive data from the settings.
      *
      * @since 7.1.2
-     * @param string $method_id The method ID (option name).
-     * @param array  $settings The settings array to filter.
+     * @param string $option_name The option name the settings were read from.
+     * @param array  $settings    The settings array to filter.
      * @return array The filtered settings.
      */
-    private static function filter_sensitive_data( $method_id, $settings ) {
+    private static function filter_sensitive_data( $option_name, $settings ) {
         $sensitive_keys = array(
             'woocommerce_wc_montonio_api_settings' => array( 'access_key', 'secret_key', 'sandbox_access_key', 'sandbox_secret_key' )
         );
 
-        if ( isset( $sensitive_keys[$method_id] ) ) {
-            foreach ( $sensitive_keys[$method_id] as $sensitive_key ) {
+        if ( isset( $sensitive_keys[$option_name] ) ) {
+            foreach ( $sensitive_keys[$option_name] as $sensitive_key ) {
                 unset( $settings[$sensitive_key] );
             }
         }

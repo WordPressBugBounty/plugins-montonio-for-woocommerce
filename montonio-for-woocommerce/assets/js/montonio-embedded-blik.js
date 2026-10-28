@@ -76,13 +76,11 @@ jQuery(document).ready(function ($) {
         return true;
     });
 
-    $(document).ajaxComplete(function (event, xhr, settings) {
-        if ($('input[value="wc_montonio_blik"]').is(':checked')) {           
-            var response = xhr.responseJSON;
-            if (response.result !== 'success') {
-                window.embeddedPayment.closeModal();
-                window.embeddedPayment.reset();
-            }
+    // Close the modal opened in checkout_place_order when the checkout submission fails
+    $(document.body).on('checkout_error', function () {
+        if (window.embeddedPayment && $('input[value="wc_montonio_blik"]').is(':checked')) {
+            window.embeddedPayment.closeModal();
+            window.embeddedPayment.reset();
         }
     });
 

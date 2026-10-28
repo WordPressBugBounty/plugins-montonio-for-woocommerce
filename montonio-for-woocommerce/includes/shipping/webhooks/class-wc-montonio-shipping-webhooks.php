@@ -69,9 +69,9 @@ class WC_Montonio_Shipping_Webhooks {
             return new WP_REST_Response( array( 'message' => 'Order not found' ), 400 );
         }
 
-        $shipping_method = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
+        $shipping_item = WC_Montonio_Shipping_Helper::get_chosen_montonio_shipping_method_for_order( $order );
 
-        if ( empty( $shipping_method ) ) {
+        if ( empty( $shipping_item ) ) {
             return new WP_REST_Response( array( 'message' => 'Order not using Montonio shipping method' ), 400 );
         }
 
@@ -88,8 +88,8 @@ class WC_Montonio_Shipping_Webhooks {
 
         if ( ! empty( $tracking_links ) ) {
             $order->add_order_note( __( '<strong>Shipment created.</strong><br>Tracking codes: ', 'montonio-for-woocommerce' ) . $tracking_links );
-            $shipping_method->update_meta_data( 'tracking_codes', $tracking_links );
-            $shipping_method->save_meta_data();
+            $shipping_item->update_meta_data( 'tracking_codes', $tracking_links );
+            $shipping_item->save_meta_data();
 
             $order->update_meta_data( '_montonio_tracking_info', $tracking_links );
         }
