@@ -2735,6 +2735,6 @@ msgstr "Сумма корзины превышает максимальный л
 msgid "Enable or disable recommendation tagging of cart items"
 msgstr ""
 
-#: includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php:998
+#: includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php:1012
 msgid "When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps it on its own server, tied to the shopper's WooCommerce session, for 30 minutes, and uses it when a product is added to the cart; if the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce's session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store's own order data and is used to measure how recommendations perform."
 msgstr ""

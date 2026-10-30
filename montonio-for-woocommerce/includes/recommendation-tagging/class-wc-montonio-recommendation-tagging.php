@@ -28,13 +28,17 @@ class WC_Montonio_Recommendation_Tagging {
     const MAX_CANDIDATES = 20;
     const MAX_SHOWN      = 24;
     const NOTE_ACTION    = 'montonio_rec_note';
+    const ITEM_META_KEYS = array( '_montonio_rec_surface', '_montonio_rec_anchors', '_montonio_rec_added_at', '_montonio_rec_evidence' );
 
     /**
-     * Registers the hooks, unless WooCommerce is below the floor, which is logged once a day where Ladu switched tagging on.
+     * Registers the hooks. Below the WooCommerce floor only the admin item-meta hiding stays on, and the floor is logged once a day where Ladu switched tagging on.
      *
      * @return void
      */
     public static function init() {
+        // Before the floor check: orders tagged before a WooCommerce downgrade, or before the floor was raised, stay hidden on the admin order screen either way.
+        add_filter( 'woocommerce_hidden_order_itemmeta', array( __CLASS__, 'hide_order_itemmeta' ) );
+
         if ( ! self::is_supported() ) {
             // The option is autoloaded, so the check costs no query. Once a day at best: the throttle is a transient, so a flushed object cache repeats the line.
             if ( 'yes' === get_option( self::OPTION_ENABLED ) ) {
@@ -50,6 +54,16 @@ class WC_Montonio_Recommendation_Tagging {
         add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_note_script' ), 20 );
         add_action( 'admin_init', array( __CLASS__, 'add_privacy_policy_content' ) );
         add_action( 'wc_ajax_' . self::NOTE_ACTION, array( __CLASS__, 'note_request' ) );
+    }
+
+    /**
+     * Keeps the tag's keys off the admin order screen, where WooCommerce shows underscore-prefixed item meta and lets staff edit it by hand.
+     *
+     * @param string[] $hidden The keys WooCommerce already hides.
+     * @return string[]
+     */
+    public static function hide_order_itemmeta( $hidden ) {
+        return array_merge( (array) $hidden, self::ITEM_META_KEYS );
     }
 
     /**
