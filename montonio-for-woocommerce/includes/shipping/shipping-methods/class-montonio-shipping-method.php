@@ -53,6 +53,14 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
     protected $max_dimensions = null;
 
     /**
+     * Maximum sum of package length, width and height for this shipping method in cm
+     *
+     * @since 10.5.0
+     * @var float|null
+     */
+    protected $max_dimensions_sum = null;
+
+    /**
      * Shipping method type for V2
      *
      * @var string
@@ -225,21 +233,26 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
      * Allows any orientation by comparing sorted dimensions.
      *
      * @since 10.3.2 Validates every parcel from get_parcels_for_size_check() instead of one package bounding box.
+     * @since 10.5.0 Also validates the sum of parcel sides against $max_dimensions_sum.
      * @param array $package The package data containing items to validate.
      * @return bool True if all parcels fit, false otherwise.
      */
     protected function fits_within_dimensions( $package ) {
-        if ( empty( $this->max_dimensions ) ) {
+        if ( empty( $this->max_dimensions ) && empty( $this->max_dimensions_sum ) ) {
             return true;
         }
 
-        $max_dimensions_sorted = $this->max_dimensions;
+        $max_dimensions_sorted = (array) $this->max_dimensions;
         sort( $max_dimensions_sorted );
 
-        // Each sorted parcel dimension must fit within the corresponding max dimension
         foreach ( $this->get_parcels_for_size_check( $package ) as $parcel_dimensions ) {
-            foreach ( $parcel_dimensions as $index => $dimension ) {
-                if ( $dimension > $max_dimensions_sorted[$index] ) {
+            if ( ! empty( $this->max_dimensions_sum ) && array_sum( $parcel_dimensions ) > $this->max_dimensions_sum ) {
+                return false;
+            }
+
+            // Each sorted parcel dimension must fit within the corresponding max dimension
+            foreach ( $max_dimensions_sorted as $index => $max_dimension ) {
+                if ( $parcel_dimensions[$index] > $max_dimension ) {
                     return false;
                 }
             }
@@ -806,8 +819,9 @@ abstract class Montonio_Shipping_Method extends WC_Shipping_Method {
                     );
                 }
             } else {
-                // Add to shared items parcel
-                $item_data['quantity'] = $item['quantity'];
+                // Add to shared items parcel. Themes that update the cart via their own AJAX can
+                // store the quantity as a string, which the API rejects with a 400.
+                $item_data['quantity'] = wc_stock_amount( $item['quantity'] );
                 $shared_items[]        = $item_data;
             }
         }

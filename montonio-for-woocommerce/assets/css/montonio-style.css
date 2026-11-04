@@ -219,6 +219,10 @@ img.montonio-payment-method-icon {
   content: "";
   background-image: url(../images/carriers/posti.svg);
 }
+.montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_matkahuolto_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
+  content: "";
+  background-image: url(../images/carriers/matkahuolto.svg);
+}
 .montonio-show-carrier-logos .wc-block-components-radio-control__input[value^=montonio_international_shipping_] + .wc-block-components-radio-control__option-layout .wc-block-components-radio-control__label::before {
   content: "";
   background-image: url(../images/carriers/montonio_international_shipping.svg);
@@ -438,6 +442,9 @@ img.montonio-payment-method-icon {
 }
 .montonio-pickup-point__search-logo--posti {
   background-image: url(../images/carriers/posti.svg);
+}
+.montonio-pickup-point__search-logo--matkahuolto {
+  background-image: url(../images/carriers/matkahuolto.svg);
 }
 .montonio-pickup-point__search-logo--international_shipping {
   background-image: url(../images/carriers/montonio_international_shipping.svg);

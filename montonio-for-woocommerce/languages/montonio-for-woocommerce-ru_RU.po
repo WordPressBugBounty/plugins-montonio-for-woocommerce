@@ -227,7 +227,7 @@ msgid "Text used before tracking codes in e-mail placeholder {montonio_tracking_
 msgstr ""
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:154
-#: includes/shipping/class-wc-montonio-shipping.php:381
+#: includes/shipping/class-wc-montonio-shipping.php:387
 msgid "Track your shipment:"
 msgstr "Отслеживай доставку:"
 
@@ -906,8 +906,6 @@ msgstr ""
 msgid "Montonio Bank Payments"
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:180
-#: includes/admin/class-wc-montonio-banners.php:195
 #: includes/shipping/class-wc-montonio-shipping-settings.php:29
 msgid "Montonio Shipping"
 msgstr ""
@@ -1349,15 +1347,15 @@ msgstr ""
 msgid "Inpost parcel machines"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:210
+#: includes/shipping/class-wc-montonio-shipping.php:216
 msgid "Searching pickup points..."
 msgstr "Поиск пунктов доставки..."
 
-#: includes/shipping/class-wc-montonio-shipping.php:211
+#: includes/shipping/class-wc-montonio-shipping.php:217
 msgid "Failed to load pickup points. Please try again."
 msgstr "Не удалось загрузить пункты доставки. Пожалуйста, попробуйте ещё раз."
 
-#: includes/shipping/class-wc-montonio-shipping.php:212
+#: includes/shipping/class-wc-montonio-shipping.php:218
 msgid "No pickup points found"
 msgstr "Пункты доставки не найдены"
 
@@ -1375,10 +1373,8 @@ msgstr ""
 msgid "Add card fields to the checkout instead of redirecting to the gateway."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:170
-#: includes/admin/class-wc-montonio-banners.php:171
-#: includes/admin/class-wc-montonio-banners.php:228
-#: includes/admin/class-wc-montonio-banners.php:229
+#: includes/admin/class-montonio-ota-banners.php:630
+#: includes/admin/class-montonio-ota-banners.php:631
 msgid "Dismiss this notice"
 msgstr ""
 
@@ -1411,19 +1407,19 @@ msgstr ""
 msgid "Payment could not be completed. Please try again or choose a different payment method."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:661
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:674
 msgid "Length must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:678
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:691
 msgid "Width must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:695
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:708
 msgid "Height must be a positive number."
 msgstr ""
 
-#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:712
+#: includes/shipping/shipping-methods/class-montonio-shipping-method.php:725
 msgid "Weight must be a positive number."
 msgstr ""
 
@@ -1562,7 +1558,7 @@ msgid "Invalid payment reference. Please refresh the page and try again."
 msgstr ""
 
 #. translators: %s: URL to the API settings page
-#: includes/shipping/class-wc-montonio-shipping.php:337
+#: includes/shipping/class-wc-montonio-shipping.php:343
 #, php-format
 msgid "Montonio Shipping requires API credentials. Please <a href=\"%s\">add them here</a>."
 msgstr ""
@@ -1601,20 +1597,6 @@ msgstr ""
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-courier.php:25
 #: includes/shipping/shipping-methods/unisend/class-montonio-unisend-courier.php:28
 msgid "Unisend courier"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-banners.php:253
-#: includes/admin/class-wc-montonio-banners.php:278
-msgid "International Shipping"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-banners.php:186
-#: includes/admin/class-wc-montonio-banners.php:261
-msgid "Learn more and activate"
-msgstr ""
-
-#: includes/admin/class-wc-montonio-banners.php:269
-msgid "Calculate shipping costs"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:41
@@ -1828,7 +1810,7 @@ msgstr ""
 msgid "<strong>%1$s could not be enabled.</strong><br>Error: %2$s"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:355
+#: includes/shipping/class-wc-montonio-shipping.php:361
 msgid "Shipping method data synced successfully."
 msgstr ""
 
@@ -1866,12 +1848,8 @@ msgstr ""
 msgid "Could not verify existing zones. Please try again."
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:350
+#: includes/shipping/class-wc-montonio-shipping.php:356
 msgid "Shipping data sync failed."
-msgstr ""
-
-#: includes/admin/class-wc-montonio-banners.php:255
-msgid "Send parcels to over 20+ EU countries, including Germany, Spain, Italy, France, and more. <br><strong>Starting from just €5.95 until end of May.</strong>"
 msgstr ""
 
 #: includes/shipping/shipping-methods/dpd/dpd-settings.php:61
@@ -2174,10 +2152,6 @@ msgstr ""
 msgid "Syncing data, this may take some time..."
 msgstr ""
 
-#: includes/admin/class-wc-montonio-banners.php:181
-msgid "Try Montonio shipping - from only €1.99 per package."
-msgstr ""
-
 #: blocks/class-wc-montonio-mobilepay-block.php:36
 #: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:100
 #: includes/payment/payment-methods/class-wc-montonio-mobilepay.php:124
@@ -2227,7 +2201,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:23
 #: includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php:26
 msgid "Postnord parcel machines"
-msgstr ""
+msgstr "Посылочный автомат Postnord"
 
 #: includes/withdrawals/class-wc-montonio-withdrawal-frontend.php:210
 msgid "This form session expired. Review your details and try again."
@@ -2585,7 +2559,7 @@ msgstr "Мы не смогли зарегистрировать ваш запр�
 #. translators: additional amount needed
 #: includes/payment/payment-methods/class-wc-montonio-bnpl.php:210
 #: blocks/build/wc-montonio-bnpl/index.js:1
-#, php-format
+#, php-format,js-format
 msgid "Add %s more to your cart to use this payment method"
 msgstr "Добавьте %s в корзину, чтобы использовать этот способ оплаты"
 
@@ -2674,7 +2648,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/posti/class-montonio-posti-courier.php:23
 #: includes/shipping/shipping-methods/posti/class-montonio-posti-courier.php:26
 msgid "Posti courier"
-msgstr ""
+msgstr "Курьер Posti"
 
 #: includes/shipping/shipping-methods/posti/class-montonio-posti-parcel-machines.php:17
 msgid "Montonio Posti parcel machines"
@@ -2684,7 +2658,7 @@ msgstr ""
 #: includes/shipping/shipping-methods/posti/class-montonio-posti-parcel-machines.php:23
 #: includes/shipping/shipping-methods/posti/class-montonio-posti-parcel-machines.php:26
 msgid "Posti parcel machines"
-msgstr ""
+msgstr "Посылочный автомат Posti"
 
 #: includes/shipping/class-wc-montonio-shipping-settings.php:122
 msgid ""
@@ -2700,6 +2674,7 @@ msgstr ""
 
 #. translators: %s: URL for link.
 #: includes/shipping/shipping-methods/montonio-international-shipping/montonio-international-shipping-settings.php:15
+#, php-format
 msgid ""
 "<p><strong>Important:</strong> You must schedule a <a href=\"%s\" target=\"_blank\">courier pick-up in Partner System</a> for international orders. <em>Exception:</em> Cross-Baltic shipments can be dropped off at Venipak parcel machines.</p>\n"
 "            <strong>Pricing Types:</strong>\n"
@@ -2709,12 +2684,13 @@ msgid ""
 "            </ul>"
 msgstr ""
 
-#: includes/shipping/class-wc-montonio-shipping.php:213
+#: includes/shipping/class-wc-montonio-shipping.php:219
 msgid "Start typing to search pickup points (at least 3 characters)"
 msgstr "Начните вводить для поиска пунктов доставки (не менее 3 символов)"
 
 #. translators: 1: number of pickup points shown, 2: number of pickup points found
-#: includes/shipping/class-wc-montonio-shipping.php:215
+#: includes/shipping/class-wc-montonio-shipping.php:221
+#, php-format
 msgid "Showing %1$s of %2$s pickup points. Type more to narrow the search."
 msgstr "Показано %1$s из %2$s пунктов доставки. Введите больше символов, чтобы уточнить поиск."
 
@@ -2737,4 +2713,38 @@ msgstr ""
 
 #: includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php:1012
 msgid "When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps it on its own server, tied to the shopper's WooCommerce session, for 30 minutes, and uses it when a product is added to the cart; if the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce's session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store's own order data and is used to measure how recommendations perform."
+msgstr ""
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php:18
+msgid "Montonio Matkahuolto courier"
+msgstr ""
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php:19
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php:24
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php:27
+msgid "Matkahuolto courier"
+msgstr "Курьер Matkahuolto"
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-machines.php:17
+msgid "Montonio Matkahuolto parcel machines"
+msgstr ""
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-machines.php:18
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-machines.php:23
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-machines.php:26
+msgid "Matkahuolto parcel machines"
+msgstr "Посылочный автомат Matkahuolto"
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-shops.php:18
+msgid "Montonio Matkahuolto parcel shops"
+msgstr ""
+
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-shops.php:19
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-shops.php:24
+#: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-shops.php:27
+msgid "Matkahuolto parcel shops"
+msgstr "Почтовый офис Matkahuolto"
+
+#: includes/admin/class-montonio-ota-banners.php:649
+msgid "(opens in a new tab)"
 msgstr ""

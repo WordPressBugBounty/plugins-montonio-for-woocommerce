@@ -64,15 +64,35 @@
 
     adjustOptionsLayout();
 
-    // Hide the Montonio banner when the dismiss button or close button is clicked
-    $('.montonio-banner__close').on('click', function (e) {
+    // Hide an OTA banner when its close button is clicked
+    $('.montonio-ota-banner__close').on('click', function (e) {
         e.preventDefault();
 
-        var bannerId = $(this).closest('.montonio-banner').attr('id');
+        var banner = $(this).closest('.montonio-ota-banner');
+        var bannerId = banner.attr('id');
 
-        $(this).closest('.montonio-banner').addClass('hidden');
+        banner.addClass('hidden');
 
         updateBannerVisibility(bannerId);
+    });
+
+    // OTA banners in the native notice style use the dismiss button WordPress adds to .is-dismissible,
+    // which removes the notice itself. Delegated, since WordPress adds the button after this script runs.
+    $(document).on('click', '.montonio-ota-notice .notice-dismiss', function () {
+        updateBannerVisibility($(this).closest('.montonio-ota-notice').attr('id'));
+    });
+
+    // Drop OTA banner images that fail to load, so no broken-image icon is shown.
+    // The image may have failed before this footer script ran, so probe the URL with a
+    // fresh Image whose handler is attached before loading (a loaded image comes from cache).
+    $('.montonio-ota-banner__image').each(function () {
+        var image = this;
+        var probe = new Image();
+
+        probe.onerror = function () {
+            $(image).closest('.montonio-ota-banner__media').remove();
+        };
+        probe.src = image.currentSrc || image.src;
     });
 
     function updateBannerVisibility(bannerId) {

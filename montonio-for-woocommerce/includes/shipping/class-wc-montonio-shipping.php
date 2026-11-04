@@ -108,6 +108,9 @@ class WC_Montonio_Shipping {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/postnord/class-montonio-postnord-parcel-machines.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/posti/class-montonio-posti-parcel-machines.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/posti/class-montonio-posti-courier.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-machines.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-parcel-shops.php';
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php';
         }
     }
 
@@ -168,6 +171,9 @@ class WC_Montonio_Shipping {
         $methods['montonio_postnord_parcel_machines']             = 'Montonio_Postnord_Parcel_Machines';
         $methods['montonio_posti_parcel_machines']                = 'Montonio_Posti_Parcel_Machines';
         $methods['montonio_posti_courier']                        = 'Montonio_Posti_Courier';
+        $methods['montonio_matkahuolto_parcel_machines']          = 'Montonio_Matkahuolto_Parcel_Machines';
+        $methods['montonio_matkahuolto_parcel_shops']             = 'Montonio_Matkahuolto_Parcel_Shops';
+        $methods['montonio_matkahuolto_courier']                  = 'Montonio_Matkahuolto_Courier';
         $methods['montonio_inpost_parcel_machines']               = 'Montonio_Inpost_Parcel_Machines';
         $methods['montonio_orlen_parcel_machines']                = 'Montonio_Orlen_Parcel_Machines';
 

@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.4.6
+ * Version:           10.5.0
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.4.6' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.5.0' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -141,14 +141,14 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-data-sync.php';
             WC_Montonio_Data_Sync::init();
 
-            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-banners.php';
-            WC_Montonio_Banners::init();
-
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-wc-montonio-telemetry-service.php';
             WC_Montonio_Telemetry_Service::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-updates.php';
             Montonio_OTA_Updates::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-banners.php';
+            Montonio_OTA_Banners::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-capture.php';
             WC_Montonio_Cart_Capture::init();

@@ -130,34 +130,6 @@
 .montonio-button--secondary:focus {
   background: #fff;
 }
-.montonio-button--beige {
-  background: #F9E0C0;
-  color: #260071 !important;
-}
-.montonio-button--beige:hover {
-  background: #E2BF92;
-  color: #260071 !important;
-}
-.montonio-button--beige:active {
-  background: #E2BF92;
-}
-.montonio-button--beige:focus {
-  background: #E2BF92;
-}
-.montonio-button--transparent {
-  background: rgba(27, 5, 71, 0.5);
-  color: #fff !important;
-}
-.montonio-button--transparent:hover {
-  background: rgba(27, 5, 71, 0.8);
-  color: #fff !important;
-}
-.montonio-button--transparent:active {
-  background: rgba(27, 5, 71, 0.8);
-}
-.montonio-button--transparent:focus {
-  background: rgba(27, 5, 71, 0.8);
-}
 .montonio-button--disconnect:hover {
   background: #E9283F;
   border-color: #E9283F;
@@ -333,19 +305,19 @@
   color: #ffebeb;
 }
 @media only screen and (max-width: 1240px) {
-  .montonio-badge {
+  .montonio-menu .montonio-badge {
     padding: 0;
     width: 8px;
     height: 8px;
     border-radius: 50%;
   }
-  .montonio-badge__text {
+  .montonio-menu .montonio-badge__text {
     display: none;
   }
-  .montonio-badge--live {
+  .montonio-menu .montonio-badge--success {
     background-color: #6DD06A;
   }
-  .montonio-badge--sandbox {
+  .montonio-menu .montonio-badge--warning {
     background-color: #FFD460;
   }
 }
@@ -1133,23 +1105,6 @@ label[for*=montonio_shipping_sender]::after {
   margin: 0 0 0.5em;
 }
 
-.montonio-banner-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-right: 20px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-
-.woocommerce-admin-page #wpcontent .montonio-banner-wrapper {
-  padding-left: 20px;
-}
-
-.woocommerce-admin-page #wpcontent #wpadminbar + .montonio-banner-wrapper {
-  margin-top: 90px;
-}
-
 .montonio-options-loader {
   display: inline-flex;
   align-items: center;
@@ -1491,178 +1446,6 @@ label[for*=montonio_shipping_sender]::after {
   content: "\f193" !important;
 }
 
-.montonio-banner {
-  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  max-width: 912px;
-  position: relative;
-  background-color: var(--montonio-banner-bg, #E4DBFA);
-  color: #260071;
-  border: none;
-  box-shadow: none;
-  padding: 24px !important;
-  border-radius: 16px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-.montonio-banner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-color: var(--montonio-banner-pattern, #FFFFFF);
-  -webkit-mask: url("../images/banner_pattern.svg") no-repeat right bottom;
-  mask: url("../images/banner_pattern.svg") no-repeat right bottom;
-  -webkit-mask-size: auto 100%;
-  mask-size: auto 100%;
-}
-@media screen and (max-width: 810px) {
-  .montonio-banner {
-    padding: 32px 24px !important;
-  }
-}
-.montonio-banner .montonio-badge {
-  margin-bottom: 8px;
-}
-.montonio-banner img {
-  max-width: 100%;
-  max-height: 169px;
-  height: auto;
-  display: block;
-  margin: 0;
-}
-@media screen and (max-width: 819px) {
-  .montonio-banner img {
-    display: none;
-  }
-}
-.montonio-banner__logo {
-  margin-bottom: 16px;
-}
-.montonio-banner__logo svg {
-  max-width: 115px;
-}
-.montonio-banner__close {
-  display: block;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
-}
-.montonio-banner__close span {
-  display: none;
-}
-.montonio-banner__close svg {
-  padding: 4px;
-}
-@media screen and (max-width: 810px) {
-  .montonio-banner__close {
-    right: 19px;
-    top: 20px;
-  }
-}
-.montonio-banner__row {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-@media screen and (max-width: 810px) {
-  .montonio-banner__row {
-    flex-direction: column;
-  }
-}
-.montonio-banner__content {
-  max-width: 1600px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
-}
-.montonio-banner__content h2 {
-  color: #260071;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 40px;
-  letter-spacing: -1.28px;
-  margin: 0 0 16px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-.montonio-banner__content h2 span {
-  background: #389D9D;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 116.667%;
-  letter-spacing: -0.24px;
-  padding: 8px 10px;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  border-radius: 24px;
-}
-.montonio-banner__content p {
-  color: #fff;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 138.462%;
-}
-.montonio-banner__content ul {
-  display: flex;
-  gap: 14px 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-@media screen and (max-width: 819px) {
-  .montonio-banner__content ul {
-    flex-direction: column;
-  }
-}
-.montonio-banner__content ul li {
-  background: #E4DBFA;
-  flex: 1;
-  padding: 24px;
-  margin: 0;
-  border-radius: 16px;
-}
-.montonio-banner__content ul li .montonio-icon {
-  margin-bottom: 8px;
-}
-.montonio-banner__content ul li h3 {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 150%;
-  letter-spacing: -0.48px;
-  color: #260071;
-  margin: 0 0 4px;
-}
-.montonio-banner__content ul li p {
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 160%;
-  color: #260071;
-}
-.montonio-banner__actions {
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-}
-@media screen and (max-width: 465px) {
-  .montonio-banner__actions {
-    flex-direction: column;
-  }
-}
-.montonio-banner__button a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .montonio-international-shipping-description-title {
   display: none;
 }
@@ -1915,4 +1698,313 @@ body.montonio-modal-open {
   float: none;
   margin: 0;
   vertical-align: middle;
+}
+
+/* ===========================
+   OTA Banners
+   =========================== */
+.montonio-ota-banner {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  max-width: 1200px;
+  position: relative;
+  background-color: var(--montonio-banner-bg, #E4DBFA);
+  color: #260071;
+  border: none;
+  box-shadow: none;
+  padding: 24px !important;
+  border-radius: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.montonio-ota-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0 -7% 0 0;
+  z-index: 1;
+  pointer-events: none;
+  background-color: var(--montonio-banner-pattern, #FFFFFF);
+  -webkit-mask: url("../images/banner_pattern.svg") no-repeat right 87%;
+  mask: url("../images/banner_pattern.svg") no-repeat right 87%;
+  -webkit-mask-size: auto clamp(120%, 30cqw, 187%);
+  mask-size: auto clamp(120%, 30cqw, 187%);
+}
+.montonio-ota-banner .montonio-badge {
+  margin: 0 0 8px;
+  background: #260071;
+  color: #E4DBFA;
+}
+.montonio-ota-banner .montonio-ota-banner__close {
+  display: block;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 20;
+  color: #260070;
+}
+.montonio-ota-banner .montonio-ota-banner__close span {
+  display: none;
+}
+.montonio-ota-banner .montonio-ota-banner__close svg {
+  padding: 4px;
+}
+.montonio-ota-banner .montonio-ota-banner__close:hover {
+  color: #260070;
+  opacity: 0.8;
+}
+.montonio-ota-banner__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.montonio-ota-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+.montonio-ota-banner__media {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 320px;
+  max-width: 40%;
+}
+@media screen and (max-width: 810px) {
+  .montonio-ota-banner__media {
+    display: none;
+  }
+}
+.montonio-ota-banner__image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 169px;
+}
+.montonio-ota-banner__heading {
+  font-family: Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  color: #260071;
+  letter-spacing: -1.28px;
+}
+.montonio-ota-banner__content {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  color: #3C3C3C;
+}
+.montonio-ota-banner__content:first-child {
+  margin-top: 0;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content p,
+.montonio-ota-banner.notice .montonio-ota-banner__content ul,
+.montonio-ota-banner.notice .montonio-ota-banner__content ol,
+.montonio-ota-banner.notice .montonio-ota-banner__content li,
+.montonio-ota-banner.notice .montonio-ota-banner__content a,
+.montonio-ota-banner.notice .montonio-ota-banner__content strong,
+.montonio-ota-banner.notice .montonio-ota-banner__content em,
+.montonio-ota-banner.notice .montonio-ota-banner__content span {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content p,
+.montonio-ota-banner.notice .montonio-ota-banner__content ul,
+.montonio-ota-banner.notice .montonio-ota-banner__content ol {
+  margin: 0 0 8px;
+  padding: 0;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content p:last-child,
+.montonio-ota-banner.notice .montonio-ota-banner__content ul:last-child,
+.montonio-ota-banner.notice .montonio-ota-banner__content ol:last-child {
+  margin-bottom: 0;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content ul,
+.montonio-ota-banner.notice .montonio-ota-banner__content ol {
+  padding-left: 20px;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content ul {
+  list-style: disc;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content ol {
+  list-style: decimal;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content li {
+  margin: 0 0 4px;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content a {
+  text-decoration: underline;
+}
+.montonio-ota-banner.notice .montonio-ota-banner__content a:hover {
+  opacity: 0.8;
+}
+.montonio-ota-banner__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 12px;
+  background: #260071;
+  color: #fff !important;
+  text-decoration: none !important;
+  border-radius: 4px;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  box-shadow: 0 1px 2px 0 rgba(15, 26, 42, 0.08);
+}
+.montonio-ota-banner__cta:first-child {
+  margin-top: 0;
+}
+.montonio-ota-banner__cta::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url("../images/chevron-right.svg") no-repeat center/contain;
+  mask: url("../images/chevron-right.svg") no-repeat center/contain;
+}
+.montonio-ota-banner__cta:hover {
+  background: #1a004d;
+  color: #fff !important;
+}
+.montonio-ota-banner__cta--external::after {
+  -webkit-mask-image: url("../images/link-external.svg");
+  mask-image: url("../images/link-external.svg");
+}
+.montonio-ota-banner--lilac {
+  --montonio-banner-bg: #E4DBFA;
+  --montonio-banner-pattern: #ffffff;
+}
+.montonio-ota-banner--lilac .montonio-ota-banner__heading {
+  color: #1B0547;
+}
+.montonio-ota-banner--lilac .montonio-ota-banner__heading span {
+  color: #5C14EB;
+}
+.montonio-ota-banner--lilac .montonio-badge {
+  background: #F0EBFF;
+  color: #260071;
+}
+.montonio-ota-banner--indigo {
+  --montonio-banner-bg: #260071;
+  --montonio-banner-pattern: #C8F4EF;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__heading {
+  color: #fff;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__heading span {
+  color: #C8F4EF;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__content {
+  color: #E4DBFA;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__cta {
+  background: #fff !important;
+  color: #260071 !important;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__cta:hover {
+  background: #E4DBFA !important;
+}
+.montonio-ota-banner--indigo .montonio-badge {
+  background: #F1FCFB;
+  color: #0D6B6B;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__close {
+  color: #fff;
+}
+.montonio-ota-banner--indigo .montonio-ota-banner__close:hover {
+  color: #fff;
+  opacity: 0.8;
+}
+.montonio-ota-banner--beige {
+  --montonio-banner-bg: #F3E5DA;
+  --montonio-banner-pattern: #E2BF92;
+}
+.montonio-ota-banner--beige .montonio-ota-banner__heading span {
+  color: #5C14EB;
+}
+.montonio-ota-banner--beige .montonio-badge {
+  background: #FFF6DA;
+  color: #BF8B00;
+}
+.montonio-ota-banner--beige .montonio-ota-banner__cta {
+  padding: 7px 11px;
+  background: #fff !important;
+  color: #1B1B1B !important;
+  border: 1px solid #ADADB0;
+}
+.montonio-ota-banner--beige .montonio-ota-banner__cta:hover {
+  background: #F8F6F4 !important;
+  border-color: #1B1B1B;
+}
+.montonio-ota-banner--carribean {
+  --montonio-banner-bg: #0D6B6B;
+  --montonio-banner-pattern: #C8F4EF;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__heading {
+  color: #fff;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__heading span {
+  color: #F9E0C0;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__content {
+  color: #F8F6F4;
+}
+.montonio-ota-banner--carribean .montonio-badge {
+  background: #0A1F1F;
+  color: #C8F4EF;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__cta {
+  background: #fff !important;
+  color: #0D6B6B !important;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__cta:hover {
+  background: #C8F4EF !important;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__close {
+  color: #fff;
+}
+.montonio-ota-banner--carribean .montonio-ota-banner__close:hover {
+  color: #fff;
+  opacity: 0.8;
+}
+.montonio-ota-banner--warning {
+  --montonio-banner-bg: #FFEBEC;
+  --montonio-banner-pattern: #FFCFD6;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__heading {
+  color: #A90619;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__heading span {
+  color: #E9293F;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__content {
+  color: #A90619;
+}
+.montonio-ota-banner--warning .montonio-badge {
+  background: #FFCFD5;
+  color: #A9061A;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__cta {
+  background: #A90719;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__cta:hover {
+  background: #870514;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__close {
+  color: #A90619;
+}
+.montonio-ota-banner--warning .montonio-ota-banner__close:hover {
+  color: #A90619;
+  opacity: 0.8;
 }
