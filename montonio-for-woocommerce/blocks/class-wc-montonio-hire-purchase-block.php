@@ -25,6 +25,8 @@ class WC_Montonio_Hire_Purchase_Block extends AbstractMontonioPaymentMethodBlock
      * @return array Payment method data including title, description, and icon URL.
      */
     public function get_payment_method_data() {
+        $countries = WC_Montonio_Helper::get_inbank_countries();
+
         $title = $this->get_setting( 'title' );
 
         if ( 'Financing' === $title ) {
@@ -32,10 +34,14 @@ class WC_Montonio_Hire_Purchase_Block extends AbstractMontonioPaymentMethodBlock
         }
 
         return array(
-            'title'       => $title,
-            'description' => $this->get_setting( 'description' ),
-            'iconurl'     => WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/inbank.svg',
-            'sandboxMode' => WC_Montonio_Helper::is_test_mode()
+            'title'             => $title,
+            'description'       => $this->get_setting( 'description' ),
+            'iconurl'           => WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/inbank.svg',
+            'sandboxMode'       => WC_Montonio_Helper::is_test_mode(),
+            'countries'         => $countries,
+            'defaultCountry'    => WC_Montonio_Helper::get_inbank_checkout_country( $this->get_setting( 'default_country' ), $this->get_setting( 'preselect_country' ) ),
+            'preselectCountry'  => $this->get_setting( 'preselect_country', 'disable' ),
+            'hideCountrySelect' => 'yes' === $this->get_setting( 'hide_country_select' )
         );
     }
 }

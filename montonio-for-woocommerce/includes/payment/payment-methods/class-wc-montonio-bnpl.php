@@ -82,21 +82,21 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'     => array(
+            'enabled'             => array(
                 'title'       => __( 'Enable/Disable', 'montonio-for-woocommerce' ),
                 'label'       => __( 'Enable Montonio Pay Later', 'montonio-for-woocommerce' ),
                 'type'        => 'checkbox',
                 'description' => '',
                 'default'     => 'no'
             ),
-            'title'       => array(
+            'title'               => array(
                 'title'       => __( 'Title', 'montonio-for-woocommerce' ),
                 'type'        => 'text',
                 'default'     => __( 'Pay Later', 'montonio-for-woocommerce' ),
                 'description' => __( 'Payment method title which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'description' => array(
+            'description'         => array(
                 'title'       => __( 'Description', 'montonio-for-woocommerce' ),
                 'type'        => 'textarea',
                 'css'         => 'width: 400px;',
@@ -104,12 +104,38 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
                 'description' => __( 'Payment method description which the user sees during checkout.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
             ),
-            'min_amount'  => array(
+            'min_amount'          => array(
                 'title'       => __( 'Minimum cart amount', 'montonio-for-woocommerce' ),
                 'type'        => 'text',
                 'default'     => '30',
                 'description' => __( 'Display "Pay Later" payment method when the cart total is more than the specified amount.', 'montonio-for-woocommerce' ),
                 'desc_tip'    => true
+            ),
+            'default_country'     => array(
+                'title'       => __( 'Default Country', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => WC_Montonio_Helper::get_inbank_default_country(),
+                'description' => __( 'The country selected first at checkout. The customer takes the loan in the selected country.', 'montonio-for-woocommerce' ),
+                'options'     => WC_Montonio_Helper::get_inbank_countries()
+            ),
+            'hide_country_select' => array(
+                'title'   => __( 'Hide Country Select', 'montonio-for-woocommerce' ),
+                'label'   => __( 'Enable', 'montonio-for-woocommerce' ),
+                'type'    => 'checkbox',
+                'default' => 'no'
+            ),
+            'preselect_country'   => array(
+                'title'       => __( 'Preselect country by user data', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => 'disable',
+                'description' => __( 'Automatically change the selected country based on customer\'s data? If unsuccessful, fallback to "Default Country".', 'montonio-for-woocommerce' ),
+                'options'     => array(
+                    'disable' => __( 'Don\'t select automatically', 'montonio-for-woocommerce' ),
+                    'billing' => __( 'Select based on user billing country', 'montonio-for-woocommerce' ),
+                    'locale'  => __( 'Select based on site language', 'montonio-for-woocommerce' )
+                )
             )
         );
     }
@@ -151,15 +177,111 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
      * @return void
      */
     public function payment_scripts() {
-        if ( ! is_cart() && ! is_checkout() && ! isset( $_GET['pay_for_order'] ) && ! is_add_payment_method_page() ) {
+        // The script loads the Montonio SDK, so only where classic checkout can show Pay Later. The Pay Later block
+        // loads its own script.
+        if ( 'yes' !== $this->enabled || empty( $this->method_config ) ) {
             return;
         }
 
+        if ( ! is_checkout() || is_order_received_page() || WC_Montonio_Helper::is_checkout_block_rendering() ) {
+            return;
+        }
+
+        wp_localize_script( 'montonio-bnpl', 'wc_montonio_bnpl', $this->get_widget_params() );
         wp_enqueue_script( 'montonio-bnpl' );
     }
 
     /**
-     * Output the payment method fields on the checkout page.
+     * Gets the Pay Later periods with the cart total each one needs.
+     *
+     * @since 10.5.1
+     * @return array Periods keyed by the number of parts, each with a title, min and max.
+     */
+    public static function get_bnpl_periods() {
+        return array(
+            '1' => array(
+                'title' => __( 'Pay next month', 'montonio-for-woocommerce' ),
+                'min'   => 30,
+                'max'   => 800
+            ),
+            '2' => array(
+                'title' => __( 'Pay in two parts', 'montonio-for-woocommerce' ),
+                'min'   => 75,
+                'max'   => 2500
+            ),
+            '3' => array(
+                'title' => __( 'Pay in three parts', 'montonio-for-woocommerce' ),
+                'min'   => 75,
+                'max'   => 2500
+            )
+        );
+    }
+
+    /**
+     * Gets the Pay Later periods for the Montonio SDK's widget, in classic and block checkout. The widget applies its
+     * own limits for each period and country, so only the titles come from here.
+     *
+     * @since 10.5.1
+     * @return array Periods, each with a period and a title.
+     */
+    public static function get_widget_periods() {
+        $periods = array();
+
+        foreach ( self::get_bnpl_periods() as $period => $bnpl_period ) {
+            $periods[] = array(
+                'period' => (string) $period,
+                'title'  => $bnpl_period['title']
+            );
+        }
+
+        return $periods;
+    }
+
+    /**
+     * Gets the options for the Montonio SDK's Pay Later widget on classic checkout. The cart total and the country
+     * selected first aren't here: they change with every checkout update, so payment_fields() renders them on the
+     * widget container.
+     *
+     * @since 10.5.1
+     * @return array Widget options.
+     */
+    private function get_widget_params() {
+        $countries = WC_Montonio_Helper::get_inbank_countries();
+
+        // The widget replaces #amount with the bare amount still needed, so the currency symbol goes around it where the
+        // store's currency position puts it, like wc_price()
+        $amount = sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), '#amount' );
+
+        return array(
+            'bnplOptions'          => self::get_widget_periods(),
+            /* translators: %s: additional amount needed */
+            'addMoreMessage'       => sprintf( __( 'Add %s more to your cart to use this payment method', 'montonio-for-woocommerce' ), $amount ),
+            'overMaxAmountMessage' => __( 'Cart total exceeds the maximum limit for this payment method', 'montonio-for-woocommerce' ),
+            'regionSelectLabel'    => __( 'Country', 'montonio-for-woocommerce' ),
+            'regions'              => array_keys( $countries ),
+            'regionNames'          => $countries,
+            'hideCountrySelect'    => 'yes' === $this->get_option( 'hide_country_select' )
+        );
+    }
+
+    /**
+     * Gets the country the Pay Later widget selects first. WooCommerce saves the billing country the customer entered
+     * before every checkout update renders the payment fields, so preselecting by billing country follows the address.
+     *
+     * @since 10.5.1
+     * @return string The country code: EE, LV or LT.
+     */
+    private function get_checkout_country() {
+        return WC_Montonio_Helper::get_inbank_checkout_country(
+            $this->get_option( 'default_country' ),
+            $this->get_option( 'preselect_country' ),
+            WC()->customer ? WC()->customer->get_billing_country() : ''
+        );
+    }
+
+    /**
+     * Output the payment method fields on the checkout page. The Montonio SDK's Pay Later widget replaces the periods
+     * rendered here, which stay as the fallback when the SDK doesn't load.
      *
      * @return void
      */
@@ -177,30 +299,14 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
             echo esc_html( apply_filters( 'wc_montonio_description', wp_kses_post( $description ), $this->id ) );
         }
 
-        $bnpl_periods = array(
-            '1' => array(
-                'title' => __( 'Pay next month', 'montonio-for-woocommerce' ),
-                'min'   => 30,
-                'max'   => 800
-            ),
-            '2' => array(
-                'title' => __( 'Pay in two parts', 'montonio-for-woocommerce' ),
-                'min'   => 75,
-                'max'   => 2500
-            ),
-            '3' => array(
-                'title' => __( 'Pay in three parts', 'montonio-for-woocommerce' ),
-                'min'   => 75,
-                'max'   => 2500
-            )
-        );
-
         $cart_total      = WC()->cart ? $this->get_order_total() : 0;
+        $country         = $this->get_checkout_country();
         $count           = 0;
         $selected_period = 1;
 
+        echo '<div id="montonio-bnpl-widget-container" class="montonio-bnpl-form" data-grand-total="' . esc_attr( wc_format_decimal( $cart_total, 2 ) ) . '" data-default-region="' . esc_attr( $country ) . '">';
         echo '<div class="montonio-bnpl-items">';
-        foreach ( $bnpl_periods as $key => $value ) {
+        foreach ( self::get_bnpl_periods() as $key => $value ) {
             $class    = '';
             $subtitle = '';
 
@@ -224,8 +330,29 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
 
         echo '</div>';
         echo '<input type="hidden" name="montonio_bnpl_period" id="montonio_bnpl_period" value="' . esc_attr( $selected_period ) . '">';
+        echo '<input type="hidden" name="montonio_bnpl_preferred_country" value="' . esc_attr( $country ) . '">';
+        echo '</div>';
 
         do_action( 'wc_montonio_after_payment_desc', $this->id );
+    }
+
+    /**
+     * Rejects the order when no period is selected. The widget leaves the period empty when none fits the cart total in
+     * the selected country, and Montonio would refuse the order.
+     *
+     * @since 10.5.1
+     * @return bool True when a period was chosen or none was posted.
+     */
+    public function validate_fields() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verifies the checkout nonce first
+        if ( isset( $_POST['montonio_bnpl_period'] ) && '' === sanitize_key( wp_unslash( $_POST['montonio_bnpl_period'] ) ) ) {
+            // Same text as the Pay Later block shows for an empty period
+            wc_add_notice( __( 'Pay Later is not available for this cart total. Please choose another payment method.', 'montonio-for-woocommerce' ), 'error' );
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -249,6 +376,10 @@ class WC_Montonio_BNPL extends WC_Montonio_Payment_Gateway {
 
             if ( isset( $_POST['montonio_bnpl_period'] ) ) {
                 $payment_data['payment']['methodOptions']['period'] = (float) sanitize_key( wp_unslash( $_POST['montonio_bnpl_period'] ) );
+            }
+
+            if ( ! empty( $_POST['montonio_bnpl_preferred_country'] ) ) {
+                $payment_data['payment']['methodOptions']['preferredCountry'] = sanitize_text_field( wp_unslash( $_POST['montonio_bnpl_preferred_country'] ) );
             }
 
             // Create new Montonio API instance

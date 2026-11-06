@@ -113,6 +113,10 @@ class WC_Montonio_Shipping_Helper {
     public static function create_shipping_method_instance( $method_id, $instance_id = 0 ) {
         $shipping_class_names = WC()->shipping->get_shipping_method_class_names();
 
+        if ( ! isset( $shipping_class_names[$method_id] ) || ! class_exists( $shipping_class_names[$method_id] ) ) {
+            return null;
+        }
+
         return new $shipping_class_names[$method_id]( $instance_id );
     }
 

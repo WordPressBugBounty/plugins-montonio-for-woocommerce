@@ -61,6 +61,16 @@ class WC_Montonio_Shipping_Order {
      * @since 7.0.0
      */
     public static function enqueue_required_admin_scripts() {
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+        if ( ! $screen || ! in_array( $screen->id, array( 'shop_order', 'woocommerce_page_wc-orders' ), true ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'edit_shop_orders' ) ) {
+            return;
+        }
+
         wp_enqueue_script( 'montonio-shipping-pickup-points-admin' );
 
         wp_localize_script(
@@ -456,14 +466,23 @@ class WC_Montonio_Shipping_Order {
             wp_send_json_error( 'Unable to verify your request. Please reload the page and try again.', 403 );
         }
 
+        if ( ! current_user_can( 'edit_shop_orders' ) ) {
+            wp_send_json_error( 'You do not have permission to perform this action.', 403 );
+        }
+
         if ( ! isset( $_POST['shipping_method_id'] ) ) {
             wp_send_json_error();
         }
 
         $shipping_method_id       = sanitize_text_field( wp_unslash( $_POST['shipping_method_id'] ) );
         $shipping_method_instance = WC_Montonio_Shipping_Helper::create_shipping_method_instance( $shipping_method_id );
-        $carrier                  = $shipping_method_instance->carrier_code;
-        $type                     = $shipping_method_instance->type_v2;
+
+        if ( ! $shipping_method_instance ) {
+            wp_send_json_error();
+        }
+
+        $carrier = $shipping_method_instance->carrier_code;
+        $type    = $shipping_method_instance->type_v2;
 
         $country_availability = WC_Montonio_Shipping_Item_Manager::get_shipping_method_countries( $carrier, $type );
 
@@ -497,6 +516,10 @@ class WC_Montonio_Shipping_Order {
     public static function get_pickup_point_select() {
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'montonio_shipping_pickup_points_admin_nonce' ) ) {
             wp_send_json_error( 'Unable to verify your request. Please reload the page and try again.', 403 );
+        }
+
+        if ( ! current_user_can( 'edit_shop_orders' ) ) {
+            wp_send_json_error( 'You do not have permission to perform this action.', 403 );
         }
 
         if ( ! isset( $_POST['country'] ) || ! isset( $_POST['carrier'] ) || ! isset( $_POST['type'] ) ) {
@@ -550,6 +573,10 @@ class WC_Montonio_Shipping_Order {
             wp_send_json_error( 'Unable to verify your request. Please reload the page and try again.', 403 );
         }
 
+        if ( ! current_user_can( 'edit_shop_orders' ) ) {
+            wp_send_json_error( 'You do not have permission to perform this action.', 403 );
+        }
+
         if ( ! isset( $_POST['order_id'] ) || ! isset( $_POST['country'] ) || ! isset( $_POST['carrier'] ) || ! isset( $_POST['type'] ) ) {
             wp_send_json_error();
         }
@@ -560,6 +587,15 @@ class WC_Montonio_Shipping_Order {
         $type     = sanitize_text_field( wp_unslash( $_POST['type'] ) );
 
         $order = wc_get_order( $order_id );
+
+        if ( ! $order ) {
+            wp_send_json_error();
+        }
+
+        // Same check as WooCommerce's order edit screen: this order, or every order for store managers
+        if ( ! current_user_can( 'edit_shop_order', $order->get_id() ) && ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( 'You do not have permission to perform this action.', 403 );
+        }
 
         if ( in_array( $type, array( 'parcelMachine', 'postOffice', 'parcelShop' ) ) ) {
             // Set method type
@@ -574,6 +610,11 @@ class WC_Montonio_Shipping_Order {
 
             // Get pickup point info
             $shipping_method_item = WC_Montonio_Shipping_Item_Manager::get_shipping_method_item( $shipping_method_item_id );
+
+            // The pickup point can be gone since the page loaded, e.g. removed by a sync
+            if ( ! $shipping_method_item ) {
+                wp_send_json_error( 'The selected pickup point was not found. Please reload the page and try again.', 404 );
+            }
 
             // Update order meta data and shipping address
             $order->update_meta_data( '_montonio_pickup_point_name', $shipping_method_item->item_name );

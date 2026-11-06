@@ -139,13 +139,7 @@ class WC_Montonio_Payments extends WC_Montonio_Payment_Gateway {
                 'class'       => 'wc-enhanced-select',
                 'default'     => 'EE',
                 'description' => __( 'The country whose banks to show first at checkout when using Euro (€) as currency.<br/>When using a different currency, e.g Polish Zloty (PLN), this option will be disregarded and the correct currency will be shown.', 'montonio-for-woocommerce' ),
-                'options'     => array(
-                    'EE' => 'Estonia',
-                    'FI' => 'Finland',
-                    'LV' => 'Latvia',
-                    'LT' => 'Lithuania',
-                    'PL' => 'Poland'
-                )
+                'options'     => WC_Montonio_Helper::get_bank_payment_countries()
             ),
             'hide_country_select'        => array(
                 'title'   => __( 'Hide Country Select', 'montonio-for-woocommerce' ),
@@ -216,43 +210,39 @@ class WC_Montonio_Payments extends WC_Montonio_Payment_Gateway {
     }
 
     /**
+     * Gets the bank country selected first at checkout. A store in Polish Zloty always starts with Poland, the only
+     * country whose banks take it.
+     *
+     * @since 10.5.1
+     * @param array  $countries Country codes with banks for the store currency.
+     * @param string $currency  The store currency.
+     * @return string The country code.
+     */
+    private function get_preferred_country( $countries, $currency ) {
+        if ( 'PLN' === $currency ) {
+            return 'PL';
+        }
+
+        $preselect_country = $this->preselect_country;
+        $billing_country   = WC()->customer ? WC()->customer->get_billing_country() : '';
+
+        // Until the customer has a billing country, the site language's country goes first, as it did before 10.5.1
+        if ( 'billing' === $preselect_country && empty( $billing_country ) ) {
+            $preselect_country = 'locale';
+        }
+
+        return WC_Montonio_Helper::get_preselected_country( $countries, $this->default_country, $preselect_country, $billing_country );
+    }
+
+    /**
      * Output the payment method fields on the checkout page.
      *
      * @return void
      */
     public function payment_fields() {
-        $currency        = WC_Montonio_Helper::get_currency();
-        $description     = $this->get_description();
-
-        $available_countries = array(
-            'EE' => __( 'Estonia', 'montonio-for-woocommerce' ),
-            'FI' => __( 'Finland', 'montonio-for-woocommerce' ),
-            'LV' => __( 'Latvia', 'montonio-for-woocommerce' ),
-            'LT' => __( 'Lithuania', 'montonio-for-woocommerce' ),
-            'PL' => __( 'Poland', 'montonio-for-woocommerce' )
-        );
-
-        if ( 'locale' === $this->preselect_country || 'billing' === $this->preselect_country ) {
-            if ( 'billing' === $this->preselect_country && WC()->customer && WC()->customer->get_billing_country() ) {
-                $user_country = WC()->customer->get_billing_country();
-            } else {
-                $user_country = strtoupper( WC_Montonio_Helper::get_locale() );
-            }
-
-            if ( 'EE' === $user_country ) {
-                $this->default_country = 'EE';
-            } else {
-                foreach ( $available_countries as $country_code => $country_name ) {
-                    if ( $country_code === $user_country ) {
-                        $this->default_country = $user_country;
-                    }
-                }
-            }
-        }
-
-        if ( 'PLN' === $currency ) {
-            $this->default_country = 'PL';
-        }
+        $currency            = WC_Montonio_Helper::get_currency();
+        $description         = $this->get_description();
+        $available_countries = WC_Montonio_Helper::get_bank_payment_countries();
 
         do_action( 'wc_montonio_before_payment_desc', $this->id );
 
@@ -277,29 +267,25 @@ class WC_Montonio_Payments extends WC_Montonio_Payment_Gateway {
                 return array_search( $currency, $country['supportedCurrencies'] ) !== false;
             } );
 
+            // The dropdown, the posted country and the banks shown all start from the same country
+            $preferred_country = $this->get_preferred_country( array_keys( $countries ), $currency );
+
             if ( 'yes' !== $this->hide_country_select && count( $countries ) > 1 ) {
                 echo '<select class="montonio-payments-country-dropdown" name="montonio_payments_preferred_country">';
                 foreach ( $countries as $r => $list ) {
-                    echo '<option ' . ( $r === $this->default_country ? 'selected="selected"' : '' ) . ' value="' . esc_attr( $r ) . '">' . esc_html( $available_countries[$r] ) . '</option>';
+                    echo '<option ' . ( $r === $preferred_country ? 'selected="selected"' : '' ) . ' value="' . esc_attr( $r ) . '">' . esc_html( $available_countries[$r] ) . '</option>';
                 }
                 echo '</select>';
             } else {
-                echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $this->default_country ) . '">';
+                echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $preferred_country ) . '">';
             }
 
             echo '<div id="montonio-payments-description" class="montonio-bank-items montonio-bank-items--' . esc_attr( $this->handle_style ) . '">';
 
-            $default_country = array_keys( $countries )[0];
-            foreach ( $countries as $country => $value ) {
-                if ( $country === $this->default_country ) {
-                    $default_country = $country;
-                }
-            }
-
             foreach ( $countries as $r => $list ) {
                 foreach ( $list['paymentMethods'] as $key => $value ) {
                     if ( in_array( $currency, $value['supportedCurrencies'] ) ) {
-                        echo '<div class="bank-region-' . esc_attr( $r ) . ' montonio-bank-item' . ( $r === $default_country ? '' : ' montonio-bank-item--hidden' ) . '" data-bank="' . esc_attr( $value['code'] ) . '"><img class="montonio-bank-item-img" src="' . esc_url( $value['logoUrl'] ) . '"  alt="' . esc_attr( $value['name'] ) . '"></div>';
+                        echo '<div class="bank-region-' . esc_attr( $r ) . ' montonio-bank-item' . ( $r === $preferred_country ? '' : ' montonio-bank-item--hidden' ) . '" data-bank="' . esc_attr( $value['code'] ) . '"><img class="montonio-bank-item-img" src="' . esc_url( $value['logoUrl'] ) . '"  alt="' . esc_attr( $value['name'] ) . '"></div>';
                     }
                 }
             }
@@ -308,7 +294,7 @@ class WC_Montonio_Payments extends WC_Montonio_Payment_Gateway {
             echo '<input type="hidden" name="montonio_payments_preselected_bank" id="montonio_payments_preselected_bank">';
             echo '</div>';
         } else {
-            echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $this->default_country ) . '">';
+            echo '<input type="hidden" name="montonio_payments_preferred_country" value="' . esc_attr( $this->get_preferred_country( array_keys( $available_countries ), $currency ) ) . '">';
         }
 
         do_action( 'wc_montonio_after_payment_desc', $this->id );

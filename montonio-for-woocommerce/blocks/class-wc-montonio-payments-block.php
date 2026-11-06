@@ -26,22 +26,11 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
      * @return string The default country code.
      */
     public function get_default_country( $available_countries ) {
-        $default_country   = $this->get_setting( 'default_country', 'EE' );
-        $preselect_country = $this->get_setting( 'preselect_country' );
-
-        if ( 'locale' === $preselect_country ) {
-            $user_country = strtoupper( WC_Montonio_Helper::get_locale() );
-
-            if ( 'ET' === $user_country ) {
-                $user_country = 'EE';
-            }
-
-            if ( array_key_exists( $user_country, $available_countries ) ) {
-                $default_country = $user_country;
-            }
-        }
-
-        return $default_country;
+        return WC_Montonio_Helper::get_preselected_country(
+            array_keys( $available_countries ),
+            $this->get_setting( 'default_country', 'EE' ),
+            $this->get_setting( 'preselect_country' )
+        );
     }
 
     /**
@@ -51,14 +40,7 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
      * @return array Payment method data including various settings and configurations.
      */
     public function get_payment_method_data() {
-        $available_countries = array(
-            'EE' => __( 'Estonia', 'montonio-for-woocommerce' ),
-            'FI' => __( 'Finland', 'montonio-for-woocommerce' ),
-            'LV' => __( 'Latvia', 'montonio-for-woocommerce' ),
-            'LT' => __( 'Lithuania', 'montonio-for-woocommerce' ),
-            'PL' => __( 'Poland', 'montonio-for-woocommerce' )
-        );
-
+        $available_countries = WC_Montonio_Helper::get_bank_payment_countries();
         $hide_country_select = $this->get_setting( 'hide_country_select' );
         $currency            = WC_Montonio_Helper::get_currency();
         $default_country     = $this->get_default_country( $available_countries );
@@ -68,6 +50,16 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
 
         if ( $currency == 'PLN' ) {
             $default_country = 'PL';
+        }
+
+        // Countries whose banks take the store currency. Preselecting by billing country picks only from these, as
+        // classic checkout does, since the widget refuses a country without banks for the currency.
+        $checkout_countries = array();
+
+        foreach ( (array) $setup_data as $country => $country_setup ) {
+            if ( isset( $available_countries[$country] ) && in_array( $currency, $country_setup['supportedCurrencies'] ?? array(), true ) ) {
+                $checkout_countries[] = $country;
+            }
         }
 
         $title = $this->get_setting( 'title' );
@@ -86,8 +78,11 @@ class WC_Montonio_Payments_Block extends AbstractMontonioPaymentMethodBlock {
             'currency'           => $currency,
             'preselectCountry'   => $preselect_country,
             'availableCountries' => array_keys( $available_countries ),
+            'checkoutCountries'  => $checkout_countries,
             'defaultRegion'      => $default_country,
             'regions'            => ( $hide_country_select == 'yes' ) ? array( $default_country ) : null,
+            // The block narrows the regions down to the country it selects first, which can be the billing country
+            'hideCountrySelect'  => 'yes' === $hide_country_select,
             'regionNames'        => $available_countries,
             'handleStyle'        => $this->get_setting( 'handle_style' )
         );

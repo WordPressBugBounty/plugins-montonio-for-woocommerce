@@ -2203,9 +2203,48 @@ body.montonio-modal-open {
         }
     }
 
-    &__cta:hover {
-        background: #1a004d;
+    // Button styles, picked per banner with cta_style. Each template has a default
+    // (Montonio_OTA_Banners::CTA_STYLE_DEFAULTS); the base __cta rule above is indigo.
+    &__cta--indigo {
+        background: #260071;
         color: #fff !important;
+
+        &:hover {
+            background: #1a004d;
+            color: #fff !important;
+        }
+    }
+
+    // Dark text on white, so it reads on every banner background. Hover fades the button
+    // instead of darkening it, so it looks right on light and dark banners alike.
+    &__cta--white {
+        background: #fff;
+        color: #1B1B1B !important;
+
+        &:hover {
+            color: #1B1B1B !important;
+            opacity: 0.8;
+        }
+    }
+
+    &__cta--red {
+        background: #A90719;
+        color: #fff !important;
+
+        &:hover {
+            background: #870514;
+            color: #fff !important;
+        }
+    }
+
+    &__cta--beige {
+        background: #F9E0C0;
+        color: #211D19 !important;
+
+        &:hover {
+            background: #E2BF92;
+            color: #211D19 !important;
+        }
     }
 
     // A CTA that opens in a new tab.
@@ -2240,7 +2279,7 @@ body.montonio-modal-open {
             color: #fff;
 
             span {
-                color: #C8F4EF;
+                color: #F9E0C0;
             }
         }
 
@@ -2248,18 +2287,9 @@ body.montonio-modal-open {
             color: #E4DBFA;
         }
 
-        .montonio-ota-banner__cta {
-            background: #fff !important;
-            color: #260071 !important;
-
-            &:hover {
-                background: #E4DBFA !important;
-            }
-        }
-
         .montonio-badge {
-            background: #F1FCFB;
-            color: #0D6B6B;
+            background: #F9E0C0;
+            color: #260071;
         }
 
         .montonio-ota-banner__close {
@@ -2281,21 +2311,8 @@ body.montonio-modal-open {
         }
 
         .montonio-badge {
-            background: #FFF6DA;
-            color: #BF8B00;
-        }
-
-        // 1px less padding keeps the bordered button the same size as the other templates' buttons.
-        .montonio-ota-banner__cta {
-            padding: 7px 11px;
-            background: #fff !important;
-            color: #1B1B1B !important;
-            border: 1px solid #ADADB0;
-
-            &:hover {
-                background: #F8F6F4 !important;
-                border-color: #1B1B1B;
-            }
+            background: #F0EBFF;
+            color: #260071;
         }
     }
 
@@ -2318,15 +2335,6 @@ body.montonio-modal-open {
         .montonio-badge {
             background: #0A1F1F;
             color: #C8F4EF;
-        }
-
-        .montonio-ota-banner__cta {
-            background: #fff !important;
-            color: #0D6B6B !important;
-
-            &:hover {
-                background: #C8F4EF !important;
-            }
         }
 
         .montonio-ota-banner__close {
@@ -2359,14 +2367,6 @@ body.montonio-modal-open {
         .montonio-badge {
             background: #FFCFD5;
             color: #A9061A;
-        }
-
-        .montonio-ota-banner__cta {
-            background: #A90719;
-
-            &:hover {
-                background: #870514;
-            }
         }
 
         .montonio-ota-banner__close {

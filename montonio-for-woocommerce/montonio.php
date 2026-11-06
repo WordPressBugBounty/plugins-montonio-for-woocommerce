@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.5.0
+ * Version:           10.5.1
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -14,12 +14,12 @@
  * Requires Plugins: woocommerce
  * Requires PHP: 7.2
  * WC requires at least: 4.0.0
- * WC tested up to: 11.2.1
+ * WC tested up to: 11.2.2
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.5.0' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.5.1' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -279,7 +279,8 @@ if ( ! class_exists( 'Montonio' ) ) {
             wp_register_style( 'montonio-pickup-points', WC_MONTONIO_PLUGIN_URL . '/assets/css/pickup-points.css', array(), WC_MONTONIO_PLUGIN_VERSION );
 
             wp_register_script( 'montonio-pis', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-pis.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
-            wp_register_script( 'montonio-bnpl', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-bnpl.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-bnpl', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-bnpl.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
+            wp_register_script( 'montonio-hire-purchase', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-hire-purchase.js', array( 'jquery' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-embedded-card-legacy', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card-legacy.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-embedded-blik', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-blik.js', array( 'jquery', 'montonio-js-legacy' ), WC_MONTONIO_PLUGIN_VERSION, true );
             wp_register_script( 'montonio-embedded-card', WC_MONTONIO_PLUGIN_URL . '/assets/js/montonio-embedded-card.js', array( 'jquery', 'montonio-js' ), WC_MONTONIO_PLUGIN_VERSION, true );

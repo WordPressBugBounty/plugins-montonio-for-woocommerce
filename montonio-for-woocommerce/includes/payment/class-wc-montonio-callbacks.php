@@ -450,7 +450,7 @@ class WC_Montonio_Callbacks {
             case 'cardPayments':
                 return 'Card payment';
             case 'bnpl':
-                return 'Pay in parts';
+                return 'Pay Later';
             case 'hirePurchase':
                 return 'Financing';
             case 'blik':

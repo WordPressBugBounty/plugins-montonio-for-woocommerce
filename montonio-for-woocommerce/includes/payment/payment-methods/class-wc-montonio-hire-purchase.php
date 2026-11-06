@@ -36,7 +36,7 @@ class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
     public function __construct() {
         $this->id                 = 'wc_montonio_hire_purchase';
         $this->icon               = WC_MONTONIO_PLUGIN_URL . '/assets/images/payments/inbank.svg';
-        $this->has_fields         = false;
+        $this->has_fields         = true;
         $this->method_title       = __( 'Montonio Financing', 'montonio-for-woocommerce' );
         $this->method_description = __( 'Hire purchase provided in co-operation with Inbank', 'montonio-for-woocommerce' );
         $this->supports           = array(
@@ -69,6 +69,7 @@ class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
 
         // Hooks
         $this->register_montonio_hooks();
+        add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
     }
 
     /**
@@ -109,6 +110,32 @@ class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
                 'custom_attributes' => array(
                     'min'  => 100,
                     'step' => '1'
+                )
+            ),
+            'default_country'     => array(
+                'title'       => __( 'Default Country', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => WC_Montonio_Helper::get_inbank_default_country(),
+                'description' => __( 'The country selected first at checkout. The customer takes the loan in the selected country.', 'montonio-for-woocommerce' ),
+                'options'     => WC_Montonio_Helper::get_inbank_countries()
+            ),
+            'hide_country_select' => array(
+                'title'   => __( 'Hide Country Select', 'montonio-for-woocommerce' ),
+                'label'   => __( 'Enable', 'montonio-for-woocommerce' ),
+                'type'    => 'checkbox',
+                'default' => 'no'
+            ),
+            'preselect_country'   => array(
+                'title'       => __( 'Preselect country by user data', 'montonio-for-woocommerce' ),
+                'type'        => 'select',
+                'class'       => 'wc-enhanced-select',
+                'default'     => 'disable',
+                'description' => __( 'Automatically change the selected country based on customer\'s data? If unsuccessful, fallback to "Default Country".', 'montonio-for-woocommerce' ),
+                'options'     => array(
+                    'disable' => __( 'Don\'t select automatically', 'montonio-for-woocommerce' ),
+                    'billing' => __( 'Select based on user billing country', 'montonio-for-woocommerce' ),
+                    'locale'  => __( 'Select based on site language', 'montonio-for-woocommerce' )
                 )
             ),
             'calculator_title'    => array(
@@ -201,6 +228,59 @@ class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
     }
 
     /**
+     * Enqueue payment scripts for the frontend.
+     *
+     * @since 10.5.1
+     * @return void
+     */
+    public function payment_scripts() {
+        // Classic checkout only: the Financing block keeps the customer's country itself
+        if ( 'yes' !== $this->enabled || empty( $this->method_config ) || 'yes' === $this->get_option( 'hide_country_select' ) ) {
+            return;
+        }
+
+        if ( ! is_checkout() || is_order_received_page() || WC_Montonio_Helper::is_checkout_block_rendering() ) {
+            return;
+        }
+
+        wp_enqueue_script( 'montonio-hire-purchase' );
+    }
+
+    /**
+     * Output the payment method fields on the checkout page: the description, and the loan country dropdown unless
+     * the merchant hides it. WooCommerce renders them again on every checkout update, after saving the billing country
+     * the customer entered, so the billing country preselect follows the address.
+     *
+     * @since 10.5.1
+     * @return void
+     */
+    public function payment_fields() {
+        parent::payment_fields();
+
+        $default_country = WC_Montonio_Helper::get_inbank_checkout_country(
+            $this->get_option( 'default_country' ),
+            $this->get_option( 'preselect_country' ),
+            WC()->customer ? WC()->customer->get_billing_country() : ''
+        );
+
+        if ( 'yes' === $this->get_option( 'hide_country_select' ) ) {
+            echo '<input type="hidden" name="montonio_hire_purchase_preferred_country" value="' . esc_attr( $default_country ) . '">';
+
+            return;
+        }
+
+        echo '<div class="montonio-hire-purchase-form">';
+        echo '<select class="montonio-hire-purchase-country-select" name="montonio_hire_purchase_preferred_country" aria-label="' . esc_attr__( 'Country', 'montonio-for-woocommerce' ) . '" data-default-country="' . esc_attr( $default_country ) . '">';
+
+        foreach ( WC_Montonio_Helper::get_inbank_countries() as $code => $name ) {
+            echo '<option value="' . esc_attr( $code ) . '"' . selected( $code, $default_country, false ) . '>' . esc_html( $name ) . '</option>';
+        }
+
+        echo '</select>';
+        echo '</div>';
+    }
+
+    /**
      * Process the payment for an order.
      *
      * @param  int $order_id The ID of the order being processed.
@@ -218,6 +298,10 @@ class WC_Montonio_Hire_Purchase extends WC_Montonio_Payment_Gateway {
                     'methodOptions' => null
                 )
             );
+
+            if ( ! empty( $_POST['montonio_hire_purchase_preferred_country'] ) ) {
+                $payment_data['payment']['methodOptions']['preferredCountry'] = sanitize_text_field( wp_unslash( $_POST['montonio_hire_purchase_preferred_country'] ) );
+            }
 
             $montonio_api = new WC_Montonio_API();
             $response     = $montonio_api->create_order( $order, $payment_data );

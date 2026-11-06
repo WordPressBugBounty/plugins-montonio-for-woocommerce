@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.5.0
+Version: 10.5.1
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.5.0
+Stable tag: 10.5.1
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -140,6 +140,16 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 When Montonio Ladu has switched recommendation tagging on for the store, clicking a product recommendation on a product or cart page sends the shop a short note: product ids, a page-section word, the ids of the cards shown and, for a card without a product id, a short hash of the clicked product's link; no shopper identifier. The shop keeps the note with the shopper's WooCommerce session for 30 minutes, uses it when the shopper adds a product to the cart, and sets no cookie of its own; a click from a shopper who has no WooCommerce session yet starts one. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. The `wc_montonio_recommendation_note_creates_session` filter, returning false, keeps notes to shoppers who already have a session. The plugin suggests matching text for the store's privacy policy page under Settings → Privacy.
 
 == Changelog ==
+= 10.5.1 =
+* Added – Customers can now choose the country they take a Pay Later or Financing loan in, in both classic and block checkout
+* Added – Financing now has the same Default Country, Hide Country Select and Preselect country by user data settings as Pay Later
+* Added – Pay Later in classic checkout now uses the same Montonio SDK widget as the Checkout block
+* Fix – With Hide Country Select on and the country preselected by billing country, bank payments in the Checkout block now show the banks of the customer's billing country instead of always the Default Country
+* Fix – "Select based on site language" now correctly selects Estonia on Estonian sites in classic bank payments
+* Fix – Pay Later periods in the Checkout block now update when the cart total changes, and an order can no longer be placed with a period that doesn't fit the cart total
+* Security – Changing an order's pickup point in the admin now requires permission to edit that order, and a pickup point that no longer exists is rejected instead of saving an empty shipping address
+* Dev – The Pay Later and Financing checkout scripts now load only on classic checkout when the payment method is enabled, instead of also on the cart page
+
 = 10.5.0 =
 * Added – New Matkahuolto parcel machines, parcel shops and courier shipping methods
 * Added – Montonio can now send announcements and notices in the WordPress admin dashboard

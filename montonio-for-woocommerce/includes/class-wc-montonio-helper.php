@@ -418,6 +418,109 @@ class WC_Montonio_Helper {
     }
 
     /**
+     * Gets the countries whose banks Montonio bank payments can show. Checkout narrows them down to the countries with
+     * banks for the store currency.
+     *
+     * @since 10.5.1
+     * @return array Country names keyed by country code.
+     */
+    public static function get_bank_payment_countries() {
+        return array(
+            'EE' => __( 'Estonia', 'montonio-for-woocommerce' ),
+            'FI' => __( 'Finland', 'montonio-for-woocommerce' ),
+            'LV' => __( 'Latvia', 'montonio-for-woocommerce' ),
+            'LT' => __( 'Lithuania', 'montonio-for-woocommerce' ),
+            'PL' => __( 'Poland', 'montonio-for-woocommerce' )
+        );
+    }
+
+    /**
+     * Gets the countries Inbank lends in, for Pay Later and Financing.
+     *
+     * @since 10.5.1
+     * @return array Country names keyed by country code.
+     */
+    public static function get_inbank_countries() {
+        return array(
+            'EE' => __( 'Estonia', 'montonio-for-woocommerce' ),
+            'LV' => __( 'Latvia', 'montonio-for-woocommerce' ),
+            'LT' => __( 'Lithuania', 'montonio-for-woocommerce' )
+        );
+    }
+
+    /**
+     * Gets the Montonio store country if Inbank lends there, otherwise Estonia. Without a country in the order, the loan
+     * is taken in the store country, so defaulting to it keeps checkouts where the customer picks nothing as before.
+     *
+     * @since 10.5.1
+     * @return string The country code: EE, LV or LT.
+     */
+    public static function get_inbank_default_country() {
+        $store_details = self::get_store_details();
+        $country       = $store_details['country'] ?? '';
+
+        return array_key_exists( $country, self::get_inbank_countries() ) ? $country : 'EE';
+    }
+
+    /**
+     * Gets the country a payment method's country dropdown selects first at checkout: the billing country or the site
+     * language's country, depending on how the merchant preselects, when the method supports it. Otherwise the
+     * merchant's default country, or the first supported country when the default isn't one.
+     *
+     * @since 10.5.1
+     * @param array  $countries         Country codes the method supports at checkout.
+     * @param string $default_country   The gateway's Default Country setting.
+     * @param string $preselect_country The gateway's Preselect country by user data setting: disable, billing or locale.
+     * @param string $billing_country   The customer's billing country. Block checkout leaves it out and preselects by
+     *                                  billing country in the browser, where the customer edits the address.
+     * @return string The country code, or $default_country when $countries is empty.
+     */
+    public static function get_preselected_country( $countries, $default_country, $preselect_country, $billing_country = '' ) {
+        $preferred_country = '';
+
+        if ( 'billing' === $preselect_country ) {
+            $preferred_country = $billing_country;
+        } elseif ( 'locale' === $preselect_country ) {
+            // get_locale() returns the language code, and Estonian's (et) differs from Estonia's country code
+            $preferred_country = strtoupper( self::get_locale() );
+
+            if ( 'ET' === $preferred_country ) {
+                $preferred_country = 'EE';
+            }
+        }
+
+        if ( in_array( $preferred_country, $countries, true ) ) {
+            return $preferred_country;
+        }
+
+        if ( in_array( $default_country, $countries, true ) || empty( $countries ) ) {
+            return $default_country;
+        }
+
+        return reset( $countries );
+    }
+
+    /**
+     * Gets the Inbank country selected first at checkout, falling back to the store country when the merchant's
+     * default isn't one Inbank lends in.
+     *
+     * @since 10.5.1
+     * @param string $default_country   The gateway's Default Country setting.
+     * @param string $preselect_country The gateway's Preselect country by user data setting: disable, billing or locale.
+     * @param string $billing_country   The customer's billing country, see get_preselected_country().
+     * @return string The country code: EE, LV or LT.
+     */
+    public static function get_inbank_checkout_country( $default_country, $preselect_country, $billing_country = '' ) {
+        $countries = array_keys( self::get_inbank_countries() );
+
+        if ( ! in_array( $default_country, $countries, true ) ) {
+            $default_country = self::get_inbank_default_country();
+        }
+
+        return self::get_preselected_country( $countries, $default_country, $preselect_country, $billing_country );
+    }
+
+    /**
      * Check if any other Montonio payment method is active.
      *
      * @since  9.3.0

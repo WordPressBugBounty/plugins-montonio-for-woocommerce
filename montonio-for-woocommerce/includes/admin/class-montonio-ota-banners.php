@@ -76,6 +76,26 @@ class Montonio_OTA_Banners {
     const ALLOWED_IMAGE_DOMAIN = 'montonio.com';
 
     /**
+     * CTA button styles a styled banner can pick with cta_style.
+     *
+     * @since 10.5.1
+     */
+    const CTA_STYLES = array( 'indigo', 'white', 'red', 'beige' );
+
+    /**
+     * CTA button style per styled template, used when a banner doesn't set cta_style.
+     *
+     * @since 10.5.1
+     */
+    const CTA_STYLE_DEFAULTS = array(
+        'lilac'     => 'indigo',
+        'indigo'    => 'white',
+        'beige'     => 'indigo',
+        'carribean' => 'white',
+        'warning'   => 'red',
+    );
+
+    /**
      * Initialize the class by registering hooks.
      *
      * @since 10.5.0
@@ -248,8 +268,12 @@ class Montonio_OTA_Banners {
                 return new WP_Error( 'invalid_image_url', 'Banner "' . esc_html( $id ) . '" has invalid "image_url". It must be an https:// URL on ' . self::ALLOWED_IMAGE_DOMAIN . ' or its subdomains', array( 'status' => 400 ) );
             }
 
-            if ( ! empty( $banner['expire_at'] ) && ! self::is_valid_expire_at( $banner['expire_at'] ) ) {
-                return new WP_Error( 'invalid_expire_at', 'Banner "' . esc_html( $id ) . '" has invalid "expire_at". It must be an ISO 8601 date or date-time, e.g. 2026-06-30 or 2026-06-30T21:00:00Z', array( 'status' => 400 ) );
+            if ( empty( $banner['expires_at'] ) ) {
+                return new WP_Error( 'missing_expires_at', 'Banner "' . esc_html( $id ) . '" is missing required "expires_at" field', array( 'status' => 400 ) );
+            }
+
+            if ( ! self::is_valid_expires_at( $banner['expires_at'] ) ) {
+                return new WP_Error( 'invalid_expires_at', 'Banner "' . esc_html( $id ) . '" has invalid "expires_at". It must be an ISO 8601 date or date-time, e.g. 2026-06-30 or 2026-06-30T21:00:00Z', array( 'status' => 400 ) );
             }
 
             $validated[ $sanitized_id ] = self::sanitize_banner( $banner );
@@ -267,20 +291,58 @@ class Montonio_OTA_Banners {
      */
     private static function sanitize_banner( $banner ) {
         return array(
-            'template'    => sanitize_text_field( $banner['template'] ),
-            'label'       => ! empty( $banner['label'] ) ? sanitize_text_field( $banner['label'] ) : null,
-            'heading'     => self::kses_heading( $banner['heading'] ),
-            'content'     => ! empty( $banner['content'] ) ? self::kses_content( $banner['content'] ) : '',
-            'can_dismiss' => isset( $banner['can_dismiss'] ) ? (bool) $banner['can_dismiss'] : true,
-            'expire_at'   => self::sanitize_expire_at( $banner ),
-            'cta_text'    => ! empty( $banner['cta_text'] ) ? sanitize_text_field( $banner['cta_text'] ) : null,
-            'cta_url'     => ! empty( $banner['cta_url'] ) ? esc_url_raw( $banner['cta_url'] ) : null,
-            'cta_new_tab' => isset( $banner['cta_new_tab'] ) ? (bool) $banner['cta_new_tab'] : true,
-            'min_ver'     => ! empty( $banner['min_ver'] ) ? sanitize_text_field( $banner['min_ver'] ) : null,
-            'max_ver'     => ! empty( $banner['max_ver'] ) ? sanitize_text_field( $banner['max_ver'] ) : null,
-            'image_url'   => ! empty( $banner['image_url'] ) ? esc_url_raw( $banner['image_url'] ) : null,
-            'image_alt'   => ! empty( $banner['image_alt'] ) ? sanitize_text_field( $banner['image_alt'] ) : '',
+            'template'      => sanitize_text_field( $banner['template'] ),
+            'label'         => ! empty( $banner['label'] ) ? sanitize_text_field( $banner['label'] ) : null,
+            'heading'       => self::kses_heading( $banner['heading'] ),
+            'content'       => ! empty( $banner['content'] ) ? self::kses_content( $banner['content'] ) : '',
+            'can_dismiss'   => isset( $banner['can_dismiss'] ) ? (bool) $banner['can_dismiss'] : true,
+            'expires_at'    => sanitize_text_field( $banner['expires_at'] ),
+            'cta_text'      => ! empty( $banner['cta_text'] ) ? sanitize_text_field( $banner['cta_text'] ) : null,
+            'cta_url'       => ! empty( $banner['cta_url'] ) ? esc_url_raw( $banner['cta_url'] ) : null,
+            'cta_new_tab'   => isset( $banner['cta_new_tab'] ) ? (bool) $banner['cta_new_tab'] : true,
+            'cta_style'     => self::sanitize_cta_style( $banner ),
+            'bg_color'      => self::sanitize_color( $banner, 'bg_color' ),
+            'pattern_color' => self::sanitize_color( $banner, 'pattern_color' ),
+            'min_ver'       => ! empty( $banner['min_ver'] ) ? sanitize_text_field( $banner['min_ver'] ) : null,
+            'max_ver'       => ! empty( $banner['max_ver'] ) ? sanitize_text_field( $banner['max_ver'] ) : null,
+            'image_url'     => ! empty( $banner['image_url'] ) ? esc_url_raw( $banner['image_url'] ) : null,
+            'image_alt'     => ! empty( $banner['image_alt'] ) ? sanitize_text_field( $banner['image_alt'] ) : '',
         );
+    }
+
+    /**
+     * Keep cta_style only if it's a known style. Anything else is stored as null,
+     * so the banner falls back to its template's default button instead of being rejected.
+     *
+     * @since 10.5.1
+     * @param array $banner Raw banner data.
+     * @return string|null One of CTA_STYLES, or null.
+     */
+    private static function sanitize_cta_style( $banner ) {
+        if ( empty( $banner['cta_style'] ) || ! in_array( $banner['cta_style'], self::CTA_STYLES, true ) ) {
+            return null;
+        }
+
+        return $banner['cta_style'];
+    }
+
+    /**
+     * Keep a colour field only if it's a hex colour (#RGB or #RRGGBB). Anything else is stored
+     * as null, so the banner falls back to its template's colour instead of being rejected.
+     *
+     * @since 10.5.1
+     * @param array  $banner Raw banner data.
+     * @param string $field  The colour field: bg_color or pattern_color.
+     * @return string|null The hex colour, or null.
+     */
+    private static function sanitize_color( $banner, $field ) {
+        if ( empty( $banner[ $field ] ) || ! is_string( $banner[ $field ] ) ) {
+            return null;
+        }
+
+        $color = sanitize_hex_color( $banner[ $field ] );
+
+        return ! empty( $color ) ? $color : null;
     }
 
     /**
@@ -341,30 +403,15 @@ class Montonio_OTA_Banners {
     }
 
     /**
-     * Sanitize the expire_at field. validate_banners_payload() has already rejected invalid values.
-     *
-     * @since 10.5.0
-     * @param array $banner Raw banner data.
-     * @return string|null Sanitized date string or null.
-     */
-    private static function sanitize_expire_at( $banner ) {
-        if ( empty( $banner['expire_at'] ) ) {
-            return null;
-        }
-
-        return sanitize_text_field( $banner['expire_at'] );
-    }
-
-    /**
-     * Check that expire_at is a real ISO 8601 date or date-time with nothing after it.
+     * Check that expires_at is a real ISO 8601 date or date-time with nothing after it.
      * The whole value must match, so strtotime() can't read relative modifiers ("2026-01-01 +100 years"),
      * and the date must exist, so an impossible one ("2026-13-45") can't make a banner that never expires.
      *
      * @since 10.5.0
-     * @param mixed $value The raw expire_at value.
+     * @param mixed $value The raw expires_at value.
      * @return bool True if the value is a valid date or date-time.
      */
-    private static function is_valid_expire_at( $value ) {
+    private static function is_valid_expires_at( $value ) {
         $pattern = '/^(\d{4})-(\d{2})-(\d{2})(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/';
 
         if ( ! is_string( $value ) || ! preg_match( $pattern, $value, $matches ) ) {
@@ -415,18 +462,18 @@ class Montonio_OTA_Banners {
     }
 
     /**
-     * Check whether a banner's expire_at has passed.
+     * Check whether a banner's expires_at has passed.
      *
      * @since 10.5.0
      * @param array $banner The banner data.
      * @return bool True if the banner has expired.
      */
     private static function is_expired( $banner ) {
-        if ( empty( $banner['expire_at'] ) ) {
+        if ( empty( $banner['expires_at'] ) ) {
             return false;
         }
 
-        $expire_time = strtotime( $banner['expire_at'] );
+        $expire_time = strtotime( $banner['expires_at'] );
 
         return false !== $expire_time && time() > $expire_time;
     }
@@ -496,7 +543,7 @@ class Montonio_OTA_Banners {
             return false;
         }
 
-        foreach ( array( 'label', 'content', 'expire_at', 'cta_text', 'cta_url', 'min_ver', 'max_ver', 'image_url', 'image_alt' ) as $field ) {
+        foreach ( array( 'label', 'content', 'expires_at', 'cta_text', 'cta_url', 'min_ver', 'max_ver', 'image_url', 'image_alt' ) as $field ) {
             if ( isset( $banner[ $field ] ) && ! is_string( $banner[ $field ] ) ) {
                 return false;
             }
@@ -622,9 +669,8 @@ class Montonio_OTA_Banners {
         $can_dismiss    = ! empty( $banner['can_dismiss'] );
         $image_url      = ! empty( $banner['image_url'] ) && self::is_allowed_image_url( $banner['image_url'] ) ? $banner['image_url'] : '';
         $image_alt      = ! empty( $banner['image_alt'] ) ? $banner['image_alt'] : '';
-        $label          = ! empty( $banner['label'] ) ? $banner['label'] : 'Montonio';
         ?>
-        <div id="<?php echo esc_attr( $html_id ); ?>" class="montonio-ota-banner <?php echo esc_attr( $template_class ); ?> notice">
+        <div id="<?php echo esc_attr( $html_id ); ?>" class="montonio-ota-banner <?php echo esc_attr( $template_class ); ?> notice"<?php echo self::color_style_attribute( $banner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in color_style_attribute() ?>>
             <?php if ( $can_dismiss ) : ?>
                 <?php wp_nonce_field( $html_id . '_nonce', $html_id . '_nonce_field' ); ?>
                 <a class="montonio-ota-banner__close" href="<?php echo esc_url( add_query_arg( $html_id, 0 ) ); ?>" aria-label="<?php esc_attr_e( 'Dismiss this notice', 'montonio-for-woocommerce' ); ?>">
@@ -637,13 +683,15 @@ class Montonio_OTA_Banners {
 
             <div class="montonio-ota-banner__body">
                 <div class="montonio-ota-banner__text">
-                    <div class="montonio-badge"><?php echo esc_html( $label ); ?></div>
+                    <?php if ( ! empty( $banner['label'] ) ) : ?>
+                        <div class="montonio-badge"><?php echo esc_html( $banner['label'] ); ?></div>
+                    <?php endif; ?>
                     <h4 class="montonio-ota-banner__heading"><?php echo self::kses_heading( $banner['heading'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by wp_kses ?></h4>
                     <?php if ( ! empty( $banner['content'] ) ) : ?>
                         <div class="montonio-ota-banner__content"><?php echo self::kses_content( $banner['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by wp_kses ?></div>
                     <?php endif; ?>
                     <?php if ( ! empty( $banner['cta_text'] ) && ! empty( $banner['cta_url'] ) ) : ?>
-                        <a class="montonio-ota-banner__cta<?php echo self::cta_opens_new_tab( $banner ) ? ' montonio-ota-banner__cta--external' : ''; ?>" href="<?php echo esc_url( $banner['cta_url'] ); ?>"<?php echo self::cta_target_attributes( $banner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed markup ?>>
+                        <a class="montonio-ota-banner__cta montonio-ota-banner__cta--<?php echo esc_attr( self::get_cta_style( $banner ) ); ?><?php echo self::cta_opens_new_tab( $banner ) ? ' montonio-ota-banner__cta--external' : ''; ?>" href="<?php echo esc_url( $banner['cta_url'] ); ?>"<?php echo self::cta_target_attributes( $banner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed markup ?>>
                             <?php echo esc_html( $banner['cta_text'] ); ?>
                             <?php if ( self::cta_opens_new_tab( $banner ) ) : ?>
                                 <span class="screen-reader-text"><?php esc_html_e( '(opens in a new tab)', 'montonio-for-woocommerce' ); ?></span>
@@ -659,6 +707,55 @@ class Montonio_OTA_Banners {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * A style attribute overriding the template's background and pattern colours with the
+     * banner's bg_color and pattern_color, or an empty string when it sets neither.
+     * Colours are checked again here, since the option can be written without going through
+     * the REST validation.
+     *
+     * @since 10.5.1
+     * @param array $banner The banner data.
+     * @return string The escaped style attribute, with a leading space, or ''.
+     */
+    private static function color_style_attribute( $banner ) {
+        $properties = array(
+            'bg_color'      => '--montonio-banner-bg',
+            'pattern_color' => '--montonio-banner-pattern',
+        );
+        $styles     = array();
+
+        foreach ( $properties as $field => $property ) {
+            $color = self::sanitize_color( $banner, $field );
+
+            if ( null !== $color ) {
+                $styles[] = $property . ': ' . $color;
+            }
+        }
+
+        if ( empty( $styles ) ) {
+            return '';
+        }
+
+        return ' style="' . esc_attr( implode( '; ', $styles ) ) . '"';
+    }
+
+    /**
+     * The CTA button style: the banner's cta_style, or its template's default.
+     * A stored value that isn't a known style, or isn't a string, falls back to the default,
+     * since the option can be written without going through the REST validation.
+     *
+     * @since 10.5.1
+     * @param array $banner The banner data.
+     * @return string One of CTA_STYLES.
+     */
+    private static function get_cta_style( $banner ) {
+        if ( ! empty( $banner['cta_style'] ) && in_array( $banner['cta_style'], self::CTA_STYLES, true ) ) {
+            return $banner['cta_style'];
+        }
+
+        return array_key_exists( $banner['template'], self::CTA_STYLE_DEFAULTS ) ? self::CTA_STYLE_DEFAULTS[ $banner['template'] ] : 'indigo';
     }
 
     /**

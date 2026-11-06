@@ -1873,9 +1873,37 @@ body.montonio-modal-open {
   -webkit-mask: url("../images/chevron-right.svg") no-repeat center/contain;
   mask: url("../images/chevron-right.svg") no-repeat center/contain;
 }
-.montonio-ota-banner__cta:hover {
+.montonio-ota-banner__cta--indigo {
+  background: #260071;
+  color: #fff !important;
+}
+.montonio-ota-banner__cta--indigo:hover {
   background: #1a004d;
   color: #fff !important;
+}
+.montonio-ota-banner__cta--white {
+  background: #fff;
+  color: #1B1B1B !important;
+}
+.montonio-ota-banner__cta--white:hover {
+  color: #1B1B1B !important;
+  opacity: 0.8;
+}
+.montonio-ota-banner__cta--red {
+  background: #A90719;
+  color: #fff !important;
+}
+.montonio-ota-banner__cta--red:hover {
+  background: #870514;
+  color: #fff !important;
+}
+.montonio-ota-banner__cta--beige {
+  background: #F9E0C0;
+  color: #211D19 !important;
+}
+.montonio-ota-banner__cta--beige:hover {
+  background: #E2BF92;
+  color: #211D19 !important;
 }
 .montonio-ota-banner__cta--external::after {
   -webkit-mask-image: url("../images/link-external.svg");
@@ -1903,21 +1931,14 @@ body.montonio-modal-open {
   color: #fff;
 }
 .montonio-ota-banner--indigo .montonio-ota-banner__heading span {
-  color: #C8F4EF;
+  color: #F9E0C0;
 }
 .montonio-ota-banner--indigo .montonio-ota-banner__content {
   color: #E4DBFA;
 }
-.montonio-ota-banner--indigo .montonio-ota-banner__cta {
-  background: #fff !important;
-  color: #260071 !important;
-}
-.montonio-ota-banner--indigo .montonio-ota-banner__cta:hover {
-  background: #E4DBFA !important;
-}
 .montonio-ota-banner--indigo .montonio-badge {
-  background: #F1FCFB;
-  color: #0D6B6B;
+  background: #F9E0C0;
+  color: #260071;
 }
 .montonio-ota-banner--indigo .montonio-ota-banner__close {
   color: #fff;
@@ -1934,18 +1955,8 @@ body.montonio-modal-open {
   color: #5C14EB;
 }
 .montonio-ota-banner--beige .montonio-badge {
-  background: #FFF6DA;
-  color: #BF8B00;
-}
-.montonio-ota-banner--beige .montonio-ota-banner__cta {
-  padding: 7px 11px;
-  background: #fff !important;
-  color: #1B1B1B !important;
-  border: 1px solid #ADADB0;
-}
-.montonio-ota-banner--beige .montonio-ota-banner__cta:hover {
-  background: #F8F6F4 !important;
-  border-color: #1B1B1B;
+  background: #F0EBFF;
+  color: #260071;
 }
 .montonio-ota-banner--carribean {
   --montonio-banner-bg: #0D6B6B;
@@ -1963,13 +1974,6 @@ body.montonio-modal-open {
 .montonio-ota-banner--carribean .montonio-badge {
   background: #0A1F1F;
   color: #C8F4EF;
-}
-.montonio-ota-banner--carribean .montonio-ota-banner__cta {
-  background: #fff !important;
-  color: #0D6B6B !important;
-}
-.montonio-ota-banner--carribean .montonio-ota-banner__cta:hover {
-  background: #C8F4EF !important;
 }
 .montonio-ota-banner--carribean .montonio-ota-banner__close {
   color: #fff;
@@ -1994,12 +1998,6 @@ body.montonio-modal-open {
 .montonio-ota-banner--warning .montonio-badge {
   background: #FFCFD5;
   color: #A9061A;
-}
-.montonio-ota-banner--warning .montonio-ota-banner__cta {
-  background: #A90719;
-}
-.montonio-ota-banner--warning .montonio-ota-banner__cta:hover {
-  background: #870514;
 }
 .montonio-ota-banner--warning .montonio-ota-banner__close {
   color: #A90619;
