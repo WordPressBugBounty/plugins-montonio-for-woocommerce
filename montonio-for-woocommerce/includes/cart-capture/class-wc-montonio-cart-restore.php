@@ -64,7 +64,7 @@ class WC_Montonio_Cart_Restore {
                 return;
             }
 
-            $result = self::fetch( untrailingslashit( get_option( WC_Montonio_Cart_Capture::OPTION_ENDPOINT, '' ) ) . '/restore', $token, $fillable ? self::TIMEOUT_SECONDS : self::TAGS_TIMEOUT_SECONDS );
+            $result = self::fetch( $token, $fillable ? self::TIMEOUT_SECONDS : self::TAGS_TIMEOUT_SECONDS );
 
             // A timeout or a server error may pass, so a reload asks again; for the tags alone it does not.
             if ( $result['definitive'] || ! $fillable ) {
@@ -124,7 +124,13 @@ class WC_Montonio_Cart_Restore {
         return 1;
     }
 
-    private static function requested_token() {
+    /**
+     * The well-formed restore id in the checkout URL, or null.
+     *
+     * @internal Shared with the cart landing report; not part of the public API.
+     * @return string|null
+     */
+    public static function requested_token() {
         if ( ! WC_Montonio_Cart_Capture::is_checkout_page() || ! isset( $_GET[self::QUERY_ARG] ) || ! is_string( $_GET[self::QUERY_ARG] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return null;
         }
@@ -146,21 +152,15 @@ class WC_Montonio_Cart_Restore {
     /**
      * @return array 'details': Ladu's answer, or null; 'definitive': whether asking again cannot change it.
      */
-    private static function fetch( $url, $token, $timeout ) {
-        $jwt = WC_Montonio_Helper::create_jwt_token( array( 'restore_token' => $token, 'exp' => time() + 60 ) );
+    private static function fetch( $token, $timeout ) {
+        $result = WC_Montonio_Ladu_Client::post( 'restore', array( 'restore_token' => $token ), time() + 60, $timeout );
 
-        $response = wp_remote_post( $url, array(
-            'timeout' => $timeout,
-            'headers' => array( 'Content-Type' => 'application/json' ),
-            'body'    => wp_json_encode( array( 'data' => $jwt ) )
-        ) );
-
-        if ( is_wp_error( $response ) ) {
-            WC_Montonio_Logger::log( 'Cart restore request failed: ' . $response->get_error_code() . ': ' . $response->get_error_message() );
+        if ( null !== $result['error'] ) {
+            WC_Montonio_Logger::log( 'Cart restore request failed: ' . $result['error']->get_error_code() . ': ' . $result['error']->get_error_message() );
             return array( 'details' => null, 'definitive' => false );
         }
 
-        $status = (int) wp_remote_retrieve_response_code( $response );
+        $status = $result['status'];
 
         // Ladu answers 404 for a restore id it no longer answers for, and 400 or 401 for a request it cannot verify.
         if ( 200 !== $status ) {
@@ -168,7 +168,7 @@ class WC_Montonio_Cart_Restore {
             return array( 'details' => null, 'definitive' => ! WC_Montonio_Cart_Capture::is_retryable_status( $status ) );
         }
 
-        $details = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+        $details = json_decode( $result['body'], true );
 
         if ( ! is_array( $details ) ) {
             WC_Montonio_Logger::log( 'Cart restore response was not JSON: ' . json_last_error_msg() );

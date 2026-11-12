@@ -1,11 +1,11 @@
 === Montonio for WooCommerce ===
-Version: 10.5.1
+Version: 10.5.2
 Date: 2019-09-04
 Contributors: Montonio
 Tags: payments, payment gateway, shipping, montonio, woocommerce
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 10.5.1
+Stable tag: 10.5.2
 Requires PHP: 7.2
 Minimum requirements: WooCommerce 4.0 or greater
 License: GPLv3
@@ -137,9 +137,14 @@ Service information: [Terms of Service](https://s3.eu-central-1.amazonaws.com/pu
 
 == Recommendation notes ==
 
-When Montonio Ladu has switched recommendation tagging on for the store, clicking a product recommendation on a product or cart page sends the shop a short note: product ids, a page-section word, the ids of the cards shown and, for a card without a product id, a short hash of the clicked product's link; no shopper identifier. The shop keeps the note with the shopper's WooCommerce session for 30 minutes, uses it when the shopper adds a product to the cart, and sets no cookie of its own; a click from a shopper who has no WooCommerce session yet starts one. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. The `wc_montonio_recommendation_note_creates_session` filter, returning false, keeps notes to shoppers who already have a session. The plugin suggests matching text for the store's privacy policy page under Settings → Privacy.
+When Montonio Ladu has switched recommendation tagging on for the store, clicking a product recommendation on a product or cart page sends the shop a short note: product ids, a page-section word, the ids of the cards shown and, for a card without a product id, a short hash of the clicked product's link; no shopper identifier. The shop keeps the shopper's last 10 notes with the shopper's WooCommerce session, uses a note for 30 minutes when the shopper adds a product to the cart, and sets no cookie of its own; a note that is no longer used is deleted by WooCommerce's regular session cleanup at the latest; a click from a shopper who has no WooCommerce session yet starts one. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. The `wc_montonio_recommendation_note_creates_session` filter, returning false, keeps notes to shoppers who already have a session. The plugin suggests matching text for the store's privacy policy page under Settings → Privacy.
 
 == Changelog ==
+= 10.5.2 =
+* Added – When a shopper opens a Montonio Ladu cart rescue link, the store now lets Ladu know the link was opened
+* Fix – Montonio Ladu recommendation tagging now credits a product added from a recommendation even if the shopper clicked other recommendations before adding it, or picked a different variation of the recommended product
+* Dev – Every request to Montonio Ladu's cart rescue API now goes through the new `WC_Montonio_Ladu_Client` class
+       
 = 10.5.1 =
 * Added – Customers can now choose the country they take a Pay Later or Financing loan in, in both classic and block checkout
 * Added – Financing now has the same Default Country, Hide Country Select and Preselect country by user data settings as Pay Later

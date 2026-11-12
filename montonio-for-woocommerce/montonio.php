@@ -3,7 +3,7 @@
  * Plugin Name:       Montonio for WooCommerce
  * Plugin URI:        https://www.montonio.com
  * Description:       All-in-one plug & play checkout solution
- * Version:           10.5.1
+ * Version:           10.5.2
  * Author:            Montonio
  * Author URI:        https://www.montonio.com
  * Text Domain:       montonio-for-woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_MONTONIO_PLUGIN_VERSION', '10.5.1' );
+define( 'WC_MONTONIO_PLUGIN_VERSION', '10.5.2' );
 define( 'WC_MONTONIO_PLUGIN_URL', plugins_url( '', __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WC_MONTONIO_PLUGIN_FILE', __FILE__ );
@@ -150,11 +150,15 @@ if ( ! class_exists( 'Montonio' ) ) {
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/admin/class-montonio-ota-banners.php';
             Montonio_OTA_Banners::init();
 
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-ladu-client.php';
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-capture.php';
             WC_Montonio_Cart_Capture::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-restore.php';
             WC_Montonio_Cart_Restore::init();
+
+            require_once WC_MONTONIO_PLUGIN_PATH . '/includes/cart-capture/class-wc-montonio-cart-landing.php';
+            WC_Montonio_Cart_Landing::init();
 
             require_once WC_MONTONIO_PLUGIN_PATH . '/includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php';
             WC_Montonio_Recommendation_Tagging::init();

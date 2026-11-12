@@ -7,8 +7,8 @@ defined( 'ABSPATH' ) || exit;
  * Records, per cart item, which recommendation surface the product was added from (an
  * up-sell list, a cross-sell list, or neither) and the anchor products whose lists held it,
  * with the evidence the decision was made from, then copies both to the order item as meta.
- * Classification is by link membership at add time; a short-lived note the storefront script
- * sends to the store, kept with the shopper's session, narrows the anchor and carries a click from
+ * Classification is by link membership at add time; short-lived notes the storefront script
+ * sends to the store, the last MAX_NOTES kept with the shopper's session, narrow the anchor and carry a click from
  * a recommendation card to the product page. The tag also travels with a cart rescue: cart capture sends it to Ladu and the
  * restore puts it back on the rebuilt cart item.
  */
@@ -17,6 +17,10 @@ class WC_Montonio_Recommendation_Tagging {
     const NOTE_VERSION   = 'v3';
     const NOTE_PARTS     = 7;
     const NOTE_MAX_AGE   = 1800;
+    // Notes kept per session, newest last: a shopper who clicks on from a recommended product's page must not lose the first click.
+    const MAX_NOTES      = 10;
+    // Attempts at one compare-and-swap rewrite of the notes row before it is given up.
+    const NOTE_WRITE_TRIES = 5;
     const CART_ITEM_KEY  = 'montonio_rec';
     const OPTION_ENABLED = 'montonio_rec_tagging_enabled';
     const LOG_SOURCE     = 'montonio-recommendation-tagging';
@@ -85,8 +89,12 @@ class WC_Montonio_Recommendation_Tagging {
     /**
      * Keeps a note sent by the storefront script under the session's customer id, in a row of its own in WooCommerce's
      * sessions table: the session blob is rewritten whole by whichever request finishes last, so a note kept there could
-     * overwrite the cart of an add made in the same instant. The endpoint has no rate limit: a client can only overwrite
-     * its own note, and WooCommerce sessions can be created without it anyway.
+     * overwrite the cart of an add made in the same instant. The row holds the session's last MAX_NOTES fresh notes, one
+     * v3 note per line, so a later click adds to the earlier ones instead of replacing them; a repeat of a held click
+     * replaces that note. Two notes posted at once both land, because update_notes rewrites the row by compare-and-swap;
+     * a note that loses NOTE_WRITE_TRIES times in a row, or whose write fails, is dropped, logged and answered as contended.
+     * The endpoint has no rate limit: a client can only fill its own row, which stays bounded, and
+     * WooCommerce sessions can be created without it anyway.
      *
      * @param array $post   The request's form fields.
      * @param array $server The request's server variables.
@@ -125,9 +133,12 @@ class WC_Montonio_Recommendation_Tagging {
             WC()->session->set_customer_session_cookie( true );
         }
 
-        self::set_row( self::note_key( WC()->session->get_customer_id() ), $note['note'], self::NOTE_MAX_AGE );
+        $added = $note['note'];
+        $done  = self::update_notes( self::note_key( WC()->session->get_customer_id() ), function ( $live ) use ( $added ) {
+            return self::with_note( $live, $added );
+        }, 'store' );
 
-        return 'stored';
+        return $done ? 'stored' : 'contended';
     }
 
     // Exactly WooCommerce's handler: Redis and Memcached session plugins extend it with a cleanup that never sweeps this table.
@@ -140,22 +151,171 @@ class WC_Montonio_Recommendation_Tagging {
         return 'm_' . substr( wp_hash( 'note:' . $customer_id ), 0, 30 );
     }
 
-    // Read past WooCommerce's session cache, which never holds these rows; the cleanup runs twice a day, so an expired row is skipped here.
-    private static function get_row( $key ) {
+    /**
+     * The notes row as stored, read past WooCommerce's session cache, which never holds these rows.
+     *
+     * @since 10.5.2
+     * @param string $key The row's session key.
+     * @return array|null 'value': the stored value; 'notes': its lines, oldest first, none once the row has expired (the
+     *                    cleanup runs twice a day). Null when there is no row.
+     */
+    private static function read_notes_row( $key ) {
         global $wpdb;
         $row = $wpdb->get_row( $wpdb->prepare( "SELECT session_value, session_expiry FROM {$wpdb->prefix}woocommerce_sessions WHERE session_key = %s", $key ) );
+        if ( ! $row ) {
+            return null;
+        }
 
-        return $row && (int) $row->session_expiry >= time() ? $row->session_value : null;
+        return array(
+            'value' => (string) $row->session_value,
+            'notes' => (int) $row->session_expiry >= time() ? self::split_notes( $row->session_value ) : array(),
+        );
     }
 
-    private static function set_row( $key, $value, $ttl ) {
+    /**
+     * Rewrites the notes row as $change( live notes ) by a compare-and-swap on the value read: a write that finds the row
+     * changed since is retried on the new value, so an add spending a note and a note request from the same session each
+     * apply to the other's result rather than overwrite it. Every write drops the notes live_notes refuses, keeps the
+     * last MAX_NOTES, and lets the row expire with its newest note; an empty list deletes the row.
+     *
+     * @since 10.5.2
+     * @param string           $key    The row's session key.
+     * @param callable         $change Maps the live notes, as live_notes returns them, to the ones to keep.
+     * @param string           $what   The write, for the log: store, spend or forget.
+     * @param array|null|false $row    The row as read_notes_row returned it to the caller (null: it found no row), saving
+     *                                 the first read; false to read it here.
+     * @return bool True when the row holds the changed list, written or already so; false when a write failed, or when
+     *              NOTE_WRITE_TRIES writes in a row lost to another request.
+     */
+    private static function update_notes( $key, $change, $what, $row = false ) {
         global $wpdb;
-        $wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->prefix}woocommerce_sessions (session_key, session_value, session_expiry) VALUES (%s, %s, %d) ON DUPLICATE KEY UPDATE session_value = VALUES(session_value), session_expiry = VALUES(session_expiry)", $key, $value, time() + (int) $ttl ) );
+        $table = $wpdb->prefix . 'woocommerce_sessions';
+
+        for ( $try = 0; $try < self::NOTE_WRITE_TRIES; $try++ ) {
+            if ( false === $row || $try > 0 ) {
+                $row = self::read_notes_row( $key );
+            }
+            $held = null === $row ? array() : $row['notes'];
+            $live = array_slice( array_values( $change( self::live_notes( $held ) ) ), -self::MAX_NOTES );
+            $next = wp_list_pluck( $live, 'note' );
+            if ( $next === $held && ( null === $row || $held ) ) {
+                return true;
+            }
+
+            // The newest note by its receipt time, not the last line: two clicks at once can be written out of order.
+            $expiry = $live ? max( wp_list_pluck( wp_list_pluck( $live, 'decoded' ), 'ts' ) ) + self::NOTE_MAX_AGE : 0;
+            if ( null === $row ) {
+                // No IGNORE, which would report any failed insert as no row written. A duplicate key is the lost race:
+                // another request inserted the row first. wpdb would print and log it as an error.
+                $shown   = $wpdb->suppress_errors( true );
+                $written = $wpdb->query( $wpdb->prepare( "INSERT INTO {$table} (session_key, session_value, session_expiry) VALUES (%s, %s, %d)", $key, implode( "\n", $next ), $expiry ) );
+                $wpdb->suppress_errors( $shown );
+                if ( false === $written && self::is_duplicate_key_error() ) {
+                    $written = 0;
+                }
+            } elseif ( ! $next ) {
+                $written = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE session_key = %s AND session_value = %s", $key, $row['value'] ) );
+            } else {
+                $written = $wpdb->query( $wpdb->prepare( "UPDATE {$table} SET session_value = %s, session_expiry = %d WHERE session_key = %s AND session_value = %s", implode( "\n", $next ), $expiry, $key, $row['value'] ) );
+            }
+            if ( $written ) {
+                return true;
+            }
+            // A failed query is not retried: a table that refuses writes would cost every click and add all its tries.
+            // A key per write and cause, so a contended click does not hide a failing spend for the rest of the day.
+            if ( false === $written ) {
+                WC_Montonio_Logger::warning_once( 'rec_note_' . $what . '_failed', 'Recommendation notes write (' . $what . ') failed: ' . $wpdb->last_error, self::LOG_SOURCE );
+                return false;
+            }
+            // 0 rows: another request changed the row first. Read it again and apply the change to that.
+        }
+
+        WC_Montonio_Logger::warning_once( 'rec_note_' . $what . '_contended', 'Recommendation notes write (' . $what . ') given up: the row changed under each of ' . self::NOTE_WRITE_TRIES . ' attempts.', self::LOG_SOURCE );
+
+        return false;
     }
 
-    private static function delete_row( $key ) {
+    /**
+     * Whether the last query failed on a duplicate key (MySQL error 1062).
+     *
+     * @since 10.5.2
+     * @return bool
+     */
+    private static function is_duplicate_key_error() {
         global $wpdb;
-        $wpdb->delete( $wpdb->prefix . 'woocommerce_sessions', array( 'session_key' => $key ) );
+
+        return $wpdb->dbh instanceof mysqli ? 1062 === mysqli_errno( $wpdb->dbh ) : 0 === strpos( (string) $wpdb->last_error, 'Duplicate entry' );
+    }
+
+    /**
+     * The lines of a stored row, oldest first. A value without a line break is a list of one, as a row written by 10.5.1 is.
+     *
+     * @since 10.5.2
+     * @param string|null $value The row's value.
+     * @return string[]
+     */
+    private static function split_notes( $value ) {
+        if ( ! is_string( $value ) || '' === $value ) {
+            return array();
+        }
+
+        return array_values( array_filter( explode( "\n", $value ), 'strlen' ) );
+    }
+
+    /**
+     * The stored notes still worth keeping, oldest first: those that decode and are not past NOTE_MAX_AGE. A line that
+     * does not decode is logged by decode_note, as a format drift would otherwise go unseen once a later click drops it.
+     *
+     * @since 10.5.2
+     * @param string[] $notes Stored notes.
+     * @return array[] One entry per note: 'note', its stored form, and 'decoded', as decode_note returns it.
+     */
+    private static function live_notes( $notes ) {
+        $live = array();
+        $now  = time();
+
+        foreach ( $notes as $note ) {
+            $decoded = self::decode_note( $note );
+            if ( null !== $decoded && $now - $decoded['ts'] <= self::NOTE_MAX_AGE ) {
+                $live[] = array( 'note' => $note, 'decoded' => $decoded );
+            }
+        }
+
+        return $live;
+    }
+
+    /**
+     * The live notes with $note added last, an earlier note for the same click dropped.
+     *
+     * @since 10.5.2
+     * @param array[] $live The held notes as live_notes returns them.
+     * @param string  $note A note in its stored v3 form, as note_from_request built it.
+     * @return array[]
+     */
+    private static function with_note( $live, $note ) {
+        $added = array( 'note' => $note, 'decoded' => self::decode_note_parts( explode( '|', $note ) ) );
+        $same  = self::click_identity( $added['decoded'] );
+        $kept  = array();
+
+        foreach ( $live as $held ) {
+            if ( self::click_identity( $held['decoded'] ) !== $same ) {
+                $kept[] = $held;
+            }
+        }
+        $kept[] = $added;
+
+        return $kept;
+    }
+
+    /**
+     * What makes two notes the same click: the anchor page, the clicked product and the card's link hash.
+     *
+     * @since 10.5.2
+     * @param array $decoded A note as decode_note_parts returns it.
+     * @return string
+     */
+    private static function click_identity( $decoded ) {
+        return $decoded['anchor'] . '|' . $decoded['clicked'] . '|' . $decoded['link'];
     }
 
     // Sec-Fetch-Site decides alone when the browser sends it; without it, the Origin must name the request's own host and port.
@@ -467,18 +627,22 @@ class WC_Montonio_Recommendation_Tagging {
 
             $product_id   = (int) $item['product_id'];
             $variation_id = isset( $item['variation_id'] ) ? (int) $item['variation_id'] : 0;
-            $note         = self::held_note();
-            // Consent withdrawn after the click: the note goes unused and is deleted.
-            if ( null !== $note && ! self::has_consent() ) {
-                self::spend_note();
-                $note = null;
+            $key          = self::uses_session_table() ? self::note_key( WC()->session->get_customer_id() ) : null;
+            $row          = null === $key ? null : self::read_notes_row( $key );
+            $notes        = null === $row ? array() : $row['notes'];
+            // Consent withdrawn after the click: the notes go unused and are deleted.
+            if ( $notes && ! self::has_consent() ) {
+                self::update_notes( $key, function () {
+                    return array();
+                }, 'forget', $row );
+                $notes = array();
             }
             $referer      = wp_get_raw_referer() ?: null; // Unsanitised; the resolver sanitises it.
             $lines        = self::cart_products( WC()->cart );
             $links        = function () use ( $lines ) {
                 return self::cross_sell_links( $lines );
             };
-            $result       = self::classify( $product_id, $variation_id, $note, $referer, $links, $lines );
+            $result       = self::classify( $product_id, $variation_id, $notes, $referer, $links, $lines );
 
             $tag = apply_filters( 'wc_montonio_recommendation_tag', array(
                 'v'        => 1,
@@ -497,8 +661,8 @@ class WC_Montonio_Recommendation_Tagging {
 
             $item[ self::CART_ITEM_KEY ] = $normalized;
 
-            if ( ! empty( $result['evidence']['note']['used'] ) ) {
-                self::spend_note();
+            if ( $result['spent_notes'] ) {
+                self::spend_notes( $key, $result['spent_notes'], $row );
             }
         } catch ( Throwable $e ) {
             WC_Montonio_Logger::warning_once( 'rec_tag_failed', 'Recommendation tagging failed for product ' . $product_id . ': ' . WC_Montonio_Logger::describe( $e ), self::LOG_SOURCE );
@@ -517,95 +681,377 @@ class WC_Montonio_Recommendation_Tagging {
         return ! function_exists( 'wp_has_consent' ) || wp_has_consent( 'statistics', plugin_basename( WC_MONTONIO_PLUGIN_FILE ) );
     }
 
-    // The note kept for this session, in its stored v3 form, or null.
-    private static function held_note() {
-        return self::uses_session_table() ? self::get_row( self::note_key( WC()->session->get_customer_id() ) ) : null;
-    }
-
-    // A note credits one add: a later add of the same product, e.g. after removing it, must come from a new click.
-    // Only the add the note names spends it, so the other products of a grouped add leave it in place.
-    private static function spend_note() {
-        if ( self::uses_session_table() ) {
-            self::delete_row( self::note_key( WC()->session->get_customer_id() ) );
+    /**
+     * Spends the notes an add used. A note credits one add, so a later add of the same product, e.g. after removing it,
+     * must come from a new click: every held note naming this add is spent, not only the one that decided it. Notes
+     * naming other products, such as the rest of a grouped add, stay. A note is spent by its click, not its text, so a
+     * repeat of the click that lands while the add is written is spent with it.
+     *
+     * @since 10.5.2
+     * @param string     $key   The session's notes row key.
+     * @param string[]   $spent The stored notes to drop, each one classify accepted.
+     * @param array|null $row   The row as read for this add.
+     * @return void
+     */
+    private static function spend_notes( $key, $spent, $row ) {
+        $clicks = array();
+        foreach ( $spent as $note ) {
+            $clicks[] = self::click_identity( self::decode_note_parts( explode( '|', $note ) ) );
         }
+
+        self::update_notes( $key, function ( $live ) use ( $clicks ) {
+            $kept = array();
+            foreach ( $live as $held ) {
+                if ( ! in_array( self::click_identity( $held['decoded'] ), $clicks, true ) ) {
+                    $kept[] = $held;
+                }
+            }
+            return $kept;
+        }, 'spend', $row );
     }
 
     /**
-     * Decides the surface and anchors for an add, by link membership.
+     * Decides the surface and anchors for an add, by link membership. Of the held notes that name the add, the newest
+     * one whose anchor lists the product as an up-sell or cross-sell decides it: a later click on the same product from
+     * a page that does not link it, or a card on the product's own page, must not cost the earlier click its credit.
+     * The page the add was made on is tried after the notes, so a click that credits nothing does not hide an add made
+     * with a card's own button, which sends no note. Only when none of them lists the product do the cart's cross-sells
+     * stand in, for the newest note or page they may stand in for, so a drawer or cart-page fallback never outranks a
+     * click on a card its anchor really lists. When nothing credits the add, the newest note naming it stands.
      *
      * @param int         $product_id   The product added (the parent for a variation).
      * @param int         $variation_id The variation added, or 0.
-     * @param string|null    $note          The note kept for the session, in its stored v3 form, or null.
+     * @param string[]|string|null $notes  The notes kept for the session in their stored v3 form, oldest first; a single
+     *                                      note string or null, as taken before 10.5.2, is also accepted.
      * @param string|null    $referer       The request Referer, or null.
      * @param array|callable $cart_links    Cross-sell ids of every other cart item, keyed by that item's parent product id,
      *                                      or a callable building them, called only when the cart's cross-sells decide.
      * @param WC_Product[]   $cart_products The other cart items' products keyed by parent product id, reused as anchors.
      * @return array 'surface': upsell, cross_sell or organic; 'anchors': product ids, empty for organic;
-     *               'evidence': what the decision was made from.
+     *               'evidence': what the decision was made from; 'used_note': the stored note that decided the add, or
+     *               null; 'spent_notes': every held note that names the add, which the add spends.
      */
-    public static function classify( $product_id, $variation_id, $note, $referer, $cart_links, $cart_products = array() ) {
+    public static function classify( $product_id, $variation_id, $notes, $referer, $cart_links, $cart_products = array() ) {
         $product_id   = (int) $product_id;
         $variation_id = (int) $variation_id;
         $page         = self::resolve_referer( $referer, $product_id );
-        $decoded      = self::decode_note( $note );
-        $used         = null !== $decoded && self::note_applies( $decoded, $product_id, $variation_id, $page );
-        $anchor       = $used ? $decoded['anchor'] : $page;
-        $hint         = $used ? $decoded['hint'] : 'unknown';
-        $other        = is_int( $anchor ) && $anchor !== $product_id;
+        $notes        = is_array( $notes ) ? array_values( array_filter( $notes, 'is_string' ) ) : ( is_string( $notes ) && '' !== $notes ? array( $notes ) : array() );
+        list( $newest, $applying ) = self::pick_notes( $notes, $product_id, $variation_id, $page );
         // Link pickers accept variations, so a list may hold the variation itself rather than its parent.
-        $added    = array_values( array_filter( array( $product_id, $variation_id ) ) );
-        $surface  = 'organic';
-        $anchors  = array();
+        $added = array_values( array_filter( array( $product_id, $variation_id ) ) );
+
+        // What may decide the add, in order: each note naming it, newest first, then the page it was made on unless a
+        // note already stands for that page.
+        $tries = array();
+        foreach ( $applying as $held ) {
+            $tries[] = array( 'anchor' => $held['decoded']['anchor'], 'hint' => $held['decoded']['hint'], 'held' => $held );
+        }
+        if ( ! in_array( $page, wp_list_pluck( $tries, 'anchor' ), true ) ) {
+            $tries[] = array( 'anchor' => $page, 'hint' => 'unknown', 'held' => null );
+        }
+
+        $lists   = self::lists_of_anchors( wp_list_pluck( $tries, 'anchor' ), $product_id, $cart_products );
+        $parents = self::variation_parents( self::ids_to_resolve( array_merge( wp_list_pluck( $lists, 'upsell' ), wp_list_pluck( $lists, 'cross_sell' ) ), $added ) );
+        $chosen  = null;
+        $direct  = array();
+
+        // First what each anchor's own lists say, for every try: a click on a card the anchor really lists says more
+        // than what the cart holds, so no try's cart fallback may decide before an older click that credits directly.
+        foreach ( $tries as $try ) {
+            $anchor     = $try['anchor'];
+            $other      = is_int( $anchor ) && $anchor !== $product_id;
+            $surface    = 'organic';
+            $candidates = array();
+
+            if ( $other ) {
+                $in_up    = self::list_holds( $lists[ $anchor ]['upsell'], $added, $product_id, $parents );
+                $in_cross = self::list_holds( $lists[ $anchor ]['cross_sell'], $added, $product_id, $parents );
+
+                $candidates[] = array( 'anchor' => $anchor, 'upsell' => $in_up, 'cross_sell' => $in_cross );
+
+                if ( $in_up && $in_cross ) {
+                    $surface = 'cross_sell' === $try['hint'] ? 'cross_sell' : 'upsell';
+                } elseif ( $in_up ) {
+                    $surface = 'upsell';
+                } elseif ( $in_cross ) {
+                    $surface = 'cross_sell';
+                }
+            }
+
+            $one = array(
+                'surface'    => $surface,
+                'anchors'    => 'organic' === $surface ? array() : array( $anchor ),
+                'candidates' => $candidates,
+                'held'       => $try['held'],
+                // The cart's cross-sells may stand in: for a card on the cart page, or a drawer on another product's
+                // page. On a product page a note from a Related or up-sell section rules the drawer out.
+                'cart'       => 'cart' === $anchor || ( $other && ! ( null !== $try['held'] && in_array( $try['hint'], array( 'related', 'upsell' ), true ) ) ),
+            );
+            if ( 'organic' !== $surface ) {
+                $chosen = $one;
+                break;
+            }
+            $direct[] = $one;
+        }
+
+        // Then the cart's cross-sells, for the first try they may stand in for. When they credit nothing either, the
+        // first try stands, with the cart lines it looked at in its evidence.
+        if ( null === $chosen ) {
+            foreach ( $direct as $index => $one ) {
+                if ( ! $one['cart'] ) {
+                    continue;
+                }
+                $cart              = self::cart_cross_sells( $cart_links, $added, $product_id );
+                $one['candidates'] = array_merge( $one['candidates'], $cart['candidates'] );
+                if ( $cart['anchors'] ) {
+                    $one['surface'] = 'cross_sell';
+                    $one['anchors'] = $cart['anchors'];
+                    $chosen         = $one;
+                } elseif ( 0 === $index ) {
+                    $direct[0] = $one;
+                }
+                // The cart says the same for every try.
+                break;
+            }
+            if ( null === $chosen ) {
+                $chosen = $direct[0];
+            }
+        }
+
+        $used     = null !== $chosen['held'];
+        $decoded  = $used ? $chosen['held']['decoded'] : $newest;
         $evidence = array(
             'v'          => 1,
             'note'       => self::note_evidence( $decoded, $used ),
             'page'       => $page,
-            'candidates' => array(),
+            'candidates' => $chosen['candidates'],
             // Only a note that decided the add says what the shopper saw before it.
             'shown'      => $used ? $decoded['shown'] : array(),
             'restored'   => false,
         );
 
-        if ( $other ) {
-            $lists    = self::anchor_lists( $anchor, $cart_products );
-            $in_up    = (bool) array_intersect( $added, $lists['upsell'] );
-            $in_cross = (bool) array_intersect( $added, $lists['cross_sell'] );
+        return array(
+            'surface'     => $chosen['surface'],
+            'anchors'     => $chosen['anchors'],
+            'evidence'    => $evidence,
+            'used_note'   => $used ? $chosen['held']['note'] : null,
+            'spent_notes' => wp_list_pluck( $applying, 'note' ),
+        );
+    }
 
-            $evidence['candidates'][] = array( 'anchor' => $anchor, 'upsell' => $in_up, 'cross_sell' => $in_cross );
-
-            if ( $in_up && $in_cross ) {
-                $surface = 'cross_sell' === $hint ? 'cross_sell' : 'upsell';
-            } elseif ( $in_up ) {
-                $surface = 'upsell';
-            } elseif ( $in_cross ) {
-                $surface = 'cross_sell';
-            }
-            if ( 'organic' !== $surface ) {
-                $anchors = array( $anchor );
-            }
-        }
-
-        // The cart's cross-sells: a card on the cart page, or a drawer on another product's page. On a product
-        // page a note from a Related or up-sell section rules the drawer out.
-        $drawer = $other && ! ( $used && in_array( $hint, array( 'related', 'upsell' ), true ) );
-        if ( 'organic' === $surface && ( 'cart' === $anchor || $drawer ) ) {
-            foreach ( is_callable( $cart_links ) ? $cart_links() : (array) $cart_links as $line_product_id => $cross_sell_ids ) {
-                if ( (int) $line_product_id === $product_id ) {
-                    continue;
-                }
-                $linked = (bool) array_intersect( $added, array_map( 'intval', (array) $cross_sell_ids ) );
-                $evidence['candidates'][] = array( 'anchor' => (int) $line_product_id, 'cross_sell' => $linked );
-                if ( $linked ) {
-                    $anchors[] = (int) $line_product_id;
-                }
-            }
-            if ( $anchors ) {
-                $surface = 'cross_sell';
-                $anchors = array_values( array_unique( $anchors ) );
+    /**
+     * Picks among the held notes for an add.
+     *
+     * @since 10.5.2
+     * @param string[]   $notes        The held notes, oldest first.
+     * @param int        $product_id   The product added.
+     * @param int        $variation_id The variation added, or 0.
+     * @param int|string $page         The page the add was made on.
+     * @return array [0] the newest note that decodes, decoded, or null: what the evidence describes when no note names
+     *               the add, and it may be stale or name another product; [1] every fresh note naming the add, newest
+     *               first, each as 'note' (its stored form) and 'decoded'.
+     */
+    private static function pick_notes( $notes, $product_id, $variation_id, $page ) {
+        $decoded = array();
+        foreach ( array_reverse( $notes ) as $note ) {
+            $one = self::decode_note( $note );
+            if ( null !== $one ) {
+                $decoded[] = array( 'note' => $note, 'decoded' => $one );
             }
         }
 
-        return array( 'surface' => $surface, 'anchors' => $anchors, 'evidence' => $evidence );
+        // One query for the clicked ids that are not the add itself, so note_applies looks no post up. Only an added
+        // variation can have a card for another variation of its product.
+        $clicked = array();
+        foreach ( $variation_id > 0 ? $decoded : array() as $held ) {
+            $clicked[] = (int) $held['decoded']['clicked'];
+        }
+        $parents = self::variation_parents( array_diff( $clicked, array( $product_id, $variation_id ) ) );
+
+        $applying = array();
+        foreach ( $decoded as $held ) {
+            if ( self::note_applies( $held['decoded'], $product_id, $variation_id, $page, $parents ) ) {
+                $applying[] = $held;
+            }
+        }
+
+        return array( $decoded ? $decoded[0]['decoded'] : null, $applying );
+    }
+
+    /**
+     * The up-sell and cross-sell lists of the anchors that are another product than the one added, keyed by anchor id.
+     * Anchors not in the cart are loaded in one go, so reading their lists costs no query per anchor, and one that is
+     * not a product is not loaded as one. A note is a client's to forge: WordPress caches no missing post, and a
+     * variation would have its parent loaded, so each such anchor would cost a product's queries on every add; here all
+     * missing posts cost one query between them. A real anchor is the product page a card was shown on, or the page the add was made on.
+     *
+     * @since 10.5.2
+     * @param array        $anchors       Anchors as notes and the Referer give them: product ids, 'cart' or null.
+     * @param int          $product_id    The product added.
+     * @param WC_Product[] $cart_products The cart items' products keyed by parent product id.
+     * @return array[] 'upsell' and 'cross_sell' id lists per anchor id.
+     */
+    private static function lists_of_anchors( $anchors, $product_id, $cart_products ) {
+        $ids = array();
+        foreach ( $anchors as $anchor ) {
+            if ( is_int( $anchor ) && $anchor !== $product_id ) {
+                $ids[ $anchor ] = $anchor;
+            }
+        }
+
+        $to_load = array_values( array_diff( $ids, array_keys( $cart_products ) ) );
+        $skip    = array();
+        if ( $to_load ) {
+            // The posts alone first: priming meta and terms looks each missing post up again.
+            _prime_post_caches( $to_load, false, false );
+            $found  = array();
+            $missed = array();
+            foreach ( $to_load as $id ) {
+                $post = wp_cache_get( $id, 'posts' );
+                if ( ! $post ) {
+                    $missed[] = $id;
+                } elseif ( 'product' === $post->post_type ) {
+                    $found[] = $id;
+                } else {
+                    $skip[ $id ] = true;
+                }
+            }
+            // A miss is a post that does not exist, or an object cache that did not keep the one just primed
+            // (cache additions suspended, a failing backend). One query confirms all of them, where taking the
+            // miss for "no product" would tag every credited add organic on such a store.
+            if ( $missed ) {
+                global $wpdb;
+                $products = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'product' AND ID IN (" . implode( ',', array_fill( 0, count( $missed ), '%d' ) ) . ')', $missed ) ) );
+                foreach ( $missed as $id ) {
+                    if ( in_array( $id, $products, true ) ) {
+                        $found[] = $id;
+                    } else {
+                        $skip[ $id ] = true;
+                    }
+                }
+            }
+            if ( $found ) {
+                update_postmeta_cache( $found );
+                update_object_term_cache( $found, 'product' );
+            }
+        }
+
+        $lists = array();
+        foreach ( $ids as $id ) {
+            $lists[ $id ] = isset( $skip[ $id ] ) ? array( 'upsell' => array(), 'cross_sell' => array() ) : self::anchor_lists( $id, $cart_products );
+        }
+
+        return $lists;
+    }
+
+    /**
+     * The cart lines whose cross-sell lists hold the product added.
+     *
+     * @since 10.5.2
+     * @param array|callable $cart_links Cross-sell ids per cart line's parent product id, or a callable building them.
+     * @param int[]          $added      The added product id and, for a variation, the variation id.
+     * @param int            $product_id The product added (the parent for a variation).
+     * @return array 'anchors': the linking lines' product ids; 'candidates': the evidence row of every line looked at.
+     */
+    private static function cart_cross_sells( $cart_links, $added, $product_id ) {
+        $cart_links = is_callable( $cart_links ) ? $cart_links() : (array) $cart_links;
+        $parents    = self::variation_parents( self::ids_to_resolve( $cart_links, $added ) );
+        $anchors    = array();
+        $candidates = array();
+
+        foreach ( $cart_links as $line_product_id => $cross_sell_ids ) {
+            if ( (int) $line_product_id === $product_id ) {
+                continue;
+            }
+            $linked       = self::list_holds( $cross_sell_ids, $added, $product_id, $parents );
+            $candidates[] = array( 'anchor' => (int) $line_product_id, 'cross_sell' => $linked );
+            if ( $linked ) {
+                $anchors[] = (int) $line_product_id;
+            }
+        }
+
+        return array( 'anchors' => array_values( array_unique( $anchors ) ), 'candidates' => $candidates );
+    }
+
+    /**
+     * The ids list_holds needs a parent for: those of the lists that do not hold the added product directly, and only
+     * when a variation was added, as no list can hold another variation of a product added without one.
+     *
+     * @since 10.5.2
+     * @param array $lists Lists of product ids.
+     * @param int[] $added The added product id and, for a variation, the variation id.
+     * @return int[]
+     */
+    private static function ids_to_resolve( $lists, $added ) {
+        if ( count( $added ) < 2 ) {
+            return array();
+        }
+
+        $ids = array();
+        foreach ( $lists as $list ) {
+            $list = array_map( 'intval', (array) $list );
+            if ( ! array_intersect( $added, $list ) ) {
+                $ids = array_merge( $ids, $list );
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Whether a recommendation list holds the product added: its id, its variation's id, or another variation of the
+     * same product, since link pickers accept variations and a variation's card links to its parent's page.
+     *
+     * @since 10.5.2
+     * @param int[] $list       Product ids in the list.
+     * @param int[] $added      The added product id and, for a variation, the variation id.
+     * @param int   $product_id The product added (the parent for a variation).
+     * @param int[] $parents    The parent of each listed variation, as variation_parents returns it for ids_to_resolve.
+     * @return bool
+     */
+    private static function list_holds( $list, $added, $product_id, $parents ) {
+        $list = array_map( 'intval', (array) $list );
+
+        if ( array_intersect( $added, $list ) ) {
+            return true;
+        }
+        foreach ( $list as $id ) {
+            if ( isset( $parents[ $id ] ) && $product_id === $parents[ $id ] ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * The parent product of each id that is a variation, in one query, or none for no ids. Ids of anything else, and of deleted products,
+     * which WooCommerce leaves in other products' lists, are absent: looked up one by one, each missing post would cost
+     * a query on every add, as WordPress caches no miss.
+     *
+     * @since 10.5.2
+     * @param int[] $ids Post ids.
+     * @return int[] Parent product id keyed by variation id.
+     */
+    private static function variation_parents( $ids ) {
+        $ids = array_values( array_unique( array_filter( array_map( 'intval', (array) $ids ), function ( $id ) {
+            return $id > 0;
+        } ) ) );
+        if ( ! $ids ) {
+            return array();
+        }
+
+        // Read directly: a WP_Query for whole posts costs two queries, and its 'id=>parent' map is keyed differently when
+        // WordPress answers from its query cache.
+        global $wpdb;
+        $rows = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_parent FROM {$wpdb->posts} WHERE post_type = 'product_variation' AND ID IN (" . implode( ',', array_fill( 0, count( $ids ), '%d' ) ) . ')', $ids ) );
+
+        $parents = array();
+        foreach ( (array) $rows as $row ) {
+            $parents[ (int) $row->ID ] = (int) $row->post_parent;
+        }
+
+        return $parents;
     }
 
     /**
@@ -714,11 +1160,11 @@ class WC_Montonio_Recommendation_Tagging {
     }
 
     /**
-     * The note kept for the session, read field by field; null when its shape, version or any
+     * A note kept for the session, read field by field; null when its shape, version or any
      * field but the shown list does not hold, so a forged note neither decides an add nor reaches order
      * meta. A malformed shown list is dropped on its own. Freshness and whether it names this add are note_applies' to decide.
      *
-     * @return array|null 'anchor': product id or 'cart'; 'clicked': product id or null; 'hint'; 'ts'; 'shown'.
+     * @return array|null 'anchor': product id or 'cart'; 'clicked': product id or null; 'hint'; 'ts'; 'shown'; 'link'.
      */
     private static function decode_note( $note ) {
         if ( ! is_string( $note ) || '' === $note ) {
@@ -787,9 +1233,9 @@ class WC_Montonio_Recommendation_Tagging {
      * Whether a decoded note decides this add: fresh, and naming the product added. A note whose clicked
      * product is empty names it through the card's link hash when it has one, else it is trusted only on
      * the anchor's own page: a card click with no id followed by an add of some other product reached
-     * another way must not credit the anchor.
+     * another way must not credit the anchor. $parents is the parent product of each clicked id that is a variation.
      */
-    private static function note_applies( $decoded, $product_id, $variation_id, $page ) {
+    private static function note_applies( $decoded, $product_id, $variation_id, $page, $parents ) {
         $now = time();
 
         if ( $now - $decoded['ts'] > self::NOTE_MAX_AGE || $decoded['ts'] - $now > 60 ) {
@@ -797,7 +1243,8 @@ class WC_Montonio_Recommendation_Tagging {
         }
 
         if ( null !== $decoded['clicked'] ) {
-            return in_array( $decoded['clicked'], array( $product_id, $variation_id ), true );
+            // The product or variation added itself, or another variation of the product: its card names the same product page.
+            return in_array( $decoded['clicked'], array( $product_id, $variation_id ), true ) || ( isset( $parents[ $decoded['clicked'] ] ) && $product_id === $parents[ $decoded['clicked'] ] );
         }
 
         if ( '' !== $decoded['link'] ) {
@@ -1009,7 +1456,7 @@ class WC_Montonio_Recommendation_Tagging {
      * @return string
      */
     public static function privacy_policy_text() {
-        return __( 'When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps it on its own server, tied to the shopper\'s WooCommerce session, for 30 minutes, and uses it when a product is added to the cart; if the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce\'s session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper\'s statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store\'s own order data and is used to measure how recommendations perform.', 'montonio-for-woocommerce' );
+        return __( 'When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps the shopper\'s last 10 notes on its own server, tied to the shopper\'s WooCommerce session, and uses a note for 30 minutes, when a product is added to the cart. A note that is no longer used is deleted by WooCommerce\'s regular session cleanup at the latest. If the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce\'s session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper\'s statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store\'s own order data and is used to measure how recommendations perform.', 'montonio-for-woocommerce' );
     }
 
     /**

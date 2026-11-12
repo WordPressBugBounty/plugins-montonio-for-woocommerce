@@ -38,6 +38,10 @@ class WC_Montonio_Cart_Capture {
     const REQUEST_CAPTURE          = 'capture';
     const REQUEST_MARK_AND_CAPTURE = 'mark_and_capture';
 
+    // What schedule_retry() returns when no retry is scheduled; also the log and exception suffix.
+    const RETRY_GIVING_UP       = 'giving up';
+    const RETRY_SCHEDULE_FAILED = 'scheduling the retry failed';
+
     /**
      * Registers the capture and push hooks.
      *
@@ -322,26 +326,50 @@ class WC_Montonio_Cart_Capture {
             throw new Exception( $message . '; not retried' );
         }
 
-        $delay = self::retry_delay( $attempt );
+        $failed = self::schedule_retry( self::ACTION_HOOK, array( $session_key ), $attempts_key, $message );
 
-        if ( null === $delay ) {
+        if ( self::RETRY_GIVING_UP === $failed ) {
             foreach ( $retryable as $failure ) {
                 self::delete_if_unchanged( $failure['key'], $failure['fp'] );
             }
-
-            delete_transient( $attempts_key );
-            WC_Montonio_Logger::log( $message . '; giving up' );
-            throw new Exception( $message . '; giving up' );
         }
 
-        // A capture during this send has already queued the next push, which is the retry then.
-        if ( ! self::has_pending_action( $session_key ) && ! as_schedule_single_action( time() + $delay, self::ACTION_HOOK, array( $session_key ), self::ACTION_GROUP, false, self::ACTION_PRIORITY ) ) {
-            WC_Montonio_Logger::log( $message . '; scheduling the retry failed' );
-            throw new Exception( $message . '; scheduling the retry failed' );
+        if ( null !== $failed ) {
+            throw new Exception( $message . '; ' . $failed );
+        }
+    }
+
+    /**
+     * Schedules the next try of a failed Ladu send with the backoff, counting attempts in $attempts_key, and logs
+     * the outcome after $message. A pending action for the same hook and args is the retry already.
+     *
+     * @internal Shared with the cart landing report; not part of the public API.
+     * @param string $hook         The action hook.
+     * @param array  $args         The action's args.
+     * @param string $attempts_key The transient that counts the attempts.
+     * @param string $message      What failed, for the log.
+     * @return string|null Null when the retry is scheduled; else RETRY_GIVING_UP (MAX_ATTEMPTS reached, the count is cleared) or RETRY_SCHEDULE_FAILED.
+     */
+    public static function schedule_retry( $hook, $args, $attempts_key, $message ) {
+        $attempt = (int) get_transient( $attempts_key );
+        $delay   = self::retry_delay( $attempt );
+
+        if ( null === $delay ) {
+            delete_transient( $attempts_key );
+            WC_Montonio_Logger::log( $message . '; ' . self::RETRY_GIVING_UP );
+            return self::RETRY_GIVING_UP;
+        }
+
+        // An action queued during this send, such as the next push after a capture, is the retry then.
+        if ( ! self::has_pending_action( $hook, $args ) && ! as_schedule_single_action( time() + $delay, $hook, $args, self::ACTION_GROUP, false, self::ACTION_PRIORITY ) ) {
+            WC_Montonio_Logger::log( $message . '; ' . self::RETRY_SCHEDULE_FAILED );
+            return self::RETRY_SCHEDULE_FAILED;
         }
 
         set_transient( $attempts_key, $attempt + 1, DAY_IN_SECONDS );
         WC_Montonio_Logger::log( $message . '; retrying in ' . $delay . 's' );
+
+        return null;
     }
 
     /**
@@ -478,7 +506,6 @@ class WC_Montonio_Cart_Capture {
      * @return array[] Per failed snapshot kind: the message, whether a later try may succeed, and its transient key and fingerprint.
      */
     private static function deliver( $session_key ) {
-        $endpoint = (string) get_option( self::OPTION_ENDPOINT, '' );
         $keys     = array(
             'placed' => self::placed_transient_key( $session_key ),
             'update' => self::update_transient_key( $session_key )
@@ -496,7 +523,7 @@ class WC_Montonio_Cart_Capture {
             $found = true;
 
             try {
-                self::send( $endpoint, $entry['snapshot'] );
+                self::send( $entry['snapshot'] );
                 self::delete_if_unchanged( $key, $entry['fp'] );
             } catch ( Throwable $e ) {
                 $retryable = self::is_retryable_status( $e->getCode() );
@@ -761,17 +788,17 @@ class WC_Montonio_Cart_Capture {
     }
 
     private static function ensure_pending_action( $session_key ) {
-        if ( ! self::has_pending_action( $session_key ) && ! as_enqueue_async_action( self::ACTION_HOOK, array( $session_key ), self::ACTION_GROUP, false, self::ACTION_PRIORITY ) ) {
+        if ( ! self::has_pending_action( self::ACTION_HOOK, array( $session_key ) ) && ! as_enqueue_async_action( self::ACTION_HOOK, array( $session_key ), self::ACTION_GROUP, false, self::ACTION_PRIORITY ) ) {
             throw new Exception( 'enqueueing the push failed' );
         }
     }
 
     // Pending only: a running action may already have read the transient, so a change arriving mid-run must enqueue.
-    private static function has_pending_action( $session_key ) {
+    private static function has_pending_action( $hook, $args ) {
         $pending = as_get_scheduled_actions(
             array(
-                'hook'     => self::ACTION_HOOK,
-                'args'     => array( $session_key ),
+                'hook'     => $hook,
+                'args'     => $args,
                 'group'    => self::ACTION_GROUP,
                 'status'   => ActionScheduler_Store::STATUS_PENDING,
                 'per_page' => 1
@@ -785,28 +812,28 @@ class WC_Montonio_Cart_Capture {
     /**
      * @throws Exception On a failed send, with the HTTP status as its code (0 for a transport error).
      */
-    private static function send( $endpoint, $snapshot ) {
-        $jwt = WC_Montonio_Helper::create_jwt_token( array_merge( $snapshot, array( 'exp' => time() + 600 ) ) );
+    private static function send( $snapshot ) {
+        $result = WC_Montonio_Ladu_Client::post( '', $snapshot, time() + 600, self::SEND_TIMEOUT_SECONDS );
 
-        $response = wp_remote_post( $endpoint, array(
-            'timeout' => self::SEND_TIMEOUT_SECONDS,
-            'headers' => array( 'Content-Type' => 'application/json' ),
-            'body'    => wp_json_encode( array( 'data' => $jwt ) )
-        ) );
-
-        if ( is_wp_error( $response ) ) {
-            throw new Exception( 'transport error: ' . $response->get_error_message() );
+        if ( null !== $result['error'] ) {
+            throw new Exception( 'transport error: ' . $result['error']->get_error_message() );
         }
 
-        $status = (int) wp_remote_retrieve_response_code( $response );
+        $status = $result['status'];
 
         if ( $status < 200 || $status > 299 ) {
-            $body = substr( (string) preg_replace( '/\s+/', ' ', (string) wp_remote_retrieve_body( $response ) ), 0, 200 );
+            $body = substr( (string) preg_replace( '/\s+/', ' ', $result['body'] ), 0, 200 );
             throw new Exception( 'HTTP ' . $status . ': ' . $body, $status );
         }
     }
 
-    private static function session_key() {
+    /**
+     * The key Ladu holds this session's cart rows under: the guest's former session id when a login moved a captured cart's session to the user, else the session's customer id.
+     *
+     * @internal Shared with the cart restore; not part of the public API.
+     * @return string Empty without a session.
+     */
+    public static function session_key() {
         if ( ! WC()->session ) {
             return '';
         }

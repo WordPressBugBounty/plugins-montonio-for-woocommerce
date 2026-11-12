@@ -70,7 +70,7 @@ msgstr "Zapłać swoją kartą kredytową lub debetową"
 msgid "Unable to finish the payment. Please try again or choose a different payment method."
 msgstr ""
 
-#: montonio.php:235
+#: montonio.php:239
 msgid "Settings"
 msgstr "Ustawienia"
 
@@ -1278,7 +1278,7 @@ msgstr ""
 msgid "Montonio: Labels downloaded. Refresh the browser for updated order statuses"
 msgstr ""
 
-#: montonio.php:397
+#: montonio.php:401
 msgid "Need help?"
 msgstr "Potrzebujesz pomocy?"
 
@@ -1299,7 +1299,7 @@ msgstr ""
 msgid "Courier"
 msgstr "Kurier"
 
-#: montonio.php:403
+#: montonio.php:407
 msgid "How to activate Montonio payment methods"
 msgstr "Jak aktywować metody płatności Montonio"
 
@@ -2029,12 +2029,12 @@ msgid "Follow these instructions to set up payment methods: <a href=\"%s\" targe
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:199
-#: montonio.php:386
+#: montonio.php:390
 msgid "Connect your store"
 msgstr ""
 
 #: includes/admin/class-wc-montonio-api-settings.php:200
-#: montonio.php:390
+#: montonio.php:394
 msgid "Link this WooCommerce store to a Montonio store to start accepting payments and shipping orders."
 msgstr ""
 
@@ -2110,7 +2110,7 @@ msgstr ""
 msgid "Live Secret Key is not valid."
 msgstr ""
 
-#: montonio.php:393
+#: montonio.php:397
 msgid "Go to account settings"
 msgstr ""
 
@@ -2130,19 +2130,19 @@ msgstr ""
 msgid "Shipping sync failed: %s"
 msgstr ""
 
-#: montonio.php:318
+#: montonio.php:322
 msgid "Payment methods and shipping data synced successfully."
 msgstr ""
 
-#: montonio.php:319
+#: montonio.php:323
 msgid "Payment methods synced successfully."
 msgstr ""
 
-#: montonio.php:320
+#: montonio.php:324
 msgid "Resync failed. Please try again or check the Montonio log."
 msgstr ""
 
-#: montonio.php:321
+#: montonio.php:325
 msgid "Your session has expired. Please reload the page and try again."
 msgstr ""
 
@@ -2158,7 +2158,7 @@ msgstr ""
 msgid "Remove API keys and disconnect this store from Montonio"
 msgstr ""
 
-#: montonio.php:317
+#: montonio.php:321
 msgid "Syncing data, this may take some time..."
 msgstr ""
 
@@ -2724,10 +2724,6 @@ msgstr "Wartość koszyka przekracza maksymalny limit dla tej metody płatności
 msgid "Enable or disable recommendation tagging of cart items"
 msgstr ""
 
-#: includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php:1012
-msgid "When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps it on its own server, tied to the shopper's WooCommerce session, for 30 minutes, and uses it when a product is added to the cart; if the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce's session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store's own order data and is used to measure how recommendations perform."
-msgstr ""
-
 #: includes/shipping/shipping-methods/matkahuolto/class-montonio-matkahuolto-courier.php:18
 msgid "Montonio Matkahuolto courier"
 msgstr ""
@@ -2788,3 +2784,7 @@ msgstr ""
 #: blocks/build/wc-montonio-bnpl/index.js:1
 msgid "Pay Later is not available for this cart total. Please choose another payment method."
 msgstr "Pay Later nie jest dostępne dla tej wartości koszyka. Wybierz inną metodę płatności."
+
+#: includes/recommendation-tagging/class-wc-montonio-recommendation-tagging.php:1459
+msgid "When this store has Montonio Ladu recommendations switched on, clicking a product recommendation on a product or cart page sends the store a short note: the product ids involved, the name of the page section, the ids of the recommendations shown and, for a recommendation shown without a product id, a short hash of the product link that was clicked. The note contains no identifier of the shopper. The store keeps the shopper's last 10 notes on its own server, tied to the shopper's WooCommerce session, and uses a note for 30 minutes, when a product is added to the cart. A note that is no longer used is deleted by WooCommerce's regular session cleanup at the latest. If the shopper has no WooCommerce session yet, the click starts one, which sets WooCommerce's session cookie. Where the store uses the WP Consent API, the note is kept and used only with the shopper's statistics consent. When a product is added to the cart, the store records with the order item whether it was added from an up-sell or cross-sell recommendation and which products recommended it. This information is stored in the store's own order data and is used to measure how recommendations perform."
+msgstr ""
